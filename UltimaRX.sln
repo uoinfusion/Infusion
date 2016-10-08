@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX", "UltimaRX\UltimaRX.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Tests", "UltimaRX.Tests\UltimaRX.Tests.csproj", "{F6658DAD-8158-4105-A9F4-AEDF23748FAE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

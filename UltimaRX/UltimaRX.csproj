@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UltimaRX</RootNamespace>
     <AssemblyName>UltimaRX</AssemblyName>
@@ -32,6 +32,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -43,11 +46,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Packets\ArrayPacketReader.cs" />
+    <Compile Include="Packets\Packet.cs" />
+    <Compile Include="Packets\IPacketReader.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\AttackRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\CreateCharacterRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\DisconnectNotificationDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\GodModeRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\LoginRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\MoveRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\SelectServerRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\TalkRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\PacketDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\PacketDefinitionRegistry.cs" />
+    <Compile Include="Packets\PacketDefinitions\PacketLength.cs" />
+    <Compile Include="Packets\PacketDefinitions\StandardVariablePacketLength.cs" />
+    <Compile Include="Packets\PacketDefinitions\StaticPacketLength.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <Compile Include="UltimaClientConnection.cs" />
+    <Compile Include="UltimaClientConnectionStatus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

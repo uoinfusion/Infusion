@@ -24,40 +24,17 @@ namespace UltimaRX
 
             var position = 0;
 
-            while (position < inputDataEnumerator.Current.Length)
+            if (status == UltimaClientConnectionStatus.BeforeInitialSeed)
             {
-                int packetId;
-                int packetLength;
-
-                switch (status)
-                {
-                    case UltimaClientConnectionStatus.BeforeInitialSeed:
-                        packetId = -1;
-                        packetLength = 4;
-                        status = UltimaClientConnectionStatus.AfterInitialSeed;
-                        break;
-                    default:
-                        packetId = inputDataEnumerator.Current[position];
-                        packetLength = GetPacketLength(inputDataEnumerator.Current, position);
-                        break;
-                }
-
-                var payload = new byte[packetLength];
-                Array.Copy(inputDataEnumerator.Current, position, payload, 0, packetLength);
-                PacketReceived?.Invoke(this, new Packet(packetId, payload));
-                position += packetLength;
+                var payload = new byte[4];
+                Array.Copy(inputDataEnumerator.Current, 0, payload, 0, 4);
+                PacketReceived?.Invoke(this, new Packet(-1, payload));
+                status = UltimaClientConnectionStatus.AfterInitialSeed;
+                position += 4;
             }
-        }
 
-        private int GetPacketLength(byte[] current, int position)
-        {
-            int packedId = current[position];
-            PacketDefinition packetDefinition;
-
-            if (PacketDefinitionRegistry.TryFind(packedId, out packetDefinition))
-                return packetDefinition.GetSize(new ArrayPacketReader(current, position));
-
-            throw new NotImplementedException($"Unknown packet type{current[position]}");
+            foreach (var packet in PacketParser.ParseBatch(inputDataEnumerator.Current, position))
+                PacketReceived?.Invoke(this, packet);
         }
     }
 }

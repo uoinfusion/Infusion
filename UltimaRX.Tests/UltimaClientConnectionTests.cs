@@ -30,7 +30,7 @@ namespace UltimaRX.Tests
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
             connection.ReceiveBatch();
 
-            AssertPackets(expectedPackets, receivedPackets.ToArray());
+            expectedPackets.AreEqual(receivedPackets);
         }
 
         [TestMethod]
@@ -54,19 +54,7 @@ namespace UltimaRX.Tests
             connection.ReceiveBatch();
             connection.ReceiveBatch();
 
-            AssertPackets(expectedPackets, receivedPackets.ToArray());
-        }
-
-        private void AssertPackets(Packet[] expectedPackets, Packet[] receivedPackets)
-        {
-            Assert.AreEqual(expectedPackets.Length, receivedPackets.Length);
-
-            for (var i = 0; i < expectedPackets.Length; i++)
-            {
-                Assert.AreEqual(expectedPackets[i].Id, receivedPackets[i].Id);
-                Assert.AreEqual(expectedPackets[i].Length, receivedPackets[i].Length);
-                Assert.IsTrue(expectedPackets[i].Payload.SequenceEqual(receivedPackets[i].Payload));
-            }
+            expectedPackets.AreEqual(receivedPackets);
         }
     }
 }

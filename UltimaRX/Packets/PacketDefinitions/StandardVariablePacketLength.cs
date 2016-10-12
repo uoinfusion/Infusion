@@ -4,8 +4,6 @@
     {
         public override int GetSize(IPacketReader reader)
         {
-            reader.ReadByte();
-
             return reader.ReadUShort();
         }
     }

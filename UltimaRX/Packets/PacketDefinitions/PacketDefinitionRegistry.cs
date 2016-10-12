@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UltimaRX.Packets.PacketDefinitions.Client;
+using UltimaRX.Packets.PacketDefinitions.Server;
 
 namespace UltimaRX.Packets.PacketDefinitions
 {
@@ -17,6 +18,10 @@ namespace UltimaRX.Packets.PacketDefinitions
             Register(new MoveRequestDefinition());
             Register(new SelectServerRequestDefinition());
             Register(new TalkRequestDefinition());
+            Register(new GameServerListDefinition());
+            Register(new ConnectToGameServerDefinition());
+            Register(new EnableLockedClientFeaturesDefinition());
+            Register(new CharactersStartingLocationsDefinition());
         }
 
         public static void Register(PacketDefinition definition)

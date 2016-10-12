@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UltimaRX.Tests
+﻿namespace UltimaRX.Tests
 {
     public static class FakePackets
     {
-        public static byte[] InitialLoginSeed => new byte[] { 0xA9, 0xFE, 0x50, 0x50 };
+        public static byte[] InitialLoginSeed => new byte[] {0xA9, 0xFE, 0x50, 0x50};
 
         public static byte[] InitialLoginRequest => new byte[]
         {
@@ -21,6 +15,23 @@ namespace UltimaRX.Tests
         public static byte[] SelectServerRequest => new byte[]
         {
             0xA0, 0x00, 0x00
+        };
+
+        public static byte[] GameServerList => new byte[]
+        {
+            0xA8, 0x00, 0x2E, 0x99, 0x00, 0x01, 0x00, 0x01, 0x4D, 0x6F, 0x72, 0x69, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x01, 0x01, 0x7F, 0x00, 0x00, 0x01
+        };
+
+        public static byte[] EnableLockedClientFeaturesEncrypted => new byte[]
+        {
+            0xB6, 0xA0, 0xFE, 0xF9
+        };
+
+        public static byte[] EnableLockedClientFeatures => new byte[]
+        {
+            0xB9, 0x80, 0x1F
         };
     }
 }

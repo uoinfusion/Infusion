@@ -50,7 +50,24 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
-        public void Can_receive_game_packet()
+        public void Can_receive_one_game_packets()
+        {
+            var inputData = new MemoryBatchedStream(new List<byte[]>
+            {
+                new byte[] { 0xB6, 0xA0, 0xFE, 0xF9 },
+            });
+            var expectedPackets = new[] { new Packet(0xB9, FakePackets.EnableLockedClientFeatures) };
+
+            var connection = new ServerConnection(ServerConnectionStatus.Game, new NullDiagnosticStream());
+            var receivedPackets = new List<Packet>();
+            connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
+            connection.Receive(inputData);
+
+            expectedPackets.AreEqual(receivedPackets);
+        }
+
+        [TestMethod]
+        public void Can_receive_two_game_packets()
         {
             Assert.Inconclusive("Need capture more testing data");
 

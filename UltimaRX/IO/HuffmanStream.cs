@@ -442,7 +442,16 @@ namespace UltimaRX.IO
                 {
                     value = baseStream.ReadByte();
                     if ((value < 0) || (value > 255))
-                        throw new EndOfStreamException();
+                    {
+                        if (len > 0)
+                        {
+                            throw new EndOfStreamException();
+                        }
+                        else
+                        {
+                            return pdest;
+                        }
+                    }
                     bit_num = 0;
                     mask = 0x80;
                 }

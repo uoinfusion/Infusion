@@ -22,6 +22,8 @@ namespace UltimaRX.Packets.PacketDefinitions
             Register(new ConnectToGameServerDefinition());
             Register(new EnableLockedClientFeaturesDefinition());
             Register(new CharactersStartingLocationsDefinition());
+            Register(new GameServerLoginRequestDefinition());
+            Register(new ClientSpyDefinition());
         }
 
         public static void Register(PacketDefinition definition)

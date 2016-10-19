@@ -3,7 +3,9 @@
     public enum UltimaClientConnectionStatus
     {
         Initial,
-        PreLogin,
-        Game
+        ServerLogin,
+        PreGameLogin,
+        GameLogin,
+        Game,
     }
 }

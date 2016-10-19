@@ -78,7 +78,7 @@ namespace UltimaRX
                     return huffmanStream;
 
                 default:
-                    throw new NotImplementedException($"Unknown status: {status}");
+                    throw new NotImplementedException($"Unknown Status: {status}");
             }
         }
     }

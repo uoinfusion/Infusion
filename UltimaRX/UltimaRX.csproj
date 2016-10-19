@@ -62,8 +62,10 @@
     <Compile Include="Packets\Packet.cs" />
     <Compile Include="Packets\IPacketReader.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\AttackRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\ClientSpyDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\CreateCharacterRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\DisconnectNotificationDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\GameServerLoginRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\GodModeRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\LoginRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\MoveRequestDefinition.cs" />

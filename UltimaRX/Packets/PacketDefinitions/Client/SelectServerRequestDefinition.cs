@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UltimaRX.Packets.PacketDefinitions.Client
+﻿namespace UltimaRX.Packets.PacketDefinitions.Client
 {
     public class SelectServerRequestDefinition : PacketDefinition
     {
-        public SelectServerRequestDefinition() : base(0xA0, new StaticPacketLength(3))
+        public SelectServerRequestDefinition() : base(Id, new StaticPacketLength(3))
         {
         }
+
+        public new static int Id => 0xA0;
     }
 }

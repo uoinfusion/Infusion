@@ -67,6 +67,7 @@
     <Compile Include="IO\HuffmanStreamTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnectionTests.cs" />
+    <Compile Include="TestMemoryStream.cs" />
     <Compile Include="UltimaClientConnectionTests.cs" />
   </ItemGroup>
   <ItemGroup>

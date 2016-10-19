@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltimaRX.Packets;
 
@@ -62,19 +63,25 @@ namespace UltimaRX.Tests
         {
             var packet = FakePackets.Instantiate(FakePackets.GameServerList);
             var expectedSentBytes = FakePackets.GameServerList;
+            var connection = new UltimaClientConnection(new[] {new byte[0]}, UltimaClientConnectionStatus.PreLogin);
+            var outputStream = new TestMemoryStream();
 
-            var connection = new UltimaClientConnection(new[] {new byte[0]});
-            var actualSentBytes = connection.Transform(packet);
+            connection.Send(packet, outputStream);
 
-            Assert.IsTrue(expectedSentBytes.SequenceEqual(actualSentBytes));
+            outputStream.ActualBytes.Should().BeEquivalentTo(expectedSentBytes);
         }
 
         [TestMethod]
         public void Can_send_game_packet()
         {
-            Assert.Inconclusive();
+            var packet = FakePackets.Instantiate(FakePackets.EnableLockedClientFeatures);
+            var expectedSentBytes = new byte[] { 0xB3, 0x32, 0x98, 0xDA };
+            var connection = new UltimaClientConnection(new[] { new byte[0] }, UltimaClientConnectionStatus.Game);
+            var outputStream = new TestMemoryStream();
 
-            var packet = FakePackets.Instantiate(new byte[] {0xB9, 0x80, 0x1F});
+            connection.Send(packet, outputStream);
+
+            outputStream.ActualBytes.Should().BeEquivalentTo(expectedSentBytes);
         }
     }
 }

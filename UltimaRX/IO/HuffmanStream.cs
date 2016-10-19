@@ -515,11 +515,12 @@ namespace UltimaRX.IO
             return b;
         }
 
-        public override void Write(byte[] dest, int offset, int count)
+        public override void Write(byte[] sourceBuffer, int offset, int count)
         {
-            var srcPos = 0;
-            var destPos = offset;
-            var bitNum = 0;
+            var srcPos = offset;
+            var bitNum = 8;
+            byte dest = 0;
+            bool flushed = false;
 
             while (srcPos <= count)
             {
@@ -527,9 +528,7 @@ namespace UltimaRX.IO
                 var treeByte = 0;
                 if (srcPos != count)
                 {
-                    var src = baseStream.ReadByte();
-                    if (src < 0)
-                        throw new EndOfStreamException();
+                    var src = sourceBuffer[srcPos];
 
                     treeBits = CompressionTree[src, 0];
                     treeByte = CompressionTree[src, 1];
@@ -545,16 +544,13 @@ namespace UltimaRX.IO
                     /* proceed to next byte if we are done with this one */
                     if (bitNum == 0)
                     {
-                        destPos++;
                         bitNum = 8;
+                        baseStream.WriteByte(dest);
+                        dest = 0;
                     }
-                    ;
 
                     var bit = GetBit(treeByte, treeBits);
-                    if (bit != 0)
-                        dest[destPos - 1] = PutBit(dest[destPos - 1], bitNum);
-                    else
-                        dest[destPos - 1] = RemoveBit(dest[destPos - 1], bitNum);
+                    dest = bit != 0 ? PutBit(dest, bitNum) : RemoveBit(dest, bitNum);
 
                     bitNum--;
                     treeBits--;
@@ -562,6 +558,8 @@ namespace UltimaRX.IO
 
                 srcPos++;
             }
+
+            baseStream.WriteByte(dest);
         }
     }
 }

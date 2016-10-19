@@ -44,12 +44,6 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
-        public void Can_receive_initial_sequence()
-        {
-            Assert.Inconclusive();
-        }
-
-        [TestMethod]
         public void Can_receive_one_game_packets()
         {
             var inputData = new MemoryBatchedStream(new List<byte[]>

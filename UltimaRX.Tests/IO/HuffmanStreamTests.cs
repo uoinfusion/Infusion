@@ -123,15 +123,14 @@ namespace UltimaRX.Tests.IO
         };
 
         [TestMethod]
-        public void Can_compress_block()
+        public void Can_compress_long_block()
         {
-            var baseStream = new MemoryStream(decompressed);
-            var huffmanStream = new HuffmanStream(baseStream);
+            var actualCompressedStream = new TestMemoryStream();
+            var huffmanStream = new HuffmanStream(actualCompressedStream);
 
-            var actualCompressed = new byte[compressed.Length];
-            huffmanStream.Write(actualCompressed, 0, decompressed.Length);
+            huffmanStream.Write(decompressed, 0, decompressed.Length);
 
-            actualCompressed.Should().BeEquivalentTo(compressed);
+            actualCompressedStream.ActualBytes.Should().BeEquivalentTo(compressed);
         }
 
         [TestMethod]
@@ -171,13 +170,12 @@ namespace UltimaRX.Tests.IO
         [TestMethod]
         public void Can_compress_short_block()
         {
-            var baseStream = new MemoryStream(new byte[] { 0xB9, 0x80, 0x1F });
-            var huffmanStream = new HuffmanStream(baseStream);
+            var compressedStream = new TestMemoryStream();
+            var huffmanStream = new HuffmanStream(compressedStream);
 
-            var actualCompressed = new byte[4];
-            huffmanStream.Write(actualCompressed, 0, 3);
+            huffmanStream.Write(new byte[] { 0xB9, 0x80, 0x1F }, 0, 3);
 
-            actualCompressed.Should().BeEquivalentTo(new byte[] { 0xB3, 0x32, 0x98, 0xDA });
+            compressedStream.ActualBytes.Should().BeEquivalentTo(new byte[] { 0xB3, 0x32, 0x98, 0xDA });
         }
 
         [TestMethod]

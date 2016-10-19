@@ -8,7 +8,7 @@ namespace UltimaRX
     public class UltimaClientConnection
     {
         private readonly IEnumerator<byte[]> inputDataEnumerator;
-        private UltimaClientConnectionStatus status = UltimaClientConnectionStatus.BeforeInitialSeed;
+        private UltimaClientConnectionStatus status = UltimaClientConnectionStatus.Initial;
 
         public UltimaClientConnection(IEnumerable<byte[]> inputData)
         {
@@ -24,17 +24,22 @@ namespace UltimaRX
 
             var position = 0;
 
-            if (status == UltimaClientConnectionStatus.BeforeInitialSeed)
+            if (status == UltimaClientConnectionStatus.Initial)
             {
                 var payload = new byte[4];
                 Array.Copy(inputDataEnumerator.Current, 0, payload, 0, 4);
                 PacketReceived?.Invoke(this, new Packet(-1, payload));
-                status = UltimaClientConnectionStatus.AfterInitialSeed;
+                status = UltimaClientConnectionStatus.PreLogin;
                 position += 4;
             }
 
             foreach (var packet in PacketParser.ParseBatch(inputDataEnumerator.Current, position))
                 PacketReceived?.Invoke(this, packet);
+        }
+
+        public byte[] Transform(Packet packet)
+        {
+            return packet.Payload;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace UltimaRX.Tests
     public class ServerConnectionTests
     {
         [TestMethod]
-        public void Can_receive_packet()
+        public void Can_receive_prelogin_packet()
         {
             var inputData = new MemoryBatchedStream(new List<byte[]> {FakePackets.GameServerList});
 
@@ -25,8 +25,35 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
-        public void Can_receive_packet_after_reconnect()
+        public void Can_write_diagnostic_info_about_received_packet()
         {
+            var inputData = new MemoryBatchedStream(new List<byte[]>
+            {
+                new byte[] {0xB6, 0xA0, 0xFE, 0xE6}
+            });
+
+
+            var diagnosticStream = new DiagnosticStream();
+            var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream);
+            connection.Receive(inputData);
+
+            string output = diagnosticStream.ToString();
+
+            Assert.IsTrue(output.Contains("0xB6, 0xA0, 0xFE, 0xE6"));
+            Assert.IsTrue(output.Contains("0xB9, 0x80, 0x1F"));
+        }
+
+        [TestMethod]
+        public void Can_receive_initial_sequence()
+        {
+            Assert.Inconclusive();
+        }
+
+        [TestMethod]
+        public void Can_receive_game_packet()
+        {
+            Assert.Inconclusive("Need capture more testing data");
+
             var inputData = new MemoryBatchedStream(new List<byte[]>
             {
                 new byte[] { 0xB6, 0xA0, 0xFE, 0xF9 },

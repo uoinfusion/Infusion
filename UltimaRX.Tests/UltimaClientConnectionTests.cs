@@ -56,5 +56,25 @@ namespace UltimaRX.Tests
 
             expectedPackets.AreEqual(receivedPackets);
         }
+
+        [TestMethod]
+        public void Can_send_prelogin_packet()
+        {
+            var packet = FakePackets.Instantiate(FakePackets.GameServerList);
+            var expectedSentBytes = FakePackets.GameServerList;
+
+            var connection = new UltimaClientConnection(new[] {new byte[0]});
+            var actualSentBytes = connection.Transform(packet);
+
+            Assert.IsTrue(expectedSentBytes.SequenceEqual(actualSentBytes));
+        }
+
+        [TestMethod]
+        public void Can_send_game_packet()
+        {
+            Assert.Inconclusive();
+
+            var packet = FakePackets.Instantiate(new byte[] {0xB9, 0x80, 0x1F});
+        }
     }
 }

@@ -1,4 +1,10 @@
-﻿namespace UltimaRX.Tests
+﻿using System;
+using System.IO;
+using UltimaRX.IO;
+using UltimaRX.Packets;
+using UltimaRX.Packets.PacketDefinitions;
+
+namespace UltimaRX.Tests
 {
     public static class FakePackets
     {
@@ -33,5 +39,26 @@
         {
             0xB9, 0x80, 0x1F
         };
+
+        public static Packet Instantiate(byte[] source)
+        {
+            var processingStream = new MemoryStream(source);
+            var received = new byte[1024];
+
+            var packetReader = new StreamPacketReader(processingStream, received);
+            int packetId = packetReader.ReadByte();
+            if ((packetId < 0) || (packetId > 255))
+                throw new EndOfStreamException();
+
+            var packetDefinition = PacketDefinitionRegistry.Find(packetId);
+            var packetSize = packetDefinition.GetSize(packetReader);
+            packetReader.ReadBytes(packetSize - packetReader.Position);
+            var payload = new byte[packetSize];
+            Array.Copy(received, 0, payload, 0, packetSize);
+
+            var packet = new Packet(packetId, payload);
+
+            return packet;
+        }
     }
 }

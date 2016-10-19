@@ -2,7 +2,8 @@
 {
     public enum UltimaClientConnectionStatus
     {
-        BeforeInitialSeed,
-        AfterInitialSeed
+        Initial,
+        PreLogin,
+        Game
     }
 }

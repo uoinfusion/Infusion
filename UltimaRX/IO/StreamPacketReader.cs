@@ -8,24 +8,22 @@ namespace UltimaRX.IO
         private readonly Stream sourceStream;
         private readonly byte[] targetBuffer;
 
-        public int Position { get; private set; }
-
         public StreamPacketReader(Stream sourceStream, byte[] targetBuffer)
         {
             this.sourceStream = sourceStream;
             this.targetBuffer = targetBuffer;
         }
 
+        public int Position { get; private set; }
+
         public byte ReadByte()
         {
-            int result = sourceStream.ReadByte();
+            var result = sourceStream.ReadByte();
 
-            if (result < byte.MinValue || result > byte.MaxValue)
-            {
+            if ((result < byte.MinValue) || (result > byte.MaxValue))
                 throw new EndOfStreamException();
-            }
 
-            byte resultByte = (byte) result;
+            var resultByte = (byte) result;
             targetBuffer[Position++] = resultByte;
 
             return resultByte;
@@ -33,15 +31,13 @@ namespace UltimaRX.IO
 
         public ushort ReadUShort()
         {
-            return (ushort)((ReadByte() << 8) + ReadByte());
+            return (ushort) ((ReadByte() << 8) + ReadByte());
         }
 
         public void ReadBytes(int count)
         {
-            for (int i = 0; i < count; i++)
-            {
+            for (var i = 0; i < count; i++)
                 ReadByte();
-            }
         }
     }
 }

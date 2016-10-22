@@ -8,19 +8,19 @@ namespace UltimaRX
 {
     public class UltimaClientConnection
     {
-        private readonly IDiagnosticStream diagnosticStream;
+        private readonly IDiagnosticPullStream diagnosticStream;
 
         public UltimaClientConnection()
-            : this(UltimaClientConnectionStatus.Initial, NullDiagnosticStream.Instance)
+            : this(UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance)
         {
         }
 
         public UltimaClientConnection(UltimaClientConnectionStatus status)
-            : this(status, NullDiagnosticStream.Instance)
+            : this(status, NullDiagnosticPullStream.Instance)
         {
         }
 
-        public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticStream diagnosticStream)
+        public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticPullStream diagnosticStream)
         {
             this.diagnosticStream = diagnosticStream;
             Status = status;
@@ -67,14 +67,14 @@ namespace UltimaRX
         {
             var payload = new byte[4];
             inputStream.Read(payload, 0, 4);
-            var packet = new Packet(-1, payload);
+            var packet = new Packet(LoginSeedDefinition.Id, payload);
             OnPacketReceived(packet);
         }
 
         private void OnPacketReceived(Packet packet)
         {
-            PacketReceived?.Invoke(this, packet);
             diagnosticStream.FinishPacket(packet);
+            PacketReceived?.Invoke(this, packet);
         }
 
         public void Send(Packet packet, Stream outputStream)

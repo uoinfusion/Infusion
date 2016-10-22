@@ -444,13 +444,8 @@ namespace UltimaRX.IO
                     if ((value < 0) || (value > 255))
                     {
                         if (len > 0)
-                        {
                             throw new EndOfStreamException();
-                        }
-                        else
-                        {
-                            return pdest;
-                        }
+                        return pdest;
                     }
                     bit_num = 0;
                     mask = 0x80;
@@ -520,7 +515,7 @@ namespace UltimaRX.IO
             var srcPos = offset;
             var bitNum = 8;
             byte dest = 0;
-            bool flushed = false;
+            var flushed = false;
 
             while (srcPos <= count)
             {

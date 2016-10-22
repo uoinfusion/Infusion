@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltimaRX.IO;
 using UltimaRX.Packets;
+using UltimaRX.Packets.PacketDefinitions.Client;
 
 namespace UltimaRX.Tests
 {
@@ -23,7 +24,7 @@ namespace UltimaRX.Tests
 
             var expectedPackets = new[]
             {
-                new Packet(-1, FakePackets.InitialLoginSeed),
+                new Packet(LoginSeedDefinition.Id, FakePackets.InitialLoginSeed),
                 new Packet(0x80, FakePackets.InitialLoginRequest),
                 new Packet(0xA0, FakePackets.SelectServerRequest)
             };
@@ -47,7 +48,7 @@ namespace UltimaRX.Tests
 
             var expectedPackets = new[]
             {
-                new Packet(-1, FakePackets.InitialLoginSeed),
+                new Packet(LoginSeedDefinition.Id, FakePackets.InitialLoginSeed),
                 new Packet(0x80, FakePackets.InitialLoginRequest)
             };
 

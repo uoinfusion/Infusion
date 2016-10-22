@@ -46,18 +46,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IO\IDiagnosticStream.cs" />
+    <Compile Include="IO\DiagnosticPacketFormatter.cs" />
+    <Compile Include="IO\DiagnosticPushStream.cs" />
+    <Compile Include="IO\IDiagnosticPullStream.cs" />
     <Compile Include="IO\CipherMode.cs" />
-    <Compile Include="IO\DiagnosticStream.cs" />
+    <Compile Include="IO\DiagnosticPullStream.cs" />
     <Compile Include="IO\HuffmanStream.cs" />
     <Compile Include="IO\IPullStream.cs" />
+    <Compile Include="IO\IDiagnosticPushStream.cs" />
+    <Compile Include="IO\IPushStream.cs" />
+    <Compile Include="IO\LoginStream.cs" />
     <Compile Include="IO\MemoryBatchedStream.cs" />
     <Compile Include="IO\NewGameStream.cs" />
+    <Compile Include="IO\NullDiagnosticPushStream.cs" />
     <Compile Include="IO\PullStreamToStreamAdapter.cs" />
     <Compile Include="IO\NetworkStreamToPullStreamAdapter.cs" />
+    <Compile Include="IO\StreamToPushStreamAdapter.cs" />
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />
-    <Compile Include="IO\NullDiagnosticStream.cs" />
+    <Compile Include="IO\NullDiagnosticPullStream.cs" />
     <Compile Include="PacketParser.cs" />
     <Compile Include="Packets\ArrayPacketReader.cs" />
     <Compile Include="Packets\Packet.cs" />
@@ -70,6 +77,7 @@
     <Compile Include="Packets\PacketDefinitions\Client\GodModeRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\LoginCharacterDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\LoginRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\LoginSeedDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\MoveRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\SelectServerRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\TalkRequestDefinition.cs" />

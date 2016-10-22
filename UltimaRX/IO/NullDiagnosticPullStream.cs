@@ -2,9 +2,9 @@
 
 namespace UltimaRX.IO
 {
-    public class NullDiagnosticStream : IDiagnosticStream
+    public class NullDiagnosticPullStream : IDiagnosticPullStream
     {
-        public static NullDiagnosticStream Instance { get; } = new NullDiagnosticStream();
+        public static NullDiagnosticPullStream Instance { get; } = new NullDiagnosticPullStream();
 
         public void Dispose()
         {

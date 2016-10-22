@@ -8,22 +8,33 @@ namespace UltimaRX
 {
     public class ServerConnection
     {
-        private readonly IDiagnosticStream diagnosticStream;
+        private readonly IDiagnosticPullStream diagnosticPullStream;
+        private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly HuffmanStream huffmanStream;
         private readonly NewGameStream newGameStream = new NewGameStream(new byte[] {127, 0, 0, 1});
         private readonly PullStreamToStreamAdapter preLoginStream;
-        private ServerConnectionStatus status;
 
-        public ServerConnection() : this(ServerConnectionStatus.PreLogin, new NullDiagnosticStream())
+        public ServerConnectionStatus Status { get; private set; }
+
+        public ServerConnection()
+            : this(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance
+            )
         {
         }
 
-        public ServerConnection(ServerConnectionStatus status, IDiagnosticStream diagnosticStream)
+        public ServerConnection(ServerConnectionStatus status)
+            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance)
         {
-            this.status = status;
-            this.diagnosticStream = diagnosticStream;
+        }
+
+        public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
+            IDiagnosticPushStream diagnosticPushStream)
+        {
+            this.Status = status;
+            this.diagnosticPullStream = diagnosticPullStream;
+            this.diagnosticPushStream = diagnosticPushStream;
             huffmanStream = new HuffmanStream(newGameStream);
-            preLoginStream = new PullStreamToStreamAdapter(diagnosticStream);
+            preLoginStream = new PullStreamToStreamAdapter(diagnosticPullStream);
         }
 
         public event EventHandler<Packet> PacketReceived;
@@ -49,7 +60,7 @@ namespace UltimaRX
 
                 var packet = new Packet(packetId, payload);
 
-                diagnosticStream.FinishPacket(packet);
+                diagnosticPullStream.FinishPacket(packet);
 
                 OnPacketReceived(packet);
             }
@@ -57,43 +68,53 @@ namespace UltimaRX
 
         private void OnPacketReceived(Packet packet)
         {
-            if ((status == ServerConnectionStatus.PreLogin) && (packet.Id == 0x8C))
-                status = ServerConnectionStatus.Game;
+            if ((Status == ServerConnectionStatus.PreLogin) && (packet.Id == 0x8C))
+                Status = ServerConnectionStatus.Game;
 
             PacketReceived?.Invoke(this, packet);
         }
 
         private Stream GetProcessingStream(IPullStream inputStream)
         {
-            diagnosticStream.BaseStream = inputStream;
+            diagnosticPullStream.BaseStream = inputStream;
 
-            switch (status)
+            switch (Status)
             {
                 case ServerConnectionStatus.PreLogin:
                     return preLoginStream;
 
                 case ServerConnectionStatus.Game:
-                    newGameStream.BasePullStream = diagnosticStream;
+                    newGameStream.BasePullStream = diagnosticPullStream;
 
                     return huffmanStream;
 
                 default:
-                    throw new NotImplementedException($"Unknown Status: {status}");
+                    throw new NotImplementedException($"Unknown Status: {Status}");
             }
         }
 
         public void Send(Packet packet, Stream outputStream)
         {
-            switch (status)
+            switch (Status)
             {
+                case ServerConnectionStatus.Initial:
+                    diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
+                    // TODO: use seed sent by client
+                    diagnosticPushStream.Write(new byte[] { 0xA9, 0xFE, 0x50, 0x50 }, 0, 4);
+                    Status = ServerConnectionStatus.PreLogin;
+                    break;
                 case ServerConnectionStatus.PreLogin:
-                    outputStream.Write(packet.Payload, 0, packet.Length);
+                    var loginStream = new LoginStream(outputStream);
+                    loginStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 case ServerConnectionStatus.Game:
                     var stream = new NewGameStream(new byte[] {127, 0, 0, 1}) {BasePushStream = outputStream};
-                    stream.Write(packet.Payload, 0, packet.Length);
+                    diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(stream);
+                    diagnosticPushStream.Write(packet.Payload, 0, packet.Length);
                     break;
             }
+
+            diagnosticPushStream.FinishPacket(packet);
         }
     }
 }

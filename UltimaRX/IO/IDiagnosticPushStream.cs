@@ -2,9 +2,9 @@
 
 namespace UltimaRX.IO
 {
-    public interface IDiagnosticStream : IPullStream
+    public interface IDiagnosticPushStream : IPushStream
     {
-        IPullStream BaseStream { get; set; }
+        IPushStream BaseStream { get; set; }
         void FinishPacket(Packet packet);
     }
 }

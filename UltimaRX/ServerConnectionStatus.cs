@@ -2,6 +2,7 @@
 {
     public enum ServerConnectionStatus
     {
+        Initial,
         PreLogin,
         Game,
     }

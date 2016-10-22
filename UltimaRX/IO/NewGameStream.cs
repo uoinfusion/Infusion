@@ -17,8 +17,9 @@ namespace UltimaRX.IO
             0x7f, 0x00, 0x00, 0x01
         };
 
-        private readonly byte[] m_subData3 = new byte[256];
         private readonly byte[] cryptoKey;
+
+        private readonly byte[] m_subData3 = new byte[256];
         private uint dwIndex;
         private TwofishEncryption encTwofish;
         private int m_pos;

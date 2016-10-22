@@ -8,15 +8,15 @@
             Decrypting
         }
 
-        private readonly int[] numRounds = { 0, ROUNDS_128, ROUNDS_192, ROUNDS_256 };
+        private readonly int[] numRounds = {0, ROUNDS_128, ROUNDS_192, ROUNDS_256};
         protected CipherMode cipherMode = CipherMode.ECB;
-        protected int inputBlockSize = BLOCK_SIZE / 8;
-        protected uint[] IV = { 0, 0, 0, 0 }; // this should be one block size
-        protected uint[] Key = { 0, 0, 0, 0, 0, 0, 0, 0 }; //new int[MAX_KEY_BITS/32];
+        protected int inputBlockSize = BLOCK_SIZE/8;
+        protected uint[] IV = {0, 0, 0, 0}; // this should be one block size
+        protected uint[] Key = {0, 0, 0, 0, 0, 0, 0, 0}; //new int[MAX_KEY_BITS/32];
         private int keyLength;
-        protected int outputBlockSize = BLOCK_SIZE / 8;
+        protected int outputBlockSize = BLOCK_SIZE/8;
         private int rounds;
-        protected uint[] sboxKeys = new uint[MAX_KEY_BITS / 64]; /* key bits used for S-boxes */
+        protected uint[] sboxKeys = new uint[MAX_KEY_BITS/64]; /* key bits used for S-boxes */
         protected uint[] subKeys = new uint[TOTAL_SUBKEYS]; /* round subkeys, input/output whitening bits */
         /*
         +*****************************************************************************
@@ -50,26 +50,26 @@
 
         private static uint f32(uint x, ref uint[] k32, int keyLen)
         {
-            byte[] b = { b0(x), b1(x), b2(x), b3(x) };
+            byte[] b = {b0(x), b1(x), b2(x), b3(x)};
 
             /* Run each byte thru 8x8 S-boxes, xoring with key byte at each stage. */
             /* Note that each byte goes through a different combination of S-boxes.*/
 
             //*((DWORD *)b) = Bswap(x);	/* make b[0] = LSB, b[3] = MSB */
-            switch (((keyLen + 63) / 64) & 3)
+            switch (((keyLen + 63)/64) & 3)
             {
                 case 0: /* 256 bits of key */
-                    b[0] = (byte)(P8x8[P_04, b[0]] ^ b0(k32[3]));
-                    b[1] = (byte)(P8x8[P_14, b[1]] ^ b1(k32[3]));
-                    b[2] = (byte)(P8x8[P_24, b[2]] ^ b2(k32[3]));
-                    b[3] = (byte)(P8x8[P_34, b[3]] ^ b3(k32[3]));
+                    b[0] = (byte) (P8x8[P_04, b[0]] ^ b0(k32[3]));
+                    b[1] = (byte) (P8x8[P_14, b[1]] ^ b1(k32[3]));
+                    b[2] = (byte) (P8x8[P_24, b[2]] ^ b2(k32[3]));
+                    b[3] = (byte) (P8x8[P_34, b[3]] ^ b3(k32[3]));
                     /* fall thru, having pre-processed b[0]..b[3] with k32[3] */
                     goto case 3;
                 case 3: /* 192 bits of key */
-                    b[0] = (byte)(P8x8[P_03, b[0]] ^ b0(k32[2]));
-                    b[1] = (byte)(P8x8[P_13, b[1]] ^ b1(k32[2]));
-                    b[2] = (byte)(P8x8[P_23, b[2]] ^ b2(k32[2]));
-                    b[3] = (byte)(P8x8[P_33, b[3]] ^ b3(k32[2]));
+                    b[0] = (byte) (P8x8[P_03, b[0]] ^ b0(k32[2]));
+                    b[1] = (byte) (P8x8[P_13, b[1]] ^ b1(k32[2]));
+                    b[2] = (byte) (P8x8[P_23, b[2]] ^ b2(k32[2]));
+                    b[3] = (byte) (P8x8[P_33, b[3]] ^ b3(k32[2]));
                     /* fall thru, having pre-processed b[0]..b[3] with k32[2] */
                     goto case 2;
                 case 2: /* 128 bits of key */
@@ -82,10 +82,10 @@
 
 
             /* Now perform the MDS matrix multiply inline. */
-            return (uint)((M00(b[0]) ^ M01(b[1]) ^ M02(b[2]) ^ M03(b[3]))) ^
-                   (uint)((M10(b[0]) ^ M11(b[1]) ^ M12(b[2]) ^ M13(b[3])) << 8) ^
-                   (uint)((M20(b[0]) ^ M21(b[1]) ^ M22(b[2]) ^ M23(b[3])) << 16) ^
-                   (uint)((M30(b[0]) ^ M31(b[1]) ^ M32(b[2]) ^ M33(b[3])) << 24);
+            return (uint) (M00(b[0]) ^ M01(b[1]) ^ M02(b[2]) ^ M03(b[3])) ^
+                   (uint) ((M10(b[0]) ^ M11(b[1]) ^ M12(b[2]) ^ M13(b[3])) << 8) ^
+                   (uint) ((M20(b[0]) ^ M21(b[1]) ^ M22(b[2]) ^ M23(b[3])) << 16) ^
+                   (uint) ((M30(b[0]) ^ M31(b[1]) ^ M32(b[2]) ^ M33(b[3])) << 24);
         }
 
         /*
@@ -110,29 +110,29 @@
         {
             int i, k64Cnt;
             keyLength = keyLen;
-            rounds = numRounds[(keyLen - 1) / 64];
-            var subkeyCnt = ROUND_SUBKEYS + 2 * rounds;
+            rounds = numRounds[(keyLen - 1)/64];
+            var subkeyCnt = ROUND_SUBKEYS + 2*rounds;
             uint A, B;
-            var k32e = new uint[MAX_KEY_BITS / 64];
-            var k32o = new uint[MAX_KEY_BITS / 64]; /* even/odd key dwords */
+            var k32e = new uint[MAX_KEY_BITS/64];
+            var k32o = new uint[MAX_KEY_BITS/64]; /* even/odd key dwords */
 
-            k64Cnt = (keyLen + 63) / 64; /* round up to next multiple of 64 bits */
+            k64Cnt = (keyLen + 63)/64; /* round up to next multiple of 64 bits */
             for (i = 0; i < k64Cnt; i++)
             {
                 /* split into even/odd key dwords */
-                k32e[i] = key32[2 * i];
-                k32o[i] = key32[2 * i + 1];
+                k32e[i] = key32[2*i];
+                k32o[i] = key32[2*i + 1];
                 /* compute S-box keys using (12,8) Reed-Solomon code over GF(256) */
                 sboxKeys[k64Cnt - 1 - i] = RS_MDS_Encode(k32e[i], k32o[i]); /* reverse order */
             }
 
-            for (i = 0; i < subkeyCnt / 2; i++) /* compute round subkeys for PHT */
+            for (i = 0; i < subkeyCnt/2; i++) /* compute round subkeys for PHT */
             {
-                A = f32((uint)(i * SK_STEP), ref k32e, keyLen); /* A uses even key dwords */
-                B = f32((uint)(i * SK_STEP + SK_BUMP), ref k32o, keyLen); /* B uses odd  key dwords */
+                A = f32((uint) (i*SK_STEP), ref k32e, keyLen); /* A uses even key dwords */
+                B = f32((uint) (i*SK_STEP + SK_BUMP), ref k32o, keyLen); /* B uses odd  key dwords */
                 B = ROL(B, 8);
-                subKeys[2 * i] = A + B; /* combine with a PHT */
-                subKeys[2 * i + 1] = ROL(A + 2 * B, SK_ROTL);
+                subKeys[2*i] = A + B; /* combine with a PHT */
+                subKeys[2*i + 1] = ROL(A + 2*B, SK_ROTL);
             }
 
             return true;
@@ -144,11 +144,9 @@
             var xtemp = new uint[4];
 
             if (cipherMode == CipherMode.CBC)
-            {
                 x.CopyTo(xtemp, 0);
-            }
 
-            for (var i = 0; i < BLOCK_SIZE / 32; i++) /* copy in the block, add whitening */
+            for (var i = 0; i < BLOCK_SIZE/32; i++) /* copy in the block, add whitening */
                 x[i] ^= subKeys[OUTPUT_WHITEN + i];
 
             for (var r = rounds - 1; r >= 0; r--) /* main Twofish decryption loop */
@@ -157,8 +155,8 @@
                 t1 = f32(ROL(x[1], 8), ref sboxKeys, keyLength);
 
                 x[2] = ROL(x[2], 1);
-                x[2] ^= t0 + t1 + subKeys[ROUND_SUBKEYS + 2 * r]; /* PHT, round keys */
-                x[3] ^= t0 + 2 * t1 + subKeys[ROUND_SUBKEYS + 2 * r + 1];
+                x[2] ^= t0 + t1 + subKeys[ROUND_SUBKEYS + 2*r]; /* PHT, round keys */
+                x[3] ^= t0 + 2*t1 + subKeys[ROUND_SUBKEYS + 2*r + 1];
                 x[3] = ROR(x[3], 1);
 
                 if (r > 0) /* unswap, except for last round */
@@ -172,7 +170,7 @@
                 }
             }
 
-            for (var i = 0; i < BLOCK_SIZE / 32; i++) /* copy out, with whitening */
+            for (var i = 0; i < BLOCK_SIZE/32; i++) /* copy out, with whitening */
             {
                 x[i] ^= subKeys[INPUT_WHITEN + i];
                 if (cipherMode == CipherMode.CBC)
@@ -187,7 +185,7 @@
         {
             uint t0, t1, tmp;
 
-            for (var i = 0; i < BLOCK_SIZE / 32; i++) /* copy in the block, add whitening */
+            for (var i = 0; i < BLOCK_SIZE/32; i++) /* copy in the block, add whitening */
             {
                 x[i] ^= subKeys[INPUT_WHITEN + i];
                 if (cipherMode == CipherMode.CBC)
@@ -200,8 +198,8 @@
                 t1 = f32(ROL(x[1], 8), ref sboxKeys, keyLength);
 
                 x[3] = ROL(x[3], 1);
-                x[2] ^= t0 + t1 + subKeys[ROUND_SUBKEYS + 2 * r]; /* PHT, round keys */
-                x[3] ^= t0 + 2 * t1 + subKeys[ROUND_SUBKEYS + 2 * r + 1];
+                x[2] ^= t0 + t1 + subKeys[ROUND_SUBKEYS + 2*r]; /* PHT, round keys */
+                x[3] ^= t0 + 2*t1 + subKeys[ROUND_SUBKEYS + 2*r + 1];
                 x[2] = ROR(x[2], 1);
 
                 if (r < rounds - 1) /* swap for next round */
@@ -215,13 +213,11 @@
                 }
             }
 
-            for (var i = 0; i < BLOCK_SIZE / 32; i++) /* copy out, with whitening */
+            for (var i = 0; i < BLOCK_SIZE/32; i++) /* copy out, with whitening */
             {
                 x[i] ^= subKeys[OUTPUT_WHITEN + i];
                 if (cipherMode == CipherMode.CBC)
-                {
                     IV[i] = x[i];
-                }
             }
         }
 
@@ -253,7 +249,7 @@
 
             for (i = r = 0; i < 2; i++)
             {
-                r ^= (i > 0) ? k0 : k1; /* merge in 32 more key bits */
+                r ^= i > 0 ? k0 : k1; /* merge in 32 more key bits */
                 for (j = 0; j < 4; j++) /* shift one byte at a time */
                     RS_rem(ref r);
             }
@@ -270,9 +266,9 @@
         private static readonly int MAX_KEY_BITS = 256; /* max number of bits of key */
 
         private static readonly int INPUT_WHITEN = 0; /* subkey array indices */
-        private static readonly int OUTPUT_WHITEN = (INPUT_WHITEN + BLOCK_SIZE / 32);
-        private static readonly int ROUND_SUBKEYS = (OUTPUT_WHITEN + BLOCK_SIZE / 32); /* use 2 * (# rounds) */
-        private static readonly int TOTAL_SUBKEYS = (ROUND_SUBKEYS + 2 * MAX_ROUNDS);
+        private static readonly int OUTPUT_WHITEN = INPUT_WHITEN + BLOCK_SIZE/32;
+        private static readonly int ROUND_SUBKEYS = OUTPUT_WHITEN + BLOCK_SIZE/32; /* use 2 * (# rounds) */
+        private static readonly int TOTAL_SUBKEYS = ROUND_SUBKEYS + 2*MAX_ROUNDS;
 
         #endregion
 
@@ -290,10 +286,10 @@
 
         private static void RS_rem(ref uint x)
         {
-            var b = (byte)(x >> 24);
+            var b = (byte) (x >> 24);
             // TODO: maybe change g2 and g3 to bytes			 
-            var g2 = (uint)(((b << 1) ^ (((b & 0x80) == 0x80) ? RS_GF_FDBK : 0)) & 0xFF);
-            var g3 = (uint)(((b >> 1) & 0x7F) ^ (((b & 1) == 1) ? RS_GF_FDBK >> 1 : 0) ^ g2);
+            var g2 = (uint) (((b << 1) ^ ((b & 0x80) == 0x80 ? RS_GF_FDBK : 0)) & 0xFF);
+            var g3 = (uint) (((b >> 1) & 0x7F) ^ ((b & 1) == 1 ? RS_GF_FDBK >> 1 : 0) ^ g2);
             x = (x << 8) ^ (g3 << 24) ^ (g2 << 16) ^ (g3 << 8) ^ b;
         }
 
@@ -325,13 +321,13 @@
 
         private static int LFSR1(int x)
         {
-            return (((x) >> 1) ^ ((((x) & 0x01) == 0x01) ? MDS_GF_FDBK / 2 : 0));
+            return (x >> 1) ^ ((x & 0x01) == 0x01 ? MDS_GF_FDBK/2 : 0);
         }
 
         private static int LFSR2(int x)
         {
-            return (((x) >> 2) ^ ((((x) & 0x02) == 0x02) ? MDS_GF_FDBK / 2 : 0) ^
-                    ((((x) & 0x01) == 0x01) ? MDS_GF_FDBK / 4 : 0));
+            return (x >> 2) ^ ((x & 0x02) == 0x02 ? MDS_GF_FDBK/2 : 0) ^
+                   ((x & 0x01) == 0x01 ? MDS_GF_FDBK/4 : 0);
         }
 
         // TODO: not the most efficient use of code but it allows us to update the code a lot quicker we can possibly optimize this code once we have got it all working
@@ -454,25 +450,25 @@
         private static readonly int P_00 = 1; /* "outermost" permutation */
         private static readonly int P_01 = 0;
         private static readonly int P_02 = 0;
-        private static readonly int P_03 = (P_01 ^ 1); /* "extend" to larger key sizes */
+        private static readonly int P_03 = P_01 ^ 1; /* "extend" to larger key sizes */
         private static readonly int P_04 = 1;
 
         private static readonly int P_10 = 0;
         private static readonly int P_11 = 0;
         private static readonly int P_12 = 1;
-        private static readonly int P_13 = (P_11 ^ 1);
+        private static readonly int P_13 = P_11 ^ 1;
         private static readonly int P_14 = 0;
 
         private static readonly int P_20 = 1;
         private static readonly int P_21 = 1;
         private static readonly int P_22 = 0;
-        private static readonly int P_23 = (P_21 ^ 1);
+        private static readonly int P_23 = P_21 ^ 1;
         private static readonly int P_24 = 0;
 
         private static readonly int P_30 = 0;
         private static readonly int P_31 = 1;
         private static readonly int P_32 = 1;
-        private static readonly int P_33 = (P_31 ^ 1);
+        private static readonly int P_33 = P_31 ^ 1;
         private static readonly int P_34 = 1;
 
         /* fixed 8x8 permutation S-boxes */
@@ -584,37 +580,37 @@
         // left rotation
         private static uint ROL(uint x, int n)
         {
-            return (((x) << ((n) & 0x1F)) | (x) >> (32 - ((n) & 0x1F)));
+            return (x << (n & 0x1F)) | (x >> (32 - (n & 0x1F)));
         }
 
         // right rotation
         private static uint ROR(uint x, int n)
         {
-            return (((x) >> ((n) & 0x1F)) | ((x) << (32 - ((n) & 0x1F))));
+            return (x >> (n & 0x1F)) | (x << (32 - (n & 0x1F)));
         }
 
         // first byte
         protected static byte b0(uint x)
         {
-            return (byte)(x); //& 0xFF);
+            return (byte) x; //& 0xFF);
         }
 
         // second byte
         protected static byte b1(uint x)
         {
-            return (byte)((x >> 8)); // & (0xFF));
+            return (byte) (x >> 8); // & (0xFF));
         }
 
         // third byte
         protected static byte b2(uint x)
         {
-            return (byte)((x >> 16)); // & (0xFF));
+            return (byte) (x >> 16); // & (0xFF));
         }
 
         // fourth byte
         protected static byte b3(uint x)
         {
-            return (byte)((x >> 24)); // & (0xFF));
+            return (byte) (x >> 24); // & (0xFF));
         }
 
         #endregion

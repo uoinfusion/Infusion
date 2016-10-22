@@ -33,14 +33,14 @@ namespace UltimaRX.Tests
             });
 
 
-            var diagnosticStream = new DiagnosticStream();
-            var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream);
+            var diagnosticStream = new DiagnosticPullStream();
+            var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream, NullDiagnosticPushStream.Instance);
             connection.Receive(inputData);
 
-            var output = diagnosticStream.ToString();
+            var output = diagnosticStream.Flush();
 
-            Assert.IsTrue(output.Contains("0xB6, 0xA0, 0xFE, 0xE6"));
-            Assert.IsTrue(output.Contains("0xB9, 0x80, 0x1F"));
+            output.Should().Contain("0xB6, 0xA0, 0xFE, 0xE6")
+                .And.Contain("0xB9, 0x80, 0x1F");
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace UltimaRX.Tests
             });
             var expectedPackets = new[] {new Packet(0xB9, FakePackets.EnableLockedClientFeatures)};
 
-            var connection = new ServerConnection(ServerConnectionStatus.Game, new NullDiagnosticStream());
+            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance);
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
             connection.Receive(inputData);
@@ -63,17 +63,41 @@ namespace UltimaRX.Tests
         [TestMethod]
         public void Can_send_prelogin_packet()
         {
-            var connection = new ServerConnection(ServerConnectionStatus.PreLogin, new NullDiagnosticStream());
+            var connection = new ServerConnection(ServerConnectionStatus.PreLogin);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
 
-            testStream.ActualBytes.Should().BeEquivalentTo(FakePackets.InitialLoginRequest);
+            testStream.ActualBytes.Should().BeEquivalentTo(FakePackets.InitialLoginRequestEncrypted);
         }
+
+        [TestMethod]
+        public void Given_connection_in_Initial_status_When_sends_login_seed_Then_enters_PreLogin_status()
+        {
+            var connection = new ServerConnection(ServerConnectionStatus.Initial);
+            connection.Send(FakePackets.InitialLoginSeedPacket, new TestMemoryStream());
+
+            connection.Status.Should().Be(ServerConnectionStatus.PreLogin);
+        }
+
+        [TestMethod]
+        public void Can_write_diagnostic_info_about_sent_packet()
+        {
+            var diagnosticStream = new DiagnosticPushStream();
+
+            var connection = new ServerConnection(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, diagnosticStream);
+            var testStream = new TestMemoryStream();
+            connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
+
+            string output = diagnosticStream.Flush();
+
+            output.Should().Contain("0x80, 0x61, 0x64, 0x6D, 0x69, 0x6E");
+        }
+
 
         [TestMethod]
         public void Can_send_game_packet()
         {
-            var connection = new ServerConnection(ServerConnectionStatus.Game, new NullDiagnosticStream());
+            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.GameServerLoginRequest), testStream);
 

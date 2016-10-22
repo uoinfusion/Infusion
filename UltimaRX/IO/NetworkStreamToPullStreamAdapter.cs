@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UltimaRX.IO
 {
@@ -22,16 +16,16 @@ namespace UltimaRX.IO
             baseStream.Dispose();
         }
 
-        public bool DataAvailable => this.baseStream.DataAvailable;
+        public bool DataAvailable => baseStream.DataAvailable;
 
         public int ReadByte()
         {
-            return this.baseStream.ReadByte();
+            return baseStream.ReadByte();
         }
 
         public int Read(byte[] buffer, int offset, int count)
         {
-            return this.baseStream.Read(buffer, offset, count);
+            return baseStream.Read(buffer, offset, count);
         }
     }
 }

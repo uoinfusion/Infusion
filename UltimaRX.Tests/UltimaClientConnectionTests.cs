@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UltimaRX.IO;
 using UltimaRX.Packets;
 
 namespace UltimaRX.Tests
@@ -12,12 +14,12 @@ namespace UltimaRX.Tests
         [TestMethod]
         public void Can_receive_tree_packets_in_one_batch()
         {
-            var inputData = new List<byte[]>
+            var inputStream = new TestPullStream(new List<byte[]>
             {
                 FakePackets.InitialLoginSeed
                     .Concat(FakePackets.InitialLoginRequest)
                     .Concat(FakePackets.SelectServerRequest).ToArray()
-            };
+            });
 
             var expectedPackets = new[]
             {
@@ -26,10 +28,10 @@ namespace UltimaRX.Tests
                 new Packet(0xA0, FakePackets.SelectServerRequest)
             };
 
-            var connection = new UltimaClientConnection(inputData);
+            var connection = new UltimaClientConnection();
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.ReceiveBatch();
+            connection.ReceiveBatch(inputStream);
 
             expectedPackets.AreEqual(receivedPackets);
         }
@@ -37,11 +39,11 @@ namespace UltimaRX.Tests
         [TestMethod]
         public void Can_receive_two_consecutive_batches()
         {
-            var inputData = new List<byte[]>
+            var inputStream = new TestPullStream(new List<byte[]>
             {
                 FakePackets.InitialLoginSeed,
                 FakePackets.InitialLoginRequest
-            };
+            });
 
             var expectedPackets = new[]
             {
@@ -49,11 +51,12 @@ namespace UltimaRX.Tests
                 new Packet(0x80, FakePackets.InitialLoginRequest)
             };
 
-            var connection = new UltimaClientConnection(inputData);
+            var connection = new UltimaClientConnection();
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.ReceiveBatch();
-            connection.ReceiveBatch();
+            connection.ReceiveBatch(inputStream);
+            inputStream.NextBatch();
+            connection.ReceiveBatch(inputStream);
 
             expectedPackets.AreEqual(receivedPackets);
         }
@@ -63,7 +66,7 @@ namespace UltimaRX.Tests
         {
             var packet = FakePackets.Instantiate(FakePackets.GameServerList);
             var expectedSentBytes = FakePackets.GameServerList;
-            var connection = new UltimaClientConnection(new[] {new byte[0]}, UltimaClientConnectionStatus.ServerLogin);
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.ServerLogin);
             var outputStream = new TestMemoryStream();
 
             connection.Send(packet, outputStream);
@@ -76,7 +79,7 @@ namespace UltimaRX.Tests
         {
             var packet = FakePackets.Instantiate(FakePackets.EnableLockedClientFeatures);
             var expectedSentBytes = new byte[] {0xB3, 0x32, 0x98, 0xDA};
-            var connection = new UltimaClientConnection(new[] {new byte[0]}, UltimaClientConnectionStatus.Game);
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Game);
             var outputStream = new TestMemoryStream();
 
             connection.Send(packet, outputStream);
@@ -88,10 +91,10 @@ namespace UltimaRX.Tests
         public void
             Given_connection_in_Initial_status_When_receives_login_seed_Then_connection_enters_ServerLogin_status()
         {
-            var inputData = new List<byte[]> {FakePackets.InitialLoginSeed};
+            var inputStream = new TestPullStream(new List<byte[]> {FakePackets.InitialLoginSeed});
 
-            var connection = new UltimaClientConnection(inputData, UltimaClientConnectionStatus.Initial);
-            connection.ReceiveBatch();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial);
+            connection.ReceiveBatch(inputStream);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.ServerLogin);
         }
@@ -100,10 +103,10 @@ namespace UltimaRX.Tests
         public void
             Given_connection_in_ServerLogin_status_When_receives_SelectServerRequest_Then_enters_PreGameLogin_status()
         {
-            var inputData = new List<byte[]> {FakePackets.SelectServerRequest};
+            var inputStream = new TestPullStream(new List<byte[]> {FakePackets.SelectServerRequest});
 
-            var connection = new UltimaClientConnection(inputData, UltimaClientConnectionStatus.ServerLogin);
-            connection.ReceiveBatch();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.ServerLogin);
+            connection.ReceiveBatch(inputStream);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.PreGameLogin);
         }
@@ -112,10 +115,10 @@ namespace UltimaRX.Tests
         public void
             Given_connection_in_PreGameLogin_status_When_receives_login_seed_Then_connection_enters_GameLogin_status()
         {
-            var inputData = new List<byte[]> {FakePackets.LoginSeed};
+            var inpuStream = new TestPullStream(new List<byte[]> {FakePackets.LoginSeed});
 
-            var connection = new UltimaClientConnection(inputData, UltimaClientConnectionStatus.PreGameLogin);
-            connection.ReceiveBatch();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin);
+            connection.ReceiveBatch(inpuStream);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.GameLogin);
         }
@@ -123,10 +126,10 @@ namespace UltimaRX.Tests
         [TestMethod]
         public void Given_connection_in_GameLoign_status_When_receives_GameServerLoginRequest_Then_enters_Game_status()
         {
-            var inputData = new List<byte[]> {FakePackets.GameServerLoginRequest};
+            var inputStream = new TestPullStream(new List<byte[]> {FakePackets.GameServerLoginRequest});
 
-            var connection = new UltimaClientConnection(inputData, UltimaClientConnectionStatus.GameLogin);
-            connection.ReceiveBatch();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.GameLogin);
+            connection.ReceiveBatch(inputStream);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.Game);
         }
@@ -134,7 +137,7 @@ namespace UltimaRX.Tests
         [TestMethod]
         public void Can_enter_Game_status_after_initial_sequence()
         {
-            var inputData = new List<byte[]>
+            var inputStream = new TestPullStream(new List<byte[]>
             {
                 FakePackets.InitialLoginSeed,
                 FakePackets.InitialLoginRequest,
@@ -142,17 +145,70 @@ namespace UltimaRX.Tests
                 FakePackets.SelectServerRequest,
                 FakePackets.LoginSeed,
                 FakePackets.GameServerLoginRequest
-            };
+            });
 
-            var connection = new UltimaClientConnection(inputData, UltimaClientConnectionStatus.Initial);
-            connection.ReceiveBatch();
-            connection.ReceiveBatch();
-            connection.ReceiveBatch();
-            connection.ReceiveBatch();
-            connection.ReceiveBatch();
-            connection.ReceiveBatch();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial);
+            connection.ReceiveBatch(inputStream);
+            inputStream.NextBatch();
+            connection.ReceiveBatch(inputStream);
+            inputStream.NextBatch();
+            connection.ReceiveBatch(inputStream);
+            inputStream.NextBatch();
+            connection.ReceiveBatch(inputStream);
+            inputStream.NextBatch();
+            connection.ReceiveBatch(inputStream);
+            inputStream.NextBatch();
+            connection.ReceiveBatch(inputStream);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.Game);
+        }
+    }
+
+    public class TestPullStream : IPullStream
+    {
+        private readonly IEnumerator<byte[]> batchesEnumerator;
+        private int position;
+        private bool hasData;
+
+        public TestPullStream(IEnumerable<byte[]> batches)
+        {
+            this.batchesEnumerator = batches.GetEnumerator();
+            hasData = this.batchesEnumerator.MoveNext();
+        }
+
+        public void Dispose()
+        {
+            batchesEnumerator.Dispose();
+        }
+
+        public bool DataAvailable => hasData && position < batchesEnumerator.Current.Length;
+
+        public int ReadByte()
+        {
+            return batchesEnumerator.Current[position++];
+        }
+
+        public void NextBatch()
+        {
+            hasData = batchesEnumerator.MoveNext();
+            position = 0;
+        }
+
+        public int Read(byte[] buffer, int offset, int count)
+        {
+            if (!hasData)
+            {
+                throw new EndOfStreamException();
+            }
+
+            int i;
+
+            for (i = 0; i < count && position < batchesEnumerator.Current.Length; i++)
+            {
+                buffer[i] = batchesEnumerator.Current[position++];
+            }
+
+            return i;
         }
     }
 }

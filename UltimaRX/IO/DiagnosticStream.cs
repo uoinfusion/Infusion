@@ -93,11 +93,21 @@ namespace UltimaRX.IO
             builder.AppendLine();
             columns = 0;
             requiresHeader = true;
+
+            OnPacketFinished();
         }
 
-        public override string ToString()
+        protected virtual void OnPacketFinished()
         {
-            return builder.ToString();
+        }
+
+        public string Flush()
+        {
+            string result = builder.ToString();
+
+            builder.Clear();
+
+            return result;
         }
     }
 }

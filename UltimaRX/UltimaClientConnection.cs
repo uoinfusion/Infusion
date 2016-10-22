@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using UltimaRX.IO;
 using UltimaRX.Packets;
@@ -9,46 +8,47 @@ namespace UltimaRX
 {
     public class UltimaClientConnection
     {
-        private readonly IEnumerator<byte[]> inputDataEnumerator;
+        private readonly IDiagnosticStream diagnosticStream;
 
-        public UltimaClientConnection(IEnumerable<byte[]> inputData)
+        public UltimaClientConnection()
+            : this(UltimaClientConnectionStatus.Initial, NullDiagnosticStream.Instance)
         {
-            inputDataEnumerator = inputData.GetEnumerator();
         }
 
-        public UltimaClientConnection(IEnumerable<byte[]> inputData, UltimaClientConnectionStatus status)
-            : this(inputData)
+        public UltimaClientConnection(UltimaClientConnectionStatus status)
+            : this(status, NullDiagnosticStream.Instance)
         {
+        }
+
+        public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticStream diagnosticStream)
+        {
+            this.diagnosticStream = diagnosticStream;
             Status = status;
         }
 
-        public UltimaClientConnectionStatus Status { get; private set; } = UltimaClientConnectionStatus.Initial;
+        public UltimaClientConnectionStatus Status { get; private set; }
 
         public event EventHandler<Packet> PacketReceived;
 
-        public void ReceiveBatch()
+        public void ReceiveBatch(IPullStream inputStream)
         {
-            if (!inputDataEnumerator.MoveNext())
-                return;
-
-            var position = 0;
+            diagnosticStream.BaseStream = inputStream;
 
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
-                    position = ReceiveSeed(position);
+                    ReceiveSeed(diagnosticStream);
                     Status = UltimaClientConnectionStatus.ServerLogin;
                     break;
                 case UltimaClientConnectionStatus.PreGameLogin:
-                    position = ReceiveSeed(position);
+                    ReceiveSeed(diagnosticStream);
                     Status = UltimaClientConnectionStatus.GameLogin;
                     break;
             }
 
-            foreach (var packet in PacketParser.ParseBatch(inputDataEnumerator.Current, position))
+            foreach (var packet in PacketParser.ParseBatch(diagnosticStream))
             {
-                PacketReceived?.Invoke(this, packet);
-
+                OnPacketReceived(packet);
                 switch (Status)
                 {
                     case UltimaClientConnectionStatus.ServerLogin:
@@ -63,13 +63,18 @@ namespace UltimaRX
             }
         }
 
-        private int ReceiveSeed(int position)
+        private void ReceiveSeed(IPullStream inputStream)
         {
             var payload = new byte[4];
-            Array.Copy(inputDataEnumerator.Current, 0, payload, 0, 4);
-            PacketReceived?.Invoke(this, new Packet(-1, payload));
-            position += 4;
-            return position;
+            inputStream.Read(payload, 0, 4);
+            var packet = new Packet(-1, payload);
+            OnPacketReceived(packet);
+        }
+
+        private void OnPacketReceived(Packet packet)
+        {
+            PacketReceived?.Invoke(this, packet);
+            diagnosticStream.FinishPacket(packet);
         }
 
         public void Send(Packet packet, Stream outputStream)

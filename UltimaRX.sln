@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX", "UltimaRX\Ultima
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Tests", "UltimaRX.Tests\UltimaRX.Tests.csproj", "{F6658DAD-8158-4105-A9F4-AEDF23748FAE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Proxy", "UltimaRX.Proxy\UltimaRX.Proxy.csproj", "{5E814151-7F4C-4D71-BCB2-97FD303F04A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6658DAD-8158-4105-A9F4-AEDF23748FAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E814151-7F4C-4D71-BCB2-97FD303F04A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E814151-7F4C-4D71-BCB2-97FD303F04A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E814151-7F4C-4D71-BCB2-97FD303F04A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E814151-7F4C-4D71-BCB2-97FD303F04A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

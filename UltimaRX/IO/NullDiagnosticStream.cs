@@ -4,6 +4,8 @@ namespace UltimaRX.IO
 {
     public class NullDiagnosticStream : IDiagnosticStream
     {
+        public static NullDiagnosticStream Instance { get; } = new NullDiagnosticStream();
+
         public void Dispose()
         {
             BaseStream.Dispose();
@@ -18,7 +20,7 @@ namespace UltimaRX.IO
 
         public int Read(byte[] buffer, int offset, int count)
         {
-            return BaseStream.ReadByte();
+            return BaseStream.Read(buffer, offset, count);
         }
 
         public IPullStream BaseStream { get; set; }

@@ -54,6 +54,7 @@
     <Compile Include="IO\MemoryBatchedStream.cs" />
     <Compile Include="IO\NewGameStream.cs" />
     <Compile Include="IO\PullStreamToStreamAdapter.cs" />
+    <Compile Include="IO\NetworkStreamToPullStreamAdapter.cs" />
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />
     <Compile Include="IO\NullDiagnosticStream.cs" />

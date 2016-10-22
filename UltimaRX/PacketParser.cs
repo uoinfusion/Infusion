@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using UltimaRX.IO;
 using UltimaRX.Packets;
 using UltimaRX.Packets.PacketDefinitions;
 
@@ -7,30 +9,33 @@ namespace UltimaRX
 {
     public static class PacketParser
     {
-        public static IEnumerable<Packet> ParseBatch(byte[] batch, int position = 0)
+        public static IEnumerable<Packet> ParseBatch(IPullStream inputStream)
         {
-            while (position < batch.Length)
+            while (inputStream.DataAvailable)
             {
-                int packetId = batch[position];
-                var packetLength = GetPacketLength(batch, position);
+                byte[] buffer = new byte[65535];
+
+                var reader = new StreamPacketReader(new PullStreamToStreamAdapter(inputStream), buffer);
+
+                int packetId = reader.ReadByte();
+                int packetLength = GetPacketLength(reader, packetId);
+                reader.ReadBytes(packetLength - reader.Position);
 
                 var payload = new byte[packetLength];
-                Array.Copy(batch, position, payload, 0, packetLength);
-                position += packetLength;
+                Array.Copy(buffer, 0, payload, 0, packetLength);
 
                 yield return new Packet(packetId, payload);
             }
         }
 
-        private static int GetPacketLength(byte[] batch, int position)
+        private static int GetPacketLength(StreamPacketReader reader, int packetId)
         {
-            int packedId = batch[position];
             PacketDefinition packetDefinition;
 
-            if (PacketDefinitionRegistry.TryFind(packedId, out packetDefinition))
-                return packetDefinition.GetSize(new ArrayPacketReader(batch, position));
+            if (PacketDefinitionRegistry.TryFind(packetId, out packetDefinition))
+                return packetDefinition.GetSize(reader);
 
-            throw new NotImplementedException($"Unknown packet type {batch[position]:X2}");
+            throw new NotImplementedException($"Unknown packet type {packetId:X2}");
         }
     }
 }

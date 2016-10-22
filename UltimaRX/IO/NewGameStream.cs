@@ -11,20 +11,27 @@ namespace UltimaRX.IO
             0x62, 0xDC, 0x60, 0x8C, 0xD6, 0xFE, 0x7C, 0x25, 0x69
         };
 
-        public IPullStream BaseStream { get; set; }
+        private static readonly byte[] key =
+        {
+            0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01,
+            0x7f, 0x00, 0x00, 0x01
+        };
+
         private readonly byte[] m_subData3 = new byte[256];
+        private readonly byte[] cryptoKey;
         private uint dwIndex;
         private TwofishEncryption encTwofish;
         private int m_pos;
-        private byte[] cryptoKey;
 
-        public NewGameStream(IPullStream baseStream, byte[] cryptoKey)
+        public NewGameStream(byte[] cryptoKey)
         {
-            BaseStream = baseStream;
             this.cryptoKey = cryptoKey;
 
             Initialize();
         }
+
+        public IPullStream BasePullStream { get; set; }
+        public Stream BasePushStream { get; set; }
 
         public override bool CanRead => true;
 
@@ -50,45 +57,35 @@ namespace UltimaRX.IO
             {
                 if (len <= 16)
                 {
-                    encTwofish.TransformBlock(input, offset, len * 8, output, offset);
+                    encTwofish.TransformBlock(input, offset, len*8, output, offset);
                     len = 0;
                 }
                 else
                 {
-                    encTwofish.TransformBlock(input, offset, len * 8, output, offset);
+                    encTwofish.TransformBlock(input, offset, len*8, output, offset);
                     len -= 16;
                     offset += 16;
                 }
             }
         }
 
-        private static readonly byte[] key =
-        {
-            0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01,
-            0x7f, 0x00, 0x00, 0x01
-        };
-
         private void Initialize()
         {
             const byte encryptionKeyRepetitionCount = 4;
-            byte[] keyBuffer = new byte[cryptoKey.Length * encryptionKeyRepetitionCount];
-            for (int i = 0; i < encryptionKeyRepetitionCount; i++)
-            {
-                cryptoKey.CopyTo(keyBuffer, i * encryptionKeyRepetitionCount);
-            }
+            var keyBuffer = new byte[cryptoKey.Length*encryptionKeyRepetitionCount];
+            for (var i = 0; i < encryptionKeyRepetitionCount; i++)
+                cryptoKey.CopyTo(keyBuffer, i*encryptionKeyRepetitionCount);
 
             var tmpBuff = new byte[256];
             encTwofish = new TwofishEncryption(0x80, key, null, CipherMode.ECB,
                 TwofishBase.EncryptionDirection.Encrypting);
             for (var i = 0; i < 256; i++)
-                m_subData3[i] = (byte)i;
+                m_subData3[i] = (byte) i;
 
             Encrypt(m_subData3, tmpBuff, 256);
 
             for (var i = 0; i < 256; i++)
-            {
                 m_subData3[i] = tmpBuff[i];
-            }
 
             m_pos = 0;
             dwIndex = 0;
@@ -99,7 +96,7 @@ namespace UltimaRX.IO
             var dwTmpIndex = dwIndex;
             for (var i = 0; i < len; i++)
             {
-                output[i] = (byte)(input[i] ^ sm_bData[dwTmpIndex % 16]);
+                output[i] = (byte) (input[i] ^ sm_bData[dwTmpIndex%16]);
                 dwTmpIndex++;
             }
             dwIndex = dwTmpIndex;
@@ -117,12 +114,10 @@ namespace UltimaRX.IO
                     //					encTwofish.TransformBlock(m_subData3, 0, 0x800, tmpBuff, 0);
 
                     for (var j = 0; j < 0x100; j++)
-                    {
                         m_subData3[j] = tmpBuff[j];
-                    }
                     m_pos = 0;
                 }
-                output[i] = (byte)(input[i] ^ m_subData3[m_pos++]);
+                output[i] = (byte) (input[i] ^ m_subData3[m_pos++]);
             }
         }
 
@@ -134,7 +129,7 @@ namespace UltimaRX.IO
         public override int Read(byte[] buffer, int offset, int count)
         {
             var encrypted = new byte[count + 1];
-            var encryptedCount = BaseStream.Read(encrypted, 0, count);
+            var encryptedCount = BasePullStream.Read(encrypted, 0, count);
 
             Decrypt(encrypted, buffer, count);
 
@@ -144,13 +139,11 @@ namespace UltimaRX.IO
         public override int ReadByte()
         {
             var encrypted = new byte[1];
-            int value = BaseStream.ReadByte();
-            if (value < 0 || value > 255)
-            {
+            var value = BasePullStream.ReadByte();
+            if ((value < 0) || (value > 255))
                 throw new EndOfStreamException();
-            }
 
-            encrypted[0] = (byte)value;
+            encrypted[0] = (byte) value;
 
             var buffer = new byte[1];
             Decrypt(encrypted, buffer, 1);
@@ -170,7 +163,16 @@ namespace UltimaRX.IO
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-            throw new NotSupportedException();
+            var encrypted = new byte[1];
+            var tmp = new byte[1];
+
+            for (var i = offset; i < count; i++)
+            {
+                tmp[0] = buffer[i];
+                Encrypt(tmp, encrypted, (long) 1);
+
+                BasePushStream.Write(encrypted, 0, 1);
+            }
         }
     }
 }

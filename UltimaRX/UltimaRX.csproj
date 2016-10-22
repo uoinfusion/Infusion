@@ -67,6 +67,7 @@
     <Compile Include="Packets\PacketDefinitions\Client\DisconnectNotificationDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\GameServerLoginRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\GodModeRequestDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Client\LoginCharacterDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\LoginRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\MoveRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\SelectServerRequestDefinition.cs" />

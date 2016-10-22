@@ -10,7 +10,7 @@ namespace UltimaRX
     {
         private readonly IDiagnosticStream diagnosticStream;
         private readonly HuffmanStream huffmanStream;
-        private readonly NewGameStream newGameStream = new NewGameStream(null, new byte[] {127, 0, 0, 1});
+        private readonly NewGameStream newGameStream = new NewGameStream(new byte[] {127, 0, 0, 1});
         private readonly PullStreamToStreamAdapter preLoginStream;
         private ServerConnectionStatus status;
 
@@ -73,12 +73,26 @@ namespace UltimaRX
                     return preLoginStream;
 
                 case ServerConnectionStatus.Game:
-                    newGameStream.BaseStream = diagnosticStream;
+                    newGameStream.BasePullStream = diagnosticStream;
 
                     return huffmanStream;
 
                 default:
                     throw new NotImplementedException($"Unknown Status: {status}");
+            }
+        }
+
+        public void Send(Packet packet, Stream outputStream)
+        {
+            switch (status)
+            {
+                case ServerConnectionStatus.PreLogin:
+                    outputStream.Write(packet.Payload, 0, packet.Length);
+                    break;
+                case ServerConnectionStatus.Game:
+                    var stream = new NewGameStream(new byte[] {127, 0, 0, 1}) {BasePushStream = outputStream};
+                    stream.Write(packet.Payload, 0, packet.Length);
+                    break;
             }
         }
     }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions.Server;
 
 namespace UltimaRX.Tests
 {
@@ -37,7 +37,7 @@ namespace UltimaRX.Tests
             var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream);
             connection.Receive(inputData);
 
-            string output = diagnosticStream.ToString();
+            var output = diagnosticStream.ToString();
 
             Assert.IsTrue(output.Contains("0xB6, 0xA0, 0xFE, 0xE6"));
             Assert.IsTrue(output.Contains("0xB9, 0x80, 0x1F"));
@@ -48,9 +48,9 @@ namespace UltimaRX.Tests
         {
             var inputData = new MemoryBatchedStream(new List<byte[]>
             {
-                new byte[] { 0xB6, 0xA0, 0xFE, 0xF9 },
+                new byte[] {0xB6, 0xA0, 0xFE, 0xF9}
             });
-            var expectedPackets = new[] { new Packet(0xB9, FakePackets.EnableLockedClientFeatures) };
+            var expectedPackets = new[] {new Packet(0xB9, FakePackets.EnableLockedClientFeatures)};
 
             var connection = new ServerConnection(ServerConnectionStatus.Game, new NullDiagnosticStream());
             var receivedPackets = new List<Packet>();
@@ -61,13 +61,33 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
+        public void Can_send_prelogin_packet()
+        {
+            var connection = new ServerConnection(ServerConnectionStatus.PreLogin, new NullDiagnosticStream());
+            var testStream = new TestMemoryStream();
+            connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
+
+            testStream.ActualBytes.Should().BeEquivalentTo(FakePackets.InitialLoginRequest);
+        }
+
+        [TestMethod]
+        public void Can_send_game_packet()
+        {
+            var connection = new ServerConnection(ServerConnectionStatus.Game, new NullDiagnosticStream());
+            var testStream = new TestMemoryStream();
+            connection.Send(FakePackets.Instantiate(FakePackets.GameServerLoginRequest), testStream);
+
+            testStream.ActualBytes.Should().BeEquivalentTo(FakePackets.GameServerLoginRequestEncrypted);
+        }
+
+        [TestMethod]
         public void Can_receive_two_game_packets()
         {
             Assert.Inconclusive("Need capture more testing data");
 
             var inputData = new MemoryBatchedStream(new List<byte[]>
             {
-                new byte[] { 0xB6, 0xA0, 0xFE, 0xF9 },
+                new byte[] {0xB6, 0xA0, 0xFE, 0xF9},
                 new byte[]
                 {
                     0xE6, 0x6E, 0x31, 0xDD, 0x0D, 0xBB, 0x1D, 0x02, 0xFE, 0x7C, 0x25, 0x69, 0x05, 0x92, 0x66, 0x23,
@@ -92,7 +112,7 @@ namespace UltimaRX.Tests
                     0x9A, 0x61, 0x11, 0xD8, 0x72, 0x5B, 0xAF, 0xC2, 0x1D, 0x90, 0x83
                 }
             });
-            var expectedPackets = new[] { new Packet(0xB9, FakePackets.EnableLockedClientFeatures) };
+            var expectedPackets = new[] {new Packet(0xB9, FakePackets.EnableLockedClientFeatures)};
 
             var connection = new ServerConnection();
             var receivedPackets = new List<Packet>();

@@ -30,7 +30,7 @@ namespace UltimaRX.Proxy
         {
             var client = listener.AcceptTcpClient();
 
-            serverConnection = new ServerConnection(ServerConnectionStatus.Initial, new ConsoleDiagnosticPullStream("Receive ServerConnection"), new ConsoleDiagnosticPushStream("Send ServerConnection"));
+            serverConnection = new ServerConnection(ServerConnectionStatus.Initial, new ConsoleDiagnosticPullStream("server -> proxy"), new ConsoleDiagnosticPushStream("proxy -> server"));
             var serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
             var serverSocket = new Socket(serverEndpoint.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Connect(serverEndpoint);
@@ -39,7 +39,7 @@ namespace UltimaRX.Proxy
             ClientStream = client.GetStream();
 
             var clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
-                new ConsoleDiagnosticPullStream("ClientConnection"));
+                new ConsoleDiagnosticPullStream("client -> proxy"));
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
 
             clientConnection.ReceiveBatch(new NetworkStreamToPullStreamAdapter(ClientStream));

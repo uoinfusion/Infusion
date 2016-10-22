@@ -20,5 +20,10 @@ namespace UltimaRX.IO
         {
             baseStream.Write(buffer, offset, count);
         }
+
+        public void WriteByte(byte value)
+        {
+            baseStream.WriteByte(value);
+        }
     }
 }

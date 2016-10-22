@@ -61,6 +61,7 @@
     <Compile Include="IO\NullDiagnosticPushStream.cs" />
     <Compile Include="IO\PullStreamToStreamAdapter.cs" />
     <Compile Include="IO\NetworkStreamToPullStreamAdapter.cs" />
+    <Compile Include="IO\PushStreamToStreamAdapter.cs" />
     <Compile Include="IO\StreamToPushStreamAdapter.cs" />
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />

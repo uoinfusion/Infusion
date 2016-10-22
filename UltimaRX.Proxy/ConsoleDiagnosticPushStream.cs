@@ -10,7 +10,7 @@ namespace UltimaRX.Proxy
         {
         }
 
-        protected override void OnPacketFinished(Packet packet)
+        protected override void OnPacketFinished()
         {
             Console.WriteLine(Flush());
         }

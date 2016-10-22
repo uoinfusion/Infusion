@@ -30,12 +30,21 @@ namespace UltimaRX.IO
                 formatter.AddByte(buffer[offset + i]);
         }
 
+        public void WriteByte(byte value)
+        {
+            formatter.AddByte(value);
+        }
+
         public IPushStream BaseStream { get; set; }
 
-        public void FinishPacket(Packet packet)
+        public void DumpPacket(Packet packet)
         {
-            formatter.FinishPacket(packet);
-            OnPacketFinished(packet);
+            formatter.DumpPacket(packet);
+        }
+
+        public void Finish()
+        {
+            OnPacketFinished();
         }
 
         public string Flush()
@@ -43,7 +52,7 @@ namespace UltimaRX.IO
             return formatter.Flush();
         }
 
-        protected virtual void OnPacketFinished(Packet packet)
+        protected virtual void OnPacketFinished()
         {
         }
     }

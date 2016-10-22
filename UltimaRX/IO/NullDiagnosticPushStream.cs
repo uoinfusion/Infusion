@@ -16,9 +16,18 @@ namespace UltimaRX.IO
             BaseStream.Write(buffer, offset, count);
         }
 
+        public void WriteByte(byte value)
+        {
+            BaseStream.WriteByte(value);
+        }
+
         public IPushStream BaseStream { get; set; }
 
-        public void FinishPacket(Packet packet)
+        public void DumpPacket(Packet packet)
+        {
+        }
+
+        public void Finish()
         {
         }
     }

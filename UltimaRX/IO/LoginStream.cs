@@ -5,11 +5,11 @@ namespace UltimaRX.IO
 {
     public class LoginStream : Stream
     {
-        private static readonly uint[] m_key;
-        private static readonly uint m_key1;
-        private static readonly uint m_key2;
+        private readonly uint[] m_key;
+        private readonly uint m_key1;
+        private readonly uint m_key2;
 
-        static LoginStream()
+        public LoginStream(Stream baseStream)
         {
             var seed = 0xA9FE5050;
             uint k1 = 0x2cc3ed9d;
@@ -26,10 +26,7 @@ namespace UltimaRX.IO
 
             m_key1 = k1;
             m_key2 = k2;
-        }
 
-        public LoginStream(Stream baseStream)
-        {
             BaseStream = baseStream;
         }
 

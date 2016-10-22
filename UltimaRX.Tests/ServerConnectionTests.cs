@@ -34,7 +34,8 @@ namespace UltimaRX.Tests
 
 
             var diagnosticStream = new DiagnosticPullStream();
-            var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream, NullDiagnosticPushStream.Instance);
+            var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream,
+                NullDiagnosticPushStream.Instance);
             connection.Receive(inputData);
 
             var output = diagnosticStream.Flush();
@@ -52,7 +53,8 @@ namespace UltimaRX.Tests
             });
             var expectedPackets = new[] {new Packet(0xB9, FakePackets.EnableLockedClientFeatures)};
 
-            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance);
+            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
+                NullDiagnosticPushStream.Instance);
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
             connection.Receive(inputData);
@@ -80,24 +82,26 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
-        public void Can_write_diagnostic_info_about_sent_packet()
+        public void Can_write_diagnostic_info_about_sent_PreLogin_packet()
         {
-            var diagnosticStream = new DiagnosticPushStream();
+            var diagnosticStream = new DiagnosticPushStream("Proxy -> Server");
 
-            var connection = new ServerConnection(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, diagnosticStream);
+            var connection = new ServerConnection(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance,
+                diagnosticStream);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
 
-            string output = diagnosticStream.Flush();
+            var output = diagnosticStream.Flush();
 
-            output.Should().Contain("0x80, 0x61, 0x64, 0x6D, 0x69, 0x6E");
+            output.Should().Contain("0x80, 0x61, 0x64, 0x6D, 0x69, 0x6E")
+                .And.Contain("0x7A, 0x63, 0x9A, 0xED, 0x56, 0x0E");
         }
-
 
         [TestMethod]
         public void Can_send_game_packet()
         {
-            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance);
+            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
+                NullDiagnosticPushStream.Instance);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.GameServerLoginRequest), testStream);
 

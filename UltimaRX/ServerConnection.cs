@@ -95,6 +95,8 @@ namespace UltimaRX
 
         public void Send(Packet packet, Stream outputStream)
         {
+            diagnosticPushStream.DumpPacket(packet);
+
             switch (Status)
             {
                 case ServerConnectionStatus.Initial:
@@ -104,7 +106,8 @@ namespace UltimaRX
                     Status = ServerConnectionStatus.PreLogin;
                     break;
                 case ServerConnectionStatus.PreLogin:
-                    var loginStream = new LoginStream(outputStream);
+                    diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
+                    var loginStream = new LoginStream(new PushStreamToStreamAdapter(diagnosticPushStream));
                     loginStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 case ServerConnectionStatus.Game:
@@ -114,7 +117,7 @@ namespace UltimaRX
                     break;
             }
 
-            diagnosticPushStream.FinishPacket(packet);
+            diagnosticPushStream.Finish();
         }
     }
 }

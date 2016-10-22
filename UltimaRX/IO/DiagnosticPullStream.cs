@@ -51,7 +51,7 @@ namespace UltimaRX.IO
 
         public void FinishPacket(Packet packet)
         {
-            formatter.FinishPacket(packet);
+            formatter.DumpPacket(packet);
             OnPacketFinished(packet);
         }
 

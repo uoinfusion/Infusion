@@ -5,6 +5,9 @@ namespace UltimaRX.IO
     public interface IDiagnosticPushStream : IPushStream
     {
         IPushStream BaseStream { get; set; }
-        void FinishPacket(Packet packet);
+
+        void DumpPacket(Packet packet);
+
+        void Finish();
     }
 }

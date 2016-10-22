@@ -22,17 +22,17 @@ namespace UltimaRX.IO
         {
             if (requiresHeader)
             {
-                builder.AppendFormat($"{DateTime.Now} {header} >>>> Starting");
+                builder.AppendFormat($"{DateTime.Now} >>>> {header}");
                 builder.AppendLine();
                 requiresHeader = false;
             }
         }
 
-        public void FinishPacket(Packet packet)
+        public void DumpPacket(Packet packet)
         {
             builder.AppendLine();
             builder.AppendFormat(
-                $"{DateTime.Now} {header} >>>> Packet {PacketDefinitionRegistry.Find(packet.Id).GetType().Name}, length = {packet.Length}");
+                $"{DateTime.Now} >>>> {header}: Packet {PacketDefinitionRegistry.Find(packet.Id).GetType().Name}, length = {packet.Length}");
             builder.AppendLine();
 
             for (var i = 0; i < packet.Length; i++)

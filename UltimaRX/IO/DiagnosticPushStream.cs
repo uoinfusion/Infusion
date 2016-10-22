@@ -32,6 +32,7 @@ namespace UltimaRX.IO
 
         public void WriteByte(byte value)
         {
+            BaseStream.WriteByte(value);
             formatter.AddByte(value);
         }
 

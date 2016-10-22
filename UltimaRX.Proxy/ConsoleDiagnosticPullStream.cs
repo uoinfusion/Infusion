@@ -4,6 +4,7 @@ using UltimaRX.Packets;
 
 namespace UltimaRX.Proxy
 {
+    // TODO: do not have special type for each logging backend, inject backend instead
     public class ConsoleDiagnosticPullStream : DiagnosticPullStream
     {
         public ConsoleDiagnosticPullStream(string header) : base(header)

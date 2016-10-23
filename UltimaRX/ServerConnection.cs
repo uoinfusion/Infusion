@@ -2,9 +2,7 @@
 using System.IO;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions;
-using UltimaRX.Packets.PacketDefinitions.Client;
-using UltimaRX.Packets.PacketDefinitions.Server;
+using UltimaRX.Packets.Server;
 
 namespace UltimaRX
 {
@@ -62,7 +60,7 @@ namespace UltimaRX
 
                 var packet = new Packet(packetId, payload);
 
-                if (packetId == ConnectToGameServerDefinition.Id)
+                if (packetId == PacketDefinitions.ConnectToGameServer.Id)
                 {
                     Status = ServerConnectionStatus.PreGame;
                 }

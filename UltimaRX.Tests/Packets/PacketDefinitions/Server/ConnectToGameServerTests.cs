@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets.PacketDefinitions;
-using UltimaRX.Packets.PacketDefinitions.Server;
+using UltimaRX.Packets.Server;
 
 namespace UltimaRX.Tests.Packets.PacketDefinitions.Server
 {

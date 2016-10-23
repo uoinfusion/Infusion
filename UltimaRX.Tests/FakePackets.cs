@@ -2,14 +2,12 @@
 using System.IO;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions;
-using UltimaRX.Packets.PacketDefinitions.Client;
 
 namespace UltimaRX.Tests
 {
     public static class FakePackets
     {
-        public static Packet InitialLoginSeedPacket = new Packet(LoginSeedDefinition.Id, InitialLoginSeed);
+        public static Packet InitialLoginSeedPacket = new Packet(PacketDefinitions.LoginSeed.Id, InitialLoginSeed);
 
         public static Packet ConnectToGameServerPacket = Instantiate(ConnectToGameServer);
 
@@ -212,7 +210,7 @@ namespace UltimaRX.Tests
 
         public static byte[] LoginSeed => new byte[] {0x7F, 0x00, 0x00, 0x01};
 
-        public static Packet LoginSeedPacket => new Packet(LoginSeedDefinition.Id, LoginSeed);
+        public static Packet LoginSeedPacket => new Packet(PacketDefinitions.LoginSeed.Id, LoginSeed);
 
         public static Packet Instantiate(byte[] source)
         {

@@ -6,8 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions;
-using UltimaRX.Packets.PacketDefinitions.Server;
+using UltimaRX.Packets.Server;
 
 namespace UltimaRX.Proxy
 {
@@ -70,7 +69,7 @@ namespace UltimaRX.Proxy
         {
             using (var memoryStream = new MemoryStream(1024))
             {
-                if (packet.Id == ConnectToGameServerDefinition.Id)
+                if (packet.Id == PacketDefinitions.ConnectToGameServer.Id)
                 {
                     var materializedPacket = PacketDefinitionRegistry.Materialize<ConnectToGameServer>(packet);
                     materializedPacket.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};

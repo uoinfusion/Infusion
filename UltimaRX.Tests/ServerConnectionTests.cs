@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions.Server;
 
 namespace UltimaRX.Tests
 {
@@ -168,7 +167,7 @@ namespace UltimaRX.Tests
             var expectedPackets = new[]
             {
                 new Packet(0xB9, FakePackets.EnableLockedClientFeatures),
-                new Packet(CharactersStartingLocationsDefinition.Id, FakePackets.CharactersStartingLocations), 
+                new Packet(PacketDefinitions.CharactersStartingLocations.Id, FakePackets.CharactersStartingLocations), 
             };
 
             var connection = new ServerConnection(ServerConnectionStatus.Game);

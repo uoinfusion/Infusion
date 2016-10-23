@@ -2,7 +2,6 @@
 using System.IO;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions.Client;
 
 namespace UltimaRX
 {
@@ -56,11 +55,11 @@ namespace UltimaRX
                 switch (Status)
                 {
                     case UltimaClientConnectionStatus.ServerLogin:
-                        if (packet.Id == SelectServerRequestDefinition.Id)
+                        if (packet.Id == PacketDefinitions.SelectServerRequest.Id)
                             Status = UltimaClientConnectionStatus.PreGameLogin;
                         break;
                     case UltimaClientConnectionStatus.GameLogin:
-                        if (packet.Id == GameServerLoginRequestDefinition.Id)
+                        if (packet.Id == PacketDefinitions.GameServerLoginRequest.Id)
                             Status = UltimaClientConnectionStatus.Game;
                         break;
                 }
@@ -71,7 +70,7 @@ namespace UltimaRX
         {
             var payload = new byte[4];
             inputStream.Read(payload, 0, 4);
-            var packet = new Packet(LoginSeedDefinition.Id, payload);
+            var packet = new Packet(PacketDefinitions.LoginSeed.Id, payload);
             OnPacketReceived(packet);
         }
 

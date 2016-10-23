@@ -1,7 +1,7 @@
 ﻿using System;
 using UltimaRX.IO;
 
-namespace UltimaRX.Packets.PacketDefinitions.Server
+namespace UltimaRX.Packets.Server
 {
     public class ConnectToGameServer : MaterializedPacket
     {

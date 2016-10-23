@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Text;
 using UltimaRX.Packets;
-using UltimaRX.Packets.PacketDefinitions;
 
 namespace UltimaRX.IO
 {

@@ -1,6 +1,6 @@
 ﻿using UltimaRX.IO;
 
-namespace UltimaRX.Packets.PacketDefinitions
+namespace UltimaRX.Packets
 {
     public class StandardVariablePacketLength : PacketLength
     {

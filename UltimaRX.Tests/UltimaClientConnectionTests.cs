@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -102,6 +101,37 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
+        public void Can_write_diagnostic_info_about_sent_PreGameLogin_packet()
+        {
+            var packet = FakePackets.Instantiate(FakePackets.ConnectToGameServer);
+            var diagnosticStream = new DiagnosticPushStream();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin, NullDiagnosticPullStream.Instance, diagnosticStream);
+            var outputStream = new TestMemoryStream();
+
+            connection.Send(packet, outputStream);
+
+            var output = diagnosticStream.Flush();
+
+            output.Should().Contain("0x8C, 0x7F, 0x00, 0x00, 0x01, 0x0A, 0x21, 0x7F, 0x00, 0x00, 0x01");
+        }
+
+        [TestMethod]
+        public void Can_write_diagnostic_info_about_send_Game_packet()
+        {
+            var packet = FakePackets.Instantiate(FakePackets.EnableLockedClientFeatures);
+            var diagnosticStream = new DiagnosticPushStream();
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Game, NullDiagnosticPullStream.Instance, diagnosticStream);
+            var outputStream = new TestMemoryStream();
+
+            connection.Send(packet, outputStream);
+
+            string output = diagnosticStream.Flush();
+
+            output.Should().Contain("0xB9, 0x80, 0x1F")
+                .And.Contain("0xB3, 0x32, 0x98, 0xDA");
+        }
+
+        [TestMethod]
         public void
             Given_connection_in_Initial_status_When_receives_login_seed_Then_connection_enters_ServerLogin_status()
         {
@@ -175,54 +205,6 @@ namespace UltimaRX.Tests
             connection.ReceiveBatch(inputStream);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.Game);
-        }
-    }
-
-    public class TestPullStream : IPullStream
-    {
-        private readonly IEnumerator<byte[]> batchesEnumerator;
-        private int position;
-        private bool hasData;
-
-        public TestPullStream(IEnumerable<byte[]> batches)
-        {
-            this.batchesEnumerator = batches.GetEnumerator();
-            hasData = this.batchesEnumerator.MoveNext();
-        }
-
-        public void Dispose()
-        {
-            batchesEnumerator.Dispose();
-        }
-
-        public bool DataAvailable => hasData && position < batchesEnumerator.Current.Length;
-
-        public int ReadByte()
-        {
-            return batchesEnumerator.Current[position++];
-        }
-
-        public void NextBatch()
-        {
-            hasData = batchesEnumerator.MoveNext();
-            position = 0;
-        }
-
-        public int Read(byte[] buffer, int offset, int count)
-        {
-            if (!hasData)
-            {
-                throw new EndOfStreamException();
-            }
-
-            int i;
-
-            for (i = 0; i < count && position < batchesEnumerator.Current.Length; i++)
-            {
-                buffer[i] = batchesEnumerator.Current[position++];
-            }
-
-            return i;
         }
     }
 }

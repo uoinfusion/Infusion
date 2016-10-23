@@ -8,21 +8,25 @@ namespace UltimaRX
 {
     public class UltimaClientConnection
     {
-        private readonly IDiagnosticPullStream diagnosticStream;
+        private readonly IDiagnosticPullStream diagnosticPullStream;
+        private readonly IDiagnosticPushStream diagnosticPushStream;
 
-        public UltimaClientConnection()
-            : this(UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance)
+        public UltimaClientConnection() : this(
+            UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
+            NullDiagnosticPushStream.Instance)
         {
         }
 
         public UltimaClientConnection(UltimaClientConnectionStatus status)
-            : this(status, NullDiagnosticPullStream.Instance)
+            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance)
         {
         }
 
-        public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticPullStream diagnosticStream)
+        public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
+            IDiagnosticPushStream diagnosticPushStream)
         {
-            this.diagnosticStream = diagnosticStream;
+            this.diagnosticPullStream = diagnosticPullStream;
+            this.diagnosticPushStream = diagnosticPushStream;
             Status = status;
         }
 
@@ -32,21 +36,21 @@ namespace UltimaRX
 
         public void ReceiveBatch(IPullStream inputStream)
         {
-            diagnosticStream.BaseStream = inputStream;
+            diagnosticPullStream.BaseStream = inputStream;
 
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
-                    ReceiveSeed(diagnosticStream);
+                    ReceiveSeed(diagnosticPullStream);
                     Status = UltimaClientConnectionStatus.ServerLogin;
                     break;
                 case UltimaClientConnectionStatus.PreGameLogin:
-                    ReceiveSeed(diagnosticStream);
+                    ReceiveSeed(diagnosticPullStream);
                     Status = UltimaClientConnectionStatus.GameLogin;
                     break;
             }
 
-            foreach (var packet in PacketParser.ParseBatch(diagnosticStream))
+            foreach (var packet in PacketParser.ParseBatch(diagnosticPullStream))
             {
                 OnPacketReceived(packet);
                 switch (Status)
@@ -73,26 +77,32 @@ namespace UltimaRX
 
         private void OnPacketReceived(Packet packet)
         {
-            diagnosticStream.FinishPacket(packet);
+            diagnosticPullStream.FinishPacket(packet);
             PacketReceived?.Invoke(this, packet);
         }
 
         public void Send(Packet packet, Stream outputStream)
         {
+            diagnosticPushStream.DumpPacket(packet);
+
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
                 case UltimaClientConnectionStatus.ServerLogin:
                 case UltimaClientConnectionStatus.PreGameLogin:
-                    outputStream.Write(packet.Payload, 0, packet.Length);
+                    diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
+                    diagnosticPushStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 case UltimaClientConnectionStatus.Game:
-                    var huffmanStream = new HuffmanStream(outputStream);
+                    diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
+                    var huffmanStream = new HuffmanStream(new PushStreamToStreamAdapter(diagnosticPushStream));
                     huffmanStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 default:
                     throw new NotImplementedException($"Sending packets while in {Status} Status.");
             }
+
+            diagnosticPushStream.Finish();
         }
     }
 }

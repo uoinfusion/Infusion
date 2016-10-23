@@ -45,7 +45,7 @@ namespace UltimaRX.Proxy
             ClientStream = client.GetStream();
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
-                new ConsoleDiagnosticPullStream("client -> proxy"));
+                new ConsoleDiagnosticPullStream("client -> proxy"), new ConsoleDiagnosticPushStream("proxy -> client"));
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
 
             while (true)
@@ -84,8 +84,8 @@ namespace UltimaRX.Proxy
                     if (ServerStream.DataAvailable)
                     {
                         serverConnection.Receive(new NetworkStreamToPullStreamAdapter(ServerStream));
-                        Thread.Yield();
                     }
+                    Thread.Yield();
                 }
             }
             catch (Exception ex)

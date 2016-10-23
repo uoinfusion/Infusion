@@ -4,6 +4,7 @@
     {
         Initial,
         PreLogin,
+        PreGame,
         Game,
     }
 }

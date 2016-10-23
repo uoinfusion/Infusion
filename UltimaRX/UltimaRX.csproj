@@ -57,6 +57,7 @@
     <Compile Include="IO\IPushStream.cs" />
     <Compile Include="IO\LoginStream.cs" />
     <Compile Include="IO\MemoryBatchedStream.cs" />
+    <Compile Include="IO\MemoryStreamToPullStreamAdapter.cs" />
     <Compile Include="IO\NewGameStream.cs" />
     <Compile Include="IO\NullDiagnosticPushStream.cs" />
     <Compile Include="IO\PullStreamToStreamAdapter.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UltimaRX.Packets.PacketDefinitions.Client;
 using UltimaRX.Packets.PacketDefinitions.Server;
 
@@ -35,7 +36,14 @@ namespace UltimaRX.Packets.PacketDefinitions
 
         public static PacketDefinition Find(int id)
         {
-            return Definitions[id];
+            PacketDefinition definition;
+
+            if (!Definitions.TryGetValue(id, out definition))
+            {
+                throw new InvalidOperationException($"Unknown packet id {id:X2}.");
+            }
+
+            return definition;
         }
 
         public static bool TryFind(int packedId, out PacketDefinition packetDefinition)

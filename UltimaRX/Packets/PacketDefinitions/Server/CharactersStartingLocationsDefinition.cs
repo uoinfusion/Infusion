@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UltimaRX.Packets.PacketDefinitions.Server
+﻿namespace UltimaRX.Packets.PacketDefinitions.Server
 {
     public class CharactersStartingLocationsDefinition : PacketDefinition
     {
-        public CharactersStartingLocationsDefinition() : base(0xA9, new StandardVariablePacketLength())
+        public CharactersStartingLocationsDefinition() : base(Id, new StandardVariablePacketLength())
         {
         }
+
+        public new static int Id => 0xA9;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UltimaRX.Packets.PacketDefinitions.Both;
 using UltimaRX.Packets.PacketDefinitions.Client;
 using UltimaRX.Packets.PacketDefinitions.Server;
 
@@ -27,6 +28,39 @@ namespace UltimaRX.Packets.PacketDefinitions
             Register(new ClientSpyDefinition());
             Register(new LoginCharacterDefinition());
             Register(new LoginSeedDefinition());
+            Register(new GeneralInformationPacketDefinition());
+            Register(new DeleteObjectDefinition());
+            Register(new CharacterLocaleAndBodyDefinition());
+            Register(new LoginCompleteDefinition());
+            Register(new ClientViewRangeDefinition());
+            Register(new PlaySoundEffectDefinition());
+            Register(new GetClientStatusDefinition());
+            Register(new ClientVersionDefinition());
+            Register(new RequestWarModeDefinition());
+            Register(new DrawGamePlayerDefinition());
+            Register(new DrawObjectDefinition());
+            Register(new SendSpeechDefinition());
+            Register(new TipNoticeWindowDefinition());
+            Register(new SendSkillsDefinition());
+            Register(new PingMessageDefinition());
+            Register(new CharacterMoveAckDefinition());
+            Register(new SpeechRequestDefinition());
+            Register(new SpeechMessageDefinition());
+            Register(new LoginDeniedDefinition());
+            Register(new PauseClientDefinition());
+            Register(new ObjectInfoDefinition());
+            Register(new GraphicalEffectDefinition());
+            Register(new RejectMoveItemRequestDefinition());
+            Register(new KickPlayerDefinition());
+            Register(new AddItemToContainerDefinition());
+            Register(new DrawContainerDefinition());
+            Register(new DraggingOfItemDefinition());
+            Register(new CharMoveRejectionDefinition());
+            Register(new ExplosionDefinition());
+            Register(new HealthBarStatusUpdateDefinition());
+            Register(new NewHealthBarStatusUpdateDefinition());
+            Register(new StatusBarInfoDefinition());
+            Register(new DamageDefinition());
         }
 
         public static void Register(PacketDefinition definition)

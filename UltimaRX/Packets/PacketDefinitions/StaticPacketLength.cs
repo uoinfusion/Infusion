@@ -1,4 +1,6 @@
-﻿namespace UltimaRX.Packets.PacketDefinitions
+﻿using UltimaRX.IO;
+
+namespace UltimaRX.Packets.PacketDefinitions
 {
     internal class StaticPacketLength : PacketLength
     {

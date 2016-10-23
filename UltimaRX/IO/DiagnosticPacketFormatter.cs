@@ -32,7 +32,7 @@ namespace UltimaRX.IO
         {
             builder.AppendLine();
             builder.AppendFormat(
-                $"{DateTime.Now} >>>> {header}: Packet {PacketDefinitionRegistry.Find(packet.Id).GetType().Name}, length = {packet.Length}");
+                $"{DateTime.Now} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).GetType().Name}, length = {packet.Length}");
             builder.AppendLine();
 
             for (var i = 0; i < packet.Length; i++)

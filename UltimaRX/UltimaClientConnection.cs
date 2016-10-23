@@ -83,6 +83,7 @@ namespace UltimaRX
             {
                 case UltimaClientConnectionStatus.Initial:
                 case UltimaClientConnectionStatus.ServerLogin:
+                case UltimaClientConnectionStatus.PreGameLogin:
                     outputStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 case UltimaClientConnectionStatus.Game:

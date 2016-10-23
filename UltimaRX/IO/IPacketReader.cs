@@ -1,4 +1,4 @@
-namespace UltimaRX.Packets
+namespace UltimaRX.IO
 {
     public interface IPacketReader
     {

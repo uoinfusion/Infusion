@@ -42,5 +42,11 @@ namespace UltimaRX.Packets.PacketDefinitions
         {
             return Definitions.TryGetValue(packedId, out packetDefinition);
         }
+
+        public static T Materialize<T>(Packet rawPacket) where T : MaterializedPacket
+        {
+            PacketDefinition definition = Find(rawPacket.Id);
+            return (T)definition.Materialize(rawPacket);
+        }
     }
 }

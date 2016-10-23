@@ -1,3 +1,5 @@
+using UltimaRX.IO;
+
 namespace UltimaRX.Packets.PacketDefinitions
 {
     public abstract class PacketLength

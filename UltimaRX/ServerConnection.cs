@@ -93,6 +93,8 @@ namespace UltimaRX
             }
         }
 
+        private readonly LoginStream loginStream = new LoginStream(null);
+
         public void Send(Packet packet, Stream outputStream)
         {
             diagnosticPushStream.DumpPacket(packet);
@@ -107,7 +109,7 @@ namespace UltimaRX
                     break;
                 case ServerConnectionStatus.PreLogin:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    var loginStream = new LoginStream(new PushStreamToStreamAdapter(diagnosticPushStream));
+                    loginStream.BaseStream = new PushStreamToStreamAdapter(diagnosticPushStream);
                     loginStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 case ServerConnectionStatus.Game:

@@ -89,6 +89,19 @@ namespace UltimaRX.Tests
         }
 
         [TestMethod]
+        public void Can_send_PreGameLogin_packet()
+        {
+            var packet = FakePackets.Instantiate(FakePackets.ConnectToGameServer);
+            var expectedSentBytes = FakePackets.ConnectToGameServer;
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin);
+            var outputStream = new TestMemoryStream();
+
+            connection.Send(packet, outputStream);
+
+            outputStream.ActualBytes.Should().BeEquivalentTo(expectedSentBytes);
+        }
+
+        [TestMethod]
         public void
             Given_connection_in_Initial_status_When_receives_login_seed_Then_connection_enters_ServerLogin_status()
         {

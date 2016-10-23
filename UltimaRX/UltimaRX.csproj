@@ -67,9 +67,10 @@
     <Compile Include="IO\TwoFishEncryption.cs" />
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
     <Compile Include="PacketParser.cs" />
-    <Compile Include="Packets\ArrayPacketReader.cs" />
+    <Compile Include="IO\ArrayPacketReader.cs" />
+    <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />
-    <Compile Include="Packets\IPacketReader.cs" />
+    <Compile Include="IO\IPacketReader.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\AttackRequestDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\ClientSpyDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Client\CreateCharacterRequestDefinition.cs" />
@@ -85,7 +86,9 @@
     <Compile Include="Packets\PacketDefinitions\PacketDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\PacketDefinitionRegistry.cs" />
     <Compile Include="Packets\PacketDefinitions\PacketLength.cs" />
+    <Compile Include="IO\ArrayPacketWriter.cs" />
     <Compile Include="Packets\PacketDefinitions\Server\CharactersStartingLocationsDefinition.cs" />
+    <Compile Include="Packets\PacketDefinitions\Server\ConnectToGameServer.cs" />
     <Compile Include="Packets\PacketDefinitions\Server\ConnectToGameServerDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Server\EnableLockedClientFeaturesDefinition.cs" />
     <Compile Include="Packets\PacketDefinitions\Server\GameServerListDefinition.cs" />

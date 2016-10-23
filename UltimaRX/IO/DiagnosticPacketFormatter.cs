@@ -12,6 +12,7 @@ namespace UltimaRX.IO
         private readonly string header;
         private int columns;
         private bool requiresHeader = true;
+        private bool needsNewLine = false;
 
         public DiagnosticPacketFormatter(string header)
         {
@@ -30,20 +31,33 @@ namespace UltimaRX.IO
 
         public void DumpPacket(Packet packet)
         {
-            builder.AppendLine();
+            if (needsNewLine)
+            {
+                builder.AppendLine();
+                needsNewLine = false;
+            }
+
             builder.AppendFormat(
                 $"{DateTime.Now} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).GetType().Name}, length = {packet.Length}");
             builder.AppendLine();
 
+            bool justAppendedNewLine = true;
             for (var i = 0; i < packet.Length; i++)
             {
+                justAppendedNewLine = false;
                 builder.AppendFormat("0x{0:X2}, ", packet.Payload[i]);
                 if ((i + 1)%MaxColumns == 0)
+                {
                     builder.AppendLine();
+                    justAppendedNewLine = true;
+                }
             }
 
-            builder.AppendLine();
-            builder.AppendLine();
+            if (!justAppendedNewLine)
+            {
+                builder.AppendLine();
+            }
+
             columns = 0;
             requiresHeader = true;
         }
@@ -52,21 +66,30 @@ namespace UltimaRX.IO
         {
             Header();
 
+            needsNewLine = true;
+
             builder.AppendFormat("0x{0:X2}, ", value);
             columns++;
 
-            if (columns > MaxColumns)
+            if (columns + 1 > MaxColumns)
             {
                 columns = 0;
                 builder.AppendLine();
+                needsNewLine = false;
             }
         }
 
         public string Flush()
         {
+            if (needsNewLine)
+            {
+                builder.AppendLine();
+            }
+
             var result = builder.ToString();
 
             builder.Clear();
+            needsNewLine = false;
 
             return result;
         }

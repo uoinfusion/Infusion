@@ -19,7 +19,7 @@ namespace UltimaRX.Packets
             new StaticPacketLength(7), "MoveRequest");
 
         public static readonly PacketDefinition TalkRequest = new PacketDefinition(0x03,
-            new StandardVariablePacketLength(), "TalkRequest");
+            new VariablePacketLength(), "TalkRequest");
 
         public static readonly PacketDefinition GodModeRequest = new PacketDefinition(0x04,
             new StaticPacketLength(2), "GodModeRequest");
@@ -46,32 +46,32 @@ namespace UltimaRX.Packets
             new StaticPacketLength(149), "ClientSpy");
 
         public static readonly PacketDefinition SpeechRequest = new PacketDefinition(0xAD,
-            new StandardVariablePacketLength(), "SpeechRequest");
+            new VariablePacketLength(), "SpeechRequest");
 
         #endregion
 
         #region Server
 
         public static readonly PacketDefinition Damage = new PacketDefinition(0x0B,
-            new StandardVariablePacketLength(), "Damage");
+            new VariablePacketLength(), "Damage");
 
         public static readonly PacketDefinition StatusBarInfo = new PacketDefinition(0x11,
-            new StandardVariablePacketLength(), "StatusBarInfo");
+            new VariablePacketLength(), "StatusBarInfo");
 
         public static readonly PacketDefinition NewHealthBarStatusUpdate = new PacketDefinition(0x16,
-            new StandardVariablePacketLength(), "NewHealthBarStatusUpdate");
+            new VariablePacketLength(), "NewHealthBarStatusUpdate");
 
         public static readonly PacketDefinition HealthBarStatusUpdate = new PacketDefinition(0x17,
             new StaticPacketLength(12), "HealthBarStatusUpdate");
 
         public static readonly PacketDefinition ObjectInfo = new PacketDefinition(0x1A,
-            new StandardVariablePacketLength(), "ObjectInfo");
+            new VariablePacketLength(), "ObjectInfo");
 
         public static readonly PacketDefinition CharacterLocaleAndBody = new PacketDefinition(0x1B,
             new StaticPacketLength(37), "CharacterLocaleAndBody");
 
         public static readonly PacketDefinition SendSpeech = new PacketDefinition(0x1C,
-            new StandardVariablePacketLength(), "SendSpeech");
+            new VariablePacketLength(), "SendSpeech");
 
         public static readonly PacketDefinition DeleteObject = new PacketDefinition(0x1D,
             new StaticPacketLength(5), "DeleteObject");
@@ -100,8 +100,44 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition RejectMoveItemRequest = new PacketDefinition(0x27,
             new StaticPacketLength(2), "RejectMoveItemRequest");
 
+        public static readonly PacketDefinition DropItemFailed = new PacketDefinition(0x28,
+            new StaticPacketLength(5), "DropItemFailed");
+
+        public static readonly PacketDefinition DropItemApproved = new PacketDefinition(0x29,
+            new StaticPacketLength(1), "DropItemApproved");
+
+        public static readonly PacketDefinition Blood = new PacketDefinition(0x2A,
+            new StaticPacketLength(5), "Blood");
+
+        public static readonly PacketDefinition MobAttributes = new PacketDefinition(0x2D,
+            new StaticPacketLength(17), "MobAttributes");
+
+        public static readonly PacketDefinition WornItem = new PacketDefinition(0x2E,
+            new StaticPacketLength(15), "WornItem");
+
+        public static readonly PacketDefinition FightOccuring = new PacketDefinition(0x2F,
+            new StaticPacketLength(10), "FightOccuring");
+
+        public static readonly PacketDefinition AttackOk = new PacketDefinition(0x30,
+            new StaticPacketLength(5), "AttackOk");
+
+        public static readonly PacketDefinition AttackEnded = new PacketDefinition(0x31,
+            new StaticPacketLength(1), "AttackEnded");
+
+        public static readonly PacketDefinition AddMultipleItemsInContainer = new PacketDefinition(0x3C,
+            new VariablePacketLength(), "AddMultipleItemsInContainer");
+
         public static readonly PacketDefinition PauseClient = new PacketDefinition(0x33,
             new StaticPacketLength(2), "PauseClient");
+
+        public static readonly PacketDefinition PersonalLightLevel = new PacketDefinition(0x4E,
+            new StaticPacketLength(6), "PersonalLightLevel");
+
+        public static readonly PacketDefinition OverallLightLevel = new PacketDefinition(0x4F,
+            new StaticPacketLength(2), "OverallLightLevel");
+
+        public static readonly PacketDefinition RejectCharacterLogon = new PacketDefinition(0x53,
+            new StaticPacketLength(2), "RejectCharacterLogon");
 
         public static readonly PacketDefinition PlaySoundEffect = new PacketDefinition(0x54,
             new StaticPacketLength(12), "PlaySoundEffect");
@@ -109,32 +145,167 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition LoginComplete = new PacketDefinition(0x55,
             new StaticPacketLength(1), "LoginComplete");
 
+        public static readonly PacketDefinition Time = new PacketDefinition(0x5B,
+            new StaticPacketLength(4), "Time");
+
+        public static readonly PacketDefinition SetWeather = new PacketDefinition(0x65,
+            new StaticPacketLength(4), "SetWeather");
+
+        public static readonly PacketDefinition PlayMidiMusic = new PacketDefinition(0x6D,
+            new StaticPacketLength(3), "PlayMidiMusic");
+
+        public static readonly PacketDefinition CharacterAnimation = new PacketDefinition(0x6E,
+            new StaticPacketLength(14), "CharacterAnimation");
+
         public static readonly PacketDefinition GraphicalEffect = new PacketDefinition(0x70,
-            new StaticPacketLength(28), "CharactersStartingLocations");
+            new StaticPacketLength(28), "GraphicalEffect");
+
+        public static readonly PacketDefinition OpenBuyWindow = new PacketDefinition(0x74,
+            new VariablePacketLength(), "OpenBuyWindow");
+
+        public static readonly PacketDefinition NewSubserver = new PacketDefinition(0x76,
+            new StaticPacketLength(16), "NewSubserver");
+
+        public static readonly PacketDefinition UpdatePlayer = new PacketDefinition(0x77,
+            new StaticPacketLength(17), "UpdatePlayer");
 
         public static readonly PacketDefinition DrawObject = new PacketDefinition(0x78,
-            new StandardVariablePacketLength(), "DrawObject");
+            new VariablePacketLength(), "DrawObject");
+
+        public static readonly PacketDefinition OpenDialogBox = new PacketDefinition(0x7C,
+            new VariablePacketLength(), "OpenDialogBox");
 
         public static readonly PacketDefinition LoginDenied = new PacketDefinition(0x82,
             new StaticPacketLength(2), "LoginDenied");
 
+        public static readonly PacketDefinition ResendCharactersAfterDelete = new PacketDefinition(0x86,
+            new StaticPacketLength(304), "ResendCharactersAfterDelete");
+
+        public static readonly PacketDefinition OpenPaperdoll = new PacketDefinition(0x88,
+            new StaticPacketLength(66), "OpenPaperdoll");
+
+        public static readonly PacketDefinition CorpseClothing = new PacketDefinition(0x89,
+            new VariablePacketLength(), "CorpseClothing");
+
         public static readonly PacketDefinition ConnectToGameServer = new PacketDefinition<ConnectToGameServer>(0x8C,
             new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServer(rawPacket));
 
+        public static readonly PacketDefinition MapMessage = new PacketDefinition(0x90,
+            new StaticPacketLength(19), "MapMessage");
+
+        public static readonly PacketDefinition MovePlayer = new PacketDefinition(0x97,
+            new StaticPacketLength(2), "MovePlayer");
+
+        public static readonly PacketDefinition RequestAssistance = new PacketDefinition(0x9C,
+            new StaticPacketLength(53), "RequestAssistance");
+
+        public static readonly PacketDefinition SellList = new PacketDefinition(0x9E,
+            new VariablePacketLength(), "SellList");
+
+        public static readonly PacketDefinition UpdateCurrentHealth = new PacketDefinition(0xA1,
+            new StaticPacketLength(9), "UpdateCurrentHealth");
+
+        public static readonly PacketDefinition UpdateCurrentMana = new PacketDefinition(0xA2,
+            new StaticPacketLength(9), "UpdateCurrentMana");
+
+        public static readonly PacketDefinition UpdateCurrentStamina = new PacketDefinition(0xA3,
+            new StaticPacketLength(9), "UpdateCurrentStamina");
+
+        public static readonly PacketDefinition OpenWebBrowser = new PacketDefinition(0xA5,
+            new VariablePacketLength(), "OpenWebBrowser");
+
         public static readonly PacketDefinition TipNoticeWindow = new PacketDefinition(0xA6,
-            new StandardVariablePacketLength(), "TipNoticeWindow");
+            new VariablePacketLength(), "TipNoticeWindow");
 
         public static readonly PacketDefinition GameServerList = new PacketDefinition(0xA8,
-            new StandardVariablePacketLength(), "GameServerList");
+            new VariablePacketLength(), "GameServerList");
 
         public static readonly PacketDefinition CharactersStartingLocations = new PacketDefinition(0xA9,
-            new StandardVariablePacketLength(), "CharactersStartingLocations");
+            new VariablePacketLength(), "CharactersStartingLocations");
+
+        public static readonly PacketDefinition AllowRefuseAttack = new PacketDefinition(0xAA,
+            new StaticPacketLength(5), "AllowRefuseAttack");
+
+        public static readonly PacketDefinition GumpTextEntryDialog = new PacketDefinition(0xAB,
+            new VariablePacketLength(), "GumpTextEntryDialog");
 
         public static readonly PacketDefinition SpeechMessage = new PacketDefinition(0xAE,
-            new StandardVariablePacketLength(), "SpeechMessage");
+            new VariablePacketLength(), "SpeechMessage");
+
+        public static readonly PacketDefinition DisplayDeathAction = new PacketDefinition(0xAF,
+            new StaticPacketLength(13), "DisplayDeathAction");
+
+        public static readonly PacketDefinition SendGumpMenuDialog = new PacketDefinition(0xB0,
+            new VariablePacketLength(), "SendGumpMenuDialog");
+
+        public static readonly PacketDefinition ChatMessage = new PacketDefinition(0xB2,
+            new VariablePacketLength(), "ChatMessage");
+
+        public static readonly PacketDefinition HelpTileData = new PacketDefinition(0xB7,
+            new VariablePacketLength(), "HelpTileData");
 
         public static readonly PacketDefinition EnableLockedClientFeatures = new PacketDefinition(0xB9,
             new StaticPacketLength(3), "EnableLockedClientFeatures");
+
+        public static readonly PacketDefinition QuestArrow = new PacketDefinition(0xBA,
+            new StaticPacketLength(6), "QuestArrow");
+
+        public static readonly PacketDefinition SeasonalInformation = new PacketDefinition(0xBC,
+            new StaticPacketLength(3), "SeasonalInformation");
+
+        public static readonly PacketDefinition GraphicalEffect2 = new PacketDefinition(0xC0,
+            new StaticPacketLength(36), "GraphicalEffect2");
+
+        public static readonly PacketDefinition ClilocMessage = new PacketDefinition(0xC1,
+            new VariablePacketLength(), "ClilocMessage");
+
+        public static readonly PacketDefinition Semivisible = new PacketDefinition(0xC4,
+            new StaticPacketLength(6), "Semivisible");
+
+        public static readonly PacketDefinition InvalidMapEnable = new PacketDefinition(0xC6,
+            new StaticPacketLength(1), "InvalidMapEnable");
+
+        public static readonly PacketDefinition GlobalQueueCount = new PacketDefinition(0xCB,
+            new StaticPacketLength(7), "GlobalQueueCount");
+
+        public static readonly PacketDefinition ClilocMessageAffix = new PacketDefinition(0xCC,
+            new VariablePacketLength(), "ClilocMessageAffix");
+
+        public static readonly PacketDefinition ExtendedDrawGamePlayer = new PacketDefinition(0xD2,
+            new StaticPacketLength(25), "ExtendedDrawGamePlayer");
+
+        public static readonly PacketDefinition ExtendedDrawObject = new PacketDefinition(0xD3,
+            new VariablePacketLength(), "ExtendedDrawObject");
+
+        public static readonly PacketDefinition SendCustomHouse = new PacketDefinition(0xD8,
+            new VariablePacketLength(), "SendCustomHouse");
+
+        public static readonly PacketDefinition CharacterTransferLog = new PacketDefinition(0xDB,
+            new VariablePacketLength(), "CharacterTransferLog");
+
+        public static readonly PacketDefinition SecondAgeRevision = new PacketDefinition(0xDC,
+            new StaticPacketLength(9), "SecondAgeRevision");
+
+        public static readonly PacketDefinition CompressedGump = new PacketDefinition(0xDD,
+            new VariablePacketLength(), "CompressedGump");
+
+        public static readonly PacketDefinition UpdateMobileStatus = new PacketDefinition(0xDE,
+            new VariablePacketLength(), "UpdateMobileStatus");
+
+        public static readonly PacketDefinition BuffSystem = new PacketDefinition(0xDF,
+    new VariablePacketLength(), "BuffSystem");
+
+        public static readonly PacketDefinition NewCharacterAnimation = new PacketDefinition(0xE2,
+            new StaticPacketLength(10), "NewCharacterAnimation");
+
+        public static readonly PacketDefinition KrEncryptionResponse = new PacketDefinition(0xE3,
+    new StaticPacketLength(77), "KrEncryptionResponse");
+
+        public static readonly PacketDefinition SecondAgeObjectInformation = new PacketDefinition(0xF3,
+            new StaticPacketLength(24), "SecondAgeObjectInformation");
+
+        public static readonly PacketDefinition NewMapMessage = new PacketDefinition(0xF5,
+            new StaticPacketLength(21), "NewMapMessage");
 
         #endregion
 
@@ -144,13 +315,13 @@ namespace UltimaRX.Packets
             new StaticPacketLength(3), "CharacterMoveAck");
 
         public static readonly PacketDefinition ClientVersion = new PacketDefinition(0xBD,
-            new StandardVariablePacketLength(), "ClientVersion");
+            new VariablePacketLength(), "ClientVersion");
 
         public static readonly PacketDefinition ClientViewRange = new PacketDefinition(0xC8,
             new StaticPacketLength(2), "ClientViewRange");
 
         public static readonly PacketDefinition GeneralInformationPacket = new PacketDefinition(0xBF,
-            new StandardVariablePacketLength(), "GeneralInformationPacket");
+            new VariablePacketLength(), "GeneralInformationPacket");
 
         public static readonly PacketDefinition PingMessage = new PacketDefinition(0x73,
             new StaticPacketLength(2), "PingMessage");
@@ -159,7 +330,7 @@ namespace UltimaRX.Packets
             new StaticPacketLength(5), "RequestWarMode");
 
         public static readonly PacketDefinition SendSkills = new PacketDefinition(0x3A,
-            new StandardVariablePacketLength(), "SendSkills");
+            new VariablePacketLength(), "SendSkills");
 
         #endregion
     }

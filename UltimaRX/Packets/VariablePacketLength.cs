@@ -2,7 +2,7 @@
 
 namespace UltimaRX.Packets
 {
-    public class StandardVariablePacketLength : PacketLength
+    public class VariablePacketLength : PacketLength
     {
         public override int GetSize(IPacketReader reader)
         {

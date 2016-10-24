@@ -455,26 +455,92 @@ namespace UltimaRX.Packets
 
         #region Both
 
+        public static readonly PacketDefinition Follow = new PacketDefinition(0x15,
+            new StaticPacketLength(9), "Follow");
+
         public static readonly PacketDefinition CharacterMoveAck = new PacketDefinition(0x22,
             new StaticPacketLength(3), "CharacterMoveAck");
 
-        public static readonly PacketDefinition ClientVersion = new PacketDefinition(0xBD,
-            new VariablePacketLength(), "ClientVersion");
+        public static readonly PacketDefinition ResurrectionMenu = new PacketDefinition(0x2C,
+            new StaticPacketLength(2), "ResurrectionMenu");
 
-        public static readonly PacketDefinition ClientViewRange = new PacketDefinition(0xC8,
-            new StaticPacketLength(2), "ClientViewRange");
+        public static readonly PacketDefinition RemoveGroup = new PacketDefinition(0x39,
+            new StaticPacketLength(9), "RemoveGroup");
 
-        public static readonly PacketDefinition GeneralInformationPacket = new PacketDefinition(0xBF,
-            new VariablePacketLength(), "GeneralInformationPacket");
+        public static readonly PacketDefinition SendSkills = new PacketDefinition(0x3A,
+            new VariablePacketLength(), "SendSkills");
 
-        public static readonly PacketDefinition PingMessage = new PacketDefinition(0x73,
-            new StaticPacketLength(2), "PingMessage");
+        public static readonly PacketDefinition MapPacket = new PacketDefinition(0x56,
+            new StaticPacketLength(11), "MapPacket");
+
+        public static readonly PacketDefinition BooksPages = new PacketDefinition(0x66,
+            new VariablePacketLength(), "BooksPages");
+
+        public static readonly PacketDefinition TargetCursor = new PacketDefinition(0x6C,
+            new StaticPacketLength(19), "TargetCursor");
+
+        public static readonly PacketDefinition SecureTraiding = new PacketDefinition(0x6F,
+            new VariablePacketLength(), "SecureTraiding");
+
+        public static readonly PacketDefinition BulletinBoardMessage = new PacketDefinition(0x71,
+            new VariablePacketLength(), "BulletinBoardMessage");
 
         public static readonly PacketDefinition RequestWarMode = new PacketDefinition(0x72,
             new StaticPacketLength(5), "RequestWarMode");
 
-        public static readonly PacketDefinition SendSkills = new PacketDefinition(0x3A,
-            new VariablePacketLength(), "SendSkills");
+        public static readonly PacketDefinition PingMessage = new PacketDefinition(0x73,
+            new StaticPacketLength(2), "PingMessage");
+
+        public static readonly PacketDefinition BookHeader = new PacketDefinition(0x93,
+            new StaticPacketLength(99), "BookHeader");
+
+        public static readonly PacketDefinition DyeWindow = new PacketDefinition(0x95,
+            new StaticPacketLength(9), "DyeWindow");
+
+        public static readonly PacketDefinition GiveBoatHousePlacementView = new PacketDefinition(0x99,
+            new StaticPacketLength(26), "GiveBoatHousePlacementView");
+
+        public static readonly PacketDefinition ConsoleEntryPrompt = new PacketDefinition(0x9A,
+            new VariablePacketLength(), "ConsoleEntryPrompt");
+
+        public static readonly PacketDefinition RequestCharProfile = new PacketDefinition(0xB8,
+            new VariablePacketLength(), "RequestCharProfile");
+
+        public static readonly PacketDefinition UltimaMessenger = new PacketDefinition(0xBB,
+            new StaticPacketLength(9), "UltimaMessenger");
+
+        public static readonly PacketDefinition ClientVersion = new PacketDefinition(0xBD,
+            new VariablePacketLength(), "ClientVersion");
+
+        public static readonly PacketDefinition AssistVersion = new PacketDefinition(0xBE,
+            new VariablePacketLength(), "AssistVersion");
+
+        public static readonly PacketDefinition GeneralInformationPacket = new PacketDefinition(0xBF,
+            new VariablePacketLength(), "GeneralInformationPacket");
+
+        public static readonly PacketDefinition UnicodeTextEntry = new PacketDefinition(0xC2,
+            new VariablePacketLength(), "UnicodeTextEntry");
+
+        public static readonly PacketDefinition ClientViewRange = new PacketDefinition(0xC8,
+            new StaticPacketLength(2), "ClientViewRange");
+
+        public static readonly PacketDefinition ConfigurationFile = new PacketDefinition(0xD0,
+            new VariablePacketLength(), "ConfigurationFile");
+
+        public static readonly PacketDefinition LogoutStatus = new PacketDefinition(0xD1,
+            new StaticPacketLength(2), "LogoutStatus");
+
+        public static readonly PacketDefinition BookHeaderNew = new PacketDefinition(0xD4,
+            new VariablePacketLength(), "BookHeaderNew");
+
+        public static readonly PacketDefinition MegaCliloc = new PacketDefinition(0xD6,
+            new VariablePacketLength(), "MegaCliloc");
+
+        public static readonly PacketDefinition GenericAosCommands = new PacketDefinition(0xD7,
+            new VariablePacketLength(), "GenericAosCommands");
+
+        public static readonly PacketDefinition FreeShardList = new PacketDefinition(0xF1,
+            new VariablePacketLength(), "FreeShardList");
 
         #endregion
     }

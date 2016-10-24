@@ -164,6 +164,28 @@ namespace UltimaRX.Packets
             Register(PacketDefinitions.SendHelpTipRequest);
             Register(PacketDefinitions.InvalidMapRequest);
             Register(PacketDefinitions.SpyOnClient);
+            Register(PacketDefinitions.Follow);
+            Register(PacketDefinitions.ResurrectionMenu);
+            Register(PacketDefinitions.RemoveGroup);
+            Register(PacketDefinitions.MapPacket);
+            Register(PacketDefinitions.BooksPages);
+            Register(PacketDefinitions.TargetCursor);
+            Register(PacketDefinitions.SecureTraiding);
+            Register(PacketDefinitions.BulletinBoardMessage);
+            Register(PacketDefinitions.BookHeader);
+            Register(PacketDefinitions.DyeWindow);
+            Register(PacketDefinitions.GiveBoatHousePlacementView);
+            Register(PacketDefinitions.ConsoleEntryPrompt);
+            Register(PacketDefinitions.RequestCharProfile);
+            Register(PacketDefinitions.UltimaMessenger);
+            Register(PacketDefinitions.AssistVersion);
+            Register(PacketDefinitions.UnicodeTextEntry);
+            Register(PacketDefinitions.ConfigurationFile);
+            Register(PacketDefinitions.LogoutStatus);
+            Register(PacketDefinitions.BookHeaderNew);
+            Register(PacketDefinitions.MegaCliloc);
+            Register(PacketDefinitions.GenericAosCommands);
+            Register(PacketDefinitions.FreeShardList);
         }
 
         public static void Register(PacketDefinition definition)

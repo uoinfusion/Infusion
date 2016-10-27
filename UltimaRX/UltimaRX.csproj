@@ -63,12 +63,14 @@
     <Compile Include="IO\PullStreamToStreamAdapter.cs" />
     <Compile Include="IO\NetworkStreamToPullStreamAdapter.cs" />
     <Compile Include="IO\PushStreamToStreamAdapter.cs" />
+    <Compile Include="IO\StreamPacketWriter.cs" />
     <Compile Include="IO\StreamToPushStreamAdapter.cs" />
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
     <Compile Include="PacketParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
+    <Compile Include="Packets\Client\SpeechType.cs" />
     <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />
     <Compile Include="IO\IPacketReader.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="Packets\PacketLength.cs" />
     <Compile Include="IO\ArrayPacketWriter.cs" />
     <Compile Include="Packets\Server\ConnectToGameServer.cs" />
+    <Compile Include="Packets\Client\SpeechRequest.cs" />
     <Compile Include="Packets\VariablePacketLength.cs" />
     <Compile Include="Packets\StaticPacketLength.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -87,6 +90,7 @@
     <Compile Include="UltimaClientConnection.cs" />
     <Compile Include="UltimaClientConnectionStatus.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,53 +1,39 @@
-﻿using System;
-using UltimaRX.IO;
+﻿using UltimaRX.IO;
 
 namespace UltimaRX.Packets.Server
 {
     public class ConnectToGameServer : MaterializedPacket
     {
-        private readonly byte[] gameServerIp = new byte[4];
-        private readonly ArrayPacketWriter writer;
+        private byte[] payload;
 
-        private ushort gameServerPort;
+        public byte[] GameServerIp { get; set; }
 
-        public ConnectToGameServer(Packet rawPacket) : base(rawPacket)
+        public ushort GameServerPort { get; set; }
+
+        public override Packet RawPacket
+        {
+            get
+            {
+                var modifiedPayload = new byte[payload.Length];
+                payload.CopyTo(modifiedPayload, 0);
+
+                var writer = new ArrayPacketWriter(modifiedPayload) {Position = 1};
+                writer.Write(GameServerIp, 0, 4);
+                writer.Position = 5;
+                writer.Write(GameServerPort);
+
+                payload = modifiedPayload;
+                return new Packet(PacketDefinitions.ConnectToGameServer.Id, payload);
+            }
+        }
+
+        public override void Deserialize(Packet rawPacket)
         {
             var reader = new ArrayPacketReader(rawPacket.Payload) {Position = 1};
-            reader.Read(gameServerIp, 0, 4);
-            gameServerPort = reader.ReadUShort();
-
-            writer = new ArrayPacketWriter(rawPacket.Payload);
-        }
-
-        public byte[] GameServerIp
-        {
-            get { return gameServerIp; }
-
-            set
-            {
-                if (value.Length != 4)
-                {
-                    throw new InvalidOperationException(
-                        $"GameServerIp has to be array of length 4, it is {value.Length} instead");
-                }
-
-                Array.Copy(value, gameServerIp, 4);
-
-                writer.Position = 1;
-                writer.Write(value, 0, 4);
-            }
-        }
-
-        public ushort GameServerPort
-        {
-            get { return gameServerPort; }
-
-            set
-            {
-                this.gameServerPort = value;
-                writer.Position = 5;
-                writer.Write(value);
-            }
+            GameServerIp = new byte[4];
+            reader.Read(GameServerIp, 0, 4);
+            GameServerPort = reader.ReadUShort();
+            payload = rawPacket.Payload;
         }
     }
 }

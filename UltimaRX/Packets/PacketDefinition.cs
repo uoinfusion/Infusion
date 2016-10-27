@@ -47,7 +47,11 @@ namespace UltimaRX.Packets
                     $"Cannot materialize rawPacket because it's id is {rawPacket.Id} but {Id} is expected");
             }
 
-            return MaterializeImpl(rawPacket);
+            var materializedPacket = MaterializeImpl(rawPacket);
+
+            materializedPacket.Deserialize(rawPacket);
+
+            return materializedPacket;
         }
 
         protected virtual MaterializedPacket MaterializeImpl(Packet rawPacket)

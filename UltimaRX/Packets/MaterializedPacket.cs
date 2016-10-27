@@ -2,13 +2,8 @@
 {
     public abstract class MaterializedPacket
     {
-        protected MaterializedPacket(Packet rawPacket)
-        {
-            RawPacket = rawPacket;
-        }
+        public abstract void Deserialize(Packet rawPacket);
 
-        public Packet RawPacket { get; }
-
-        public int Id => RawPacket.Id;
+        public abstract Packet RawPacket { get; }
     }
 }

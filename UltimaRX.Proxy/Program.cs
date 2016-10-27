@@ -6,11 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Client;
 using UltimaRX.Packets.Server;
 
 namespace UltimaRX.Proxy
 {
-    internal class Program
+    public class Program
     {
         private static TcpListener listener;
         private static ServerConnection serverConnection;
@@ -25,7 +26,21 @@ namespace UltimaRX.Proxy
 
         public static NetworkStream ServerStream { get; set; }
 
-        private static void Main(string[] args)
+        public static void Say(string message)
+        {
+            var packet = new SpeechRequest()
+            {
+                Type = SpeechType.Normal,
+                Text = message,
+                Font = 0x02b2,
+                Color = 0x0003,
+                Language = "ENU"
+            };
+
+            ClientConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
+        public static void Main()
         {
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, 33333));
             listener.Start();
@@ -83,6 +98,8 @@ namespace UltimaRX.Proxy
             }
         }
 
+        private static object serverStreamLock = new object();
+
         private static void ServerLoop()
         {
             try
@@ -91,8 +108,12 @@ namespace UltimaRX.Proxy
                 {
                     if (needServerReconnect)
                     {
-                        DisconnectFromServer();
-                        needServerReconnect = false;
+                        lock (serverStreamLock)
+                        {
+                            DisconnectFromServer();
+                            needServerReconnect = false;
+                            ServerStream = ConnectToServer();
+                        }
                     }
 
                     if (ServerStream == null)
@@ -127,6 +148,10 @@ namespace UltimaRX.Proxy
 
         private static NetworkStream ConnectToServer()
         {
+            // Erebor:
+            //var serverEndpoint = new IPEndPoint(IPAddress.Parse("89.185.244.24"), 2593);
+
+            // localhost:
             var serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
             serverSocket = new Socket(serverEndpoint.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Connect(serverEndpoint);
@@ -136,10 +161,13 @@ namespace UltimaRX.Proxy
 
         private static void ClientConnectionOnPacketReceived(object sender, Packet packet)
         {
-            using (var memoryStream = new MemoryStream(1024))
+            lock (serverStreamLock)
             {
-                serverConnection.Send(packet, memoryStream);
-                ServerStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                using (var memoryStream = new MemoryStream(1024))
+                {
+                    serverConnection.Send(packet, memoryStream);
+                    ServerStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                }
             }
         }
     }

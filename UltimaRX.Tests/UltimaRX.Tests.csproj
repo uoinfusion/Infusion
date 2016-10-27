@@ -65,8 +65,8 @@
     <Compile Include="AssertionExtensions.cs" />
     <Compile Include="FakePackets.cs" />
     <Compile Include="IO\HuffmanStreamTests.cs" />
-    <Compile Include="Packets\PacketDefinitions\PacketDefinitionRegistryTests.cs" />
-    <Compile Include="Packets\PacketDefinitions\Server\ConnectToGameServerTests.cs" />
+    <Compile Include="Packets\PacketDefinitionRegistryTests.cs" />
+    <Compile Include="Packets\Server\ConnectToGameServerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnectionTests.cs" />
     <Compile Include="TestMemoryStream.cs" />

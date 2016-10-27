@@ -332,7 +332,7 @@ namespace UltimaRX.Packets
             new VariablePacketLength(), "CorpseClothing");
 
         public static readonly PacketDefinition ConnectToGameServer = new PacketDefinition<ConnectToGameServer>(0x8C,
-            new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServer(rawPacket));
+            new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServer());
 
         public static readonly PacketDefinition MapMessage = new PacketDefinition(0x90,
             new StaticPacketLength(19), "MapMessage");

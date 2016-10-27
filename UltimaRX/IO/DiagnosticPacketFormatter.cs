@@ -37,7 +37,7 @@ namespace UltimaRX.IO
             }
 
             builder.AppendFormat(
-                $"{DateTime.Now} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).GetType().Name}, length = {packet.Length}");
+                $"{DateTime.Now} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).Name}, length = {packet.Length}");
             builder.AppendLine();
 
             bool justAppendedNewLine = true;

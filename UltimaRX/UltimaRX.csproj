@@ -81,6 +81,11 @@
     <Compile Include="IO\ArrayPacketWriter.cs" />
     <Compile Include="Packets\Server\ConnectToGameServer.cs" />
     <Compile Include="Packets\Client\SpeechRequest.cs" />
+    <Compile Include="Packets\Direction.cs" />
+    <Compile Include="Packets\Server\MovePlayer.cs" />
+    <Compile Include="Packets\Server\OverallLightLevel.cs" />
+    <Compile Include="Packets\Server\SetWeather.cs" />
+    <Compile Include="Packets\WeatherType.cs" />
     <Compile Include="Packets\VariablePacketLength.cs" />
     <Compile Include="Packets\StaticPacketLength.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

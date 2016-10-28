@@ -40,6 +40,38 @@ namespace UltimaRX.Proxy
             ClientConnectionOnPacketReceived(null, packet.RawPacket);
         }
 
+        public static void MovePlayer(Direction direction)
+        {
+            var packet = new MovePlayer()
+            {
+                Direction = direction
+            };
+
+            ServerConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
+        public static void SetWeather(WeatherType type, byte numberOfEffects)
+        {
+            var packet = new SetWeather()
+            {
+                Type = type,
+                NumberOfEffects = numberOfEffects,
+                Temperature = 25,
+            };
+
+            ServerConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
+        public static void SetOverallLightLevel(byte level)
+        {
+            var packet = new OverallLightLevel()
+            {
+                Level = level
+            };
+
+            ServerConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
         public static void Main()
         {
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, 33333));
@@ -80,21 +112,26 @@ namespace UltimaRX.Proxy
             }
         }
 
+        private static readonly object serverConnectionLock = new object();
+
         private static void ServerConnectionOnPacketReceived(object sender, Packet packet)
         {
-            using (var memoryStream = new MemoryStream(1024))
+            lock (serverConnectionLock)
             {
-                if (packet.Id == PacketDefinitions.ConnectToGameServer.Id)
+                using (var memoryStream = new MemoryStream(1024))
                 {
-                    var materializedPacket = PacketDefinitionRegistry.Materialize<ConnectToGameServer>(packet);
-                    materializedPacket.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
-                    materializedPacket.GameServerPort = 33333;
-                    packet = materializedPacket.RawPacket;
-                    needServerReconnect = true;
-                }
+                    if (packet.Id == PacketDefinitions.ConnectToGameServer.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<ConnectToGameServer>(packet);
+                        materializedPacket.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
+                        materializedPacket.GameServerPort = 33333;
+                        packet = materializedPacket.RawPacket;
+                        needServerReconnect = true;
+                    }
 
-                clientConnection.Send(packet, memoryStream);
-                ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                    clientConnection.Send(packet, memoryStream);
+                    ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                }
             }
         }
 

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
 using UltimaRX.Packets.Server;
 
@@ -22,13 +23,20 @@ namespace UltimaRX.Proxy
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
 
+        private static readonly object serverConnectionLock = new object();
+
+        private static readonly object serverStreamLock = new object();
+        private static byte currentSequenceNumber;
+        private static int moveRequestsFromProxy;
+        private static Direction lastWalkDirection;
+
         public static NetworkStream ClientStream { get; set; }
 
         public static NetworkStream ServerStream { get; set; }
 
         public static void Say(string message)
         {
-            var packet = new SpeechRequest()
+            var packet = new SpeechRequest
             {
                 Type = SpeechType.Normal,
                 Text = message,
@@ -40,9 +48,23 @@ namespace UltimaRX.Proxy
             ClientConnectionOnPacketReceived(null, packet.RawPacket);
         }
 
+        public static void Walk(Direction direction)
+        {
+            var packet = new MoveRequest()
+            {
+                Direction = direction,
+                SequenceNumber = ++currentSequenceNumber
+            };
+
+            lastWalkDirection = direction;
+            moveRequestsFromProxy++;
+
+            ClientConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
         public static void MovePlayer(Direction direction)
         {
-            var packet = new MovePlayer()
+            var packet = new MovePlayer
             {
                 Direction = direction
             };
@@ -52,11 +74,11 @@ namespace UltimaRX.Proxy
 
         public static void SetWeather(WeatherType type, byte numberOfEffects)
         {
-            var packet = new SetWeather()
+            var packet = new SetWeather
             {
                 Type = type,
                 NumberOfEffects = numberOfEffects,
-                Temperature = 25,
+                Temperature = 25
             };
 
             ServerConnectionOnPacketReceived(null, packet.RawPacket);
@@ -64,7 +86,7 @@ namespace UltimaRX.Proxy
 
         public static void SetOverallLightLevel(byte level)
         {
-            var packet = new OverallLightLevel()
+            var packet = new OverallLightLevel
             {
                 Level = level
             };
@@ -112,8 +134,6 @@ namespace UltimaRX.Proxy
             }
         }
 
-        private static readonly object serverConnectionLock = new object();
-
         private static void ServerConnectionOnPacketReceived(object sender, Packet packet)
         {
             lock (serverConnectionLock)
@@ -128,14 +148,25 @@ namespace UltimaRX.Proxy
                         packet = materializedPacket.RawPacket;
                         needServerReconnect = true;
                     }
+                    else if (packet.Id == PacketDefinitions.CharacterMoveAck.Id)
+                    {
+                        if (moveRequestsFromProxy > 0)
+                        {
+                            var movePlayerPacket = new MovePlayer()
+                            {
+                                Direction = lastWalkDirection
+                            };
+
+                            packet = movePlayerPacket.RawPacket;
+                            moveRequestsFromProxy--;
+                        }
+                    }
 
                     clientConnection.Send(packet, memoryStream);
                     ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
                 }
             }
         }
-
-        private static object serverStreamLock = new object();
 
         private static void ServerLoop()
         {
@@ -202,6 +233,12 @@ namespace UltimaRX.Proxy
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {
+                    if (packet.Id == PacketDefinitions.MoveRequest.Id)
+                    {
+                        var moveRequestPacket = PacketDefinitionRegistry.Materialize<MoveRequest>(packet);
+                        currentSequenceNumber = moveRequestPacket.SequenceNumber;
+                    }
+
                     serverConnection.Send(packet, memoryStream);
                     ServerStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
                 }

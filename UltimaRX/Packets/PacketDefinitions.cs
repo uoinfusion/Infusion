@@ -1,4 +1,6 @@
-﻿using UltimaRX.Packets.Server;
+﻿using UltimaRX.Packets.Both;
+using UltimaRX.Packets.Client;
+using UltimaRX.Packets.Server;
 
 namespace UltimaRX.Packets
 {
@@ -15,8 +17,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition DisconnectNotification = new PacketDefinition(0x01,
             new StaticPacketLength(5), "DisconnectNotification");
 
-        public static readonly PacketDefinition MoveRequest = new PacketDefinition(0x02,
-            new StaticPacketLength(7), "MoveRequest");
+        public static readonly PacketDefinition MoveRequest = new PacketDefinition<MoveRequest>(0x02,
+            new StaticPacketLength(7), "MoveRequest", packet => new MoveRequest());
 
         public static readonly PacketDefinition TalkRequest = new PacketDefinition(0x03,
             new VariablePacketLength(), "TalkRequest");
@@ -458,8 +460,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition Follow = new PacketDefinition(0x15,
             new StaticPacketLength(9), "Follow");
 
-        public static readonly PacketDefinition CharacterMoveAck = new PacketDefinition(0x22,
-            new StaticPacketLength(3), "CharacterMoveAck");
+        public static readonly PacketDefinition CharacterMoveAck = new PacketDefinition<CharacterMoveAck>(0x22,
+            new StaticPacketLength(3), "CharacterMoveAck", packet => new CharacterMoveAck());
 
         public static readonly PacketDefinition ResurrectionMenu = new PacketDefinition(0x2C,
             new StaticPacketLength(2), "ResurrectionMenu");

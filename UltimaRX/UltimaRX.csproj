@@ -70,7 +70,9 @@
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
     <Compile Include="PacketParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
-    <Compile Include="Packets\Client\SpeechType.cs" />
+    <Compile Include="Packets\Both\CharacterMoveAck.cs" />
+    <Compile Include="Packets\Client\MoveRequest.cs" />
+    <Compile Include="Packets\SpeechType.cs" />
     <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />
     <Compile Include="IO\IPacketReader.cs" />

@@ -6,13 +6,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
 using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
 using UltimaRX.Packets.Server;
+using UltimaRX.Proxy.Logging;
 
 namespace UltimaRX.Proxy
 {
-    public class Program
+    public static class Program
     {
         private static TcpListener listener;
         private static ServerConnection serverConnection;
@@ -23,12 +23,14 @@ namespace UltimaRX.Proxy
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
 
-        private static readonly object serverConnectionLock = new object();
+        private static readonly object ServerConnectionLock = new object();
 
-        private static readonly object serverStreamLock = new object();
+        private static readonly object ServerStreamLock = new object();
         private static byte currentSequenceNumber;
         private static int moveRequestsFromProxy;
         private static Direction lastWalkDirection;
+
+        private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(new ConsoleLogger(), 1000);
 
         public static NetworkStream ClientStream { get; set; }
 
@@ -48,9 +50,14 @@ namespace UltimaRX.Proxy
             ClientConnectionOnPacketReceived(null, packet.RawPacket);
         }
 
+        public static void Test()
+        {
+            Say("test");
+        }
+
         public static void Walk(Direction direction)
         {
-            var packet = new MoveRequest()
+            var packet = new MoveRequest
             {
                 Direction = direction,
                 SequenceNumber = ++currentSequenceNumber
@@ -96,23 +103,40 @@ namespace UltimaRX.Proxy
 
         public static void Main()
         {
-            listener = new TcpListener(new IPEndPoint(IPAddress.Any, 33333));
-            listener.Start();
-
-            ClientLoop();
+            Main(33333, new ConsoleLogger());
         }
 
-        private static void ClientLoop()
+        public static Task Start(IPEndPoint serverAddress, int localProxyPort = 33333)
         {
-            serverDiagnosticPushStream = new ConsoleDiagnosticPushStream("proxy -> server");
-            serverDiagnosticPullStream = new ConsoleDiagnosticPullStream("server -> proxy");
+            serverEndpoint = serverAddress;
+            return Task.Run(() => Main(localProxyPort, PacketRingBufferLogger));
+        }
+
+        private static void Main(int port, ILogger logger)
+        {
+            listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
+            listener.Start();
+
+            ClientLoop(logger);
+        }
+
+        public static void DumpCommunication()
+        {
+            PacketRingBufferLogger.Dump();
+        }
+
+        private static void ClientLoop(ILogger packetLogger)
+        {
+            serverDiagnosticPushStream = new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server");
+            serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy");
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
                 serverDiagnosticPushStream);
             serverConnection.PacketReceived += ServerConnectionOnPacketReceived;
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
-                new ConsoleDiagnosticPullStream("client -> proxy"), new ConsoleDiagnosticPushStream("proxy -> client"));
+                new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy"),
+                new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client"));
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
 
             Task.Run(() => ServerLoop());
@@ -136,7 +160,7 @@ namespace UltimaRX.Proxy
 
         private static void ServerConnectionOnPacketReceived(object sender, Packet packet)
         {
-            lock (serverConnectionLock)
+            lock (ServerConnectionLock)
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {
@@ -152,7 +176,7 @@ namespace UltimaRX.Proxy
                     {
                         if (moveRequestsFromProxy > 0)
                         {
-                            var movePlayerPacket = new MovePlayer()
+                            var movePlayerPacket = new MovePlayer
                             {
                                 Direction = lastWalkDirection
                             };
@@ -176,7 +200,7 @@ namespace UltimaRX.Proxy
                 {
                     if (needServerReconnect)
                     {
-                        lock (serverStreamLock)
+                        lock (ServerStreamLock)
                         {
                             DisconnectFromServer();
                             needServerReconnect = false;
@@ -214,13 +238,11 @@ namespace UltimaRX.Proxy
             serverSocket = null;
         }
 
+        private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
+
         private static NetworkStream ConnectToServer()
         {
-            // Erebor:
-            //var serverEndpoint = new IPEndPoint(IPAddress.Parse("89.185.244.24"), 2593);
-
             // localhost:
-            var serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
             serverSocket = new Socket(serverEndpoint.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Connect(serverEndpoint);
 
@@ -229,7 +251,7 @@ namespace UltimaRX.Proxy
 
         private static void ClientConnectionOnPacketReceived(object sender, Packet packet)
         {
-            lock (serverStreamLock)
+            lock (ServerStreamLock)
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {

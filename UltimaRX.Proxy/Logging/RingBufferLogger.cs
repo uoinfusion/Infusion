@@ -26,7 +26,7 @@ namespace UltimaRX.Proxy.Logging
                 }
 
                 ringBufferQueue.Enqueue(message);
-                
+
             }
         }
 
@@ -38,6 +38,14 @@ namespace UltimaRX.Proxy.Logging
                 {
                     dumpLogger.WriteLine(ringBufferQueue.Dequeue());
                 }
+            }
+        }
+
+        public void Clear()
+        {
+            lock (bufferLock)
+            {
+                ringBufferQueue.Clear();
             }
         }
     }

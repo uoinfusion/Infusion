@@ -2,7 +2,7 @@
 
 namespace UltimaRX.Packets.Server
 {
-    public class MovePlayer : MaterializedPacket
+    public class MovePlayerPacket : MaterializedPacket
     {
         public Direction Direction { get; set; }
 

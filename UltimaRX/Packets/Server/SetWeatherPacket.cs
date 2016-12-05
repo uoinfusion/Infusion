@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UltimaRX.Packets.Server
 {
-    public class SetWeather : MaterializedPacket
+    public class SetWeatherPacket : MaterializedPacket
     {
         public WeatherType Type { get; set; }
 

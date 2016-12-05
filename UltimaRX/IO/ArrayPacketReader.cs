@@ -21,15 +21,20 @@ namespace UltimaRX.IO
 
         public ushort ReadUShort()
         {
-            return (ushort) ((array[Position++] << 8) + array[Position++]);
+            var result = ReadUShort(array, Position);
+            Position += 2;
+            return result;
+        }
+
+        internal static ushort ReadUShort(byte[] array, int position)
+        {
+            return (ushort) ((array[position++] << 8) + array[position]);
         }
 
         internal void Read(byte[] buffer, int offset, int count)
         {
             for (var i = 0; i < count; i++)
-            {
                 buffer[offset + i] = ReadByte();
-            }
         }
 
         public short ReadShort()
@@ -46,13 +51,9 @@ namespace UltimaRX.IO
                 charRead = ReadShort();
 
                 if (charRead == 0)
-                {
                     ReadShort();
-                }
                 else
-                {
                     s += (char) charRead;
-                }
             }
             return s;
         }
@@ -63,11 +64,31 @@ namespace UltimaRX.IO
             while (length > 0)
             {
                 var ch = ReadByte();
-                str.Append((char) ch);
+                str.Append(value: (char) ch);
                 length--;
             }
 
             return str.ToString();
+        }
+
+        public static int ReadInt(byte[] array, int position)
+        {
+            return (array[position++] << 24) + (array[position++] << 16) + (array[position++] << 8) + array[position];
+        }
+
+        public uint ReadUInt()
+        {
+            var result = ReadUInt(array, Position);
+
+            Position += 4;
+
+            return result;
+        }
+
+        public static uint ReadUInt(byte[] array, int position)
+        {
+            return (uint) (array[position++] << 24) + (uint) (array[position++] << 16) + (uint) (array[position++] << 8) +
+                   array[position];
         }
     }
 }

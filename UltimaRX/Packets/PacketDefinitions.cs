@@ -210,8 +210,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition HealthBarStatusUpdate = new PacketDefinition(0x17,
             new StaticPacketLength(12), "HealthBarStatusUpdate");
 
-        public static readonly PacketDefinition ObjectInfo = new PacketDefinition(0x1A,
-            new VariablePacketLength(), "ObjectInfo");
+        public static readonly PacketDefinition ObjectInfo = new PacketDefinition<ObjectInfoPacket>(0x1A,
+            new VariablePacketLength(), "ObjectInfo", (packet) => new ObjectInfoPacket());
 
         public static readonly PacketDefinition CharacterLocaleAndBody = new PacketDefinition(0x1B,
             new StaticPacketLength(37), "CharacterLocaleAndBody");
@@ -270,8 +270,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition AttackEnded = new PacketDefinition(0x31,
             new StaticPacketLength(1), "AttackEnded");
 
-        public static readonly PacketDefinition AddMultipleItemsInContainer = new PacketDefinition(0x3C,
-            new VariablePacketLength(), "AddMultipleItemsInContainer");
+        public static readonly PacketDefinition AddMultipleItemsInContainer = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C,
+            new VariablePacketLength(), "AddMultipleItemsInContainer", (packet) => new AddMultipleItemsInContainerPacket());
 
         public static readonly PacketDefinition PauseClient = new PacketDefinition(0x33,
             new StaticPacketLength(2), "PauseClient");
@@ -333,8 +333,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition CorpseClothing = new PacketDefinition(0x89,
             new VariablePacketLength(), "CorpseClothing");
 
-        public static readonly PacketDefinition ConnectToGameServer = new PacketDefinition<ConnectToGameServer>(0x8C,
-            new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServer());
+        public static readonly PacketDefinition ConnectToGameServer = new PacketDefinition<ConnectToGameServerPacket>(0x8C,
+            new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServerPacket());
 
         public static readonly PacketDefinition MapMessage = new PacketDefinition(0x90,
             new StaticPacketLength(19), "MapMessage");

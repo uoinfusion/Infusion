@@ -8,10 +8,10 @@ namespace UltimaRX.Packets.Client
     {
         private Packet rawPacket;
 
-        public override void Deserialize(Packet packet)
+        public override void Deserialize(Packet rawPacket)
         {
-            this.rawPacket = packet;
-            var reader = new ArrayPacketReader(packet.Payload);
+            this.rawPacket = rawPacket;
+            var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.ReadByte();
             reader.ReadUShort();
             Type = (SpeechType)reader.ReadByte();

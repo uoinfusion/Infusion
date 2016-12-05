@@ -2,7 +2,7 @@
 
 namespace UltimaRX.Packets.Server
 {
-    public class ConnectToGameServer : MaterializedPacket
+    public class ConnectToGameServerPacket : MaterializedPacket
     {
         private byte[] payload;
 
@@ -20,7 +20,7 @@ namespace UltimaRX.Packets.Server
                 var writer = new ArrayPacketWriter(modifiedPayload) {Position = 1};
                 writer.Write(GameServerIp, 0, 4);
                 writer.Position = 5;
-                writer.Write(GameServerPort);
+                writer.WriteUShort(GameServerPort);
 
                 payload = modifiedPayload;
                 return new Packet(PacketDefinitions.ConnectToGameServer.Id, payload);

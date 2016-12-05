@@ -3,6 +3,7 @@ using UltimaRX.IO;
 
 namespace UltimaRX.Packets
 {
+    // TODO: move materialization from packet to a materializer so it is possible to implement different protocol versions (two versions of the same packet)
     public class PacketDefinition<TPacket> : PacketDefinition
         where TPacket : MaterializedPacket
     {
@@ -44,7 +45,7 @@ namespace UltimaRX.Packets
             if (rawPacket.Id != Id)
             {
                 throw new InvalidOperationException(
-                    $"Cannot materialize rawPacket because it's id is {rawPacket.Id} but {Id} is expected");
+                    message: $"Cannot materialize rawPacket because it's id is {rawPacket.Id} but {Id} is expected");
             }
 
             var materializedPacket = MaterializeImpl(rawPacket);

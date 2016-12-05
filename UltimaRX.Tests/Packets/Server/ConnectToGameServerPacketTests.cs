@@ -5,12 +5,12 @@ using UltimaRX.Packets.Server;
 namespace UltimaRX.Tests.Packets.Server
 {
     [TestClass]
-    public class ConnectToGameServerTests
+    public class ConnectToGameServerPacketTests
     {
         [TestMethod]
         public void Can_get_GameServerIP()
         {
-            var packet = new ConnectToGameServer();
+            var packet = new ConnectToGameServerPacket();
             packet.Deserialize(FakePackets.ConnectToGameServerPacket);
 
             packet.GameServerIp.Should().BeEquivalentTo(new byte[] {0x7F, 0x00, 0x00, 0x01});
@@ -19,7 +19,7 @@ namespace UltimaRX.Tests.Packets.Server
         [TestMethod]
         public void Can_set_GameServerIp()
         {
-            var packet = new ConnectToGameServer();
+            var packet = new ConnectToGameServerPacket();
             packet.Deserialize(FakePackets.ConnectToGameServerPacket);
             var gameServerIp = new byte[] {0xFF, 0xFE, 0xFD, 0xFC};
 
@@ -32,7 +32,7 @@ namespace UltimaRX.Tests.Packets.Server
         [TestMethod]
         public void Can_get_GameServerPort()
         {
-            var packet = new ConnectToGameServer();
+            var packet = new ConnectToGameServerPacket();
             packet.Deserialize(FakePackets.ConnectToGameServerPacket);
 
             packet.GameServerPort.Should().Be(2593);
@@ -41,7 +41,7 @@ namespace UltimaRX.Tests.Packets.Server
         [TestMethod]
         public void Can_set_GameServerPort()
         {
-            var packet = new ConnectToGameServer();
+            var packet = new ConnectToGameServerPacket();
             packet.Deserialize(FakePackets.ConnectToGameServerPacket);
             packet.GameServerPort = 0xAABB;
 

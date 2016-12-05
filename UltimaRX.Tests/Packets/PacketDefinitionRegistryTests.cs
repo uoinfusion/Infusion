@@ -11,7 +11,7 @@ namespace UltimaRX.Tests.Packets
         [TestMethod]
         public void Can_materialize_packet()
         {
-            var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServer>(FakePackets.ConnectToGameServerPacket);
+            var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(FakePackets.ConnectToGameServerPacket);
 
             packet.Should().NotBeNull();
         }

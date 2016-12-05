@@ -19,11 +19,24 @@ namespace UltimaRX.IO
             Position += count;
         }
 
-        internal void Write(ushort value)
+        internal void WriteUShort(ushort value)
         {
             array[Position++] = (byte)((value >> 8) & 0xFF);
             array[Position++] = (byte) (value & 0xFF);
 
+        }
+
+        public void WriteByte(byte value)
+        {
+            array[Position++] = value;
+        }
+
+        public void WriteInt(int value)
+        {
+            array[Position++] = (byte)((value >> 24) & 0xFF);
+            array[Position++] = (byte)((value >> 16) & 0xFF);
+            array[Position++] = (byte)((value >> 8) & 0xFF);
+            array[Position++] = (byte)(value & 0xFF);
         }
     }
 }

@@ -2,6 +2,8 @@
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
@@ -9,6 +11,11 @@ using UltimaRX.Packets;
 using UltimaRX.Packets.Client;
 using UltimaRX.Packets.Server;
 using UltimaRX.Proxy.Logging;
+
+// TODO: lumberjacking skill increase
+//12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
+//0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
+
 
 namespace UltimaRX.Proxy
 {
@@ -31,6 +38,7 @@ namespace UltimaRX.Proxy
         private static Direction lastWalkDirection;
 
         private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(new ConsoleLogger(), 1000);
+        private static readonly ILogger DetailLogger = new ConsoleLogger();
 
         public static NetworkStream ClientStream { get; set; }
 
@@ -71,7 +79,7 @@ namespace UltimaRX.Proxy
 
         public static void MovePlayer(Direction direction)
         {
-            var packet = new MovePlayer
+            var packet = new MovePlayerPacket
             {
                 Direction = direction
             };
@@ -79,9 +87,33 @@ namespace UltimaRX.Proxy
             ServerConnectionOnPacketReceived(null, packet.RawPacket);
         }
 
+        public static void TargetLocation(Location3D location, ushort tileType)
+        {
+            var targetRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Harmful);
+            ClientConnectionOnPacketReceived(null, targetRequest.RawPacket);
+        }
+
+        public static ItemCollection Items { get; } = new ItemCollection();
+
+        public static void TargetLocation(ushort xloc, ushort yloc, byte zloc, ushort tileType)
+        {
+            TargetLocation(new Location3D(xloc, yloc, zloc), tileType);
+        }
+
+        public static void Use(int objectId)
+        {
+            var packet = new DoubleClickRequest(objectId);
+            ClientConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
+        public static void Use(Item item)
+        {
+            Use(item.Id);
+        }
+
         public static void SetWeather(WeatherType type, byte numberOfEffects)
         {
-            var packet = new SetWeather
+            var packet = new SetWeatherPacket
             {
                 Type = type,
                 NumberOfEffects = numberOfEffects,
@@ -93,7 +125,7 @@ namespace UltimaRX.Proxy
 
         public static void SetOverallLightLevel(byte level)
         {
-            var packet = new OverallLightLevel
+            var packet = new OverallLightLevelPacket
             {
                 Level = level
             };
@@ -120,9 +152,14 @@ namespace UltimaRX.Proxy
             ClientLoop(logger);
         }
 
-        public static void DumpCommunication()
+        public static void DumpPacketLog()
         {
             PacketRingBufferLogger.Dump();
+        }
+
+        public static void ClearPacketLog()
+        {
+            PacketRingBufferLogger.Clear();
         }
 
         private static void ClientLoop(ILogger packetLogger)
@@ -166,17 +203,35 @@ namespace UltimaRX.Proxy
                 {
                     if (packet.Id == PacketDefinitions.ConnectToGameServer.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<ConnectToGameServer>(packet);
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(packet);
                         materializedPacket.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
                         materializedPacket.GameServerPort = 33333;
                         packet = materializedPacket.RawPacket;
                         needServerReconnect = true;
                     }
+                    else if (packet.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<AddMultipleItemsInContainerPacket>(packet);
+                        Items.AddItemRange(materializedPacket.Items);
+                        foreach (var item in materializedPacket.Items)
+                        {
+                            DetailLogger.WriteLine($"AddMultipleItemsInContainer ({item.ContainerId:X8}): {item}");
+                        }
+                    }
+                    else if (packet.Id == PacketDefinitions.ObjectInfo.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<ObjectInfoPacket>(packet);
+                        var item = new Item(materializedPacket.Id, materializedPacket.Type, materializedPacket.Amount,
+                            materializedPacket.Location);
+                        Items.AddItem(item);
+
+                        DetailLogger.WriteLine($"ObjectInfo: {item}");
+                    }
                     else if (packet.Id == PacketDefinitions.CharacterMoveAck.Id)
                     {
                         if (moveRequestsFromProxy > 0)
                         {
-                            var movePlayerPacket = new MovePlayer
+                            var movePlayerPacket = new MovePlayerPacket
                             {
                                 Direction = lastWalkDirection
                             };

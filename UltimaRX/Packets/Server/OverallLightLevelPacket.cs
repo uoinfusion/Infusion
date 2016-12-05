@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UltimaRX.Packets.Server
 {
-    public class OverallLightLevel : MaterializedPacket
+    public class OverallLightLevelPacket : MaterializedPacket
     {
         public override void Deserialize(Packet rawPacket)
         {

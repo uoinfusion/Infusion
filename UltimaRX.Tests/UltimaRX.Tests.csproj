@@ -69,6 +69,7 @@
     <Compile Include="Packets\PacketDefinitionRegistryTests.cs" />
     <Compile Include="Packets\Server\AddMultipleItemsInContainerPacketTests.cs" />
     <Compile Include="Packets\Server\ConnectToGameServerPacketTests.cs" />
+    <Compile Include="Packets\Server\DrawObjectPacketTests.cs" />
     <Compile Include="Packets\Server\ObjectInfoPacketTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnectionTests.cs" />

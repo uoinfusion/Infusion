@@ -38,7 +38,6 @@ namespace UltimaRX.Proxy
         private static Direction lastWalkDirection;
 
         private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(new ConsoleLogger(), 1000);
-        private static readonly ILogger DetailLogger = new ConsoleLogger();
 
         public static NetworkStream ClientStream { get; set; }
 
@@ -213,10 +212,11 @@ namespace UltimaRX.Proxy
                     {
                         var materializedPacket = PacketDefinitionRegistry.Materialize<AddMultipleItemsInContainerPacket>(packet);
                         Items.AddItemRange(materializedPacket.Items);
-                        foreach (var item in materializedPacket.Items)
-                        {
-                            DetailLogger.WriteLine($"AddMultipleItemsInContainer ({item.ContainerId:X8}): {item}");
-                        }
+                    }
+                    else if (packet.Id == PacketDefinitions.DeleteObject.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<DeleteObjectPacket>(packet);
+                        Items.RemoveItem(materializedPacket.Id);
                     }
                     else if (packet.Id == PacketDefinitions.ObjectInfo.Id)
                     {
@@ -224,8 +224,13 @@ namespace UltimaRX.Proxy
                         var item = new Item(materializedPacket.Id, materializedPacket.Type, materializedPacket.Amount,
                             materializedPacket.Location);
                         Items.AddItem(item);
-
-                        DetailLogger.WriteLine($"ObjectInfo: {item}");
+                    }
+                    else if (packet.Id == PacketDefinitions.DrawObject.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<DrawObjectPacket>(packet);
+                        Items.AddItemRange(materializedPacket.Items);
+                        Items.AddItem(new Item(materializedPacket.Id, materializedPacket.Type, 1,
+                            materializedPacket.Location, materializedPacket.Color));
                     }
                     else if (packet.Id == PacketDefinitions.CharacterMoveAck.Id)
                     {

@@ -219,8 +219,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition SendSpeech = new PacketDefinition(0x1C,
             new VariablePacketLength(), "SendSpeech");
 
-        public static readonly PacketDefinition DeleteObject = new PacketDefinition(0x1D,
-            new StaticPacketLength(5), "DeleteObject");
+        public static readonly PacketDefinition DeleteObject = new PacketDefinition<DeleteObjectPacket>(0x1D,
+            new StaticPacketLength(5), "DeleteObject", (packet) => new DeleteObjectPacket());
 
         public static readonly PacketDefinition Explosion = new PacketDefinition(0x1F,
             new StaticPacketLength(8), "Explosion");
@@ -315,8 +315,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition UpdatePlayer = new PacketDefinition(0x77,
             new StaticPacketLength(17), "UpdatePlayer");
 
-        public static readonly PacketDefinition DrawObject = new PacketDefinition(0x78,
-            new VariablePacketLength(), "DrawObject");
+        public static readonly PacketDefinition DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
+            new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket());
 
         public static readonly PacketDefinition OpenDialogBox = new PacketDefinition(0x7C,
             new VariablePacketLength(), "OpenDialogBox");

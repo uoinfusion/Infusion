@@ -515,7 +515,6 @@ namespace UltimaRX.IO
             var srcPos = offset;
             var bitNum = 8;
             byte dest = 0;
-            var flushed = false;
 
             while (srcPos <= count)
             {

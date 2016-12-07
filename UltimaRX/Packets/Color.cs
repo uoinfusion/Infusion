@@ -7,7 +7,7 @@
             Id = id;
         }
 
-        public static implicit operator Color(ushort id)
+        public static explicit operator Color(ushort id)
         {
             return new Color(id);
         }

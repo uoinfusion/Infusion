@@ -2,7 +2,7 @@
 
 namespace UltimaRX.IO
 {
-    internal class ArrayPacketReader : IPacketReader
+    public class ArrayPacketReader : IPacketReader
     {
         private readonly byte[] array;
 
@@ -79,6 +79,15 @@ namespace UltimaRX.IO
         public uint ReadUInt()
         {
             var result = ReadUInt(array, Position);
+
+            Position += 4;
+
+            return result;
+        }
+
+        public int ReadInt()
+        {
+            var result = ReadInt(array, Position);
 
             Position += 4;
 

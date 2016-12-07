@@ -478,8 +478,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition BooksPages = new PacketDefinition(0x66,
             new VariablePacketLength(), "BooksPages");
 
-        public static readonly PacketDefinition TargetCursor = new PacketDefinition(0x6C,
-            new StaticPacketLength(19), "TargetCursor");
+        public static readonly PacketDefinition TargetCursor = new PacketDefinition<TargetCursorPacket>(0x6C,
+            new StaticPacketLength(19), "TargetCursor", (packet) => new TargetCursorPacket());
 
         public static readonly PacketDefinition SecureTraiding = new PacketDefinition(0x6F,
             new VariablePacketLength(), "SecureTraiding");

@@ -38,5 +38,13 @@ namespace UltimaRX.IO
             array[Position++] = (byte)((value >> 8) & 0xFF);
             array[Position++] = (byte)(value & 0xFF);
         }
+
+        public void WriteUInt(uint value)
+        {
+            array[Position++] = (byte)((value >> 24) & 0xFF);
+            array[Position++] = (byte)((value >> 16) & 0xFF);
+            array[Position++] = (byte)((value >> 8) & 0xFF);
+            array[Position++] = (byte)(value & 0xFF);
+        }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
 using UltimaRX.Packets.Server;
 using UltimaRX.Proxy.Logging;
@@ -37,7 +38,9 @@ namespace UltimaRX.Proxy
         private static int moveRequestsFromProxy;
         private static Direction lastWalkDirection;
 
-        private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(new ConsoleLogger(), 1000);
+        private static readonly ILogger Console = new ConsoleLogger();
+
+        private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(Console, 1000);
 
         public static NetworkStream ClientStream { get; set; }
 
@@ -161,6 +164,12 @@ namespace UltimaRX.Proxy
             PacketRingBufferLogger.Clear();
         }
 
+        public static void TargetInfo()
+        {
+            var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
+            ServerConnectionOnPacketReceived(null, packet.RawPacket);
+        }
+
         private static void ClientLoop(ILogger packetLogger)
         {
             serverDiagnosticPushStream = new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server");
@@ -282,10 +291,10 @@ namespace UltimaRX.Proxy
             }
             catch (Exception ex)
             {
-                Console.WriteLine(serverDiagnosticPullStream.Flush());
-                Console.WriteLine();
-                Console.WriteLine(ex);
-                Console.WriteLine();
+                System.Console.WriteLine(serverDiagnosticPullStream.Flush());
+                System.Console.WriteLine();
+                System.Console.WriteLine(ex);
+                System.Console.WriteLine();
                 throw;
             }
         }
@@ -319,6 +328,23 @@ namespace UltimaRX.Proxy
                     {
                         var moveRequestPacket = PacketDefinitionRegistry.Materialize<MoveRequest>(packet);
                         currentSequenceNumber = moveRequestPacket.SequenceNumber;
+                    }
+                    else if (packet.Id == PacketDefinitions.TargetCursor.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(packet);
+                        if (materializedPacket.CursorId == 0xDEADBEEF)
+                        {
+                            switch (materializedPacket.CursorTarget)
+                            {
+                                case CursorTarget.Location:
+                                    Console.WriteLine($"{materializedPacket.ClickedOnType} {materializedPacket.Location.X} {materializedPacket.Location.Y} {materializedPacket.Location.Z}");
+                                    break;
+                                case CursorTarget.Object:
+                                    Console.WriteLine($"{materializedPacket.ClickedOnType:X4} {materializedPacket.ClickedOnId:X8}");
+                                    break;
+                            }
+                            return;
+                        }
                     }
 
                     serverConnection.Send(packet, memoryStream);

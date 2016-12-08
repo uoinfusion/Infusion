@@ -10,14 +10,14 @@ namespace UltimaRX.Packets.Client
 {
     public class TargetLocationRequest
     {
-        public TargetLocationRequest(int cursorId, Location3D location, ushort tileType, CursorType cursorType)
+        public TargetLocationRequest(uint cursorId, Location3D location, ushort tileType, CursorType cursorType)
         {
             byte[] payload = new byte[19];
             var writer = new ArrayPacketWriter(payload);
 
             writer.WriteByte((byte)PacketDefinitions.TargetCursor.Id);
             writer.WriteByte((byte)CursorTarget.Location);
-            writer.WriteInt(cursorId);
+            writer.WriteUInt(cursorId);
             writer.WriteByte((byte)cursorType); 
             writer.WriteInt(0); // clicked on item = 0 (using location click)
             writer.WriteUShort(location.X);

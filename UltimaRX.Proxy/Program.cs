@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.IO;
@@ -16,7 +15,6 @@ using UltimaRX.Proxy.Logging;
 // TODO: lumberjacking skill increase
 //12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
 //0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
-
 
 namespace UltimaRX.Proxy
 {
@@ -39,12 +37,21 @@ namespace UltimaRX.Proxy
         private static Direction lastWalkDirection;
 
         private static readonly ILogger Console = new ConsoleLogger();
+        private static ILogger Diagnostic = NullLogger.Instance;
 
         private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(Console, 1000);
+
+        private static bool discardNextTargetLocationRequestIfEmpty;
+
+        private static readonly AutoResetEvent TargetFromServerReceivedEvent = new AutoResetEvent(false);
+
+        private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
         public static NetworkStream ClientStream { get; set; }
 
         public static NetworkStream ServerStream { get; set; }
+
+        public static ItemCollection Items { get; } = new ItemCollection();
 
         public static void Say(string message)
         {
@@ -89,17 +96,52 @@ namespace UltimaRX.Proxy
             ServerConnectionOnPacketReceived(null, packet.RawPacket);
         }
 
-        public static void TargetLocation(Location3D location, ushort tileType)
+        public static void TargetTile(Location3D location, ushort tileType)
         {
+            WaitForTarget();
+            Diagnostic.WriteLine("TargetTile");
             var targetRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Harmful);
             ClientConnectionOnPacketReceived(null, targetRequest.RawPacket);
+
+            Diagnostic.WriteLine(
+                "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
+            var cancelRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Cancel);
+            discardNextTargetLocationRequestIfEmpty = true;
+            ServerConnectionOnPacketReceived(null, cancelRequest.RawPacket);
         }
 
-        public static ItemCollection Items { get; } = new ItemCollection();
-
-        public static void TargetLocation(ushort xloc, ushort yloc, byte zloc, ushort tileType)
+        public static void TargetTile(string tileInfo)
         {
-            TargetLocation(new Location3D(xloc, yloc, zloc), tileType);
+            string errorMessage =
+                $"Invalid tile info: '{tileInfo}'. Expecting <type> <xloc> <yloc> <zloc>. All numbers has to be decimal. Example: 3295 982 1007 0";
+            var parts = tileInfo.Split(' ');
+            if (parts.Length != 4)
+            {
+                throw new InvalidOperationException(errorMessage);
+            }
+
+            ushort type;
+            if (!ushort.TryParse(parts[0], out type))
+                throw new InvalidOperationException(errorMessage);
+
+            ushort xloc;
+            if (!ushort.TryParse(parts[1], out xloc))
+                throw new InvalidOperationException(errorMessage);
+
+            ushort yloc;
+            if (!ushort.TryParse(parts[2], out yloc))
+                throw new InvalidOperationException(errorMessage);
+
+            byte zloc;
+            if (!byte.TryParse(parts[3], out zloc))
+                throw new InvalidOperationException(errorMessage);
+
+            TargetTile(xloc, yloc, zloc, type);
+        }
+
+        public static void TargetTile(ushort xloc, ushort yloc, byte zloc, ushort tileType)
+        {
+            TargetTile(new Location3D(xloc, yloc, zloc), tileType);
         }
 
         public static void Use(int objectId)
@@ -111,6 +153,28 @@ namespace UltimaRX.Proxy
         public static void Use(Item item)
         {
             Use(item.Id);
+        }
+
+        public static void UseType(ushort type)
+        {
+            var item = Items.FindType(type);
+            if (item != null)
+                Use(item);
+            else
+                Console.WriteLine($"Item of type {type:X4} not found.");
+        }
+
+        public static void UseType(params ushort[] types)
+        {
+            var item = Items.FindType(types);
+            if (item != null)
+                Use(item);
+            else
+            {
+                string typesString = types.Select(u => u.ToString("X4")).Aggregate((l, r) => l + ", " + r);
+
+                Console.WriteLine($"Item of any type {typesString} not found.");
+            }
         }
 
         public static void SetWeather(WeatherType type, byte numberOfEffects)
@@ -164,7 +228,7 @@ namespace UltimaRX.Proxy
             PacketRingBufferLogger.Clear();
         }
 
-        public static void TargetInfo()
+        public static void Info()
         {
             var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
             ServerConnectionOnPacketReceived(null, packet.RawPacket);
@@ -203,6 +267,24 @@ namespace UltimaRX.Proxy
             }
         }
 
+        public static void TurnOnDiagnostic()
+        {
+            Diagnostic = new DiagnosticLogger(Console);
+        }
+
+        public static void TurnOffDiagnostic()
+        {
+            Diagnostic = NullLogger.Instance;
+        }
+
+        private static void WaitForTarget()
+        {
+            Diagnostic.WriteLine("WaitForTarget");
+            TargetFromServerReceivedEvent.Reset();
+            TargetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(10));
+            Diagnostic.WriteLine("WaitForTarget - done");
+        }
+
         private static void ServerConnectionOnPacketReceived(object sender, Packet packet)
         {
             lock (ServerConnectionLock)
@@ -219,7 +301,8 @@ namespace UltimaRX.Proxy
                     }
                     else if (packet.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<AddMultipleItemsInContainerPacket>(packet);
+                        var materializedPacket =
+                            PacketDefinitionRegistry.Materialize<AddMultipleItemsInContainerPacket>(packet);
                         Items.AddItemRange(materializedPacket.Items);
                     }
                     else if (packet.Id == PacketDefinitions.DeleteObject.Id)
@@ -240,6 +323,11 @@ namespace UltimaRX.Proxy
                         Items.AddItemRange(materializedPacket.Items);
                         Items.AddItem(new Item(materializedPacket.Id, materializedPacket.Type, 1,
                             materializedPacket.Location, materializedPacket.Color));
+                    }
+                    else if (packet.Id == PacketDefinitions.TargetCursor.Id)
+                    {
+                        Diagnostic.WriteLine("TargetCursorPacket received from server");
+                        TargetFromServerReceivedEvent.Set();
                     }
                     else if (packet.Id == PacketDefinitions.CharacterMoveAck.Id)
                     {
@@ -307,8 +395,6 @@ namespace UltimaRX.Proxy
             serverSocket = null;
         }
 
-        private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
-
         private static NetworkStream ConnectToServer()
         {
             // localhost:
@@ -332,15 +418,29 @@ namespace UltimaRX.Proxy
                     else if (packet.Id == PacketDefinitions.TargetCursor.Id)
                     {
                         var materializedPacket = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(packet);
+                        if (discardNextTargetLocationRequestIfEmpty)
+                        {
+                            discardNextTargetLocationRequestIfEmpty = false;
+                            if (materializedPacket.Location.X == 0xFFFF && materializedPacket.Location.Y == 0xFFFF &&
+                                materializedPacket.ClickedOnId == 0)
+                            {
+                                Diagnostic.WriteLine("discarding empty TargetCursorPacket sent from client");
+                                return;
+                            }
+                            Diagnostic.WriteLine("non empty TargetCursorPacket sent from client - discarding cancelled");
+                        }
+
                         if (materializedPacket.CursorId == 0xDEADBEEF)
                         {
                             switch (materializedPacket.CursorTarget)
                             {
                                 case CursorTarget.Location:
-                                    Console.WriteLine($"{materializedPacket.ClickedOnType} {materializedPacket.Location.X} {materializedPacket.Location.Y} {materializedPacket.Location.Z}");
+                                    Console.WriteLine(
+                                        $"{materializedPacket.ClickedOnType} {materializedPacket.Location.X} {materializedPacket.Location.Y} {materializedPacket.Location.Z}");
                                     break;
                                 case CursorTarget.Object:
-                                    Console.WriteLine($"{materializedPacket.ClickedOnType:X4} {materializedPacket.ClickedOnId:X8}");
+                                    Console.WriteLine(
+                                        $"{materializedPacket.ClickedOnType:X4} {materializedPacket.ClickedOnId:X8}");
                                     break;
                             }
                             return;

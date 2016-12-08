@@ -52,7 +52,9 @@
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPullStream.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
+    <Compile Include="Logging\DiagnosticLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Logging\RingBufferLogger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

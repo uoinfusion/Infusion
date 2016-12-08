@@ -49,6 +49,7 @@
   <ItemGroup>
     <None Include="item_types.csx" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Include="scripts.csx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="constants.csx" />

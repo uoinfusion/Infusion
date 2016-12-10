@@ -68,7 +68,7 @@ namespace UltimaRX.IO
                 length--;
             }
 
-            return str.ToString();
+            return str.ToString().TrimEnd('\0');
         }
 
         public static int ReadInt(byte[] array, int position)
@@ -98,6 +98,18 @@ namespace UltimaRX.IO
         {
             return (uint) (array[position++] << 24) + (uint) (array[position++] << 16) + (uint) (array[position++] << 8) +
                    array[position];
+        }
+
+        public string ReadNullTerminatedString()
+        {
+            var builder = new StringBuilder();
+            byte charRead = ReadByte();
+            while (charRead != 0)
+            {
+                builder.Append((char)charRead);
+                charRead = ReadByte();
+            }
+            return builder.ToString();
         }
     }
 }

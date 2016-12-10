@@ -72,6 +72,8 @@
     <Compile Include="Packets\Server\ConnectToGameServerPacketTests.cs" />
     <Compile Include="Packets\Server\DrawObjectPacketTests.cs" />
     <Compile Include="Packets\Server\ObjectInfoPacketTests.cs" />
+    <Compile Include="Packets\Server\SendSpeechPacketTests.cs" />
+    <Compile Include="Packets\Server\SpeechMessagePacketTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnectionTests.cs" />
     <Compile Include="TestMemoryStream.cs" />

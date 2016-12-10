@@ -216,8 +216,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition CharacterLocaleAndBody = new PacketDefinition(0x1B,
             new StaticPacketLength(37), "CharacterLocaleAndBody");
 
-        public static readonly PacketDefinition SendSpeech = new PacketDefinition(0x1C,
-            new VariablePacketLength(), "SendSpeech");
+        public static readonly PacketDefinition SendSpeech = new PacketDefinition<SendSpeechPacket>(0x1C,
+            new VariablePacketLength(), "SendSpeech", packet => new SendSpeechPacket());
 
         public static readonly PacketDefinition DeleteObject = new PacketDefinition<DeleteObjectPacket>(0x1D,
             new StaticPacketLength(5), "DeleteObject", (packet) => new DeleteObjectPacket());
@@ -375,8 +375,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition GumpTextEntryDialog = new PacketDefinition(0xAB,
             new VariablePacketLength(), "GumpTextEntryDialog");
 
-        public static readonly PacketDefinition SpeechMessage = new PacketDefinition(0xAE,
-            new VariablePacketLength(), "SpeechMessage");
+        public static readonly PacketDefinition SpeechMessage = new PacketDefinition<SpeechMessagePacket>(0xAE,
+            new VariablePacketLength(), "SpeechMessage", packet => new SpeechMessagePacket());
 
         public static readonly PacketDefinition DisplayDeathAction = new PacketDefinition(0xAF,
             new StaticPacketLength(13), "DisplayDeathAction");

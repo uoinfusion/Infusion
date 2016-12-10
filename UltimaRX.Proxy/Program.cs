@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -342,6 +344,31 @@ namespace UltimaRX.Proxy
                             moveRequestsFromProxy--;
                         }
                     }
+                    else if (packet.Id == PacketDefinitions.SpeechMessage.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<SpeechMessagePacket>(packet);
+                        string name = string.IsNullOrEmpty(materializedPacket.Name) ? string.Empty : $"{materializedPacket.Name}: ";
+                        string message = name + materializedPacket.Message;
+                        Console.WriteLine(message);
+                        journal = journal.Add(message);
+
+                        if (awaitingWords.Any(w => materializedPacket.Message.Contains(w)))
+                        {
+                            ReceivedAwaitedWordsEvent.Set();
+                        }
+                    }
+                    else if (packet.Id == PacketDefinitions.SendSpeech.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<SendSpeechPacket>(packet);
+                        string name = string.IsNullOrEmpty(materializedPacket.Name) ? string.Empty : $"{materializedPacket.Name}: ";
+                        string message = name + materializedPacket.Message;
+                        Console.WriteLine(message);
+                        journal = journal.Add(message);
+                        if (awaitingWords.Any(w => materializedPacket.Message.Contains(w)))
+                        {
+                            ReceivedAwaitedWordsEvent.Set();
+                        }
+                    }
 
                     clientConnection.Send(packet, memoryStream);
                     ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
@@ -451,6 +478,34 @@ namespace UltimaRX.Proxy
                     ServerStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
                 }
             }
+        }
+
+        private static readonly AutoResetEvent ReceivedAwaitedWordsEvent = new AutoResetEvent(false);
+        private static string[] awaitingWords = {};
+
+        public static void WaitForJournal(params string[] words)
+        {
+            awaitingWords = words;
+
+            ReceivedAwaitedWordsEvent.Reset();
+            ReceivedAwaitedWordsEvent.WaitOne();
+
+            awaitingWords = new string[] {};
+        }
+
+        private static ImmutableList<string> journal = ImmutableList<string>.Empty;
+        public static IEnumerable<string> Journal => journal;
+
+        public static bool InJournal(params string[] words) => journal.Any(line => words.Any(w => line.Contains(w)));
+
+        public static void DeleteJournal()
+        {
+            journal = ImmutableList<string>.Empty;
+        }
+
+        public static void Wait(int milliseconds)
+        {
+            Thread.Sleep(1000);
         }
     }
 }

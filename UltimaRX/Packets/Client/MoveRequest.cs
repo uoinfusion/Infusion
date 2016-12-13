@@ -9,12 +9,12 @@ namespace UltimaRX.Packets.Client
     public class MoveRequest : MaterializedPacket
     {
         public Direction Direction { get; set; }
-        public byte SequenceNumber { get; set; }
+        public byte SequenceKey { get; set; }
 
         public override void Deserialize(Packet rawPacket)
         {
             Direction = (Direction)rawPacket.Payload[1];
-            SequenceNumber = rawPacket.Payload[2];
+            SequenceKey = rawPacket.Payload[2];
         }
 
         public override Packet RawPacket
@@ -25,7 +25,7 @@ namespace UltimaRX.Packets.Client
 
                 payload[0] = (byte)PacketDefinitions.MoveRequest.Id;
                 payload[1] = (byte) Direction;
-                payload[2] = SequenceNumber;
+                payload[2] = SequenceKey;
                 payload[3] = 0;
                 payload[4] = 0;
                 payload[5] = 0;

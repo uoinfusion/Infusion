@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace UltimaRX.Packets.Both
 {
-    public class CharacterMoveAck : MaterializedPacket
+    public class CharacterMoveAckPacket : MaterializedPacket
     {
         public byte MovementSequenceKey { get; set; }
         public byte NotorietyFlag { get; set; }

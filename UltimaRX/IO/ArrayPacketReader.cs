@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace UltimaRX.IO
 {
@@ -12,6 +13,7 @@ namespace UltimaRX.IO
             Position = Position;
         }
 
+        [Obsolete("Use Skip instead of setter.")]
         public int Position { get; set; }
 
         public byte ReadByte()
@@ -110,6 +112,11 @@ namespace UltimaRX.IO
                 charRead = ReadByte();
             }
             return builder.ToString();
+        }
+
+        public void Skip(int numberOfBytes)
+        {
+            Position += numberOfBytes;
         }
     }
 }

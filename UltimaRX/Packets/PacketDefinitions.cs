@@ -213,8 +213,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition ObjectInfo = new PacketDefinition<ObjectInfoPacket>(0x1A,
             new VariablePacketLength(), "ObjectInfo", (packet) => new ObjectInfoPacket());
 
-        public static readonly PacketDefinition CharacterLocaleAndBody = new PacketDefinition(0x1B,
-            new StaticPacketLength(37), "CharacterLocaleAndBody");
+        public static readonly PacketDefinition CharacterLocaleAndBody = new PacketDefinition<CharLocaleAndBodyPacket>(0x1B,
+            new StaticPacketLength(37), "CharacterLocaleAndBody", packet => new CharLocaleAndBodyPacket());
 
         public static readonly PacketDefinition SendSpeech = new PacketDefinition<SendSpeechPacket>(0x1C,
             new VariablePacketLength(), "SendSpeech", packet => new SendSpeechPacket());
@@ -225,8 +225,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition Explosion = new PacketDefinition(0x1F,
             new StaticPacketLength(8), "Explosion");
 
-        public static readonly PacketDefinition DrawGamePlayer = new PacketDefinition(0x20,
-            new StaticPacketLength(19), "DrawGamePlayer");
+        public static readonly PacketDefinition DrawGamePlayer = new PacketDefinition<DrawGamePlayerPacket>(0x20,
+            new StaticPacketLength(19), "DrawGamePlayer", packet => new DrawGamePlayerPacket());
 
         public static readonly PacketDefinition CharMoveRejection = new PacketDefinition(0x21,
             new StaticPacketLength(8), "CharMoveRejection");
@@ -460,8 +460,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition Follow = new PacketDefinition(0x15,
             new StaticPacketLength(9), "Follow");
 
-        public static readonly PacketDefinition CharacterMoveAck = new PacketDefinition<CharacterMoveAck>(0x22,
-            new StaticPacketLength(3), "CharacterMoveAck", packet => new CharacterMoveAck());
+        public static readonly PacketDefinition CharacterMoveAck = new PacketDefinition<CharacterMoveAckPacket>(0x22,
+            new StaticPacketLength(3), "CharacterMoveAck", packet => new CharacterMoveAckPacket());
 
         public static readonly PacketDefinition ResurrectionMenu = new PacketDefinition(0x2C,
             new StaticPacketLength(2), "ResurrectionMenu");

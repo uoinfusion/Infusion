@@ -71,7 +71,7 @@
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
     <Compile Include="PacketParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
-    <Compile Include="Packets\Both\CharacterMoveAck.cs" />
+    <Compile Include="Packets\Both\CharacterMoveAckPacket.cs" />
     <Compile Include="Packets\Client\DoubleClickRequest.cs" />
     <Compile Include="Packets\Client\MoveRequest.cs" />
     <Compile Include="Packets\Client\TargetLocationRequest.cs" />
@@ -83,7 +83,9 @@
     <Compile Include="Packets\Location2D.cs" />
     <Compile Include="Packets\Location3D.cs" />
     <Compile Include="Packets\ObjectFlag.cs" />
+    <Compile Include="Packets\Server\CharLocaleAndBodyPacket.cs" />
     <Compile Include="Packets\Server\DeleteObjectPacket.cs" />
+    <Compile Include="Packets\Server\DrawGamePlayerPacket.cs" />
     <Compile Include="Packets\Server\DrawObjectPacket.cs" />
     <Compile Include="Packets\Server\ObjectInfoPacket.cs" />
     <Compile Include="Packets\PacketParsingException.cs" />

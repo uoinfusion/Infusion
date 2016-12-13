@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -35,8 +36,6 @@ namespace UltimaRX.Proxy
 
         private static readonly object ServerStreamLock = new object();
         private static byte currentSequenceNumber;
-        private static int moveRequestsFromProxy;
-        private static Direction lastWalkDirection;
 
         private static readonly ILogger Console = new ConsoleLogger();
         private static ILogger Diagnostic = NullLogger.Instance;
@@ -79,11 +78,14 @@ namespace UltimaRX.Proxy
             var packet = new MoveRequest
             {
                 Direction = direction,
-                SequenceNumber = ++currentSequenceNumber
+                SequenceKey = ++currentSequenceNumber
             };
 
-            lastWalkDirection = direction;
-            moveRequestsFromProxy++;
+            WalkRequestQueue.Enqueue(new WalkRequest()
+            {
+                Direction = direction,
+                SequenceKey = packet.SequenceKey,
+            });
 
             ClientConnectionOnPacketReceived(null, packet.RawPacket);
         }
@@ -287,94 +289,144 @@ namespace UltimaRX.Proxy
             Diagnostic.WriteLine("WaitForTarget - done");
         }
 
-        private static void ServerConnectionOnPacketReceived(object sender, Packet packet)
+        private struct WalkRequest
+        {
+            public byte SequenceKey { get; set; }
+            public Direction Direction { get; set; }
+            public bool IssuedByProxy { get; set; }
+        }
+
+        private static void ServerConnectionOnPacketReceived(object sender, Packet rawPacket)
         {
             lock (ServerConnectionLock)
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {
-                    if (packet.Id == PacketDefinitions.ConnectToGameServer.Id)
+                    if (rawPacket.Id == PacketDefinitions.ConnectToGameServer.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(packet);
-                        materializedPacket.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
-                        materializedPacket.GameServerPort = 33333;
-                        packet = materializedPacket.RawPacket;
+                        var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
+                        packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
+                        packet.GameServerPort = 33333;
+                        rawPacket = packet.RawPacket;
                         needServerReconnect = true;
                     }
-                    else if (packet.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
+                    else if (rawPacket.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
                     {
-                        var materializedPacket =
-                            PacketDefinitionRegistry.Materialize<AddMultipleItemsInContainerPacket>(packet);
-                        Items.AddItemRange(materializedPacket.Items);
+                        var packet =
+                            PacketDefinitionRegistry.Materialize<AddMultipleItemsInContainerPacket>(rawPacket);
+                        Items.AddItemRange(packet.Items);
                     }
-                    else if (packet.Id == PacketDefinitions.DeleteObject.Id)
+                    else if (rawPacket.Id == PacketDefinitions.DeleteObject.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<DeleteObjectPacket>(packet);
-                        Items.RemoveItem(materializedPacket.Id);
+                        var packet = PacketDefinitionRegistry.Materialize<DeleteObjectPacket>(rawPacket);
+                        Items.RemoveItem(packet.Id);
                     }
-                    else if (packet.Id == PacketDefinitions.ObjectInfo.Id)
+                    else if (rawPacket.Id == PacketDefinitions.ObjectInfo.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<ObjectInfoPacket>(packet);
-                        var item = new Item(materializedPacket.Id, materializedPacket.Type, materializedPacket.Amount,
-                            materializedPacket.Location);
+                        var packet = PacketDefinitionRegistry.Materialize<ObjectInfoPacket>(rawPacket);
+                        var item = new Item(packet.Id, packet.Type, packet.Amount,
+                            packet.Location);
                         Items.AddItem(item);
                     }
-                    else if (packet.Id == PacketDefinitions.DrawObject.Id)
+                    else if (rawPacket.Id == PacketDefinitions.DrawObject.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<DrawObjectPacket>(packet);
-                        Items.AddItemRange(materializedPacket.Items);
-                        Items.AddItem(new Item(materializedPacket.Id, materializedPacket.Type, 1,
-                            materializedPacket.Location, materializedPacket.Color));
+                        var packet = PacketDefinitionRegistry.Materialize<DrawObjectPacket>(rawPacket);
+                        Items.AddItemRange(packet.Items);
+                        Items.AddItem(new Item(packet.Id, packet.Type, 1,
+                            packet.Location, packet.Color));
                     }
-                    else if (packet.Id == PacketDefinitions.TargetCursor.Id)
+                    else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
                     {
                         Diagnostic.WriteLine("TargetCursorPacket received from server");
                         TargetFromServerReceivedEvent.Set();
                     }
-                    else if (packet.Id == PacketDefinitions.CharacterMoveAck.Id)
+                    else if (rawPacket.Id == PacketDefinitions.CharacterMoveAck.Id)
                     {
-                        if (moveRequestsFromProxy > 0)
+                        WalkRequest walkRequest;
+                        if (WalkRequestQueue.TryDequeue(out walkRequest))
                         {
-                            var movePlayerPacket = new MovePlayerPacket
+                            Diagnostic.WriteLine($"WalkRequest dequeued, queue length: {WalkRequestQueue.Count}");
+
+                            if (walkRequest.IssuedByProxy)
                             {
-                                Direction = lastWalkDirection
-                            };
+                                Diagnostic.WriteLine("WalkRequest issued by proxy, sending MovePlayerPacket to client");
+                                var movePlayerPacket = new MovePlayerPacket
+                                {
+                                    Direction = walkRequest.Direction
+                                };
 
-                            packet = movePlayerPacket.RawPacket;
-                            moveRequestsFromProxy--;
+                                rawPacket = movePlayerPacket.RawPacket;
+                            }
+
+                            if (Me.Direction != walkRequest.Direction)
+                            {
+                                Diagnostic.WriteLine($"Old direction: {Me.Direction}, new direction: {walkRequest.Direction} - no position change");
+                                Me.Direction = walkRequest.Direction;
+                            }
+                            else
+                            {
+                                Diagnostic.WriteLine($"Old location: {Me.Location}, direction = {walkRequest.Direction}");
+                                Me.Location = Me.Location.LocationInDirection(walkRequest.Direction);
+                                Diagnostic.WriteLine($"New location: {Me.Location}");
+                            }
+                        }
+                        else
+                        {
+                            Diagnostic.WriteLine($"CharacterMoveAck received but MoveRequestQueue is empty.");
                         }
                     }
-                    else if (packet.Id == PacketDefinitions.SpeechMessage.Id)
+                    else if (rawPacket.Id == PacketDefinitions.DrawGamePlayer.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<SpeechMessagePacket>(packet);
-                        string name = string.IsNullOrEmpty(materializedPacket.Name) ? string.Empty : $"{materializedPacket.Name}: ";
-                        string message = name + materializedPacket.Message;
+                        var packet = PacketDefinitionRegistry.Materialize<DrawGamePlayerPacket>(rawPacket);
+                        if (packet.PlayerId == Me.PlayerId)
+                        {
+                            Me.Location = packet.Location;
+                            Me.Direction = packet.Direction;
+                            var newQueue = new ConcurrentQueue<WalkRequest>();
+                            Interlocked.Exchange(ref WalkRequestQueue, newQueue);
+                            Diagnostic.WriteLine($"WalkRequestQueue cleared: {WalkRequestQueue.Count}");
+                        }
+                    }
+                    else if (rawPacket.Id == PacketDefinitions.SpeechMessage.Id)
+                    {
+                        var packet = PacketDefinitionRegistry.Materialize<SpeechMessagePacket>(rawPacket);
+                        string name = string.IsNullOrEmpty(packet.Name) ? string.Empty : $"{packet.Name}: ";
+                        string message = name + packet.Message;
                         Console.WriteLine(message);
                         journal = journal.Add(message);
 
-                        if (awaitingWords.Any(w => materializedPacket.Message.Contains(w)))
+                        if (awaitingWords.Any(w => packet.Message.Contains(w)))
                         {
                             ReceivedAwaitedWordsEvent.Set();
                         }
                     }
-                    else if (packet.Id == PacketDefinitions.SendSpeech.Id)
+                    else if (rawPacket.Id == PacketDefinitions.SendSpeech.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<SendSpeechPacket>(packet);
-                        string name = string.IsNullOrEmpty(materializedPacket.Name) ? string.Empty : $"{materializedPacket.Name}: ";
-                        string message = name + materializedPacket.Message;
+                        var packet = PacketDefinitionRegistry.Materialize<SendSpeechPacket>(rawPacket);
+                        string name = string.IsNullOrEmpty(packet.Name) ? string.Empty : $"{packet.Name}: ";
+                        string message = name + packet.Message;
                         Console.WriteLine(message);
                         journal = journal.Add(message);
-                        if (awaitingWords.Any(w => materializedPacket.Message.Contains(w)))
+                        if (awaitingWords.Any(w => packet.Message.Contains(w)))
                         {
                             ReceivedAwaitedWordsEvent.Set();
                         }
                     }
+                    else if (rawPacket.Id == PacketDefinitions.CharacterLocaleAndBody.Id)
+                    {
+                        var packet = PacketDefinitionRegistry.Materialize<CharLocaleAndBodyPacket>(rawPacket);
+                        Me.PlayerId = packet.PlayerId;
+                        Me.Location = packet.Location;
+                        Me.Direction = packet.Direction;
+                    }
 
-                    clientConnection.Send(packet, memoryStream);
+                    clientConnection.Send(rawPacket, memoryStream);
                     ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
                 }
             }
         }
+
+        public static Player Me { get; } = new Player();
 
         private static void ServerLoop()
         {
@@ -431,6 +483,8 @@ namespace UltimaRX.Proxy
             return new NetworkStream(serverSocket);
         }
 
+        private static ConcurrentQueue<WalkRequest> WalkRequestQueue = new ConcurrentQueue<WalkRequest>();
+
         private static void ClientConnectionOnPacketReceived(object sender, Packet packet)
         {
             lock (ServerStreamLock)
@@ -440,7 +494,14 @@ namespace UltimaRX.Proxy
                     if (packet.Id == PacketDefinitions.MoveRequest.Id)
                     {
                         var moveRequestPacket = PacketDefinitionRegistry.Materialize<MoveRequest>(packet);
-                        currentSequenceNumber = moveRequestPacket.SequenceNumber;
+                        currentSequenceNumber = moveRequestPacket.SequenceKey;
+                        WalkRequestQueue.Enqueue(new WalkRequest
+                        {
+                            Direction = moveRequestPacket.Direction,
+                            SequenceKey = moveRequestPacket.SequenceKey,
+                            IssuedByProxy = false
+                        });
+                        Diagnostic.WriteLine($"WalkRequest enqueued, Direction = {moveRequestPacket.Direction}, SequenceKey = {moveRequestPacket.SequenceKey}");
                     }
                     else if (packet.Id == PacketDefinitions.TargetCursor.Id)
                     {

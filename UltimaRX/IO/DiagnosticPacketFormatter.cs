@@ -22,7 +22,7 @@ namespace UltimaRX.IO
         {
             if (requiresHeader)
             {
-                builder.AppendFormat($"{DateTime.Now} >>>> {header}");
+                builder.AppendFormat($"{DateTime.Now:hh:mm:ss.fff} >>>> {header}");
                 builder.AppendLine();
                 requiresHeader = false;
             }

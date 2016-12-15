@@ -6,6 +6,7 @@
 using System;
 using System.Threading;
 using UltimaRX.Proxy;
+using UltimaRX.Packets;
 using static UltimaRX.Proxy.Program;
 
 Start(currentConnection);

@@ -35,7 +35,7 @@ namespace UltimaRX.Proxy
         private static readonly object ServerConnectionLock = new object();
 
         private static readonly object ServerStreamLock = new object();
-        private static byte currentSequenceNumber;
+        private static byte currentSequenceKey;
 
         private static readonly ILogger Console = new ConsoleLogger();
         private static ILogger Diagnostic = NullLogger.Instance;
@@ -77,15 +77,14 @@ namespace UltimaRX.Proxy
         {
             var packet = new MoveRequest
             {
-                Direction = direction,
-                SequenceKey = ++currentSequenceNumber
+                Movement = new Movement(direction, MovementType.Walk),
+                SequenceKey = currentSequenceKey
             };
 
-            WalkRequestQueue.Enqueue(new WalkRequest()
-            {
-                Direction = direction,
-                SequenceKey = packet.SequenceKey,
-            });
+            WalkRequestQueue.Enqueue(new WalkRequest(currentSequenceKey, direction, true));
+
+            currentSequenceKey++;
+            Diagnostic.WriteLine($"Walk: WalkRequest enqueued, Direction = {direction}, usedSequenceKey={packet.SequenceKey}, currentSequenceKey = {currentSequenceKey}, queue length = {WalkRequestQueue.Count}");
 
             ClientConnectionOnPacketReceived(null, packet.RawPacket);
         }
@@ -291,9 +290,16 @@ namespace UltimaRX.Proxy
 
         private struct WalkRequest
         {
-            public byte SequenceKey { get; set; }
-            public Direction Direction { get; set; }
-            public bool IssuedByProxy { get; set; }
+            public WalkRequest(byte sequenceKey, Direction direction, bool issuedByProxy)
+            {
+                SequenceKey = sequenceKey;
+                Direction = direction;
+                IssuedByProxy = issuedByProxy;
+            }
+
+            public byte SequenceKey { get; }
+            public Direction Direction { get; }
+            public bool IssuedByProxy { get; }
         }
 
         private static void ServerConnectionOnPacketReceived(object sender, Packet rawPacket)
@@ -375,6 +381,17 @@ namespace UltimaRX.Proxy
                             Diagnostic.WriteLine($"CharacterMoveAck received but MoveRequestQueue is empty.");
                         }
                     }
+                    else if (rawPacket.Id == PacketDefinitions.CharMoveRejection.Id)
+                    {
+                        var packet = PacketDefinitionRegistry.Materialize<CharMoveRejectionPacket>(rawPacket);
+                        Me.Location = packet.Location;
+                        Me.Direction = packet.Direction;
+                        currentSequenceKey = 0;
+                        var newQueue = new ConcurrentQueue<WalkRequest>();
+                        Interlocked.Exchange(ref WalkRequestQueue, newQueue);
+
+                        Diagnostic.WriteLine($"CharMoveRejection: currentSequenceKey={currentSequenceKey}, new location:{Me.Location}, new direction:{Me.Direction}");
+                    }
                     else if (rawPacket.Id == PacketDefinitions.DrawGamePlayer.Id)
                     {
                         var packet = PacketDefinitionRegistry.Materialize<DrawGamePlayerPacket>(rawPacket);
@@ -384,7 +401,8 @@ namespace UltimaRX.Proxy
                             Me.Direction = packet.Direction;
                             var newQueue = new ConcurrentQueue<WalkRequest>();
                             Interlocked.Exchange(ref WalkRequestQueue, newQueue);
-                            Diagnostic.WriteLine($"WalkRequestQueue cleared: {WalkRequestQueue.Count}");
+                            currentSequenceKey = 0;
+                            Diagnostic.WriteLine($"WalkRequestQueue cleared, currentSequenceKey = {currentSequenceKey}");
                         }
                     }
                     else if (rawPacket.Id == PacketDefinitions.SpeechMessage.Id)
@@ -494,14 +512,10 @@ namespace UltimaRX.Proxy
                     if (packet.Id == PacketDefinitions.MoveRequest.Id)
                     {
                         var moveRequestPacket = PacketDefinitionRegistry.Materialize<MoveRequest>(packet);
-                        currentSequenceNumber = moveRequestPacket.SequenceKey;
-                        WalkRequestQueue.Enqueue(new WalkRequest
-                        {
-                            Direction = moveRequestPacket.Direction,
-                            SequenceKey = moveRequestPacket.SequenceKey,
-                            IssuedByProxy = false
-                        });
-                        Diagnostic.WriteLine($"WalkRequest enqueued, Direction = {moveRequestPacket.Direction}, SequenceKey = {moveRequestPacket.SequenceKey}");
+                        currentSequenceKey = (byte)(moveRequestPacket.SequenceKey + 1);
+                        WalkRequestQueue.Enqueue(new WalkRequest(moveRequestPacket.SequenceKey,
+                            moveRequestPacket.Movement.Direction, false));
+                        Diagnostic.WriteLine($"MoveRequest from client: WalkRequest enqueued, {moveRequestPacket.Movement}, packetSequenceKey={moveRequestPacket.SequenceKey}, currentSequenceKey = {currentSequenceKey}, queue length = {WalkRequestQueue.Count}");
                     }
                     else if (packet.Id == PacketDefinitions.TargetCursor.Id)
                     {

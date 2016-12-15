@@ -228,8 +228,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition DrawGamePlayer = new PacketDefinition<DrawGamePlayerPacket>(0x20,
             new StaticPacketLength(19), "DrawGamePlayer", packet => new DrawGamePlayerPacket());
 
-        public static readonly PacketDefinition CharMoveRejection = new PacketDefinition(0x21,
-            new StaticPacketLength(8), "CharMoveRejection");
+        public static readonly PacketDefinition CharMoveRejection = new PacketDefinition<CharMoveRejectionPacket>(0x21,
+            new StaticPacketLength(8), "CharMoveRejection", packet => new CharMoveRejectionPacket());
 
         public static readonly PacketDefinition DraggingOfItem = new PacketDefinition(0x23,
             new StaticPacketLength(26), "DraggingOfItem");

@@ -11,24 +11,45 @@ namespace UltimaRX.Packets
             Z = z;
         }
 
+        public static Vector operator -(Location3D location1, Location3D location2)
+        {
+            return new Vector((short) (location1.X - location2.X), (short) (location1.Y - location2.Y),
+                (byte) (location1.Z - location2.Z));
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Location3D))
+            {
+                var otherLocation = (Location3D) obj;
+                return Equals(otherLocation);
+            }
+
+            return false;
+        }
+
+        public bool Equals(Location3D other) => X == other.X && Y == other.Y && Z == other.Z;
+
+        public static bool operator ==(Location3D location1, Location3D location2) => location1.Equals(location2);
+
+        public static bool operator !=(Location3D location1, Location3D location2) => !location1.Equals(location2);
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = X.GetHashCode();
+                hashCode = (hashCode*397) ^ Y.GetHashCode();
+                hashCode = (hashCode*397) ^ Z.GetHashCode();
+                return hashCode;
+            }
+        }
+
         public ushort X { get; }
         public ushort Y { get; }
         public byte Z { get; }
 
-        public override string ToString()
-        {
-            return $"{X}, {Y}, {Z}";
-        }
-
-        private static readonly Vector NorthVector = new Vector(0, -1, 0);
-        private static readonly Vector NortheastVector = new Vector(1, -1, 0);
-        private static readonly Vector EastVector = new Vector(1, 0, 0);
-        private static readonly Vector SoutheastVector = new Vector(1, 1, 0);
-        private static readonly Vector SouthVector = new Vector(0, 1, 0);
-        private static readonly Vector SouthwestVector = new Vector(-1, 1, 0);
-        private static readonly Vector WestVector = new Vector(-1, 0, 0);
-        private static readonly Vector NorthwestVector = new Vector(-1, -1, 0);
-        private static readonly Vector NullVector = new Vector(0, 0, 0);
+        public override string ToString() => $"{X}, {Y}, {Z}";
 
         public Location3D LocationInDirection(Direction direction)
         {
@@ -37,34 +58,35 @@ namespace UltimaRX.Packets
             switch (direction)
             {
                 case Direction.East:
-                    directionVector = EastVector;
+                    directionVector = Vector.EastVector;
                     break;
                 case Direction.North:
-                    directionVector = NorthVector;
+                    directionVector = Vector.NorthVector;
                     break;
                 case Direction.Northeast:
-                    directionVector = NortheastVector;
+                    directionVector = Vector.NortheastVector;
                     break;
                 case Direction.Northwest:
-                    directionVector = NorthwestVector;
+                    directionVector = Vector.NorthwestVector;
                     break;
                 case Direction.Southeast:
-                    directionVector = SoutheastVector;
+                    directionVector = Vector.SoutheastVector;
                     break;
                 case Direction.Southwest:
-                    directionVector = SouthwestVector;
+                    directionVector = Vector.SouthwestVector;
                     break;
                 case Direction.South:
-                    directionVector = SouthVector;
+                    directionVector = Vector.SouthVector;
                     break;
                 case Direction.West:
-                    directionVector = WestVector;
+                    directionVector = Vector.WestVector;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(direction), $"Unknown direction {direction}");
             }
 
-            return new Location3D((ushort)(X + directionVector.X), (ushort)(Y + directionVector.Y), (byte)(Z + directionVector.Z));
+            return new Location3D((ushort) (X + directionVector.X), (ushort) (Y + directionVector.Y),
+                (byte) (Z + directionVector.Z));
         }
     }
 }

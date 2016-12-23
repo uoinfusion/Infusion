@@ -27,10 +27,7 @@
 
         public override void Deserialize(Packet rawPacket)
         {
-            var directionByte = rawPacket.Payload[1];
-            Movement = (directionByte & 0x80) != 0
-                ? new Movement((Direction) (directionByte - 0x80), MovementType.Run)
-                : new Movement((Direction) directionByte, MovementType.Walk);
+            Movement = (Movement)rawPacket.Payload[1];
             SequenceKey = rawPacket.Payload[2];
         }
     }

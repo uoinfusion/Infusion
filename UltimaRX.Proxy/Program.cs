@@ -398,7 +398,7 @@ namespace UltimaRX.Proxy
                         if (packet.PlayerId == Me.PlayerId)
                         {
                             Me.Location = packet.Location;
-                            Me.Direction = packet.Direction;
+                            Me.Direction = packet.Movement.Direction;
                             var newQueue = new ConcurrentQueue<WalkRequest>();
                             Interlocked.Exchange(ref WalkRequestQueue, newQueue);
                             currentSequenceKey = 0;

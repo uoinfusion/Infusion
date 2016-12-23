@@ -1,6 +1,4 @@
-﻿using UltimaRX.Packets.Client;
-
-namespace UltimaRX.Packets
+﻿namespace UltimaRX.Packets
 {
     public struct Movement
     {
@@ -12,6 +10,11 @@ namespace UltimaRX.Packets
 
         public Direction Direction { get; }
         public MovementType Type { get; }
+
+        public static explicit operator Movement(byte rawByte) =>
+            (rawByte & 0x80) != 0
+                ? new Movement((Direction) (rawByte - 0x80), MovementType.Run)
+                : new Movement(rawByte, MovementType.Walk);
 
         public override string ToString() => $"{Type} in {Direction}";
     }

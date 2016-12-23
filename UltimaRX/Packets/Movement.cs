@@ -14,7 +14,7 @@
         public static explicit operator Movement(byte rawByte) =>
             (rawByte & 0x80) != 0
                 ? new Movement((Direction) (rawByte - 0x80), MovementType.Run)
-                : new Movement(rawByte, MovementType.Walk);
+                : new Movement((Direction) rawByte, MovementType.Walk);
 
         public override string ToString() => $"{Type} in {Direction}";
     }

@@ -28,6 +28,11 @@ namespace UltimaRX.Proxy
         private static UltimaClientConnection clientConnection;
         private static Socket serverSocket;
 
+        public static void Print(string message)
+        {
+            Console.WriteLine(message);
+        }
+
         private static bool needServerReconnect;
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
@@ -231,10 +236,16 @@ namespace UltimaRX.Proxy
             PacketRingBufferLogger.Clear();
         }
 
-        public static void Info()
+        public static string Info()
         {
             var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
+
+            ReceivedTargetInfoEvent.Reset();
             ServerConnectionOnPacketReceived(null, packet.RawPacket);
+
+            ReceivedTargetInfoEvent.WaitOne();
+
+            return lastTargetInfo;
         }
 
         private static void ClientLoop(ILogger packetLogger)
@@ -423,6 +434,7 @@ namespace UltimaRX.Proxy
                         var packet = PacketDefinitionRegistry.Materialize<SendSpeechPacket>(rawPacket);
                         string name = string.IsNullOrEmpty(packet.Name) ? string.Empty : $"{packet.Name}: ";
                         string message = name + packet.Message;
+
                         Console.WriteLine(message);
                         journal = journal.Add(message);
                         if (awaitingWords.Any(w => packet.Message.Contains(w)))
@@ -503,23 +515,42 @@ namespace UltimaRX.Proxy
 
         private static ConcurrentQueue<WalkRequest> WalkRequestQueue = new ConcurrentQueue<WalkRequest>();
 
-        private static void ClientConnectionOnPacketReceived(object sender, Packet packet)
+        public static event EventHandler<string> CommandReceived;
+
+        private static void ClientConnectionOnPacketReceived(object sender, Packet rawPacket)
         {
             lock (ServerStreamLock)
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {
-                    if (packet.Id == PacketDefinitions.MoveRequest.Id)
+                    if (rawPacket.Id == PacketDefinitions.MoveRequest.Id)
                     {
-                        var moveRequestPacket = PacketDefinitionRegistry.Materialize<MoveRequest>(packet);
+                        var moveRequestPacket = PacketDefinitionRegistry.Materialize<MoveRequest>(rawPacket);
                         currentSequenceKey = (byte)(moveRequestPacket.SequenceKey + 1);
                         WalkRequestQueue.Enqueue(new WalkRequest(moveRequestPacket.SequenceKey,
                             moveRequestPacket.Movement.Direction, false));
                         Diagnostic.WriteLine($"MoveRequest from client: WalkRequest enqueued, {moveRequestPacket.Movement}, packetSequenceKey={moveRequestPacket.SequenceKey}, currentSequenceKey = {currentSequenceKey}, queue length = {WalkRequestQueue.Count}");
                     }
-                    else if (packet.Id == PacketDefinitions.TargetCursor.Id)
+                    else if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
                     {
-                        var materializedPacket = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(packet);
+                        var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
+                        if (packet.Text.StartsWith(","))
+                        {
+                            if (CommandReceived == null)
+                            {
+                                Console.WriteLine($"Unhandled command: {packet.Text}");
+                            }
+                            else
+                            {
+                                CommandReceived?.Invoke(null, packet.Text.TrimStart(','));
+                            }
+
+                            return;
+                        }
+                    }
+                    else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
+                    {
+                        var materializedPacket = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
                         if (discardNextTargetLocationRequestIfEmpty)
                         {
                             discardNextTargetLocationRequestIfEmpty = false;
@@ -537,24 +568,28 @@ namespace UltimaRX.Proxy
                             switch (materializedPacket.CursorTarget)
                             {
                                 case CursorTarget.Location:
-                                    Console.WriteLine(
-                                        $"{materializedPacket.ClickedOnType} {materializedPacket.Location.X} {materializedPacket.Location.Y} {materializedPacket.Location.Z}");
+                                    lastTargetInfo =
+                                        $"{materializedPacket.ClickedOnType} {materializedPacket.Location.X} {materializedPacket.Location.Y} {materializedPacket.Location.Z}";
                                     break;
                                 case CursorTarget.Object:
-                                    Console.WriteLine(
-                                        $"{materializedPacket.ClickedOnType:X4} {materializedPacket.ClickedOnId:X8}");
+                                    lastTargetInfo = 
+                                        $"{materializedPacket.ClickedOnType:X4} {materializedPacket.ClickedOnId:X8}";
                                     break;
                             }
+
+                            ReceivedTargetInfoEvent.Set();
                             return;
                         }
                     }
 
-                    serverConnection.Send(packet, memoryStream);
+                    serverConnection.Send(rawPacket, memoryStream);
                     ServerStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
                 }
             }
         }
 
+        private static string lastTargetInfo;
+        private static readonly AutoResetEvent ReceivedTargetInfoEvent = new AutoResetEvent(false);
         private static readonly AutoResetEvent ReceivedAwaitedWordsEvent = new AutoResetEvent(false);
         private static string[] awaitingWords = {};
 

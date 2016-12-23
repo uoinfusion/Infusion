@@ -18,7 +18,27 @@ namespace UltimaRX.Packets.Client
             Color = reader.ReadUShort();
             Font = reader.ReadUShort();
             Language = reader.ReadString(4);
-            Text = reader.ReadNullTerminatedUnicodeString();
+            if (((int)Type & 0xC0) != 0)
+            {
+                ushort rawBytes = reader.ReadUShort();
+                int keywordCount = (rawBytes & 0x0FFF) >> 4;
+                if (keywordCount > 0)
+                {
+                    reader.ReadByte();
+                    keywordCount--;
+                }
+                while (keywordCount != 0)
+                {
+                    reader.ReadUShort();
+                    keywordCount--;
+                }
+
+                Text = reader.ReadNullTerminatedString();
+            }
+            else
+            {
+                Text = reader.ReadNullTerminatedUnicodeString();
+            }
         }
 
         public SpeechType Type { get; set; }

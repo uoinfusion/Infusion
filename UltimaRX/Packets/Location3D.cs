@@ -55,35 +55,24 @@ namespace UltimaRX.Packets
         {
             Vector directionVector;
 
-            switch (direction)
-            {
-                case Direction.East:
-                    directionVector = Vector.EastVector;
-                    break;
-                case Direction.North:
-                    directionVector = Vector.NorthVector;
-                    break;
-                case Direction.Northeast:
-                    directionVector = Vector.NortheastVector;
-                    break;
-                case Direction.Northwest:
-                    directionVector = Vector.NorthwestVector;
-                    break;
-                case Direction.Southeast:
-                    directionVector = Vector.SoutheastVector;
-                    break;
-                case Direction.Southwest:
-                    directionVector = Vector.SouthwestVector;
-                    break;
-                case Direction.South:
-                    directionVector = Vector.SouthVector;
-                    break;
-                case Direction.West:
-                    directionVector = Vector.WestVector;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(direction), $"Unknown direction {direction}");
-            }
+            if (direction == Direction.East)
+                directionVector = Vector.EastVector;
+            else if (direction == Direction.North)
+                directionVector = Vector.NorthVector;
+            else if (direction == Direction.Northeast)
+                directionVector = Vector.NortheastVector;
+            else if (direction == Direction.Northwest)
+                directionVector = Vector.NorthwestVector;
+            else if (direction == Direction.Southeast)
+                directionVector = Vector.SoutheastVector;
+            else if (direction == Direction.Southwest)
+                directionVector = Vector.SouthwestVector;
+            else if (direction == Direction.South)
+                directionVector = Vector.SouthVector;
+            else if (direction == Direction.West)
+                directionVector = Vector.WestVector;
+            else
+                throw new ArgumentOutOfRangeException(nameof(direction), $"Unknown direction {direction}");
 
             return new Location3D((ushort) (X + directionVector.X), (ushort) (Y + directionVector.Y),
                 (byte) (Z + directionVector.Z));

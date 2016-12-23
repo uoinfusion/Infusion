@@ -4,14 +4,14 @@ namespace UltimaRX.Packets
 {
     public struct Direction
     {
-        public const byte North = 0x00;
-        public const byte Northeast = 0x01;
-        public const byte East = 0x02;
-        public const byte Southeast = 0x03;
-        public const byte South = 0x04;
-        public const byte Southwest = 0x05;
-        public const byte West = 0x06;
-        public const byte Northwest = 0x07;
+        public static readonly Direction North = (Direction) 0x00;
+        public static readonly Direction Northeast = (Direction) 0x01;
+        public static readonly Direction East = (Direction) 0x02;
+        public static readonly Direction Southeast = (Direction) 0x03;
+        public static readonly Direction South = (Direction) 0x04;
+        public static readonly Direction Southwest = (Direction) 0x05;
+        public static readonly Direction West = (Direction) 0x06;
+        public static readonly Direction Northwest = (Direction) 0x07;
 
         private readonly byte value;
 
@@ -20,12 +20,22 @@ namespace UltimaRX.Packets
             this.value = value;
         }
 
-        public static implicit operator byte(Direction direction)
+        public static bool operator ==(Direction direction1, Direction direction2)
+        {
+            return direction1.Equals(direction2);
+        }
+
+        public static bool operator !=(Direction direction1, Direction direction2)
+        {
+            return !direction1.Equals(direction2);
+        }
+
+        public static explicit operator byte(Direction direction)
         {
             return direction.value;
         }
 
-        public static implicit operator Direction(byte value)
+        public static explicit operator Direction(byte value)
         {
             if (value > 0x07)
             {
@@ -35,29 +45,44 @@ namespace UltimaRX.Packets
             return new Direction(value);
         }
 
+        public override bool Equals(object obj)
+        {
+            if (!(obj is Direction))
+                return false;
+
+            var otherDirection = (Direction) obj;
+            return Equals(otherDirection);
+        }
+
+        public bool Equals(Direction other)
+        {
+            return value == other.value;
+        }
+
+        public override int GetHashCode()
+        {
+            return value.GetHashCode();
+        }
+
         public override string ToString()
         {
-            switch (value)
-            {
-                case North:
-                    return "North";
-                case Northwest:
-                    return "Northwest";
-                case Northeast:
-                    return "Northeast";
-                case South:
-                    return "South";
-                case Southeast:
-                    return "Southeast";
-                case Southwest:
-                    return "Southwest";
-                case East:
-                    return "East";
-                case West:
-                    return "West";
-                default:
-                    throw new InvalidOperationException($"Cannot convert {value} to string.");
-            }
+            if (this == North)
+                return "North";
+            if (this == Northwest)
+                return "Northwest";
+            if (this == Northeast)
+                return "Northeast";
+            if (this == South)
+                return "South";
+            if (this == Southeast)
+                return "Southeast";
+            if (this == Southwest)
+                return "Southwest";
+            if (this == East)
+                return "East";
+            if (this == West)
+                return "West";
+            throw new InvalidOperationException($"Cannot convert {value} to string.");
         }
     }
 }

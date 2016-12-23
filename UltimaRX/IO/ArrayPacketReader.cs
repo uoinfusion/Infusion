@@ -52,9 +52,7 @@ namespace UltimaRX.IO
             {
                 charRead = ReadShort();
 
-                if (charRead == 0)
-                    ReadShort();
-                else
+                if (charRead != 0)
                     s += (char) charRead;
             }
             return s;

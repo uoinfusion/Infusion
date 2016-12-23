@@ -173,8 +173,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition GumpTextEntryDialogReply = new PacketDefinition(0xAC,
             new VariablePacketLength(), "GumpTextEntryDialogReply");
 
-        public static readonly PacketDefinition SpeechRequest = new PacketDefinition(0xAD,
-            new VariablePacketLength(), "SpeechRequest");
+        public static readonly PacketDefinition SpeechRequest = new PacketDefinition<SpeechRequest>(0xAD,
+            new VariablePacketLength(), "SpeechRequest", (packet) => new SpeechRequest());
 
         public static readonly PacketDefinition GumpMenuSelection = new PacketDefinition(0xB1,
             new VariablePacketLength(), "GumpMenuSelection");

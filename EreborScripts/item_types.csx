@@ -2,7 +2,8 @@
 {
     public static ushort Hatchet = 0x0F44;
     public static ushort Hatchet2 = 0x0F43;
+    public static ushort CopperExecutionersAxe = 0x0F45;
 
-    public static ushort[] Hatchets = {Hatchet, Hatchet2};
+    public static ushort[] Hatchets = {Hatchet, Hatchet2, CopperExecutionersAxe};
 }
 

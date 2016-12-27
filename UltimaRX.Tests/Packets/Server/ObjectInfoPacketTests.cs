@@ -61,5 +61,56 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Location.Z.Should().Be(0x0A);
             packet.Flags.Should().HaveFlag(ObjectFlag.None);
         }
+
+        [TestMethod]
+        public void Can_deserialize_packet_with_facing()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x1A, // packet
+                0x00, 0x0F, // size
+                0x40, 0x03, 0x24, 0xDD, // object id
+                0x19, 0x8A, // type
+                0x94, 0xEB, // xloc
+                0x0B, 0xD0, // yloc
+                0x01, // facing
+                0x00, // zloc
+            });
+
+            var packet = new ObjectInfoPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.Id.Should().Be(0x400324dd);
+            packet.Type.Should().Be(0x198a);
+            packet.Location.X.Should().Be(0x14EB);
+            packet.Location.Y.Should().Be(0x0bd0);
+            packet.Location.Z.Should().Be(0x00);
+        }
+
+        [TestMethod]
+        public void Can_deserialize_packet_with_dye()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x1A, // packet
+                0x00, 0x10, // size
+                0x40, 0x03, 0x7C, 0xBD, // object id
+                0x1A, 0xD7, // type
+                0x14, 0xF4, // xloc
+                0x8B, 0xAE, // yloc
+                0x06, // zloc
+                0x09, 0x80 // dye
+            });
+
+            var packet = new ObjectInfoPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.Id.Should().Be(0x40037cbd);
+            packet.Type.Should().Be(0x1ad7);
+            packet.Location.X.Should().Be(0x14f4);
+            packet.Location.Y.Should().Be(0x0BAE);
+            packet.Location.Z.Should().Be(0x06);
+            packet.Dye.Should().Be((Color) 0x0980);
+        }
     }
 }

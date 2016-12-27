@@ -14,7 +14,7 @@ namespace UltimaRX.Packets.Server
 
         public Location3D Location { get; private set; }
 
-        public Direction Direction { get; private set; }
+        public Movement Movement { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -25,7 +25,7 @@ namespace UltimaRX.Packets.Server
             SequenceKey = reader.ReadByte();
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();
-            Direction = (Direction)reader.ReadByte();
+            Movement = (Movement)reader.ReadByte();
             byte zloc = reader.ReadByte();
 
             Location = new Location3D(xloc, yloc, zloc);

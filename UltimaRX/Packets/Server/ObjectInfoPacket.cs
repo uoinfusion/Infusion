@@ -19,6 +19,8 @@ namespace UltimaRX.Packets.Server
 
         public ObjectFlag Flags { get; private set; }
 
+        public Direction Facing { get; private set; }
+
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;
@@ -49,14 +51,16 @@ namespace UltimaRX.Packets.Server
 
             if ((xloc & 0x8000) != 0)
             {
-                throw new PacketParsingException(rawPacket, "Not implementated: xloc & 0x8000");
+                xloc -= 0x8000;
+                Facing = (Direction) reader.ReadByte();
             }
 
             byte zloc = reader.ReadByte();
 
             if ((yloc & 0x8000) != 0)
             {
-                throw new PacketParsingException(rawPacket, "Not implementated: yloc & 0x8000");
+                yloc -= 0x8000;
+                Dye = (Color) reader.ReadUShort();
             }
 
             if ((yloc & 0x4000) != 0)
@@ -67,6 +71,8 @@ namespace UltimaRX.Packets.Server
 
             Location = new Location3D(xloc, yloc, zloc);
         }
+
+        public Color Dye { get; private set; }
 
         private Packet rawPacket;
 

@@ -18,7 +18,10 @@ public class HarvestMapBuilder : IDisposable
     public HarvestMapBuilder(string fileName)
     {
         file = File.Create(fileName);
-        writer = new StreamWriter(file);
+        writer = new StreamWriter(file)
+        {
+            AutoFlush = true
+        };
         CommandReceived += HandleTraceBuildingCommand;
     }
 

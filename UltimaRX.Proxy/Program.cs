@@ -396,7 +396,7 @@ namespace UltimaRX.Proxy
                     {
                         var packet = PacketDefinitionRegistry.Materialize<CharMoveRejectionPacket>(rawPacket);
                         Me.Location = packet.Location;
-                        Me.Direction = packet.Direction;
+                        Me.Direction = packet.Movement.Direction;
                         currentSequenceKey = 0;
                         var newQueue = new ConcurrentQueue<WalkRequest>();
                         Interlocked.Exchange(ref WalkRequestQueue, newQueue);

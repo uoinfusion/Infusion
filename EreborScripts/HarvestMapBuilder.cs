@@ -14,7 +14,6 @@ public class HarvestMapBuilder : IDisposable
     private readonly object harvestLock = new object();
     private readonly StreamWriter writer;
     private bool disposed;
-    private bool infoRequired;
 
     public HarvestMapBuilder(string fileName)
     {
@@ -60,6 +59,7 @@ public class HarvestMapBuilder : IDisposable
                     }
 
                     writer.WriteLine(output);
+                    Program.Print(output);
                 }
             }
 
@@ -67,6 +67,7 @@ public class HarvestMapBuilder : IDisposable
             {
                 string treeInfo = Info();
                 writer.WriteLine($"tree: {treeInfo}");
+                Program.Print($"tree: {treeInfo}");
             }
 
             Thread.Yield();
@@ -95,5 +96,6 @@ public class HarvestMapBuilder : IDisposable
                 Program.Print($"Unhandled command: {e}");
                 break;
         }
+
     }
 }

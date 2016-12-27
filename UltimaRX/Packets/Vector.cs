@@ -13,10 +13,18 @@ namespace UltimaRX.Packets
         public static readonly Vector WestVector = new Vector(-1, 0, 0);
         public static readonly Vector NorthwestVector = new Vector(-1, -1, 0);
         public static readonly Vector NullVector = new Vector(0, 0, 0);
-
+ 
         public short X { get; }
         public short Y { get; }
         public byte Z { get; }
+
+        public Vector RemoveZ()
+        {
+            if (Z == 0)
+                return this;
+
+            return new Vector(X, Y, 0);
+        }
 
         public Vector Normalize()
         {

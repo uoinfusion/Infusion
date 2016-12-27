@@ -615,7 +615,7 @@ namespace UltimaRX.Proxy
 
         public static void Wait(int milliseconds)
         {
-            Thread.Sleep(1000);
+            Thread.Sleep(milliseconds);
         }
     }
 }

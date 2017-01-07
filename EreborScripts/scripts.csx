@@ -51,23 +51,23 @@ void HarvestTree(string tileInfo)
     }
 }
 
-void StepToward(Location3D currentLocation, Location3D targetLocation)
+void StepToward(Location2D currentLocation, Location2D targetLocation)
 {
-    var walkVector = (targetLocation - currentLocation).Normalize().RemoveZ();
+    var walkVector = (targetLocation - currentLocation).Normalize();
     if (walkVector != Vector.NullVector)
     {
         Walk(walkVector.ToDirection());
     }
 }
 
-void StepToward(Location3D targetLocation)
+void StepToward(Location2D targetLocation)
 {
-    StepToward(Me.Location, targetLocation);
+    StepToward((Location2D)Me.Location, targetLocation);
 }
 
-void WalkTo(Location3D targetLocation)
+void WalkTo(Location2D targetLocation)
 {
-    while (Me.Location != targetLocation)
+    while ((Location2D)Me.Location != targetLocation)
     {
         StepToward(targetLocation);
         Wait(1000);
@@ -76,5 +76,5 @@ void WalkTo(Location3D targetLocation)
 
 void WalkTo(ushort xloc, ushort yloc)
 {
-    WalkTo(new Location3D(xloc, yloc, 0));
+    WalkTo(new Location2D(xloc, yloc));
 }

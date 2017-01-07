@@ -188,7 +188,7 @@ namespace UltimaRX.Packets
             Register(PacketDefinitions.FreeShardList);
         }
 
-        public static void Register(PacketDefinition definition)
+        private static void Register(PacketDefinition definition)
         {
             Definitions.Add(definition.Id, definition);
         }

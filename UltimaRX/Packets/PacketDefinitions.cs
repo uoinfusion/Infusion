@@ -17,7 +17,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition DisconnectNotification = new PacketDefinition(0x01,
             new StaticPacketLength(5), "DisconnectNotification");
 
-        public static readonly PacketDefinition MoveRequest = new PacketDefinition<MoveRequest>(0x02,
+        public static readonly PacketDefinition<MoveRequest> MoveRequest = new PacketDefinition<MoveRequest>(0x02,
             new StaticPacketLength(7), "MoveRequest", packet => new MoveRequest());
 
         public static readonly PacketDefinition TalkRequest = new PacketDefinition(0x03,
@@ -173,7 +173,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition GumpTextEntryDialogReply = new PacketDefinition(0xAC,
             new VariablePacketLength(), "GumpTextEntryDialogReply");
 
-        public static readonly PacketDefinition SpeechRequest = new PacketDefinition<SpeechRequest>(0xAD,
+        public static readonly PacketDefinition<SpeechRequest> SpeechRequest = new PacketDefinition<SpeechRequest>(0xAD,
             new VariablePacketLength(), "SpeechRequest", (packet) => new SpeechRequest());
 
         public static readonly PacketDefinition GumpMenuSelection = new PacketDefinition(0xB1,
@@ -210,25 +210,25 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition HealthBarStatusUpdate = new PacketDefinition(0x17,
             new StaticPacketLength(12), "HealthBarStatusUpdate");
 
-        public static readonly PacketDefinition ObjectInfo = new PacketDefinition<ObjectInfoPacket>(0x1A,
+        public static readonly PacketDefinition<ObjectInfoPacket> ObjectInfo = new PacketDefinition<ObjectInfoPacket>(0x1A,
             new VariablePacketLength(), "ObjectInfo", (packet) => new ObjectInfoPacket());
 
-        public static readonly PacketDefinition CharacterLocaleAndBody = new PacketDefinition<CharLocaleAndBodyPacket>(0x1B,
+        public static readonly PacketDefinition<CharLocaleAndBodyPacket> CharacterLocaleAndBody = new PacketDefinition<CharLocaleAndBodyPacket>(0x1B,
             new StaticPacketLength(37), "CharacterLocaleAndBody", packet => new CharLocaleAndBodyPacket());
 
-        public static readonly PacketDefinition SendSpeech = new PacketDefinition<SendSpeechPacket>(0x1C,
+        public static readonly PacketDefinition<SendSpeechPacket> SendSpeech = new PacketDefinition<SendSpeechPacket>(0x1C,
             new VariablePacketLength(), "SendSpeech", packet => new SendSpeechPacket());
 
-        public static readonly PacketDefinition DeleteObject = new PacketDefinition<DeleteObjectPacket>(0x1D,
+        public static readonly PacketDefinition<DeleteObjectPacket> DeleteObject = new PacketDefinition<DeleteObjectPacket>(0x1D,
             new StaticPacketLength(5), "DeleteObject", (packet) => new DeleteObjectPacket());
 
         public static readonly PacketDefinition Explosion = new PacketDefinition(0x1F,
             new StaticPacketLength(8), "Explosion");
 
-        public static readonly PacketDefinition DrawGamePlayer = new PacketDefinition<DrawGamePlayerPacket>(0x20,
+        public static readonly PacketDefinition<DrawGamePlayerPacket> DrawGamePlayer = new PacketDefinition<DrawGamePlayerPacket>(0x20,
             new StaticPacketLength(19), "DrawGamePlayer", packet => new DrawGamePlayerPacket());
 
-        public static readonly PacketDefinition CharMoveRejection = new PacketDefinition<CharMoveRejectionPacket>(0x21,
+        public static readonly PacketDefinition<CharMoveRejectionPacket> CharMoveRejection = new PacketDefinition<CharMoveRejectionPacket>(0x21,
             new StaticPacketLength(8), "CharMoveRejection", packet => new CharMoveRejectionPacket());
 
         public static readonly PacketDefinition DraggingOfItem = new PacketDefinition(0x23,
@@ -270,8 +270,9 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition AttackEnded = new PacketDefinition(0x31,
             new StaticPacketLength(1), "AttackEnded");
 
-        public static readonly PacketDefinition AddMultipleItemsInContainer = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C,
-            new VariablePacketLength(), "AddMultipleItemsInContainer", (packet) => new AddMultipleItemsInContainerPacket());
+        public static readonly PacketDefinition<AddMultipleItemsInContainerPacket> AddMultipleItemsInContainer
+            = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C, new VariablePacketLength(),
+                "AddMultipleItemsInContainer", (packet) => new AddMultipleItemsInContainerPacket());
 
         public static readonly PacketDefinition PauseClient = new PacketDefinition(0x33,
             new StaticPacketLength(2), "PauseClient");
@@ -315,7 +316,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition UpdatePlayer = new PacketDefinition(0x77,
             new StaticPacketLength(17), "UpdatePlayer");
 
-        public static readonly PacketDefinition DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
+        public static readonly PacketDefinition<DrawObjectPacket> DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
             new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket());
 
         public static readonly PacketDefinition OpenDialogBox = new PacketDefinition(0x7C,
@@ -333,7 +334,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition CorpseClothing = new PacketDefinition(0x89,
             new VariablePacketLength(), "CorpseClothing");
 
-        public static readonly PacketDefinition ConnectToGameServer = new PacketDefinition<ConnectToGameServerPacket>(0x8C,
+        public static readonly PacketDefinition<ConnectToGameServerPacket> ConnectToGameServer = new PacketDefinition<ConnectToGameServerPacket>(0x8C,
             new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServerPacket());
 
         public static readonly PacketDefinition MapMessage = new PacketDefinition(0x90,
@@ -375,7 +376,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition GumpTextEntryDialog = new PacketDefinition(0xAB,
             new VariablePacketLength(), "GumpTextEntryDialog");
 
-        public static readonly PacketDefinition SpeechMessage = new PacketDefinition<SpeechMessagePacket>(0xAE,
+        public static readonly PacketDefinition<SpeechMessagePacket> SpeechMessage = new PacketDefinition<SpeechMessagePacket>(0xAE,
             new VariablePacketLength(), "SpeechMessage", packet => new SpeechMessagePacket());
 
         public static readonly PacketDefinition DisplayDeathAction = new PacketDefinition(0xAF,
@@ -460,7 +461,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition Follow = new PacketDefinition(0x15,
             new StaticPacketLength(9), "Follow");
 
-        public static readonly PacketDefinition CharacterMoveAck = new PacketDefinition<CharacterMoveAckPacket>(0x22,
+        public static readonly PacketDefinition<CharacterMoveAckPacket> CharacterMoveAck = new PacketDefinition<CharacterMoveAckPacket>(0x22,
             new StaticPacketLength(3), "CharacterMoveAck", packet => new CharacterMoveAckPacket());
 
         public static readonly PacketDefinition ResurrectionMenu = new PacketDefinition(0x2C,
@@ -478,7 +479,7 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition BooksPages = new PacketDefinition(0x66,
             new VariablePacketLength(), "BooksPages");
 
-        public static readonly PacketDefinition TargetCursor = new PacketDefinition<TargetCursorPacket>(0x6C,
+        public static readonly PacketDefinition<TargetCursorPacket> TargetCursor = new PacketDefinition<TargetCursorPacket>(0x6C,
             new StaticPacketLength(19), "TargetCursor", (packet) => new TargetCursorPacket());
 
         public static readonly PacketDefinition SecureTraiding = new PacketDefinition(0x6F,

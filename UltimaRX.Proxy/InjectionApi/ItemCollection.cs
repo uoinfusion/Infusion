@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using UltimaRX.Packets;
 
-namespace UltimaRX.Proxy
+namespace UltimaRX.Proxy.InjectionApi
 {
     public class ItemCollection : IEnumerable<Item>
     {
@@ -49,6 +49,9 @@ namespace UltimaRX.Proxy
 
         public override string ToString()
         {
+            if (items.IsEmpty)
+                return string.Empty;
+
             return items.Select(i => i.ToString()).Aggregate((l, r) => l + Environment.NewLine + r);
         }
     }

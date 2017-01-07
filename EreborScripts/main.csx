@@ -7,6 +7,6 @@ using System;
 using System.Threading;
 using UltimaRX.Proxy;
 using UltimaRX.Packets;
-using static UltimaRX.Proxy.Program;
+using static UltimaRX.Proxy.InjectionApi.Injection;
 
-Start(currentConnection);
+Program.Start(currentConnection);

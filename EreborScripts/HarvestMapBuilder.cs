@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using UltimaRX.Proxy;
-using static UltimaRX.Proxy.Program;
+using static UltimaRX.Proxy.InjectionApi.Injection;
 
 public class HarvestMapBuilder : IDisposable
 {

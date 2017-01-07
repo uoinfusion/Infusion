@@ -48,7 +48,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemCollection.cs" />
+    <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="InjectionApi\Injection.cs" />
+    <Compile Include="InjectionApi\InjectionCommandHandler.cs" />
+    <Compile Include="InjectionApi\ItemsObservers.cs" />
+    <Compile Include="InjectionApi\ItemCollection.cs" />
+    <Compile Include="InjectionApi\Journal.cs" />
+    <Compile Include="InjectionApi\JournalObservers.cs" />
+    <Compile Include="InjectionApi\PlayerObservers.cs" />
+    <Compile Include="InjectionApi\Targeting.cs" />
+    <Compile Include="InjectionApi\WalkRequest.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPullStream.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
@@ -56,9 +65,11 @@
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Logging\RingBufferLogger.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="InjectionApi\Player.cs" />
+    <Compile Include="PacketHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerPacketHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -70,6 +81,7 @@
       <Name>UltimaRX</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

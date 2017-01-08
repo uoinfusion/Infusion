@@ -45,7 +45,7 @@ public class HarvestMapBuilder : IDisposable
     {
         while (true)
         {
-            bool treeInfoRequired = false;
+            bool tileInfoRequired = false;
 
             lock (harvestLock)
             {
@@ -55,9 +55,9 @@ public class HarvestMapBuilder : IDisposable
                 while (fileOutputQueue.Count > 0)
                 {
                     var output = fileOutputQueue.Dequeue();
-                    if (output.Equals("tree:"))
+                    if (output.Equals("harvest:"))
                     {
-                        treeInfoRequired = true;
+                        tileInfoRequired = true;
                         break;
                     }
 
@@ -66,11 +66,11 @@ public class HarvestMapBuilder : IDisposable
                 }
             }
 
-            if (treeInfoRequired)
+            if (tileInfoRequired)
             {
-                string treeInfo = Info();
-                writer.WriteLine($"tree: {treeInfo}");
-                Program.Print($"tree: {treeInfo}");
+                string tileInfo = Info();
+                writer.WriteLine($"harvest: {tileInfo}");
+                Program.Print($"harvest: {tileInfo}");
             }
 
             Thread.Yield();
@@ -89,8 +89,8 @@ public class HarvestMapBuilder : IDisposable
     {
         switch (e)
         {
-            case "tree":
-                EnqueueOutput("tree:");
+            case "harvest":
+                EnqueueOutput("harvest:");
                 break;
             case "walk":
                 EnqueueOutput($"walk: {Me.Location}");

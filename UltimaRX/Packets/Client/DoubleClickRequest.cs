@@ -9,13 +9,13 @@ namespace UltimaRX.Packets.Client
 {
     public class DoubleClickRequest
     {
-        public DoubleClickRequest(int objectId)
+        public DoubleClickRequest(uint objectId)
         {
             byte[] payload = new byte[5];
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte)PacketDefinitions.DoubleClick.Id);
-            writer.WriteInt(objectId);
+            writer.WriteUInt(objectId);
 
             RawPacket = new Packet(PacketDefinitions.DoubleClick.Id, payload);
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -27,7 +28,10 @@ namespace UltimaRX.Proxy.InjectionApi
             awaitingWords = words;
 
             ReceivedAwaitedWordsEvent.Reset();
-            ReceivedAwaitedWordsEvent.WaitOne();
+            while (!ReceivedAwaitedWordsEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                Injection.CheckCancellation();
+            }
 
             awaitingWords = new string[] {};
         }

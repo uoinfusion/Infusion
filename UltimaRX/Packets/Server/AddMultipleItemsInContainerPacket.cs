@@ -20,12 +20,12 @@ namespace UltimaRX.Packets.Server
                 for (var i = 0; i < ItemCount; i++)
                 {
                     yield return new Item(
-                        id: ArrayPacketReader.ReadInt(rawPacket.Payload, position),
+                        id: ArrayPacketReader.ReadUInt(rawPacket.Payload, position),
                         type: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 4),
                         amount: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 7),
                         xLoc: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 9),
                         yLoc: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 11),
-                        containerId: ArrayPacketReader.ReadInt(rawPacket.Payload, position + 13),
+                        containerId: ArrayPacketReader.ReadUInt(rawPacket.Payload, position + 13),
                         color: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 17)
                     );
 

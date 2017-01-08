@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using UltimaRX.Packets;
 
@@ -14,6 +15,8 @@ namespace UltimaRX.Proxy.InjectionApi
 
         private ConcurrentQueue<WalkRequest> walkRequestQueue = new ConcurrentQueue<WalkRequest>();
         internal ConcurrentQueue<WalkRequest> WalkRequestQueue => walkRequestQueue;
+
+        public Item BackPack => Injection.Items.First(i => i.Type == 0x0E75 && i.ContainerId == PlayerId);
 
         internal void ResetWalkRequestQueue()
         {

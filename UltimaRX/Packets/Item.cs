@@ -2,7 +2,7 @@
 {
     public sealed class Item
     {
-        public Item(int id, ushort type, ushort amount, ushort xLoc, ushort yLoc, ushort color, int? containerId)
+        public Item(uint id, ushort type, ushort amount, ushort xLoc, ushort yLoc, ushort color, uint? containerId)
         {
             Type = type;
             Id = id;
@@ -12,8 +12,8 @@
             Location = new Location3D(xLoc, yLoc, 0);
         }
 
-        public Item(int id, ushort type, ushort amount, Location3D location, Color? color = null,
-            int? containerId = null, Layer? layer = null)
+        public Item(uint id, ushort type, ushort amount, Location3D location, Color? color = null,
+            uint? containerId = null, Layer? layer = null)
         {
             Id = id;
             Type = type;
@@ -24,15 +24,17 @@
             Layer = layer;
         }
 
+        public bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;
+
         public ushort Type { get; }
 
-        public int Id { get; }
+        public uint Id { get; }
 
         public ushort Amount { get; }
 
         public Location3D Location { get; }
 
-        public int? ContainerId { get; }
+        public uint? ContainerId { get; }
 
         public Color Color { get; }
 

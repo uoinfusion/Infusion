@@ -17,7 +17,7 @@ namespace UltimaRX.Proxy.InjectionApi
         public Targeting(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
             serverPacketHandler.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
-            clientPacketHandler.Subscribe(PacketDefinitions.TargetCursor, HandleClientTargetCursorPacket);
+            clientPacketHandler.RegisterFilter(FilterClientTargetCursorPacket);
         }
 
         private void HanldeServerTargetCursorPacket(TargetCursorPacket packet)
@@ -26,8 +26,13 @@ namespace UltimaRX.Proxy.InjectionApi
             targetFromServerReceivedEvent.Set();
         }
 
-        private void HandleClientTargetCursorPacket(TargetCursorPacket packet)
+        private Packet? FilterClientTargetCursorPacket(Packet rawPacket)
         {
+            if (rawPacket.Id != PacketDefinitions.TargetCursor.Id)
+                return rawPacket;
+
+            var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
+
             if (discardNextTargetLocationRequestIfEmpty)
             {
                 discardNextTargetLocationRequestIfEmpty = false;
@@ -35,7 +40,7 @@ namespace UltimaRX.Proxy.InjectionApi
                     packet.ClickedOnId == 0)
                 {
                     Program.Diagnostic.WriteLine("discarding empty TargetCursorPacket sent from client");
-                    return;
+                    return null;
                 }
                 Program.Diagnostic.WriteLine("non empty TargetCursorPacket sent from client - discarding cancelled");
             }
@@ -55,14 +60,21 @@ namespace UltimaRX.Proxy.InjectionApi
                 }
 
                 receivedTargetInfoEvent.Set();
+                return null;
             }
+
+            return rawPacket;
         }
 
         public void WaitForTarget()
         {
             Program.Diagnostic.WriteLine("WaitForTarget");
             targetFromServerReceivedEvent.Reset();
-            targetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(10));
+            while (!targetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                Injection.CheckCancellation();
+            }
+
             Program.Diagnostic.WriteLine("WaitForTarget - done");
         }
 
@@ -73,7 +85,10 @@ namespace UltimaRX.Proxy.InjectionApi
             receivedTargetInfoEvent.Reset();
             Program.SendToClient(packet.RawPacket);
 
-            receivedTargetInfoEvent.WaitOne();
+            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                Injection.CheckCancellation();
+            }
 
             return lastTargetInfo;
         }
@@ -126,5 +141,18 @@ namespace UltimaRX.Proxy.InjectionApi
             TargetTile(new Location3D(xloc, yloc, zloc), tileType);
         }
 
+        public void Target(Item item)
+        {
+            WaitForTarget();
+            Program.Diagnostic.WriteLine("Target");
+            var targetRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Harmful, item.Location, item.Type);
+            Program.SendToServer(targetRequest.RawPacket);
+
+            Program.Diagnostic.WriteLine(
+                "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
+            var cancelRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Cancel, item.Location, item.Type);
+            discardNextTargetLocationRequestIfEmpty = true;
+            Program.SendToClient(cancelRequest.RawPacket);
+        }
     }
 }

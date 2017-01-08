@@ -73,6 +73,8 @@
     <Compile Include="IO\ArrayPacketReader.cs" />
     <Compile Include="Packets\Both\CharacterMoveAckPacket.cs" />
     <Compile Include="Packets\Client\DoubleClickRequest.cs" />
+    <Compile Include="Packets\Client\DropItemRequest.cs" />
+    <Compile Include="Packets\Client\PickupItemRequest.cs" />
     <Compile Include="Packets\Movement.cs" />
     <Compile Include="Packets\MovementType.cs" />
     <Compile Include="Packets\Client\MoveRequest.cs" />

@@ -14,6 +14,11 @@ namespace UltimaRX.Proxy.InjectionApi
         private static readonly PlayerObservers PlayerObservers;
         private static readonly InjectionCommandHandler InjectionCommandHandler;
 
+        private static readonly ThreadLocal<CancellationToken?> cancellationToken =
+            new ThreadLocal<CancellationToken?>(() => null);
+
+        private static readonly Targeting Targeting;
+
         static Injection()
         {
             ItemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
@@ -24,24 +29,37 @@ namespace UltimaRX.Proxy.InjectionApi
             InjectionCommandHandler = new InjectionCommandHandler(Program.ClientPacketHandler);
         }
 
-        public static event EventHandler<string> CommandReceived
+        internal static CancellationToken? CancellationToken
         {
-            add { InjectionCommandHandler.CommandReceived += value; }
-            remove { InjectionCommandHandler.CommandReceived -= value; }
+            get { return cancellationToken.Value; }
+            set { cancellationToken.Value = value; }
         }
 
         public static ItemCollection Items { get; } = new ItemCollection();
 
         public static Player Me { get; } = new Player();
 
+        public static event EventHandler<string> CommandReceived
+        {
+            add { InjectionCommandHandler.CommandReceived += value; }
+            remove { InjectionCommandHandler.CommandReceived -= value; }
+        }
+
         public static void Initialize()
         {
         }
 
-        public static void Use(int objectId)
+        public static void Use(uint objectId)
         {
+            CheckCancellation();
+
             var packet = new DoubleClickRequest(objectId);
             Program.SendToServer(packet.RawPacket);
+        }
+
+        internal static void CheckCancellation()
+        {
+            cancellationToken.Value?.ThrowIfCancellationRequested();
         }
 
         public static void Use(Item item)
@@ -51,6 +69,8 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void UseType(ushort type)
         {
+            CheckCancellation();
+
             var item = Items.FindType(type);
             if (item != null)
                 Use(item);
@@ -60,6 +80,8 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void UseType(params ushort[] types)
         {
+            CheckCancellation();
+
             var item = Items.FindType(types);
             if (item != null)
                 Use(item);
@@ -75,21 +97,29 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void DeleteJournal()
         {
+            CheckCancellation();
+
             Journal.DeleteJournal();
         }
 
         public static void WaitForJournal(params string[] words)
         {
+            CheckCancellation();
+
             Journal.WaitForJournal(words);
         }
 
         public static void Wait(int milliseconds)
         {
+            CheckCancellation();
+
             Thread.Sleep(milliseconds);
         }
 
         public static void Walk(Direction direction)
         {
+            CheckCancellation();
+
             var packet = new MoveRequest
             {
                 Movement = new Movement(direction, MovementType.Walk),
@@ -99,24 +129,67 @@ namespace UltimaRX.Proxy.InjectionApi
             Me.WalkRequestQueue.Enqueue(new WalkRequest(Me.CurrentSequenceKey, direction, true));
 
             Me.CurrentSequenceKey++;
-            Program.Diagnostic.WriteLine($"Walk: WalkRequest enqueued, Direction = {direction}, usedSequenceKey={packet.SequenceKey}, currentSequenceKey = {Me.CurrentSequenceKey}, queue length = {Me.WalkRequestQueue.Count}");
+            Program.Diagnostic.WriteLine(
+                $"Walk: WalkRequest enqueued, Direction = {direction}, usedSequenceKey={packet.SequenceKey}, currentSequenceKey = {Me.CurrentSequenceKey}, queue length = {Me.WalkRequestQueue.Count}");
 
             Program.SendToServer(packet.RawPacket);
         }
 
-        private static readonly Targeting Targeting;
-
-
         public static void TargetTile(string tileInfo)
         {
+            CheckCancellation();
+
             Targeting.TargetTile(tileInfo);
+        }
+
+        public static void Target(Item item)
+        {
+            CheckCancellation();
+
+            Targeting.Target(item);
+        }
+
+        public static Script Run(Action scriptAction) => Script.Run(scriptAction);
+
+        public static void Terminate()
+        {
+            Script.Terminate();
         }
 
         public static string Info() => Targeting.Info();
 
         private static void WaitForTarget()
         {
+            CheckCancellation();
+
             Targeting.WaitForTarget();
+        }
+
+        public static void Pickup(Item item)
+        {
+            CheckCancellation();
+
+            var pickupPacket = new PickupItemRequest(item.Id, item.Amount);
+            Program.SendToServer(pickupPacket.RawPacket);
+            Wait(1000);
+
+            var dropPacket = new DropItemRequest(item.Id, Me.BackPack.Id);
+            Program.SendToServer(dropPacket.RawPacket);
+        }
+
+        public static void PickupFromGround(ushort type)
+        {
+            CheckCancellation();
+
+            var item = Items.FindTypeOnGround(type);
+            if (item != null)
+            {
+                Pickup(item);
+            }
+            else
+            {
+                Program.Print("No item found on ground");
+            }
         }
     }
 }

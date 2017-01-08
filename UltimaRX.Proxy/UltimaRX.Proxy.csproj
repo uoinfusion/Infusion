@@ -56,6 +56,7 @@
     <Compile Include="InjectionApi\Journal.cs" />
     <Compile Include="InjectionApi\JournalObservers.cs" />
     <Compile Include="InjectionApi\PlayerObservers.cs" />
+    <Compile Include="InjectionApi\Script.cs" />
     <Compile Include="InjectionApi\Targeting.cs" />
     <Compile Include="InjectionApi\WalkRequest.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />

@@ -9,14 +9,14 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     public class ItemCollection : IEnumerable<Item>
     {
-        private ImmutableDictionary<int, Item> items = ImmutableDictionary<int, Item>.Empty;
+        private ImmutableDictionary<uint, Item> items = ImmutableDictionary<uint, Item>.Empty;
 
         internal void AddItem(Item item)
         {
             items = items.SetItem(item.Id, item);
         }
 
-        internal void RemoveItem(int id)
+        internal void RemoveItem(uint id)
         {
             items = items.Remove(id);
         }
@@ -26,6 +26,8 @@ namespace UltimaRX.Proxy.InjectionApi
         public Item FindType(ushort type) => FindTypeAll(type).FirstOrDefault();
 
         public Item FindType(ushort[] types) => FindTypeAll(types).FirstOrDefault();
+
+        public Item FindTypeOnGround(params ushort[] types) => FindTypeAll(types).FirstOrDefault(i => i.IsOnGround);
 
         public IEnumerable<Item> FindTypeAll(ushort[] types) => items.Values.Where(i => types.Contains(i.Type));
 

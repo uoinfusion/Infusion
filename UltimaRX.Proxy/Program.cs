@@ -16,6 +16,11 @@ using UltimaRX.Proxy.Logging;
 //12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
 //0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
 
+//1/8/2017 9:50:32 PM >>>> client -> proxy: RawPacket TargetCursor, length = 19
+//0x6C, 0x00, 0x00, 0x00, 0x00, 0x25, 0x00, 0x40, 0x05, 0xB6, 0x96, 0x14, 0xE7, 0x0B, 0xB8, 0x00, 
+//0x00, 0x0D, 0xE3, 
+
+
 namespace UltimaRX.Proxy
 {
     public static class Program
@@ -77,9 +82,23 @@ namespace UltimaRX.Proxy
             Injection.Initialize();
 
             ServerPacketHandler.RegisterFilter(RedirectConnectToGameServer);
+            ServerPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
+            ServerPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
 
             serverEndpoint = serverAddress;
             return Task.Run(() => Main(localProxyPort, PacketRingBufferLogger));
+        }
+
+        private static void HandleSendSpeechPacket(SendSpeechPacket packet)
+        {
+            string message = (packet.Name ?? string.Empty) + ": " + packet.Message;
+            Console.WriteLine(message);
+        }
+
+        private static void HandleSpeechMessagePacket(SpeechMessagePacket packet)
+        {
+            string message = (packet.Name ?? string.Empty) + ": " + packet.Message;
+            Console.WriteLine(message);
         }
 
         private static void Main(int port, ILogger logger)

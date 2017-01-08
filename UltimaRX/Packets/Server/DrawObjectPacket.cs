@@ -7,7 +7,7 @@ namespace UltimaRX.Packets.Server
     {
         private Packet rawPacket;
 
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
         public ushort Type { get; private set; }
         public Location3D Location { get; private set; }
 
@@ -23,7 +23,7 @@ namespace UltimaRX.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Position = 3;
 
-            Id = reader.ReadInt();
+            Id = reader.ReadUInt();
             Type = reader.ReadUShort();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             Direction = (Direction) reader.ReadByte();
@@ -32,7 +32,7 @@ namespace UltimaRX.Packets.Server
             Notoriety = (Notoriety) reader.ReadByte();
 
             var items = new List<Item>();
-            var itemId = reader.ReadInt();
+            var itemId = reader.ReadUInt();
             while (itemId != 0x00000000)
             {
                 var type = reader.ReadUShort();
@@ -50,7 +50,7 @@ namespace UltimaRX.Packets.Server
 
                 items.Add(item);
 
-                itemId = reader.ReadInt();
+                itemId = reader.ReadUInt();
             }
 
             Items = items.ToArray();

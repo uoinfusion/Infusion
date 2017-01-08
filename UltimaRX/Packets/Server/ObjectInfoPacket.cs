@@ -11,7 +11,7 @@ namespace UltimaRX.Packets.Server
     {
         public ushort Type { get; private set; }
 
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
 
         public ushort Amount { get; private set; }
 
@@ -32,13 +32,13 @@ namespace UltimaRX.Packets.Server
 
             if ((rawId & 0x80000000) != 0)
             {
-                Id = (int)(rawId - 0x80000000);
+                Id = rawId - 0x80000000;
                 Amount = reader.ReadUShort();
             }
             else
             {
                 Amount = 1;
-                Id = (int)rawId;
+                Id = rawId;
             }
 
             if ((Type & 0x8000) != 0)

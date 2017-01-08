@@ -9,12 +9,12 @@ namespace UltimaRX.Packets.Server
 {
     public class DeleteObjectPacket : MaterializedPacket
     {
-        public int Id { get; private set; }
+        public uint Id { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;
-            Id = ArrayPacketReader.ReadInt(rawPacket.Payload, 1);
+            Id = ArrayPacketReader.ReadUInt(rawPacket.Payload, 1);
         }
 
         private Packet rawPacket;

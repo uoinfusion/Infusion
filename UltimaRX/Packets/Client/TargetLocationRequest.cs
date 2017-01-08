@@ -29,6 +29,25 @@ namespace UltimaRX.Packets.Client
             RawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);
         }
 
+        public TargetLocationRequest(uint cursorId, uint itemId, CursorType cursorType, Location3D location, ushort itemType)
+        {
+            byte[] payload = new byte[19];
+
+            var writer = new ArrayPacketWriter(payload);
+            writer.WriteByte((byte)PacketDefinitions.TargetCursor.Id);
+            writer.WriteByte((byte)CursorTarget.Object);
+            writer.WriteUInt(cursorId);
+            writer.WriteByte((byte)cursorType);
+            writer.WriteUInt(itemId);
+            writer.WriteUShort(location.X);
+            writer.WriteUShort(location.Y);
+            writer.WriteByte(0); // unknown
+            writer.WriteByte(location.Z);
+            writer.WriteUShort(itemType);
+
+            RawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);
+        }
+
         public Packet RawPacket { get; }
     }
 

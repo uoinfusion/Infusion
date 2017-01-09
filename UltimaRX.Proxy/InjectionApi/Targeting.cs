@@ -13,6 +13,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private bool discardNextTargetLocationRequestIfEmpty;
 
         private string lastTargetInfo;
+        private ushort lastTypeInfo;
 
         public Targeting(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
@@ -61,6 +62,17 @@ namespace UltimaRX.Proxy.InjectionApi
 
                 receivedTargetInfoEvent.Set();
                 return null;
+            } else if (packet.CursorId == 0xDEADBEFF)
+            {
+                switch (packet.CursorTarget)
+                {
+                    case CursorTarget.Object:
+                        lastTypeInfo = packet.ClickedOnType;
+                        break;
+                }
+
+                receivedTargetInfoEvent.Set();
+                return null;
             }
 
             return rawPacket;
@@ -95,7 +107,6 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void TargetTile(Location3D location, ushort tileType)
         {
-            WaitForTarget();
             Program.Diagnostic.WriteLine("TargetTile");
             var targetRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Harmful);
             Program.SendToServer(targetRequest.RawPacket);
@@ -143,7 +154,6 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void Target(Item item)
         {
-            WaitForTarget();
             Program.Diagnostic.WriteLine("Target");
             var targetRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Harmful, item.Location, item.Type);
             Program.SendToServer(targetRequest.RawPacket);
@@ -153,6 +163,21 @@ namespace UltimaRX.Proxy.InjectionApi
             var cancelRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Cancel, item.Location, item.Type);
             discardNextTargetLocationRequestIfEmpty = true;
             Program.SendToClient(cancelRequest.RawPacket);
+        }
+
+        public ushort TypeInfo()
+        {
+            var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEFF, CursorType.Neutral);
+
+            receivedTargetInfoEvent.Reset();
+            Program.SendToClient(packet.RawPacket);
+
+            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                Injection.CheckCancellation();
+            }
+
+            return lastTypeInfo;
         }
     }
 }

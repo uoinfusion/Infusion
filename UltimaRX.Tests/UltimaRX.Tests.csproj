@@ -69,6 +69,7 @@
     <Compile Include="Packets\Both\TargetCursorPacketTests.cs" />
     <Compile Include="Packets\MoveRequestTests.cs" />
     <Compile Include="Packets\PacketDefinitionRegistryTests.cs" />
+    <Compile Include="Packets\Server\AddItemToContainerPacketTests.cs" />
     <Compile Include="Packets\Server\AddMultipleItemsInContainerPacketTests.cs" />
     <Compile Include="Packets\Both\CharacterMoveAckPacketTests.cs" />
     <Compile Include="Packets\Server\CharLocaleAndBodyPacketTests.cs" />

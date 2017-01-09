@@ -19,14 +19,14 @@ namespace UltimaRX.Packets.Server
 
         public ObjectFlag Flags { get; private set; }
 
-        public Direction Facing { get; private set; }
+        public Movement Facing { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
 
-            reader.Position = 3;
+            reader.Skip(3);
             uint rawId = reader.ReadUInt();
             Type = reader.ReadUShort();
 
@@ -52,7 +52,7 @@ namespace UltimaRX.Packets.Server
             if ((xloc & 0x8000) != 0)
             {
                 xloc -= 0x8000;
-                Facing = (Direction) reader.ReadByte();
+                Facing = (Movement) reader.ReadByte();
             }
 
             byte zloc = reader.ReadByte();

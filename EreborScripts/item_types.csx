@@ -16,6 +16,13 @@
     public static ushort[] Fishes = {Fish1, Fish2, Fish3, Fish4};
 
     public static ushort RawFishSteak = 0x097A;
+
+    public static ushort Feathers = 0x1BD1;
+    public static ushort BodyOfBird = 0x2006;
+    public static ushort RawBird = 0x09B9;
+
+    public static ushort[] RawFood = { RawBird, RawFishSteak };
+
     public static ushort Campfire = 0x0DE3;
 
     public static ushort BackPack = 0xE75;

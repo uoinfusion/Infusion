@@ -72,15 +72,18 @@
     <Compile Include="PacketParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
     <Compile Include="Packets\Both\CharacterMoveAckPacket.cs" />
+    <Compile Include="Packets\Client\AttackRequest.cs" />
     <Compile Include="Packets\Client\DoubleClickRequest.cs" />
     <Compile Include="Packets\Client\DropItemRequest.cs" />
     <Compile Include="Packets\Client\PickupItemRequest.cs" />
+    <Compile Include="Packets\Both\RequestWarMode.cs" />
     <Compile Include="Packets\Movement.cs" />
     <Compile Include="Packets\MovementType.cs" />
     <Compile Include="Packets\Client\MoveRequest.cs" />
     <Compile Include="Packets\Client\TargetLocationRequest.cs" />
     <Compile Include="Packets\Layer.cs" />
     <Compile Include="Packets\Notoriety.cs" />
+    <Compile Include="Packets\Server\AddItemToContainerPacket.cs" />
     <Compile Include="Packets\Server\AddMultipleItemsInContainerPacket.cs" />
     <Compile Include="Packets\Color.cs" />
     <Compile Include="Packets\Item.cs" />
@@ -113,6 +116,7 @@
     <Compile Include="Packets\Server\OverallLightLevelPacket.cs" />
     <Compile Include="Packets\Server\SetWeatherPacket.cs" />
     <Compile Include="Packets\Vector.cs" />
+    <Compile Include="Packets\WarMode.cs" />
     <Compile Include="Packets\WeatherType.cs" />
     <Compile Include="Packets\VariablePacketLength.cs" />
     <Compile Include="Packets\StaticPacketLength.cs" />

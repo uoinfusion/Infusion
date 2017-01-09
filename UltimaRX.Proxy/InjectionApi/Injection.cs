@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
 
 namespace UltimaRX.Proxy.InjectionApi
@@ -135,6 +136,24 @@ namespace UltimaRX.Proxy.InjectionApi
             Program.SendToServer(packet.RawPacket);
         }
 
+        public static void WarModeOn()
+        {
+            var packet = new RequestWarMode(WarMode.Fighting);
+            Program.SendToServer(packet.RawPacket);
+        }
+
+        public static void WarModeOff()
+        {
+            var packet = new RequestWarMode(WarMode.Normal);
+            Program.SendToServer(packet.RawPacket);
+        }
+
+        public static void Attack(Item target)
+        {
+            var packet = new AttackRequest(target.Id);
+            Program.SendToServer(packet.RawPacket);
+        }
+
         public static void TargetTile(string tileInfo)
         {
             CheckCancellation();
@@ -158,7 +177,9 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static string Info() => Targeting.Info();
 
-        private static void WaitForTarget()
+        public static ushort TypeInfo() => Targeting.TypeInfo();
+
+        public static void WaitForTarget()
         {
             CheckCancellation();
 

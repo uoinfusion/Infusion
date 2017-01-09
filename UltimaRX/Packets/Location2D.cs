@@ -38,6 +38,9 @@ namespace UltimaRX.Packets
 
         public static bool operator !=(Location2D location1, Location2D location2) => !location1.Equals(location2);
 
+        public static explicit operator Location3D(Location2D location) =>
+            new Location3D(location.X, location.Y, 0);
+
         public override string ToString() => $"{X}, {Y}";
 
         public Location2D LocationInDirection(Direction direction)

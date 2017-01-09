@@ -7,16 +7,24 @@ namespace UltimaRX.Proxy.InjectionApi
     {
         private readonly ItemCollection collection;
 
+        private ItemCollection items = new ItemCollection();
+
         public ItemsObservers(ItemCollection collection, ServerPacketHandler serverPacketHandler)
         {
             this.collection = collection;
-            serverPacketHandler.Subscribe(PacketDefinitions.AddMultipleItemsInContainer, HandleAddMultipleItemsInContainer);
+            serverPacketHandler.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
+                HandleAddMultipleItemsInContainer);
+            serverPacketHandler.Subscribe(PacketDefinitions.AddItemToContainer, HandleAddItemToContainer);
             serverPacketHandler.Subscribe(PacketDefinitions.DeleteObject, HandleDeleteObjectPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
         }
 
-        private ItemCollection items = new ItemCollection();
+        private void HandleAddItemToContainer(AddItemToContainerPacket packet)
+        {
+            collection.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
+                packet.Color, packet.ContainerId));
+        }
 
         private void HandleAddMultipleItemsInContainer(AddMultipleItemsInContainerPacket packet)
         {

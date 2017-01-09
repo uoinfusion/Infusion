@@ -11,6 +11,16 @@ namespace UltimaRX.Proxy.InjectionApi
     {
         private ImmutableDictionary<uint, Item> items = ImmutableDictionary<uint, Item>.Empty;
 
+        public IEnumerator<Item> GetEnumerator()
+        {
+            return items.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return items.Values.GetEnumerator();
+        }
+
         internal void AddItem(Item item)
         {
             items = items.SetItem(item.Id, item);
@@ -29,6 +39,9 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public Item FindTypeOnGround(params ushort[] types) => FindTypeAll(types).FirstOrDefault(i => i.IsOnGround);
 
+        public Item InContainer(Item container)
+            => items.Values.First(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
+
         public IEnumerable<Item> FindTypeAll(ushort[] types) => items.Values.Where(i => types.Contains(i.Type));
 
         internal void AddItemRange(IEnumerable<Item> items)
@@ -37,16 +50,6 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 AddItem(item);
             }
-        }
-
-        public IEnumerator<Item> GetEnumerator()
-        {
-            return items.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return items.Values.GetEnumerator();
         }
 
         public override string ToString()

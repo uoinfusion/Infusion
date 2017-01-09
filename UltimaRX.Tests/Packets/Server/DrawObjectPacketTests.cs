@@ -39,7 +39,7 @@ namespace UltimaRX.Tests.Packets.Server
             items.First().Id.Should().Be(0x4000000C);
             items.First().Type.Should().Be(0x0F44);
             items.First().Amount.Should().Be(1);
-            items.First().ContainerId.Should().Be(0x00000001);
+            items.First().ContainerId.Should().Be(0x00000001u);
             items.First().Layer.Should().Be(Layer.TwoHandedWeapon);
         }
 
@@ -74,7 +74,7 @@ namespace UltimaRX.Tests.Packets.Server
             items.First().Id.Should().Be(0x40000002);
             items.First().Type.Should().Be(0xA03B - 0x8000);
             items.First().Amount.Should().Be(1);
-            items.First().ContainerId.Should().Be(0x00000001);
+            items.First().ContainerId.Should().Be(0x00000001u);
             items.First().Layer.Should().Be(Layer.Hair);
             items.First().Color.Should().Be((Color) 0x044E);
         }

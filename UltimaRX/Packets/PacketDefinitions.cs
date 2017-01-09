@@ -237,8 +237,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition DrawContainer = new PacketDefinition(0x24,
             new StaticPacketLength(7), "DrawContainer");
 
-        public static readonly PacketDefinition AddItemToContainer = new PacketDefinition(0x25,
-            new StaticPacketLength(20), "AddItemToContainer");
+        public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer = new PacketDefinition<AddItemToContainerPacket>(0x25,
+            new StaticPacketLength(20), "AddItemToContainer", packet => new AddItemToContainerPacket());
 
         public static readonly PacketDefinition KickPlayer = new PacketDefinition(0x26,
             new StaticPacketLength(5), "KickPlayer");

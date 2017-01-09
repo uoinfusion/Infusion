@@ -9,8 +9,8 @@ namespace UltimaRX.Packets.Both
         public uint CursorId { get; private set; }
         public CursorType CursorType { get; private set; }
 
-        public int ClickedOnId { get; private set; }
-        public int ClickedOnType { get; private set; }
+        public uint ClickedOnId { get; private set; }
+        public ushort ClickedOnType { get; private set; }
         public Location3D Location { get; set; }
 
         private Packet rawPacket;
@@ -39,12 +39,12 @@ namespace UltimaRX.Packets.Both
         {
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Position = 1;
+            reader.Skip(1);
 
             CursorTarget = (CursorTarget)reader.ReadByte();
             CursorId = reader.ReadUInt();
             CursorType = (CursorType)reader.ReadByte();
-            ClickedOnId = reader.ReadInt();
+            ClickedOnId = reader.ReadUInt();
 
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();

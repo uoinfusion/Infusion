@@ -53,6 +53,7 @@ void Mine(string tileInfo)
         Wait(1000);
         DeleteJournal();
         UseType(ItemTypes.PickAxe);
+        WaitForTarget();
         TargetTile(tileInfo);
 
         WaitForJournal("You put", "Nevykopal jsi nic zajimaveho", "Try mining in rock", "There is no ore here to mine");
@@ -76,6 +77,7 @@ void Fish(string tileInfo)
     {
         DeleteJournal();
         UseType(ItemTypes.FishingPole);
+        WaitForTarget();
         TargetTile(tileInfo);
 
         WaitForJournal("You pull out a fish", "There are no fish here", "Dneska nejak neberou");
@@ -110,6 +112,7 @@ void HarvestTree(string tileInfo)
         Wait(1000);
         DeleteJournal();
         UseType(ItemTypes.Hatchets);
+        WaitForTarget();
         TargetTile(tileInfo);
 
         WaitForJournal("You put", "Drevo se nepodarilo", "of a way to use", "immune", "There are no logs");
@@ -160,6 +163,7 @@ void Cook(ushort rawFoodType)
     while (campfire != null && rawFood != null)
     {
         Use(rawFood);
+        WaitForTarget();
         Target(campfire);
 
         WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
@@ -177,11 +181,24 @@ void Cook(ushort rawFoodType, string campfireTile)
     while (rawFood != null)
     {
         Use(rawFood);
+        WaitForTarget();
         TargetTile(campfireTile);
 
         WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
         Wait(500);
 
         rawFood = Items.FindType(rawFoodType);
+    }
+}
+
+void Cook()
+{
+    var campfireTile = Info();
+
+    var rawFood = Items.FindType(ItemTypes.RawFood);
+    while (rawFood != null)
+    {
+        Cook(rawFood.Type, campfireTile);
+        rawFood = Items.FindType(ItemTypes.RawFood);
     }
 }

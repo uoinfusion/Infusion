@@ -68,6 +68,11 @@ namespace UltimaRX.Proxy.InjectionApi
             Use(item.Id);
         }
 
+        public static void UseType(ushort type)
+        {
+            UseType((ModelId)type);
+        }
+
         public static void UseType(ModelId type)
         {
             CheckCancellation();
@@ -77,6 +82,11 @@ namespace UltimaRX.Proxy.InjectionApi
                 Use(item);
             else
                 Program.Console.WriteLine($"Item of type {type} not found.");
+        }
+
+        public static void UseType(params ushort[] types)
+        {
+            UseType(types.Select(t => (ModelId) t).ToArray());
         }
 
         public static void UseType(params ModelId[] types)
@@ -196,6 +206,11 @@ namespace UltimaRX.Proxy.InjectionApi
 
             var dropPacket = new DropItemRequest(item.Id, Me.BackPack.Id);
             Program.SendToServer(dropPacket.RawPacket);
+        }
+
+        public static void PickupFromGround(ushort type)
+        {
+            PickupFromGround((ModelId)type);
         }
 
         public static void PickupFromGround(ModelId type)

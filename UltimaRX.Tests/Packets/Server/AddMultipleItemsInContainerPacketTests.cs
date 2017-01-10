@@ -62,7 +62,7 @@ namespace UltimaRX.Tests.Packets.Server
 
             var firstItem = packet.Items.First();
             firstItem.Id.Should().Be(0x4000000b);
-            firstItem.Type.Should().Be(0x0eed);
+            firstItem.Type.Should().Be((ModelId)0x0eed);
             firstItem.Amount.Should().Be(0x01f4);
             firstItem.Color.Should().Be(new Color(0x0000));
             firstItem.ContainerId.Value.Should().Be(0x40000004);

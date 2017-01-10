@@ -1,4 +1,5 @@
 ﻿using System;
+using UltimaRX.Packets;
 
 namespace UltimaRX.IO
 {
@@ -45,6 +46,11 @@ namespace UltimaRX.IO
             array[Position++] = (byte)((value >> 16) & 0xFF);
             array[Position++] = (byte)((value >> 8) & 0xFF);
             array[Position++] = (byte)(value & 0xFF);
+        }
+
+        public void WriteModelId(ModelId itemType)
+        {
+            WriteUShort((ushort)itemType);
         }
     }
 }

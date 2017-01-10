@@ -9,7 +9,7 @@ namespace UltimaRX.Packets.Server
 {
     public class ObjectInfoPacket : MaterializedPacket
     {
-        public ushort Type { get; private set; }
+        public ModelId Type { get; private set; }
 
         public uint Id { get; private set; }
 
@@ -28,7 +28,7 @@ namespace UltimaRX.Packets.Server
 
             reader.Skip(3);
             uint rawId = reader.ReadUInt();
-            Type = reader.ReadUShort();
+            ushort rawType = reader.ReadUShort();
 
             if ((rawId & 0x80000000) != 0)
             {
@@ -41,9 +41,13 @@ namespace UltimaRX.Packets.Server
                 Id = rawId;
             }
 
-            if ((Type & 0x8000) != 0)
+            if ((rawType & 0x8000) != 0)
             {
                 throw new PacketParsingException(rawPacket, "Not implementated: Type & 0x8000");
+            }
+            else
+            {
+                Type = (ModelId) rawType;
             }
 
             ushort xloc = reader.ReadUShort();

@@ -13,7 +13,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private bool discardNextTargetLocationRequestIfEmpty;
 
         private string lastTargetInfo;
-        private ushort lastTypeInfo;
+        private ModelId lastTypeInfo;
 
         public Targeting(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
@@ -56,7 +56,7 @@ namespace UltimaRX.Proxy.InjectionApi
                         break;
                     case CursorTarget.Object:
                         lastTargetInfo =
-                            $"{packet.ClickedOnType:X4} {packet.ClickedOnId:X8}";
+                            $"{packet.ClickedOnType} {packet.ClickedOnId:X8}";
                         break;
                 }
 
@@ -105,7 +105,7 @@ namespace UltimaRX.Proxy.InjectionApi
             return lastTargetInfo;
         }
 
-        public void TargetTile(Location3D location, ushort tileType)
+        public void TargetTile(Location3D location, ModelId tileType)
         {
             Program.Diagnostic.WriteLine("TargetTile");
             var targetRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Harmful);
@@ -128,8 +128,8 @@ namespace UltimaRX.Proxy.InjectionApi
                 throw new InvalidOperationException(errorMessage);
             }
 
-            ushort type;
-            if (!ushort.TryParse(parts[0], out type))
+            ushort rawType;
+            if (!ushort.TryParse(parts[0], out rawType))
                 throw new InvalidOperationException(errorMessage);
 
             ushort xloc;
@@ -144,10 +144,10 @@ namespace UltimaRX.Proxy.InjectionApi
             if (!byte.TryParse(parts[3], out zloc))
                 throw new InvalidOperationException(errorMessage);
 
-            TargetTile(xloc, yloc, zloc, type);
+            TargetTile(xloc, yloc, zloc, (ModelId)rawType);
         }
 
-        public void TargetTile(ushort xloc, ushort yloc, byte zloc, ushort tileType)
+        public void TargetTile(ushort xloc, ushort yloc, byte zloc, ModelId tileType)
         {
             TargetTile(new Location3D(xloc, yloc, zloc), tileType);
         }
@@ -165,7 +165,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Program.SendToClient(cancelRequest.RawPacket);
         }
 
-        public ushort TypeInfo()
+        public ModelId TypeInfo()
         {
             var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEFF, CursorType.Neutral);
 

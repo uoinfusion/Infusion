@@ -37,7 +37,7 @@ namespace UltimaRX.Tests.Packets.Server
 
             items.Length.Should().Be(1);
             items.First().Id.Should().Be(0x4000000C);
-            items.First().Type.Should().Be(0x0F44);
+            items.First().Type.Should().Be((ModelId)0x0F44);
             items.First().Amount.Should().Be(1);
             items.First().ContainerId.Should().Be(0x00000001u);
             items.First().Layer.Should().Be(Layer.TwoHandedWeapon);
@@ -72,7 +72,7 @@ namespace UltimaRX.Tests.Packets.Server
 
             items.Length.Should().Be(1);
             items.First().Id.Should().Be(0x40000002);
-            items.First().Type.Should().Be(0xA03B - 0x8000);
+            items.First().Type.Should().Be((ModelId)(0xA03B - 0x8000));
             items.First().Amount.Should().Be(1);
             items.First().ContainerId.Should().Be(0x00000001u);
             items.First().Layer.Should().Be(Layer.Hair);
@@ -102,7 +102,7 @@ namespace UltimaRX.Tests.Packets.Server
             drawObjectPacket.Deserialize(drawObjectPacketWithoutItems);
 
             drawObjectPacket.Id.Should().Be(0x00000001);
-            drawObjectPacket.Type.Should().Be(0x0190);
+            drawObjectPacket.Type.Should().Be((ModelId)0x0190);
             drawObjectPacket.Location.X.Should().Be(0x129B);
             drawObjectPacket.Location.Y.Should().Be(0x0553);
             drawObjectPacket.Location.Z.Should().Be(0x0A);

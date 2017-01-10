@@ -68,7 +68,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Use(item.Id);
         }
 
-        public static void UseType(ushort type)
+        public static void UseType(ModelId type)
         {
             CheckCancellation();
 
@@ -76,10 +76,10 @@ namespace UltimaRX.Proxy.InjectionApi
             if (item != null)
                 Use(item);
             else
-                Program.Console.WriteLine($"Item of type {type:X4} not found.");
+                Program.Console.WriteLine($"Item of type {type} not found.");
         }
 
-        public static void UseType(params ushort[] types)
+        public static void UseType(params ModelId[] types)
         {
             CheckCancellation();
 
@@ -88,7 +88,7 @@ namespace UltimaRX.Proxy.InjectionApi
                 Use(item);
             else
             {
-                var typesString = types.Select(u => u.ToString("X4")).Aggregate((l, r) => l + ", " + r);
+                var typesString = types.Select(u => u.ToString()).Aggregate((l, r) => l + ", " + r);
 
                 Program.Console.WriteLine($"Item of any type {typesString} not found.");
             }
@@ -177,7 +177,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static string Info() => Targeting.Info();
 
-        public static ushort TypeInfo() => Targeting.TypeInfo();
+        public static ModelId TypeInfo() => Targeting.TypeInfo();
 
         public static void WaitForTarget()
         {
@@ -198,7 +198,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Program.SendToServer(dropPacket.RawPacket);
         }
 
-        public static void PickupFromGround(ushort type)
+        public static void PickupFromGround(ModelId type)
         {
             CheckCancellation();
 

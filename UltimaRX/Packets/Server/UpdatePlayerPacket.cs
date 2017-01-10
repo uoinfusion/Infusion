@@ -10,7 +10,7 @@ namespace UltimaRX.Packets.Server
     public class UpdatePlayerPacket : MaterializedPacket
     {
         public uint PlayerId { get; private set; }
-        public ushort Type { get; private set; }
+        public ModelId Type { get; private set; }
         public Location3D Location { get; private set; }
         public Movement Direction { get; private set; }
         public Color Color { get; private set; }
@@ -25,7 +25,7 @@ namespace UltimaRX.Packets.Server
             reader.Skip(1);
 
             PlayerId = reader.ReadUInt();
-            Type = reader.ReadUShort();
+            Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             Direction = (Movement) reader.ReadByte();
             Color = (Color) reader.ReadUShort();

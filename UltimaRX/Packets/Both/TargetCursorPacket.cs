@@ -10,7 +10,7 @@ namespace UltimaRX.Packets.Both
         public CursorType CursorType { get; private set; }
 
         public uint ClickedOnId { get; private set; }
-        public ushort ClickedOnType { get; private set; }
+        public ModelId ClickedOnType { get; private set; }
         public Location3D Location { get; set; }
 
         private Packet rawPacket;
@@ -53,7 +53,7 @@ namespace UltimaRX.Packets.Both
 
             Location = new Location3D(xloc, yloc, zloc);
 
-            ClickedOnType = reader.ReadUShort();
+            ClickedOnType = reader.ReadModelId();
         }
 
         public override Packet RawPacket => rawPacket;

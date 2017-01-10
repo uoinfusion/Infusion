@@ -29,7 +29,8 @@ namespace UltimaRX.Packets.Server
 
         public override void Deserialize(Packet rawPacket)
         {
-            var reader = new ArrayPacketReader(rawPacket.Payload) {Position = 1};
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+            reader.Skip(1);
             GameServerIp = new byte[4];
             reader.Read(GameServerIp, 0, 4);
             GameServerPort = reader.ReadUShort();

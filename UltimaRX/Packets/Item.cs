@@ -2,7 +2,7 @@
 {
     public sealed class Item
     {
-        public Item(uint id, ushort type, ushort amount, ushort xLoc, ushort yLoc, ushort color, uint? containerId)
+        public Item(uint id, ModelId type, ushort amount, ushort xLoc, ushort yLoc, ushort color, uint? containerId)
         {
             Type = type;
             Id = id;
@@ -12,7 +12,7 @@
             Location = new Location3D(xLoc, yLoc, 0);
         }
 
-        public Item(uint id, ushort type, ushort amount, Location3D location, Color? color = null,
+        public Item(uint id, ModelId type, ushort amount, Location3D location, Color? color = null,
             uint? containerId = null, Layer? layer = null, Movement? orientation = null)
         {
             Id = id;
@@ -27,7 +27,7 @@
 
         public bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;
 
-        public ushort Type { get; }
+        public ModelId Type { get; }
 
         public uint Id { get; }
 
@@ -46,8 +46,8 @@
         public override string ToString()
         {
             return (ContainerId.HasValue)
-                ? $"Id: {Id:X8}, Type: {Type:X4}; Amount: {Amount}; Location: {Location}; Container {ContainerId.Value:X8}"
-                : $"Id: {Id:X8}, Type: {Type:X4}; Amount: {Amount}; Location: {Location}";
+                ? $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Container {ContainerId.Value:X8}"
+                : $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}";
         }
     }
 }

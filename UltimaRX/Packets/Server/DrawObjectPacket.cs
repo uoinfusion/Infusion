@@ -8,7 +8,7 @@ namespace UltimaRX.Packets.Server
         private Packet rawPacket;
 
         public uint Id { get; private set; }
-        public ushort Type { get; private set; }
+        public ModelId Type { get; private set; }
         public Location3D Location { get; private set; }
 
         public override Packet RawPacket => rawPacket;
@@ -21,10 +21,10 @@ namespace UltimaRX.Packets.Server
         {
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Position = 3;
+            reader.Skip(3);
 
             Id = reader.ReadUInt();
-            Type = reader.ReadUShort();
+            Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             Direction = (Direction) reader.ReadByte();
             Color = (Color) reader.ReadUShort();
@@ -45,7 +45,7 @@ namespace UltimaRX.Packets.Server
                     color = (Color) reader.ReadUShort();
                 }
 
-                var item = new Item(itemId, type, 1, new Location3D(0, 0, 0), containerId: Id,
+                var item = new Item(itemId, (ModelId)type, 1, new Location3D(0, 0, 0), containerId: Id,
                     layer: layer, color: color);
 
                 items.Add(item);

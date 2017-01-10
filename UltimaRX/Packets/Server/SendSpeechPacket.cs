@@ -13,7 +13,7 @@ namespace UltimaRX.Packets.Server
 
         public uint Id { get; private set; }
 
-        public ushort Model { get; private set; }
+        public ModelId Model { get; private set; }
 
         public SpeechType Type { get; private set; }
 
@@ -29,10 +29,10 @@ namespace UltimaRX.Packets.Server
         {
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Position = 3;
+            reader.Skip(3);
 
             Id = reader.ReadUInt();
-            Model = reader.ReadUShort();
+            Model = reader.ReadModelId();
             Type = (SpeechType) reader.ReadByte();
             Color = (Color) reader.ReadUShort();
             Font = reader.ReadUShort();

@@ -36,18 +36,18 @@ namespace UltimaRX.Proxy.InjectionApi
             items = items.Remove(id);
         }
 
-        public IEnumerable<Item> FindTypeAll(ushort type) => items.Values.Where(i => i.Type == type);
+        public IEnumerable<Item> FindTypeAll(ModelId type) => items.Values.Where(i => i.Type == type);
 
-        public Item FindType(ushort type) => FindTypeAll(type).FirstOrDefault();
+        public Item FindType(ModelId type) => FindTypeAll(type).FirstOrDefault();
 
-        public Item FindType(ushort[] types) => FindTypeAll(types).FirstOrDefault();
+        public Item FindType(params ModelId[] types) => FindTypeAll(types).FirstOrDefault();
 
-        public Item FindTypeOnGround(params ushort[] types) => FindTypeAll(types).FirstOrDefault(i => i.IsOnGround);
+        public Item FindTypeOnGround(params ModelId[] types) => FindTypeAll(types).FirstOrDefault(i => i.IsOnGround);
 
         public Item InContainer(Item container)
             => items.Values.First(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
 
-        public IEnumerable<Item> FindTypeAll(ushort[] types) => items.Values.Where(i => types.Contains(i.Type));
+        public IEnumerable<Item> FindTypeAll(params ModelId[] types) => items.Values.Where(i => types.Contains(i.Type));
 
         internal void AddItemRange(IEnumerable<Item> items)
         {

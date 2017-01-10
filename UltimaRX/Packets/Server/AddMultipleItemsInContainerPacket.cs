@@ -21,7 +21,7 @@ namespace UltimaRX.Packets.Server
                 {
                     yield return new Item(
                         id: ArrayPacketReader.ReadUInt(rawPacket.Payload, position),
-                        type: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 4),
+                        type: ArrayPacketReader.ReadModelId(rawPacket.Payload, position + 4),
                         amount: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 7),
                         xLoc: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 9),
                         yLoc: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 11),

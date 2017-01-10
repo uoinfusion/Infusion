@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using UltimaRX.Packets;
 
 namespace UltimaRX.IO
 {
@@ -10,15 +11,23 @@ namespace UltimaRX.IO
         public ArrayPacketReader(byte[] array)
         {
             this.array = array;
-            Position = Position;
         }
 
-        [Obsolete("Use Skip instead of setter.")]
-        public int Position { get; set; }
+        public int Position { get; private set; }
 
         public byte ReadByte()
         {
             return array[Position++];
+        }
+
+        public static ModelId ReadModelId(byte[] array, int position)
+        {
+            return (ModelId)ReadUShort(array, position);
+        }
+
+        public ModelId ReadModelId()
+        {
+            return (ModelId) ReadUShort();
         }
 
         public ushort ReadUShort()

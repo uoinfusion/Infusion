@@ -155,7 +155,7 @@ void WalkTo(ushort xloc, ushort yloc)
     WalkTo(new Location2D(xloc, yloc));
 }
 
-void Cook(ushort rawFoodType)
+void Cook(ModelId rawFoodType)
 {
     var campfire = Items.FindType(ItemTypes.Campfire);
     var rawFood = Items.FindType(rawFoodType);
@@ -174,7 +174,7 @@ void Cook(ushort rawFoodType)
     }
 }
 
-void Cook(ushort rawFoodType, string campfireTile)
+void Cook(ModelId rawFoodType, string campfireTile)
 {
     var rawFood = Items.FindType(rawFoodType);
 

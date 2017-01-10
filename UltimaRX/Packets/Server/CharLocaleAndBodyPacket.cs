@@ -13,7 +13,7 @@ namespace UltimaRX.Packets.Server
 
         public uint PlayerId { get; private set; }
 
-        public ushort BodyType { get; set; }
+        public ModelId BodyType { get; set; }
 
         public Location3D Location { get; private set; }
 
@@ -23,11 +23,11 @@ namespace UltimaRX.Packets.Server
         {
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Position = 1;
+            reader.Skip(1);
 
             PlayerId = reader.ReadUInt();
             uint unknown1 = reader.ReadUInt();
-            BodyType = reader.ReadUShort();
+            BodyType = reader.ReadModelId();
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();
             byte unknown2 = reader.ReadByte();

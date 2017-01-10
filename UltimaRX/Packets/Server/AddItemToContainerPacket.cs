@@ -6,7 +6,7 @@ namespace UltimaRX.Packets.Server
     public class AddItemToContainerPacket : MaterializedPacket
     {
         public uint ItemId { get; private set; }
-        public ushort Type { get; private set; }
+        public ModelId Type { get; private set; }
         public ushort Amount { get; private set; }
         public Location2D Location { get; private set; }
         public uint ContainerId { get; private set; }
@@ -24,7 +24,7 @@ namespace UltimaRX.Packets.Server
             reader.Skip(1);
 
             ItemId = reader.ReadUInt();
-            Type = reader.ReadUShort();
+            Type = reader.ReadModelId();
             reader.Skip(1);
             Amount = reader.ReadUShort();
             Location = new Location2D(reader.ReadUShort(), reader.ReadUShort());

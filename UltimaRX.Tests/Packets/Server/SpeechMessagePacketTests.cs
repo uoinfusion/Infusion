@@ -38,7 +38,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.Id.Should().Be(0x00000001);
-            packet.Model.Should().Be(0x0190);
+            packet.Model.Should().Be((ModelId)0x0190);
             packet.Type.Should().Be((SpeechType)3);
             packet.Color.Should().Be((Color)0x02B2);
             packet.Font.Should().Be(0x0003);

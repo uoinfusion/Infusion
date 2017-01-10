@@ -10,7 +10,7 @@ namespace UltimaRX.Packets.Client
 {
     public class TargetLocationRequest
     {
-        public TargetLocationRequest(uint cursorId, Location3D location, ushort tileType, CursorType cursorType)
+        public TargetLocationRequest(uint cursorId, Location3D location, ModelId tileType, CursorType cursorType)
         {
             byte[] payload = new byte[19];
             var writer = new ArrayPacketWriter(payload);
@@ -24,12 +24,12 @@ namespace UltimaRX.Packets.Client
             writer.WriteUShort(location.Y);
             writer.WriteByte(0); // unknown
             writer.WriteByte(location.Z);
-            writer.WriteUShort(tileType);
+            writer.WriteModelId(tileType);
 
             RawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);
         }
 
-        public TargetLocationRequest(uint cursorId, uint itemId, CursorType cursorType, Location3D location, ushort itemType)
+        public TargetLocationRequest(uint cursorId, uint itemId, CursorType cursorType, Location3D location, ModelId itemType)
         {
             byte[] payload = new byte[19];
 
@@ -43,7 +43,7 @@ namespace UltimaRX.Packets.Client
             writer.WriteUShort(location.Y);
             writer.WriteByte(0); // unknown
             writer.WriteByte(location.Z);
-            writer.WriteUShort(itemType);
+            writer.WriteModelId(itemType);
 
             RawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);
         }

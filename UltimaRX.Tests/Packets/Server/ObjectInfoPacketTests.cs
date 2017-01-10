@@ -39,7 +39,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(ObjectInfoPacketWithAmountWithFlag);
 
             packet.Id.Should().Be(0x4000000B);
-            packet.Type.Should().Be(0x0EED);
+            packet.Type.Should().Be((ModelId)0x0EED);
             packet.Amount.Should().Be(0x01F4);
             packet.Location.X.Should().Be(0x128A);
             packet.Location.Y.Should().Be(0x0542);
@@ -54,7 +54,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(ObjectInfoPacket);
 
             packet.Id.Should().Be(0x4000000F);
-            packet.Type.Should().Be(0x372A);
+            packet.Type.Should().Be((ModelId)0x372A);
             packet.Amount.Should().Be(1);
             packet.Location.X.Should().Be(0x129B);
             packet.Location.Y.Should().Be(0x0551);
@@ -81,7 +81,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.Id.Should().Be(0x400324dd);
-            packet.Type.Should().Be(0x198a);
+            packet.Type.Should().Be((ModelId)0x198a);
             packet.Location.X.Should().Be(0x14EB);
             packet.Location.Y.Should().Be(0x0bd0);
             packet.Location.Z.Should().Be(0x00);
@@ -106,7 +106,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.Id.Should().Be(0x40037cbd);
-            packet.Type.Should().Be(0x1ad7);
+            packet.Type.Should().Be((ModelId)0x1ad7);
             packet.Location.X.Should().Be(0x14f4);
             packet.Location.Y.Should().Be(0x0BAE);
             packet.Location.Z.Should().Be(0x06);

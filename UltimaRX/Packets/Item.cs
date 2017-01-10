@@ -13,7 +13,7 @@
         }
 
         public Item(uint id, ushort type, ushort amount, Location3D location, Color? color = null,
-            uint? containerId = null, Layer? layer = null)
+            uint? containerId = null, Layer? layer = null, Movement? orientation = null)
         {
             Id = id;
             Type = type;
@@ -22,6 +22,7 @@
             Color = color ?? default(Color);
             ContainerId = containerId;
             Layer = layer;
+            Orientation = orientation;
         }
 
         public bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;
@@ -37,6 +38,8 @@
         public uint? ContainerId { get; }
 
         public Color Color { get; }
+
+        public Movement? Orientation { get; }
 
         public Layer? Layer { get; }
 

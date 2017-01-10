@@ -16,12 +16,6 @@ using UltimaRX.Proxy.Logging;
 //12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
 //0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
 
-//12:24:14.048 >>>> server -> proxy
-//0xB8, 0x8E, 0xF5, 0x55, 0x1A, 0x2A, 0x44, 0x07, 0x74, 0x9D, 0xBE, 0x98, 0x5F, 
-//1/10/2017 12:24:14 AM >>>> server -> proxy: RawPacket UpdatePlayer, length = 17
-//0x77, 0x00, 0x06, 0x62, 0x21, 0x00, 0x06, 0x08, 0xED, 0x09, 0x7F, 0x01, 0x01, 0x09, 0x01, 0x00, 
-//0x03,
-
 namespace UltimaRX.Proxy
 {
     public static class Program
@@ -270,6 +264,10 @@ namespace UltimaRX.Proxy
             else if (rawPacket.Id == PacketDefinitions.CharacterLocaleAndBody.Id)
             {
                 ServerPacketHandler.Publish<CharLocaleAndBodyPacket>(rawPacket);
+            }
+            else if (rawPacket.Id == PacketDefinitions.UpdatePlayer.Id)
+            {
+                ServerPacketHandler.Publish<UpdatePlayerPacket>(rawPacket);
             }
 
             return rawPacket;

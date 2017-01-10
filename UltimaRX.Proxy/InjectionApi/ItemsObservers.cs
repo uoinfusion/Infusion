@@ -18,6 +18,13 @@ namespace UltimaRX.Proxy.InjectionApi
             serverPacketHandler.Subscribe(PacketDefinitions.DeleteObject, HandleDeleteObjectPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
+        }
+
+        private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
+        {
+            collection.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
+                orientation: packet.Direction));
         }
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)

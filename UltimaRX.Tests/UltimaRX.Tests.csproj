@@ -80,6 +80,7 @@
     <Compile Include="Packets\Server\ObjectInfoPacketTests.cs" />
     <Compile Include="Packets\Server\SendSpeechPacketTests.cs" />
     <Compile Include="Packets\Server\SpeechMessagePacketTests.cs" />
+    <Compile Include="Packets\Server\UpdatePlayerPacketTests.cs" />
     <Compile Include="Packets\SpeechRequestTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnectionTests.cs" />

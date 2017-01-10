@@ -313,8 +313,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition NewSubserver = new PacketDefinition(0x76,
             new StaticPacketLength(16), "NewSubserver");
 
-        public static readonly PacketDefinition UpdatePlayer = new PacketDefinition(0x77,
-            new StaticPacketLength(17), "UpdatePlayer");
+        public static readonly PacketDefinition<UpdatePlayerPacket> UpdatePlayer = new PacketDefinition<UpdatePlayerPacket>(0x77,
+            new StaticPacketLength(17), "UpdatePlayer", packet => new UpdatePlayerPacket());
 
         public static readonly PacketDefinition<DrawObjectPacket> DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
             new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket());

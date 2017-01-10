@@ -100,6 +100,7 @@
     <Compile Include="Packets\Both\TargetCursorPacket.cs" />
     <Compile Include="Packets\Server\SendSpeechPacket.cs" />
     <Compile Include="Packets\Server\SpeechMessagePacket.cs" />
+    <Compile Include="Packets\Server\UpdatePlayerPacket.cs" />
     <Compile Include="Packets\SpeechType.cs" />
     <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />

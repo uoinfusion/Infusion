@@ -21,6 +21,11 @@ namespace UltimaRX.Proxy.InjectionApi
             return items.Values.GetEnumerator();
         }
 
+        internal void UpdateItem(Item item)
+        {
+            AddItem(item);
+        }
+    
         internal void AddItem(Item item)
         {
             items = items.SetItem(item.Id, item);

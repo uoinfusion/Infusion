@@ -125,5 +125,10 @@ namespace UltimaRX.IO
         {
             Position += numberOfBytes;
         }
+
+        public Color ReadColor()
+        {
+            return (Color) ReadUShort();
+        }
     }
 }

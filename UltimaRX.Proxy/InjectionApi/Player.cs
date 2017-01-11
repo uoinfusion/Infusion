@@ -13,11 +13,15 @@ namespace UltimaRX.Proxy.InjectionApi
         public uint PlayerId { get; set; }
 
         public Location3D Location { get; set; }
-        public Direction Direction { get; set; }
+        public Movement Movement { get; set; }
         internal byte CurrentSequenceKey { get; set; }
         internal ConcurrentQueue<WalkRequest> WalkRequestQueue => walkRequestQueue;
 
         public Item BackPack => Injection.Items.First(i => i.Type == BackPackType && i.ContainerId == PlayerId);
+        public Color Color { get; set; }
+        public ModelId BodyType { get; set; }
+        public ushort CurrentHealth { get; set; }
+        public ushort MaxHealth { get; set; }
 
         internal void ResetWalkRequestQueue()
         {

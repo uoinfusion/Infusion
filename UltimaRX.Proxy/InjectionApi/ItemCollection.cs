@@ -11,6 +11,13 @@ namespace UltimaRX.Proxy.InjectionApi
     {
         private ImmutableDictionary<uint, Item> items = ImmutableDictionary<uint, Item>.Empty;
 
+        public Item this[uint id] => items[id];
+
+        public bool TryGet(uint id, out Item item)
+        {
+            return items.TryGetValue(id, out item);
+        }
+
         public IEnumerator<Item> GetEnumerator()
         {
             return items.Values.GetEnumerator();

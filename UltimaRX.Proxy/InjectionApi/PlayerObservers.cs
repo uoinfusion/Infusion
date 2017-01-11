@@ -21,13 +21,23 @@ namespace UltimaRX.Proxy.InjectionApi
             serverPacketHandler.Subscribe(PacketDefinitions.DrawGamePlayer, HandleDrawGamePlayerPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.CharMoveRejection, HandleCharMoveRejectionPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.CharacterMoveAck, HandleCharacterMoveAckPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
+        }
+
+        private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
+        {
+            if (player.PlayerId == packet.PlayerId)
+            {
+                player.CurrentHealth = packet.CurrentHealth;
+                player.MaxHealth = packet.MaxHealth;
+            }
         }
 
         private void HandleCharLocaleAndBodyPacket(CharLocaleAndBodyPacket packet)
         {
             player.PlayerId = packet.PlayerId;
             player.Location = packet.Location;
-            player.Direction = packet.Direction;
+            player.Movement = new Movement(packet.Direction, MovementType.Walk);
         }
 
         private void HandleDrawGamePlayerPacket(DrawGamePlayerPacket packet)
@@ -35,9 +45,11 @@ namespace UltimaRX.Proxy.InjectionApi
             if (packet.PlayerId == player.PlayerId)
             {
                 player.Location = packet.Location;
-                player.Direction = packet.Movement.Direction;
+                player.Movement = packet.Movement;
                 player.ResetWalkRequestQueue();
                 player.CurrentSequenceKey = 0;
+                player.Color = packet.Color;
+                player.BodyType = packet.BodyType;
                 Program.Diagnostic.WriteLine(
                     $"WalkRequestQueue cleared, currentSequenceKey = {player.CurrentSequenceKey}");
             }
@@ -46,12 +58,12 @@ namespace UltimaRX.Proxy.InjectionApi
         private void HandleCharMoveRejectionPacket(CharMoveRejectionPacket packet)
         {
             player.Location = packet.Location;
-            player.Direction = packet.Movement.Direction;
+            player.Movement = packet.Movement;
             player.CurrentSequenceKey = 0;
             player.ResetWalkRequestQueue();
 
             Program.Diagnostic.WriteLine(
-                $"CharMoveRejection: currentSequenceKey={player.CurrentSequenceKey}, new location:{player.Location}, new direction:{player.Direction}");
+                $"CharMoveRejection: currentSequenceKey={player.CurrentSequenceKey}, new location:{player.Location}, new direction:{player.Movement}");
         }
 
         private void HandleCharacterMoveAckPacket(CharacterMoveAckPacket packet)
@@ -63,25 +75,20 @@ namespace UltimaRX.Proxy.InjectionApi
 
                 if (walkRequest.IssuedByProxy)
                 {
-                    Program.Diagnostic.WriteLine("WalkRequest issued by proxy, sending MovePlayerPacket to client");
-                    var movePlayerPacket = new MovePlayerPacket
-                    {
-                        Direction = walkRequest.Direction
-                    };
-
-                    Program.SendToClient(movePlayerPacket.RawPacket);
+                    var drawGamePlayerPacket = new DrawGamePlayerPacket(player.PlayerId, player.BodyType, player.Location, player.Movement, player.Color);
+                    Program.SendToClient(drawGamePlayerPacket.RawPacket);
                 }
 
-                if (player.Direction != walkRequest.Direction)
+                if (player.Movement.Direction != walkRequest.Movement.Direction)
                 {
                     Program.Diagnostic.WriteLine(
-                        $"Old direction: {player.Direction}, new direction: {walkRequest.Direction} - no position change");
-                    player.Direction = walkRequest.Direction;
+                        $"Old direction: {player.Movement}, new direction: {walkRequest.Movement} - no position change");
+                    player.Movement = walkRequest.Movement;
                 }
                 else
                 {
-                    Program.Diagnostic.WriteLine($"Old location: {player.Location}, direction = {walkRequest.Direction}");
-                    player.Location = player.Location.LocationInDirection(walkRequest.Direction);
+                    Program.Diagnostic.WriteLine($"Old location: {player.Location}, direction = {walkRequest.Movement}");
+                    player.Location = player.Location.LocationInDirection(walkRequest.Movement.Direction);
                     Program.Diagnostic.WriteLine($"New location: {player.Location}");
                 }
             }
@@ -95,7 +102,7 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             player.CurrentSequenceKey = (byte)(packet.SequenceKey + 1);
             player.WalkRequestQueue.Enqueue(new WalkRequest(packet.SequenceKey,
-                packet.Movement.Direction, false));
+                packet.Movement, false));
             Program.Diagnostic.WriteLine($"MoveRequest from client: WalkRequest enqueued, {packet.Movement}, packetSequenceKey={packet.SequenceKey}, currentSequenceKey = {player.CurrentSequenceKey}, queue length = {player.WalkRequestQueue.Count}");
         }
     }

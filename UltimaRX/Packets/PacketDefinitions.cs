@@ -349,8 +349,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition SellList = new PacketDefinition(0x9E,
             new VariablePacketLength(), "SellList");
 
-        public static readonly PacketDefinition UpdateCurrentHealth = new PacketDefinition(0xA1,
-            new StaticPacketLength(9), "UpdateCurrentHealth");
+        public static readonly PacketDefinition<UpdateCurrentHealthPacket> UpdateCurrentHealth = new PacketDefinition<UpdateCurrentHealthPacket>(0xA1,
+            new StaticPacketLength(9), "UpdateCurrentHealth", packet => new UpdateCurrentHealthPacket());
 
         public static readonly PacketDefinition UpdateCurrentMana = new PacketDefinition(0xA2,
             new StaticPacketLength(9), "UpdateCurrentMana");

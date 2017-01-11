@@ -22,9 +22,8 @@ namespace UltimaRX.IO
 
         internal void WriteUShort(ushort value)
         {
-            array[Position++] = (byte)((value >> 8) & 0xFF);
+            array[Position++] = (byte) ((value >> 8) & 0xFF);
             array[Position++] = (byte) (value & 0xFF);
-
         }
 
         public void WriteByte(byte value)
@@ -34,23 +33,34 @@ namespace UltimaRX.IO
 
         public void WriteInt(int value)
         {
-            array[Position++] = (byte)((value >> 24) & 0xFF);
-            array[Position++] = (byte)((value >> 16) & 0xFF);
-            array[Position++] = (byte)((value >> 8) & 0xFF);
-            array[Position++] = (byte)(value & 0xFF);
+            array[Position++] = (byte) ((value >> 24) & 0xFF);
+            array[Position++] = (byte) ((value >> 16) & 0xFF);
+            array[Position++] = (byte) ((value >> 8) & 0xFF);
+            array[Position++] = (byte) (value & 0xFF);
         }
 
         public void WriteUInt(uint value)
         {
-            array[Position++] = (byte)((value >> 24) & 0xFF);
-            array[Position++] = (byte)((value >> 16) & 0xFF);
-            array[Position++] = (byte)((value >> 8) & 0xFF);
-            array[Position++] = (byte)(value & 0xFF);
+            array[Position++] = (byte) ((value >> 24) & 0xFF);
+            array[Position++] = (byte) ((value >> 16) & 0xFF);
+            array[Position++] = (byte) ((value >> 8) & 0xFF);
+            array[Position++] = (byte) (value & 0xFF);
         }
 
         public void WriteModelId(ModelId itemType)
         {
-            WriteUShort((ushort)itemType);
+            WriteUShort((ushort) itemType);
+        }
+
+        public void WriteColor(Color color)
+        {
+            WriteUShort(color.Id);
+        }
+
+        public void WriteMovement(Movement movement)
+        {
+            WriteByte((byte)
+                ((movement.Type == MovementType.Walk) ? (byte) movement.Direction : 0x80 + (byte) movement.Direction));
         }
     }
 }

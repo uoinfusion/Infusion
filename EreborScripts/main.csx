@@ -11,4 +11,4 @@ using UltimaRX.Packets;
 using UltimaRX.Proxy.InjectionApi;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 
-Program.Start(currentConnection);
+Program.Start(currentConnection, 33334);

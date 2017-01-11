@@ -137,7 +137,7 @@ namespace UltimaRX.Proxy.InjectionApi
                 SequenceKey = Me.CurrentSequenceKey
             };
 
-            Me.WalkRequestQueue.Enqueue(new WalkRequest(Me.CurrentSequenceKey, direction, true));
+            Me.WalkRequestQueue.Enqueue(new WalkRequest(Me.CurrentSequenceKey, packet.Movement, true));
 
             Me.CurrentSequenceKey++;
             Program.Diagnostic.WriteLine(

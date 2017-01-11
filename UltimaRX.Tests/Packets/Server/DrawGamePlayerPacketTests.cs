@@ -35,10 +35,11 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.PlayerId.Should().Be(0x00000001);
-            packet.BodyType.Should().Be(0x0190);
+            packet.BodyType.Should().Be((ModelId)0x0190);
             packet.Location.X.Should().Be(0x129C);
             packet.Location.Y.Should().Be(0x0552);
             packet.Location.Z.Should().Be(0x0A);
+            packet.Color.Should().Be((Color) 0x83EA);
             packet.Movement.Type.Should().Be(MovementType.Walk);
             packet.Movement.Direction.Should().Be(Direction.South);
         }

@@ -7,7 +7,7 @@ namespace UltimaRX.Proxy.InjectionApi
     {
         private readonly ItemCollection collection;
 
-        private ItemCollection items = new ItemCollection();
+        private readonly ItemCollection items = new ItemCollection();
 
         public ItemsObservers(ItemCollection collection, ServerPacketHandler serverPacketHandler)
         {
@@ -19,6 +19,16 @@ namespace UltimaRX.Proxy.InjectionApi
             serverPacketHandler.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
+        }
+
+        private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
+        {
+            Item item;
+            if (collection.TryGet(packet.PlayerId, out item))
+            {
+                items.UpdateItem(item.UpdateHealth(packet.CurrentHealth, packet.MaxHealth));
+            }
         }
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)

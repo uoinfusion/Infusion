@@ -9,15 +9,15 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     internal struct WalkRequest
     {
-        public WalkRequest(byte sequenceKey, Direction direction, bool issuedByProxy)
+        public WalkRequest(byte sequenceKey, Movement movement, bool issuedByProxy)
         {
             SequenceKey = sequenceKey;
-            Direction = direction;
+            Movement = movement;
             IssuedByProxy = issuedByProxy;
         }
 
         public byte SequenceKey { get; }
-        public Direction Direction { get; }
+        public Movement Movement { get; }
         public bool IssuedByProxy { get; }
     }
 }

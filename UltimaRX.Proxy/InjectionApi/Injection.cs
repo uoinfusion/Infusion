@@ -13,6 +13,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private static readonly Journal Journal;
         private static readonly JournalObservers JournalObservers;
         private static readonly PlayerObservers PlayerObservers;
+        private static readonly BlockedPacketsFilters BlockedPacketsFilters;
         private static readonly InjectionCommandHandler InjectionCommandHandler;
 
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
@@ -29,6 +30,7 @@ namespace UltimaRX.Proxy.InjectionApi
             PlayerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
             Targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
             InjectionCommandHandler = new InjectionCommandHandler(Program.ClientPacketHandler);
+            BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 
         internal static CancellationToken? CancellationToken
@@ -182,6 +184,17 @@ namespace UltimaRX.Proxy.InjectionApi
         public static string Info() => Targeting.Info();
 
         public static ModelId TypeInfo() => Targeting.TypeInfo();
+
+        public static Item ItemInfo()
+        {
+            var itemId = Targeting.ItemIdInfo();
+
+            Item item;
+            if (!Items.TryGet(itemId, out item))
+                return null;
+
+            return item;
+        }
 
         public static void WaitForTarget()
         {

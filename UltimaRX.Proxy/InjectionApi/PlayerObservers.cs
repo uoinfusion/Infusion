@@ -38,7 +38,10 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             player.PlayerId = packet.PlayerId;
             player.Location = packet.Location;
+            player.PredictedLocation = packet.Location;
             player.Movement = new Movement(packet.Direction, MovementType.Walk);
+            player.PredictedMovement = player.Movement;
+
         }
 
         private void HandleDrawGamePlayerPacket(DrawGamePlayerPacket packet)
@@ -46,7 +49,9 @@ namespace UltimaRX.Proxy.InjectionApi
             if (packet.PlayerId == player.PlayerId)
             {
                 player.Location = packet.Location;
+                player.PredictedLocation = packet.Location;
                 player.Movement = packet.Movement;
+                player.PredictedMovement = player.Movement;
                 player.ResetWalkRequestQueue();
                 OnWalkRequestDequeued();
 
@@ -61,7 +66,9 @@ namespace UltimaRX.Proxy.InjectionApi
         private void HandleCharMoveRejectionPacket(CharMoveRejectionPacket packet)
         {
             player.Location = packet.Location;
+            player.PredictedLocation = packet.Location;
             player.Movement = packet.Movement;
+            player.PredictedMovement = player.Movement;
             player.CurrentSequenceKey = 0;
             player.ResetWalkRequestQueue();
             OnWalkRequestDequeued();

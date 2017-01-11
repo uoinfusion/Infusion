@@ -1,4 +1,6 @@
-﻿namespace UltimaRX.Packets
+﻿using System;
+
+namespace UltimaRX.Packets
 {
     public sealed class Item
     {
@@ -23,6 +25,20 @@
             ContainerId = containerId;
             Layer = layer;
             Orientation = orientation;
+        }
+
+        public ushort GetDistance(Item item)
+        {
+            return GetDistance(item.Location);
+        }
+
+        public ushort GetDistance(Location3D secondLocation)
+        {
+            var vector = Location - secondLocation;
+
+            var distance = Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2));
+
+            return (ushort)distance;
         }
 
         public bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;

@@ -18,6 +18,17 @@ namespace UltimaRX.Proxy.InjectionApi
             return items.TryGetValue(id, out item);
         }
 
+        public Item RefreshItem(Item item)
+        {
+            Item newItemVersion;
+            if (items.TryGetValue(item.Id, out newItemVersion))
+            {
+                return newItemVersion;
+            }
+
+            return null;
+        }
+
         public IEnumerator<Item> GetEnumerator()
         {
             return items.Values.GetEnumerator();
@@ -60,7 +71,7 @@ namespace UltimaRX.Proxy.InjectionApi
         public Item FindTypeOnGround(params ModelId[] types) => FindTypeAll(types).FirstOrDefault(i => i.IsOnGround);
 
         public Item InContainer(Item container)
-            => items.Values.First(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
+            => items.Values.FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
 
         public IEnumerable<Item> FindTypeAll(params ushort[] types) => FindTypeAll(ToModelIds(types));
 

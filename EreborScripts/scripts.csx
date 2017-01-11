@@ -58,14 +58,14 @@ void Mine(string tileInfo)
 
         WaitForJournal("You put", "Nevykopal jsi nic zajimaveho", "Try mining in rock", "There is no ore here to mine");
 
-        if (InJournal("Jeste nemuzes pouzit skill."))
-        {
-            Wait(5000);
-            Print("waiting for skill");
-        }
-
         canMine = !InJournal("Try mining in rock", "There is no ore here to mine");
         canMine &= !skipOre.Any(s => InJournal(s));
+
+        if (canMine && InJournal("Jeste nemuzes pouzit skill."))
+        {
+            Print("waiting for skill");
+            Wait(5000);
+        }
     }
 }
 
@@ -82,15 +82,7 @@ void Fish(string tileInfo)
 
         WaitForJournal("You pull out a fish", "There are no fish here", "Dneska nejak neberou");
 
-        if (InJournal("Jeste nemuzes pouzit skill."))
-        {
-            Wait(5000);
-            Print("waiting for skill");
-        }
-        else
-        {
-            Wait(1000);
-        }
+        Wait(1000);
 
         var fish = Items.FindTypeOnGround(ItemTypes.Fishes);
         while (fish != null)
@@ -100,6 +92,11 @@ void Fish(string tileInfo)
         }
 
         canFish = !InJournal("There are no fish here");
+        if (canFish && InJournal("Jeste nemuzes pouzit skill."))
+        {
+            Print("waiting for skill");
+            Wait(5000);
+        }
     }
 }
 
@@ -117,13 +114,13 @@ void HarvestTree(string tileInfo)
 
         WaitForJournal("You put", "Drevo se nepodarilo", "of a way to use", "immune", "There are no logs");
 
-        if (InJournal("Jeste nemuzes pouzit skill."))
-        { 
-            Wait(2000);
-            Print("waiting for skill");
-        }
-
         treeHarvestable = !InJournal("of a way to use", "immune", "There are no logs here to chop.");
+
+        if (treeHarvestable && InJournal("Jeste nemuzes pouzit skill."))
+        {
+            Print("waiting for skill");
+            Wait(5000);
+        }
     }
 }
 
@@ -137,14 +134,19 @@ void StepToward(Location2D currentLocation, Location2D targetLocation)
     }
 }
 
+void StepToward(Item item)
+{
+    StepToward((Location2D)item.Location);
+}
+
 void StepToward(Location2D targetLocation)
 {
-    StepToward((Location2D)Me.Location, targetLocation);
+    StepToward((Location2D)Me.PredictedLocation, targetLocation);
 }
 
 void WalkTo(Location2D targetLocation)
 {
-    while ((Location2D)Me.Location != targetLocation)
+    while ((Location2D)Me.PredictedLocation != targetLocation)
     {
         StepToward(targetLocation);
     }
@@ -201,4 +203,89 @@ void Cook()
         Cook(rawFood.Type, campfireTile);
         rawFood = Items.FindType(ItemTypes.RawFood);
     }
+}
+
+void Loot()
+{
+    var container = ItemInfo();
+    if (container != null)
+    {
+        Loot(container);
+    }
+    else 
+        Print("no container for loot");
+}
+
+void Loot(Item container)
+{
+    var item = Items.InContainer(container);
+    while (item != null)
+    {
+        Print("looting item");
+        Pickup(item);
+        item = Items.InContainer(container);
+    }
+
+    Print("nothing to loot");
+}
+
+void Kill(Item subjectToKill)
+{
+    WarModeOn();
+    Attack(subjectToKill);
+
+    while (subjectToKill != null)
+    {
+        if (subjectToKill.GetDistance(Me.Location) > 1)
+            StepToward(subjectToKill);
+        subjectToKill = Items.RefreshItem(subjectToKill);
+    }
+
+    Item bodyOfSubject;
+    int retryCount = 0;
+
+    do
+    {
+        Print("waiting for body");
+        Wait(1000);
+        bodyOfSubject = Items.FindTypeAll(ItemTypes.RippableBodies).OrderBy(i => i.GetDistance(Me.Location)).First();
+        retryCount++;
+    } while (bodyOfSubject == null && retryCount < 20);
+
+    if (bodyOfSubject != null)
+    {
+        DeleteJournal();
+        UseType(ItemTypes.Knives);
+        WaitForTarget();
+        Target(bodyOfSubject);
+        WaitForJournal("Rozrezal jsi mrtvolu.");
+        Wait(1000);
+        Loot(bodyOfSubject);
+    }
+    else
+        Print("no body found");
+
+    WarModeOff();
+}
+
+void Kill()
+{
+    var subjectToKill = ItemInfo();
+    if (subjectToKill != null)
+        Kill(subjectToKill);
+}
+
+void MassKill()
+{
+    do
+    {
+        var subject = Items.FindTypeAll(ItemTypes.MassKillSubjects).OrderBy(i => i.GetDistance(Me.Location)).FirstOrDefault();
+        if (subject == null)
+        {
+            Print("nothing to kill");
+            break;
+        }
+
+        Kill(subject);
+    } while (true);
 }

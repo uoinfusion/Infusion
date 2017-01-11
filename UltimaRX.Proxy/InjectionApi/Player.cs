@@ -18,6 +18,9 @@ namespace UltimaRX.Proxy.InjectionApi
         public uint PlayerId { get; set; }
 
         public Location3D Location { get; set; }
+        public Location3D PredictedLocation { get; set; }
+        public Movement PredictedMovement { get; set; }
+
         public Movement Movement { get; set; }
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
@@ -45,7 +48,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
-                Program.Diagnostic.WriteLine($"Walk: to many walk requests");
+                Program.Diagnostic.WriteLine($"Walk: too many walk requests");
                 Injection.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(1000);
             }
@@ -65,6 +68,14 @@ namespace UltimaRX.Proxy.InjectionApi
             };
 
             WalkRequestQueue.Enqueue(new WalkRequest(CurrentSequenceKey, packet.Movement, true));
+            if (PredictedMovement.Direction != packet.Movement.Direction)
+            {
+                PredictedMovement = packet.Movement;
+            }
+            else
+            {
+                PredictedLocation = PredictedLocation.LocationInDirection(direction);
+            }
 
             CurrentSequenceKey++;
             Program.Diagnostic.WriteLine(

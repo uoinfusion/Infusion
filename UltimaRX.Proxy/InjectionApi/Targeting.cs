@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
@@ -12,6 +11,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
         private bool discardNextTargetLocationRequestIfEmpty;
+        private uint lastItemIdInfo;
 
         private string lastTargetInfo;
         private ModelId lastTypeInfo;
@@ -56,19 +56,10 @@ namespace UltimaRX.Proxy.InjectionApi
                             $"{packet.ClickedOnType.Value} {packet.Location.X} {packet.Location.Y} {packet.Location.Z}";
                         break;
                     case CursorTarget.Object:
+                        lastTypeInfo = packet.ClickedOnType;
+                        lastItemIdInfo = packet.ClickedOnId;
                         lastTargetInfo =
                             $"{packet.ClickedOnType} {packet.ClickedOnId:X8}";
-                        break;
-                }
-
-                receivedTargetInfoEvent.Set();
-                return null;
-            } else if (packet.CursorId == 0xDEADBEFF)
-            {
-                switch (packet.CursorTarget)
-                {
-                    case CursorTarget.Object:
-                        lastTypeInfo = packet.ClickedOnType;
                         break;
                 }
 
@@ -145,7 +136,7 @@ namespace UltimaRX.Proxy.InjectionApi
             if (!byte.TryParse(parts[3], out zloc))
                 throw new InvalidOperationException(errorMessage);
 
-            TargetTile(xloc, yloc, zloc, (ModelId)rawType);
+            TargetTile(xloc, yloc, zloc, (ModelId) rawType);
         }
 
         public void TargetTile(ushort xloc, ushort yloc, byte zloc, ModelId tileType)
@@ -156,19 +147,21 @@ namespace UltimaRX.Proxy.InjectionApi
         public void Target(Item item)
         {
             Program.Diagnostic.WriteLine("Target");
-            var targetRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Harmful, item.Location, item.Type);
+            var targetRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Harmful, item.Location,
+                item.Type);
             Program.SendToServer(targetRequest.RawPacket);
 
             Program.Diagnostic.WriteLine(
                 "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
-            var cancelRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Cancel, item.Location, item.Type);
+            var cancelRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Cancel, item.Location,
+                item.Type);
             discardNextTargetLocationRequestIfEmpty = true;
             Program.SendToClient(cancelRequest.RawPacket);
         }
 
         public ModelId TypeInfo()
         {
-            var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEFF, CursorType.Neutral);
+            var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
 
             receivedTargetInfoEvent.Reset();
             Program.SendToClient(packet.RawPacket);
@@ -179,6 +172,21 @@ namespace UltimaRX.Proxy.InjectionApi
             }
 
             return lastTypeInfo;
+        }
+
+        public uint ItemIdInfo()
+        {
+            var packet = new TargetCursorPacket(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
+
+            receivedTargetInfoEvent.Reset();
+            Program.SendToClient(packet.RawPacket);
+
+            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                Injection.CheckCancellation();
+            }
+
+            return lastItemIdInfo;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
@@ -52,7 +53,7 @@ namespace UltimaRX.Proxy.InjectionApi
                 {
                     case CursorTarget.Location:
                         lastTargetInfo =
-                            $"{packet.ClickedOnType} {packet.Location.X} {packet.Location.Y} {packet.Location.Z}";
+                            $"{packet.ClickedOnType.Value} {packet.Location.X} {packet.Location.Y} {packet.Location.Z}";
                         break;
                     case CursorTarget.Object:
                         lastTargetInfo =

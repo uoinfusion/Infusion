@@ -12,7 +12,7 @@ namespace UltimaRX.Packets.Server
         public Location3D Location { get; private set; }
 
         public override Packet RawPacket => rawPacket;
-        public Direction Direction { get; private set; }
+        public Movement Direction { get; private set; }
         public Color Color { get; private set; }
         public Notoriety Notoriety { get; private set; }
         public IEnumerable<Item> Items { get; private set; }
@@ -26,7 +26,7 @@ namespace UltimaRX.Packets.Server
             Id = reader.ReadUInt();
             Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
-            Direction = (Direction) reader.ReadByte();
+            Direction = (Movement) reader.ReadByte();
             Color = (Color) reader.ReadUShort();
             var ignoredFlag = reader.ReadByte();
             Notoriety = (Notoriety) reader.ReadByte();

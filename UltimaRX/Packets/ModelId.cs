@@ -2,11 +2,11 @@
 {
     public struct ModelId
     {
-        private readonly ushort value;
+        public ushort Value { get; }
 
         public ModelId(ushort value)
         {
-            this.value = value;
+            Value = value;
         }
 
         public static explicit operator ModelId(ushort value)
@@ -16,7 +16,7 @@
 
         public static explicit operator ushort(ModelId model)
         {
-            return model.value;
+            return model.Value;
         }
 
         public static bool operator ==(ModelId model1, ModelId model2)
@@ -42,17 +42,17 @@
 
         public bool Equals(ModelId other)
         {
-            return value == other.value;
+            return Value == other.Value;
         }
 
         public override int GetHashCode()
         {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         public override string ToString()
         {
-            return value.ToString("X4");
+            return Value.ToString("X4");
         }
     }
 }

@@ -20,6 +20,7 @@ public static class ItemTypes
     public static ModelId RawFishSteak = (ModelId)0x097A;
 
     public static ModelId Feathers = (ModelId)0x1BD1;
+    public static ModelId Bird = (ModelId) 0x0006;
     public static ModelId BodyOfBird = (ModelId)0x2006;
     public static ModelId RawBird = (ModelId)0x09B9;
 

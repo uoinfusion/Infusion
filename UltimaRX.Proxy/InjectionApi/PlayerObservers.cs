@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
@@ -47,6 +48,8 @@ namespace UltimaRX.Proxy.InjectionApi
                 player.Location = packet.Location;
                 player.Movement = packet.Movement;
                 player.ResetWalkRequestQueue();
+                OnWalkRequestDequeued();
+
                 player.CurrentSequenceKey = 0;
                 player.Color = packet.Color;
                 player.BodyType = packet.BodyType;
@@ -61,10 +64,13 @@ namespace UltimaRX.Proxy.InjectionApi
             player.Movement = packet.Movement;
             player.CurrentSequenceKey = 0;
             player.ResetWalkRequestQueue();
+            OnWalkRequestDequeued();
 
             Program.Diagnostic.WriteLine(
                 $"CharMoveRejection: currentSequenceKey={player.CurrentSequenceKey}, new location:{player.Location}, new direction:{player.Movement}");
         }
+
+        public event EventHandler WalkRequestDequeued;
 
         private void HandleCharacterMoveAckPacket(CharacterMoveAckPacket packet)
         {
@@ -72,6 +78,7 @@ namespace UltimaRX.Proxy.InjectionApi
             if (player.WalkRequestQueue.TryDequeue(out walkRequest))
             {
                 Program.Diagnostic.WriteLine($"WalkRequest dequeued, queue length: {player.WalkRequestQueue.Count}");
+                OnWalkRequestDequeued();
 
                 if (walkRequest.IssuedByProxy)
                 {
@@ -104,6 +111,11 @@ namespace UltimaRX.Proxy.InjectionApi
             player.WalkRequestQueue.Enqueue(new WalkRequest(packet.SequenceKey,
                 packet.Movement, false));
             Program.Diagnostic.WriteLine($"MoveRequest from client: WalkRequest enqueued, {packet.Movement}, packetSequenceKey={packet.SequenceKey}, currentSequenceKey = {player.CurrentSequenceKey}, queue length = {player.WalkRequestQueue.Count}");
+        }
+
+        private void OnWalkRequestDequeued()
+        {
+            WalkRequestDequeued?.Invoke(this, EventArgs.Empty);
         }
     }
 }

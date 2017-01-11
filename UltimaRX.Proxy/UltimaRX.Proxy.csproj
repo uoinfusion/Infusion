@@ -59,6 +59,7 @@
     <Compile Include="InjectionApi\Script.cs" />
     <Compile Include="InjectionApi\Targeting.cs" />
     <Compile Include="InjectionApi\WalkRequest.cs" />
+    <Compile Include="InjectionApi\WalkRequestQueue.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPullStream.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />

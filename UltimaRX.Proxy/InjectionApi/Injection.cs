@@ -26,6 +26,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Journal = new Journal();
             JournalObservers = new JournalObservers(Journal, Program.ServerPacketHandler);
             PlayerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
+            PlayerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
             Targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
             InjectionCommandHandler = new InjectionCommandHandler(Program.ClientPacketHandler);
         }
@@ -127,23 +128,16 @@ namespace UltimaRX.Proxy.InjectionApi
             Thread.Sleep(milliseconds);
         }
 
-        public static void Walk(Direction direction)
+        public static void WaitWalk()
+        {
+            Me.WaitWalk();
+        }
+
+        public static void Walk(Direction direction, MovementType movementType = MovementType.Walk)
         {
             CheckCancellation();
 
-            var packet = new MoveRequest
-            {
-                Movement = new Movement(direction, MovementType.Walk),
-                SequenceKey = Me.CurrentSequenceKey
-            };
-
-            Me.WalkRequestQueue.Enqueue(new WalkRequest(Me.CurrentSequenceKey, packet.Movement, true));
-
-            Me.CurrentSequenceKey++;
-            Program.Diagnostic.WriteLine(
-                $"Walk: WalkRequest enqueued, Direction = {direction}, usedSequenceKey={packet.SequenceKey}, currentSequenceKey = {Me.CurrentSequenceKey}, queue length = {Me.WalkRequestQueue.Count}");
-
-            Program.SendToServer(packet.RawPacket);
+            Me.Walk(direction, movementType);
         }
 
         public static void WarModeOn()

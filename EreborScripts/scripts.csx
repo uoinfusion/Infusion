@@ -119,7 +119,7 @@ void HarvestTree(string tileInfo)
 
         if (InJournal("Jeste nemuzes pouzit skill."))
         { 
-            Wait(5000);
+            Wait(2000);
             Print("waiting for skill");
         }
 
@@ -132,6 +132,7 @@ void StepToward(Location2D currentLocation, Location2D targetLocation)
     var walkVector = (targetLocation - currentLocation).Normalize();
     if (walkVector != Vector.NullVector)
     {
+        WaitWalk();
         Walk(walkVector.ToDirection());
     }
 }
@@ -146,7 +147,6 @@ void WalkTo(Location2D targetLocation)
     while ((Location2D)Me.Location != targetLocation)
     {
         StepToward(targetLocation);
-        Wait(1000);
     }
 }
 

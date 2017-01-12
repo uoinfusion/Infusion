@@ -15,20 +15,29 @@ namespace UltimaRX.Packets
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Location2D))
+            if (obj is Location2D)
             {
-                var otherLocation = (Location3D)obj;
+                var otherLocation = (Location2D) obj;
                 return Equals(otherLocation);
             }
 
             return false;
         }
 
+        public ushort GetDistance(Location2D secondLocation)
+        {
+            var vector = this - secondLocation;
+
+            var distance = Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2));
+
+            return (ushort) distance;
+        }
+
         public override int GetHashCode()
         {
             unchecked
             {
-                return (X.GetHashCode()*397) ^ Y.GetHashCode();
+                return (X.GetHashCode() * 397) ^ Y.GetHashCode();
             }
         }
 
@@ -66,10 +75,10 @@ namespace UltimaRX.Packets
             else
                 throw new ArgumentOutOfRangeException(nameof(direction), $"Unknown direction {direction}");
 
-            return new Location2D((ushort)(X + directionVector.X), (ushort)(Y + directionVector.Y));
+            return new Location2D((ushort) (X + directionVector.X), (ushort) (Y + directionVector.Y));
         }
 
         public static Vector operator -(Location2D location1, Location2D location2) =>
-            new Vector((short)(location1.X - location2.X), (short)(location1.Y - location2.Y),0);
+            new Vector((short) (location1.X - location2.X), (short) (location1.Y - location2.Y), 0);
     }
 }

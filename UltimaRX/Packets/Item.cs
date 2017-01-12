@@ -32,14 +32,9 @@ namespace UltimaRX.Packets
             return GetDistance(item.Location);
         }
 
-        public ushort GetDistance(Location3D secondLocation)
-        {
-            var vector = Location - secondLocation;
+        public ushort GetDistance(Location3D secondLocation) => GetDistance((Location2D) secondLocation);
 
-            var distance = Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2));
-
-            return (ushort)distance;
-        }
+        public ushort GetDistance(Location2D secondLocation) => secondLocation.GetDistance((Location2D) Location);
 
         public bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;
 

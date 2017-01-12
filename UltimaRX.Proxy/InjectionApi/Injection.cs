@@ -80,30 +80,30 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             CheckCancellation();
 
-            var item = Items.FindType(type);
+            var item = Items.OfType(type).First();
             if (item != null)
                 Use(item);
             else
-                Program.Console.WriteLine($"Item of type {type} not found.");
+                Log($"Item of type {type} not found.");
         }
 
         public static void UseType(params ushort[] types)
         {
-            UseType(types.Select(t => (ModelId) t).ToArray());
+            UseType(types.ToModelIds());
         }
 
         public static void UseType(params ModelId[] types)
         {
             CheckCancellation();
 
-            var item = Items.FindType(types);
+            var item = Items.OfType(types).First();
             if (item != null)
                 Use(item);
             else
             {
                 var typesString = types.Select(u => u.ToString()).Aggregate((l, r) => l + ", " + r);
 
-                Program.Console.WriteLine($"Item of any type {typesString} not found.");
+                Log($"Item of any type {typesString} not found.");
             }
         }
 
@@ -207,6 +207,14 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             CheckCancellation();
 
+            var refreshedItem = Items.RefreshItem(item);
+            if (refreshedItem == null)
+            {
+                Log($"Cannot pickup item {item.Type}, it disappeared.");
+                return;
+            }
+            item = refreshedItem;
+
             var pickupPacket = new PickupItemRequest(item.Id, item.Amount);
             Program.SendToServer(pickupPacket.RawPacket);
             Wait(1000);
@@ -220,18 +228,16 @@ namespace UltimaRX.Proxy.InjectionApi
             PickupFromGround((ModelId)type);
         }
 
-        public static void PickupFromGround(ModelId type)
+        public static void PickupFromGround(params ModelId[] type)
         {
             CheckCancellation();
 
-            var item = Items.FindTypeOnGround(type);
-            if (item != null)
-            {
+            var itemsOnGround = Items.OfType(type).OnGround();
+            foreach (var item in itemsOnGround)
+            { 
+                Log($"Picking up {item.Type}");
                 Pickup(item);
-            }
-            else
-            {
-                Program.Print("No item found on ground");
+                Wait(1000);
             }
         }
 

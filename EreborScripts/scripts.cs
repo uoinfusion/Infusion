@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using UltimaRX.Packets;
+using UltimaRX.Proxy.InjectionApi;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 
 public static class Scripts
@@ -85,12 +86,9 @@ public static class Scripts
 
             Wait(1000);
 
-            var fish = Items.FindTypeOnGround(ItemTypes.Fishes);
-            while (fish != null)
-            {
+            var fishesOnGround = Items.OfType(ItemTypes.Fishes).OnGround();
+            foreach (var fish in fishesOnGround)
                 Pickup(fish);
-                fish = Items.FindTypeOnGround(ItemTypes.Fishes);
-            }
 
             canFish = !InJournal("There are no fish here");
             if (canFish && InJournal("Jeste nemuzes pouzit skill."))
@@ -162,8 +160,8 @@ public static class Scripts
 
     public static void Cook(ModelId rawFoodType)
     {
-        var campfire = Items.FindType(ItemTypes.Campfire);
-        var rawFood = Items.FindType(rawFoodType);
+        var campfire = Items.OfType(ItemTypes.Campfire).First();
+        var rawFood = Items.OfType(rawFoodType).First();
 
         while (campfire != null && rawFood != null)
         {
@@ -174,14 +172,14 @@ public static class Scripts
             WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
             Wait(500);
 
-            campfire = Items.FindType(ItemTypes.Campfire);
-            rawFood = Items.FindType(rawFoodType);
+            campfire = Items.OfType(ItemTypes.Campfire).First();
+            rawFood = Items.OfType(rawFoodType).First();
         }
     }
 
     public static void Cook(ModelId rawFoodType, string campfireTile)
     {
-        var rawFood = Items.FindType(rawFoodType);
+        var rawFood = Items.OfType(rawFoodType).First();
 
         while (rawFood != null)
         {
@@ -192,7 +190,7 @@ public static class Scripts
             WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
             Wait(500);
 
-            rawFood = Items.FindType(rawFoodType);
+            rawFood = Items.OfType(rawFoodType).First();
         }
     }
 
@@ -200,11 +198,11 @@ public static class Scripts
     {
         var campfireTile = Info();
 
-        var rawFood = Items.FindType(ItemTypes.RawFood);
+        var rawFood = Items.OfType(ItemTypes.RawFood).First();
         while (rawFood != null)
         {
             Cook(rawFood.Type, campfireTile);
-            rawFood = Items.FindType(ItemTypes.RawFood);
+            rawFood = Items.OfType(ItemTypes.RawFood).First();
         }
     }
 
@@ -221,39 +219,31 @@ public static class Scripts
 
     public static void Loot(Item container)
     {
-        var item = Items.InContainer(container);
-        while (item != null)
+        var itemsInContainer = Items.InContainer(container);
+        Log("Looting");
+        foreach (var item in itemsInContainer)
         {
-            Log("looting item");
+            Log($"Looting item {item.Type}");
             Pickup(item);
-            item = Items.InContainer(container);
         }
 
-        Log("nothing to loot");
+        Log("Looting finished");
     }
 
-    public static void Kill(Item subjectToKill)
+    public static void Kill(Item subject)
     {
         WarModeOn();
-        Attack(subjectToKill);
+        Attack(subject);
 
-        while (subjectToKill != null)
+        while (subject != null)
         {
-            if (subjectToKill.GetDistance(Me.Location) > 1)
-                StepToward(subjectToKill);
-            subjectToKill = Items.RefreshItem(subjectToKill);
+            if (subject.GetDistance(Me.Location) > 1)
+                StepToward(subject);
+            subject = Items.RefreshItem(subject);
         }
 
-        Item bodyOfSubject;
-        var retryCount = 0;
-
-        do
-        {
-            Log("waiting for body");
-            Wait(1000);
-            bodyOfSubject = Items.FindTypeAll(ItemTypes.RippableBodies).OrderBy(i => i.GetDistance(Me.Location)).First();
-            retryCount++;
-        } while (bodyOfSubject == null && retryCount < 20);
+        Wait(1000);
+        var bodyOfSubject = Items.OfType(ItemTypes.RippableBodies).OrderByDistance(Me.Location).First();
 
         if (bodyOfSubject != null)
         {
@@ -282,8 +272,7 @@ public static class Scripts
     {
         do
         {
-            var subject =
-                Items.FindTypeAll(ItemTypes.MassKillSubjects).OrderBy(i => i.GetDistance(Me.Location)).FirstOrDefault();
+            var subject = Items.OfType(ItemTypes.MassKillSubjects).OrderByDistance(Me.Location).First();
             if (subject == null)
             {
                 Log("nothing to kill");

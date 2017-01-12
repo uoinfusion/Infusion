@@ -234,5 +234,10 @@ namespace UltimaRX.Proxy.InjectionApi
                 Program.Print("No item found on ground");
             }
         }
+
+        public static void Log(string message)
+        {
+            Program.Print(message);
+        }
     }
 }

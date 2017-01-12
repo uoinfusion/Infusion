@@ -47,10 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="item_types.csx" />
+    <Compile Include="ItemTypes.cs" />
     <Compile Include="HarvestMapBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="scripts.csx" />
+    <Compile Include="Scripts.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="constants.csx" />

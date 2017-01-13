@@ -158,28 +158,9 @@ public static class Scripts
         WalkTo(new Location2D(xloc, yloc));
     }
 
-    public static void Cook(ModelId rawFoodType)
-    {
-        var campfire = Items.OfType(ItemTypes.Campfire).First();
-        var rawFood = Items.OfType(rawFoodType).First();
-
-        while (campfire != null && rawFood != null)
-        {
-            Use(rawFood);
-            WaitForTarget();
-            Target(campfire);
-
-            WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
-            Wait(500);
-
-            campfire = Items.OfType(ItemTypes.Campfire).First();
-            rawFood = Items.OfType(rawFoodType).First();
-        }
-    }
-
     public static void Cook(ModelId rawFoodType, string campfireTile)
     {
-        var rawFood = Items.OfType(rawFoodType).First();
+        var rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();
 
         while (rawFood != null)
         {
@@ -190,19 +171,51 @@ public static class Scripts
             WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
             Wait(500);
 
-            rawFood = Items.OfType(rawFoodType).First();
+            rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();
+        }
+    }
+
+    public static void Cook(ModelId rawFoodType, Item cookingPlace)
+    {
+        var rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();
+
+        while (rawFood != null)
+        {
+            Use(rawFood);
+            WaitForTarget();
+            Target(cookingPlace);
+
+            WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
+            Wait(500);
+
+            rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();
         }
     }
 
     public static void Cook()
     {
-        var campfireTile = Info();
+        var cookingPlace = Items.OfType(ItemTypes.CookingPlaces).OnGround().InRange(Me.Location, 2).First();
 
-        var rawFood = Items.OfType(ItemTypes.RawFood).First();
+        string cookingPlaceTile = null;
+        if (cookingPlace == null)
+        {
+            Log("Cooking place not found, specify a cooking place tile");
+            cookingPlaceTile = Info();
+            if (cookingPlaceTile == null)
+            {
+                Log("No cooking place tile found");
+                return;
+            }
+        }
+
+        var rawFood = Items.OfType(ItemTypes.RawFood).InContainer(Me.BackPack).First();
         while (rawFood != null)
         {
-            Cook(rawFood.Type, campfireTile);
-            rawFood = Items.OfType(ItemTypes.RawFood).First();
+            if (cookingPlace == null)
+                Cook(rawFood.Type, cookingPlaceTile);
+            else
+                Cook(rawFood.Type, cookingPlace);
+            rawFood = Items.OfType(ItemTypes.RawFood).InContainer(Me.BackPack).First();
         }
     }
 
@@ -272,7 +285,7 @@ public static class Scripts
     {
         do
         {
-            var subject = Items.OfType(ItemTypes.MassKillSubjects).OrderByDistance(Me.Location).First();
+            var subject = Items.OfType(ItemTypes.MassKillSubjects).InRange(Me.Location, 20).OrderByDistance(Me.Location).First();
             if (subject == null)
             {
                 Log("nothing to kill");

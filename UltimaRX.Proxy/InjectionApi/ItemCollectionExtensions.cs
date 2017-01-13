@@ -30,5 +30,11 @@ namespace UltimaRX.Proxy.InjectionApi
             => items.OrderBy(i => i.GetDistance(referenceLocation));
 
         public static ModelId[] ToModelIds(this ushort[] ids) => ids.Select(i => (ModelId) i).ToArray();
+
+        public static IEnumerable<Item> InRange(this IEnumerable<Item> items, Location2D referenceLocation,
+            ushort maxDistance) => items.Where(i => i.GetDistance(referenceLocation) <= maxDistance);
+
+        public static IEnumerable<Item> InRange(this IEnumerable<Item> items, Location3D referenceLocation,
+            ushort maxDistance) => InRange(items, (Location2D) referenceLocation, maxDistance);
     }
 }

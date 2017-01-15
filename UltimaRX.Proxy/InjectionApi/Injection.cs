@@ -174,7 +174,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Targeting.Target(item);
         }
 
-        public static Script Run(Action scriptAction) => Script.Run(scriptAction);
+        public static void Run(Action scriptAction) => Script.Create(scriptAction)();
 
         public static void Terminate()
         {

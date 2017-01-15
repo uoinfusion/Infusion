@@ -50,6 +50,7 @@
     <Compile Include="ItemTypes.cs" />
     <Compile Include="HarvestMapBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ScriptImplementation.cs" />
     <Compile Include="Scripts.cs" />
   </ItemGroup>
   <ItemGroup>

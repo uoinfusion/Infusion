@@ -34,10 +34,11 @@ public static class ItemTypes
     public static readonly ModelId Sheep = (ModelId) 0x00CF;
 
     public static readonly ModelId Cow = (ModelId) 0x00E7;
-
+    public static readonly ModelId Cow2 = (ModelId) 0x00D8;
     public static readonly ModelId Rat = (ModelId) 0x00EE;
+    public static readonly ModelId Dog = (ModelId) 0x00D9;
 
-    public static readonly ModelId[] MassKillSubjects = {Bird, Rabbit, Sheep, Rat, Cow};
+    public static readonly ModelId[] MassKillSubjects = {Bird, Rabbit, Sheep, Rat, Cow, Cow2, Dog };
     public static readonly ModelId[] RippableBodies = {RippadbleBody};
 
     public static readonly ModelId[] RawFood = {RawBird, RawFishSteak, RawRibs};

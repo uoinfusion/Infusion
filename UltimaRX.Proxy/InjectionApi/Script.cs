@@ -11,12 +11,16 @@ namespace UltimaRX.Proxy.InjectionApi
     {
         private static Script currentScript;
 
-        private readonly Task scriptTask;
+        private Task scriptTask;
+        private readonly Action scriptAction;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-        public static Script Run(Action scriptAction) => new Script(scriptAction);
+        public static Action Create(Action action) => () =>
+        {
+            new Script(action).Run();
+        };
 
-        public Script(Action scriptAction)
+        public Script Run()
         {
             if (currentScript != null)
                 throw new InvalidOperationException("A script already running, terminate it first.");
@@ -43,6 +47,13 @@ namespace UltimaRX.Proxy.InjectionApi
                     currentScript = null;
                 }
             });
+
+            return this;
+        }
+
+        public Script(Action scriptAction)
+        {
+            this.scriptAction = scriptAction;
         }
 
         public static void Terminate()

@@ -9,9 +9,26 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     public class ItemCollection : IEnumerable<Item>
     {
+        internal Player Player { get; }
+
         private ImmutableDictionary<uint, Item> items = ImmutableDictionary<uint, Item>.Empty;
 
+        public ItemCollection(Player player)
+        {
+            Player = player;
+        }
+
         public Item this[uint id] => items[id];
+
+        public IEnumerator<Item> GetEnumerator()
+        {
+            return items.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return items.Values.GetEnumerator();
+        }
 
         public bool TryGet(uint id, out Item item)
         {
@@ -29,16 +46,6 @@ namespace UltimaRX.Proxy.InjectionApi
             return null;
         }
 
-        public IEnumerator<Item> GetEnumerator()
-        {
-            return items.Values.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return items.Values.GetEnumerator();
-        }
-
         internal void UpdateItem(Item item)
         {
             AddItem(item);
@@ -52,6 +59,20 @@ namespace UltimaRX.Proxy.InjectionApi
         internal void RemoveItem(uint id)
         {
             items = items.Remove(id);
+        }
+
+        internal void PurgeUnreachableItems(Location2D referencePosition, ushort reachableRange)
+        {
+            var itemIdsOutOfRange =
+                this.MinDistance(referencePosition, reachableRange).OnGround().Select(i => i.Id).ToArray();
+            items = items.RemoveRange(itemIdsOutOfRange);
+
+            // to be perfectly correct, we would need to remove all nested orphaned containers as well, but this is good enough for now
+            var orphanedItemIds =
+                items.Values.Where(i => i.ContainerId.HasValue && i.ContainerId.Value != Player.PlayerId  && !items.ContainsKey(i.ContainerId.Value))
+                    .Select(i => i.Id);
+
+            items = items.RemoveRange(orphanedItemIds);
         }
 
         internal static ModelId[] ToModelIds(ushort[] types)

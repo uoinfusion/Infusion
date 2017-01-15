@@ -5,13 +5,12 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     internal class ItemsObservers
     {
-        private readonly ItemCollection collection;
+        private readonly ItemCollection items;
+        private Location2D? lastItemPurgeLocation;
 
-        private readonly ItemCollection items = new ItemCollection();
-
-        public ItemsObservers(ItemCollection collection, ServerPacketHandler serverPacketHandler)
+        public ItemsObservers(ItemCollection items, ServerPacketHandler serverPacketHandler)
         {
-            this.collection = collection;
+            this.items = items;
             serverPacketHandler.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
             serverPacketHandler.Subscribe(PacketDefinitions.AddItemToContainer, HandleAddItemToContainer);
@@ -25,7 +24,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
         {
             Item item;
-            if (collection.TryGet(packet.PlayerId, out item))
+            if (items.TryGet(packet.PlayerId, out item))
             {
                 items.UpdateItem(item.UpdateHealth(packet.CurrentHealth, packet.MaxHealth));
             }
@@ -33,38 +32,56 @@ namespace UltimaRX.Proxy.InjectionApi
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
         {
-            collection.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
+            items.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
                 orientation: packet.Direction));
         }
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
         {
-            collection.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
+            items.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
                 packet.Color, packet.ContainerId));
         }
 
         private void HandleAddMultipleItemsInContainer(AddMultipleItemsInContainerPacket packet)
         {
-            collection.AddItemRange(packet.Items);
+            items.AddItemRange(packet.Items);
         }
 
         private void HandleDeleteObjectPacket(DeleteObjectPacket packet)
         {
-            collection.RemoveItem(packet.Id);
+            items.RemoveItem(packet.Id);
         }
 
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
         {
             var item = new Item(packet.Id, packet.Type, packet.Amount,
                 packet.Location);
-            collection.AddItem(item);
+            items.AddItem(item);
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
         {
-            collection.AddItemRange(packet.Items);
-            collection.AddItem(new Item(packet.Id, packet.Type, 1,
+            items.AddItemRange(packet.Items);
+            items.AddItem(new Item(packet.Id, packet.Type, 1,
                 packet.Location, packet.Color));
+        }
+
+        public void OnPlayerPositionChanged(object sender, Location3D e)
+        {
+            var newPosition = (Location2D) e;
+
+            if (lastItemPurgeLocation.HasValue)
+            {
+                if (lastItemPurgeLocation.Value.GetDistance(newPosition) > 50)
+                {
+                    items.PurgeUnreachableItems(newPosition, 50);
+                    lastItemPurgeLocation = newPosition;
+                }
+            }
+            else
+            {
+                lastItemPurgeLocation = newPosition;
+            }
         }
     }
 }

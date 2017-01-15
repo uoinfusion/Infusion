@@ -31,10 +31,13 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static ModelId[] ToModelIds(this ushort[] ids) => ids.Select(i => (ModelId) i).ToArray();
 
-        public static IEnumerable<Item> InRange(this IEnumerable<Item> items, Location2D referenceLocation,
+        public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, Location2D referenceLocation,
             ushort maxDistance) => items.Where(i => i.GetDistance(referenceLocation) <= maxDistance);
 
-        public static IEnumerable<Item> InRange(this IEnumerable<Item> items, Location3D referenceLocation,
-            ushort maxDistance) => InRange(items, (Location2D) referenceLocation, maxDistance);
+        public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, Location3D referenceLocation,
+            ushort maxDistance) => MaxDistance(items, (Location2D) referenceLocation, maxDistance);
+
+        public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, Location2D referenceLocation,
+            ushort minDistance) => items.Where(i => i.GetDistance(referenceLocation) >= minDistance);
     }
 }

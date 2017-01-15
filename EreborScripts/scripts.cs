@@ -222,7 +222,7 @@ public static class ScriptImplementation
 
     public static void Cook()
     {
-        var cookingPlace = Items.OfType(ItemTypes.CookingPlaces).OnGround().InRange(Me.Location, 2).First();
+        var cookingPlace = Items.OfType(ItemTypes.CookingPlaces).OnGround().MaxDistance(Me.Location, 2).First();
 
         string cookingPlaceTile = null;
         if (cookingPlace == null)
@@ -314,7 +314,7 @@ public static class ScriptImplementation
         do
         {
             var subject =
-                Items.OfType(ItemTypes.MassKillSubjects).InRange(Me.Location, 30).OrderByDistance(Me.Location).First();
+                Items.OfType(ItemTypes.MassKillSubjects).MaxDistance(Me.Location, 30).OrderByDistance(Me.Location).First();
             if (subject == null)
             {
                 Log("nothing to kill");

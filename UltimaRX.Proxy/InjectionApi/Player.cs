@@ -17,7 +17,20 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public uint PlayerId { get; set; }
 
-        public Location3D Location { get; set; }
+        private Location3D location;
+
+        public Location3D Location
+        {
+            get { return location; }
+            set
+            {
+                location = value;
+                OnLocationChanged(value);
+            }
+        }
+
+        public event EventHandler<Location3D> LocationChanged;
+
         public Location3D PredictedLocation { get; set; }
         public Movement PredictedMovement { get; set; }
 
@@ -82,6 +95,11 @@ namespace UltimaRX.Proxy.InjectionApi
                 $"Walk: WalkRequest enqueued, Direction = {direction}, usedSequenceKey={packet.SequenceKey}, currentSequenceKey = {CurrentSequenceKey}, queue length = {WalkRequestQueue.Count}");
 
             Program.SendToServer(packet.RawPacket);
+        }
+
+        private void OnLocationChanged(Location3D e)
+        {
+            LocationChanged?.Invoke(this, e);
         }
     }
 }

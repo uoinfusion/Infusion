@@ -23,7 +23,9 @@ namespace UltimaRX.Proxy.InjectionApi
 
         static Injection()
         {
+            Items = new ItemCollection(Me);
             ItemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
+            Me.LocationChanged += ItemsObserver.OnPlayerPositionChanged;
             Journal = new Journal();
             JournalObservers = new JournalObservers(Journal, Program.ServerPacketHandler);
             PlayerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
@@ -39,7 +41,7 @@ namespace UltimaRX.Proxy.InjectionApi
             set { cancellationToken.Value = value; }
         }
 
-        public static ItemCollection Items { get; } = new ItemCollection();
+        public static ItemCollection Items { get; }
 
         public static Player Me { get; } = new Player();
 

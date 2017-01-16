@@ -18,7 +18,7 @@ namespace UltimaRX.Proxy.Logging
 
         public void WriteLine(string message)
         {
-            baseLogger.WriteLine($"{DateTime.Now:hh:mm:ss.fff} - {Thread.CurrentThread.ManagedThreadId} - {message}");
+            baseLogger.WriteLine($"{DateTime.UtcNow:hh:mm:ss.fff} - {Thread.CurrentThread.ManagedThreadId} - {message}");
         }
     }
 }

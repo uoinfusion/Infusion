@@ -22,7 +22,7 @@ namespace UltimaRX.IO
         {
             if (requiresHeader)
             {
-                builder.AppendFormat($"{DateTime.Now:hh:mm:ss.fff} >>>> {header}");
+                builder.AppendFormat($"{DateTime.UtcNow:hh:mm:ss.fff} >>>> {header}");
                 builder.AppendLine();
                 requiresHeader = false;
             }
@@ -37,7 +37,7 @@ namespace UltimaRX.IO
             }
 
             builder.AppendFormat(
-                $"{DateTime.Now} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).Name}, length = {packet.Length}");
+                $"{DateTime.UtcNow:hh:mm:ss.fff} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).Name}, length = {packet.Length}");
             builder.AppendLine();
 
             bool justAppendedNewLine = true;

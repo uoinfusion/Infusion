@@ -159,7 +159,7 @@ public static class ScriptImplementation
         if (walkVector != Vector.NullVector)
         {
             WaitWalk();
-            Walk(walkVector.ToDirection());
+            Walk(walkVector.ToDirection(), MovementType.Run);
         }
     }
 

@@ -11,7 +11,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private const int MaxEnqueuedWalkRequests = 1;
         private static readonly ModelId BackPackType = (ModelId) 0x0E75;
 
-        private static readonly TimeSpan TimeBetweenSteps = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan TimeBetweenSteps = TimeSpan.FromMilliseconds(190);
 
         private readonly AutoResetEvent walkRequestDequeueEvent = new AutoResetEvent(false);
 
@@ -61,7 +61,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
-                Program.Diagnostic.WriteLine($"Walk: too many walk requests");
+                Program.Diagnostic.WriteLine("Walk: too many walk requests");
                 Injection.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(1000);
             }

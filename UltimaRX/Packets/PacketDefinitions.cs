@@ -258,8 +258,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition MobAttributes = new PacketDefinition(0x2D,
             new StaticPacketLength(17), "MobAttributes");
 
-        public static readonly PacketDefinition WornItem = new PacketDefinition(0x2E,
-            new StaticPacketLength(15), "WornItem");
+        public static readonly PacketDefinition<WornItemPacket> WornItem = new PacketDefinition<WornItemPacket>(0x2E,
+            new StaticPacketLength(15), "WornItem", packet => new WornItemPacket());
 
         public static readonly PacketDefinition FightOccuring = new PacketDefinition(0x2F,
             new StaticPacketLength(10), "FightOccuring");
@@ -382,8 +382,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition DisplayDeathAction = new PacketDefinition(0xAF,
             new StaticPacketLength(13), "DisplayDeathAction");
 
-        public static readonly PacketDefinition SendGumpMenuDialog = new PacketDefinition(0xB0,
-            new VariablePacketLength(), "SendGumpMenuDialog");
+        public static readonly PacketDefinition<SendGumpMenuDialogPacket> SendGumpMenuDialog = new PacketDefinition<SendGumpMenuDialogPacket>(0xB0,
+            new VariablePacketLength(), "SendGumpMenuDialog", packet => new SendGumpMenuDialogPacket());
 
         public static readonly PacketDefinition ChatMessage = new PacketDefinition(0xB2,
             new VariablePacketLength(), "ChatMessage");

@@ -40,7 +40,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.PlayerId.Should().Be(0x00000001);
-            packet.BodyType.Should().Be(0x0190);
+            packet.BodyType.Should().Be((ModelId)0x0190);
             packet.Location.X.Should().Be(0x1297);
             packet.Location.Y.Should().Be(0x0546);
             packet.Location.Z.Should().Be(0x0A);

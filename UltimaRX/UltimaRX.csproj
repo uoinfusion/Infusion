@@ -47,6 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gumps\CancelGumpResponse.cs" />
+    <Compile Include="Gumps\Gump.cs" />
+    <Compile Include="Gumps\GumpFailureResponse.cs" />
+    <Compile Include="Gumps\GumpParser.cs" />
+    <Compile Include="Gumps\GumpParserDescriptionProcessor.cs" />
+    <Compile Include="Gumps\GumpResponse.cs" />
+    <Compile Include="Gumps\GumpResponseBuilder.cs" />
+    <Compile Include="Gumps\IGumpParserProcessor.cs" />
+    <Compile Include="Gumps\SelectButtonByLabelGumpParserProcessor.cs" />
+    <Compile Include="Gumps\TriggerGumpResponse.cs" />
     <Compile Include="IO\DiagnosticPacketFormatter.cs" />
     <Compile Include="IO\DiagnosticPushStream.cs" />
     <Compile Include="IO\IDiagnosticPullStream.cs" />
@@ -75,6 +85,7 @@
     <Compile Include="Packets\Client\AttackRequest.cs" />
     <Compile Include="Packets\Client\DoubleClickRequest.cs" />
     <Compile Include="Packets\Client\DropItemRequest.cs" />
+    <Compile Include="Packets\Client\GumpMenuSelectionRequest.cs" />
     <Compile Include="Packets\Client\PickupItemRequest.cs" />
     <Compile Include="Packets\Both\RequestWarMode.cs" />
     <Compile Include="Packets\ModelId.cs" />
@@ -99,10 +110,12 @@
     <Compile Include="Packets\Server\ObjectInfoPacket.cs" />
     <Compile Include="Packets\PacketParsingException.cs" />
     <Compile Include="Packets\Both\TargetCursorPacket.cs" />
+    <Compile Include="Packets\Server\SendGumpMenuDialogPacket.cs" />
     <Compile Include="Packets\Server\SendSpeechPacket.cs" />
     <Compile Include="Packets\Server\SpeechMessagePacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentHealthPacket.cs" />
     <Compile Include="Packets\Server\UpdatePlayerPacket.cs" />
+    <Compile Include="Packets\Server\WornItemPacket.cs" />
     <Compile Include="Packets\SpeechType.cs" />
     <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />

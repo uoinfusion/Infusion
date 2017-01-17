@@ -38,7 +38,7 @@ public static class ItemTypes
     public static readonly ModelId Rat = (ModelId) 0x00EE;
     public static readonly ModelId Dog = (ModelId) 0x00D9;
 
-    public static readonly ModelId[] MassKillSubjects = {Bird, Rabbit, Sheep, Rat, Cow, Cow2, Dog };
+    public static readonly ModelId[] MassKillSubjects = {Bird, Rabbit, Sheep, Rat, Cow, Cow2, Dog};
     public static readonly ModelId[] RippableBodies = {RippadbleBody};
 
     public static readonly ModelId[] RawFood = {RawBird, RawFishSteak, RawRibs};
@@ -48,5 +48,11 @@ public static class ItemTypes
     public static readonly ModelId[] CookingPlaces = {Campfire, Forge};
 
     public static readonly ModelId BackPack = (ModelId) 0xE75;
-}
 
+    public static readonly ModelId OpenDoor = (ModelId) 0x06E6;
+    public static readonly ModelId ClosedDoor = (ModelId) 0x06E5;
+
+    public static readonly ModelId[] Doors = { OpenDoor, ClosedDoor };
+
+    public static readonly ModelId HouseMenu = (ModelId) 0x0BD1;
+}

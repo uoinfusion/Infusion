@@ -19,6 +19,13 @@ namespace UltimaRX.Proxy.InjectionApi
             serverPacketHandler.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.WornItem, HandleWornItemPacket);
+        }
+
+        private void HandleWornItemPacket(WornItemPacket packet)
+        {
+            items.UpdateItem(new Item(packet.ItemId, packet.Type, 1, new Location3D(0, 0, 0), packet.Color,
+                packet.PlayerId, packet.Layer));
         }
 
         private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
 
@@ -35,7 +36,7 @@ namespace UltimaRX.Tests.Packets.Both
             materializedPacket.Location.X.Should().Be(0x0080);
             materializedPacket.Location.Y.Should().Be(0x006D);
             materializedPacket.Location.Z.Should().Be(0);
-            materializedPacket.ClickedOnType.Should().Be(0x0EED);
+            materializedPacket.ClickedOnType.Should().Be((ModelId)0x0EED);
         }
 
         [TestMethod]
@@ -65,7 +66,7 @@ namespace UltimaRX.Tests.Packets.Both
             materializedPacket.Location.X.Should().Be(0x03E8);
             materializedPacket.Location.Y.Should().Be(0x03E8);
             materializedPacket.Location.Z.Should().Be(0);
-            materializedPacket.ClickedOnType.Should().Be(0x0D9B);
+            materializedPacket.ClickedOnType.Should().Be((ModelId)0x0D9B);
         }
     }
 }

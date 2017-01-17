@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="ClientPacketHandler.cs" />
     <Compile Include="InjectionApi\BlockedPacketsFilters.cs" />
+    <Compile Include="InjectionApi\GumpObservers.cs" />
     <Compile Include="InjectionApi\Injection.cs" />
     <Compile Include="InjectionApi\InjectionCommandHandler.cs" />
     <Compile Include="InjectionApi\ItemCollectionExtensions.cs" />

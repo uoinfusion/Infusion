@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using UltimaRX.Packets;
 
 namespace UltimaRX.IO
@@ -20,22 +19,16 @@ namespace UltimaRX.IO
             return array[Position++];
         }
 
-        public static ModelId ReadModelId(byte[] array, int position)
-        {
-            return (ModelId)ReadUShort(array, position);
-        }
-
-        public ModelId ReadModelId()
-        {
-            return (ModelId) ReadUShort();
-        }
-
         public ushort ReadUShort()
         {
             var result = ReadUShort(array, Position);
             Position += 2;
             return result;
         }
+
+        public static ModelId ReadModelId(byte[] array, int position) => (ModelId) ReadUShort(array, position);
+
+        public ModelId ReadModelId() => (ModelId) ReadUShort();
 
         internal static ushort ReadUShort(byte[] array, int position)
         {
@@ -112,10 +105,10 @@ namespace UltimaRX.IO
         public string ReadNullTerminatedString()
         {
             var builder = new StringBuilder();
-            byte charRead = ReadByte();
+            var charRead = ReadByte();
             while (charRead != 0)
             {
-                builder.Append((char)charRead);
+                builder.Append((char) charRead);
                 charRead = ReadByte();
             }
             return builder.ToString();
@@ -126,9 +119,36 @@ namespace UltimaRX.IO
             Position += numberOfBytes;
         }
 
-        public Color ReadColor()
+        public Color ReadColor() => (Color) ReadUShort();
+        public Layer ReadLayer() => (Layer) ReadByte();
+
+        public string ReadUnicodeString(int count)
         {
-            return (Color) ReadUShort();
+            StringBuilder str = new StringBuilder();
+            bool append = true;
+            while (count > 0)
+            {
+                ushort ch = ReadUShort();
+                if (ch == 0)
+                {
+                    append = false;
+                }
+                if (append && IsSafeChar(ch))
+                {
+                    str.Append((char)ch);
+                }
+                count--;
+            }
+            return str.ToString();
+        }
+
+        public static bool IsSafeChar(ushort ch)
+        {
+            if (ch >= 0x20)
+            {
+                return (ch < 0xfffe);
+            }
+            return false;
         }
     }
 }

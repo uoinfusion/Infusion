@@ -334,4 +334,27 @@ public static class Scripts
     public static Action DolAmrothLumber1 = Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking.map"));
     public static Action DolAmrothLumber2 = Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking2.map"));
     public static Action DolAmrothKilling = Script.Create(() => ScriptImplementation.Harvest("dolamroth-killing.map"));
+
+    public static void ToggleNearestDoors()
+    {
+        var nearestDoor = Items.OfType(ItemTypes.Doors).MaxDistance(Me.Location, 5).OrderByDistance(Me.Location).First();
+        if (nearestDoor != null)
+            Use(nearestDoor);
+        else
+            Log("Cannot find closed doors");
+    }
+
+    public static void OpenBankFromHouseMenu()
+    {
+        var menu = Items.OfType(ItemTypes.HouseMenu).OrderByDistance(Me.Location).First();
+
+        if (menu != null)
+        {
+            Use(menu);
+            WaitForGump();
+            SelectGumpButton("Otevrit banku");
+        }
+        else
+            Log("Cannot find HouseMenu");
+    }
 }

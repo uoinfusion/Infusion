@@ -16,26 +16,6 @@ using UltimaRX.Proxy.Logging;
 //12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
 //0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
 
-//1/11/2017 12:17:37 AM >>>> proxy -> client: RawPacket StatusBarInfo, length = 43
-//0x11, 0x00, 0x2B, 0x00, 0x05, 0x0A, 0x77, 0x50, 0x74, 0x61, 0x63, 0x65, 0x6B, 0x00, 0x14, 0x0B, 
-//0x78, 0x89, 0x4D, 0x00, 0x68, 0x7A, 0x14, 0x0B, 0x05, 0xA1, 0x4F, 0x00, 0x90, 0x9F, 0x58, 0x00, 
-//0x84, 0x7A, 0x14, 0x0B, 0x59, 0x00, 0x64, 0x00, 0x64, 0x00, 0x00,
-
-//1/11/2017 12:26:08 AM >>>> proxy -> client: RawPacket StatusBarInfo, length = 43
-//0x11, 0x00, 0x2B, 0x00, 0x05, 0x0A, 0x77, 0x50, 0x74, 0x61, 0x63, 0x65, 0x6B, 0x00, 0x14, 0x0B, 
-//0x78, 0x89, 0x4D, 0x00, 0x68, 0x7A, 0x14, 0x0B, 0x05, 0xA1, 0x4F, 0x00, 0x90, 0x9F, 0x58, 0x00, 
-//0x84, 0x7A, 0x14, 0x0B, 0x59, 0x00, 0x64, 0x00, 0x64, 0x00, 0x00, 
-
-//1/11/2017 12:30:19 AM >>>> server -> proxy: RawPacket UpdateCurrentHealth, length = 9
-//0xA1, 0x00, 0x05, 0x0A, 0x77, 0x00, 0x64, 0x00, 0x00, 
-
-//1/11/2017 12:17:37 AM >>>> client -> proxy: RawPacket GetClientStatus, length = 10
-//0x34, 0xED, 0xED, 0xED, 0xED, 0x04, 0x00, 0x05, 0x0A, 0x77, 
-
-//1/11/2017 12:46:12 AM >>>> proxy -> client: RawPacket DrawGamePlayer, length = 19
-//0x20, 0x00, 0x04, 0x5B, 0x2A, 0x01, 0x90, 0x00, 0x09, 0x09, 0x00, 0x08, 0xBB, 0x09, 0x84, 0x00, 
-//0x00, 0x07, 0x00, 
-
 namespace UltimaRX.Proxy
 {
     public static class Program
@@ -219,7 +199,11 @@ namespace UltimaRX.Proxy
         {
             try
             {
-                rawPacket = HandleServerPacket(rawPacket);
+                Packet? handledPacket = HandleServerPacket(rawPacket);
+                if (!handledPacket.HasValue)
+                    return;
+
+                rawPacket = handledPacket.Value;
             }
             catch (Exception ex)
             {
@@ -230,11 +214,11 @@ namespace UltimaRX.Proxy
             SendToClient(rawPacket);
         }
 
-        private static Packet HandleServerPacket(Packet rawPacket)
+        private static Packet? HandleServerPacket(Packet rawPacket)
         {
             var filteredPacket = ServerPacketHandler.Filter(rawPacket);
             if (!filteredPacket.HasValue)
-                return rawPacket;
+                return null;
             rawPacket = filteredPacket.Value;
 
             if (rawPacket.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
@@ -292,6 +276,14 @@ namespace UltimaRX.Proxy
             else if (rawPacket.Id == PacketDefinitions.UpdateCurrentHealth.Id)
             {
                 ServerPacketHandler.Publish<UpdateCurrentHealthPacket>(rawPacket);
+            }
+            else if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
+            {
+                ServerPacketHandler.Publish<SendGumpMenuDialogPacket>(rawPacket);
+            }
+            else if (rawPacket.Id == PacketDefinitions.WornItem.Id)
+            {
+                ServerPacketHandler.Publish<WornItemPacket>(rawPacket);
             }
 
             return rawPacket;

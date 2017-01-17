@@ -215,7 +215,7 @@ namespace UltimaRX.Tests
         public static Packet Instantiate(byte[] source)
         {
             var processingStream = new MemoryStream(source);
-            var received = new byte[1024];
+            var received = new byte[source.Length];
 
             var packetReader = new StreamPacketReader(processingStream, received);
             int packetId = packetReader.ReadByte();

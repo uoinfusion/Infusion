@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using UltimaRX.Gumps;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
@@ -15,6 +16,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private static readonly PlayerObservers PlayerObservers;
         private static readonly BlockedPacketsFilters BlockedPacketsFilters;
         private static readonly InjectionCommandHandler InjectionCommandHandler;
+        private static readonly GumpObservers GumpObservers;
 
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
@@ -23,6 +25,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         static Injection()
         {
+            GumpObservers = new GumpObservers(Program.ServerPacketHandler);
             Items = new ItemCollection(Me);
             ItemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
             Me.LocationChanged += ItemsObserver.OnPlayerPositionChanged;
@@ -44,6 +47,8 @@ namespace UltimaRX.Proxy.InjectionApi
         public static ItemCollection Items { get; }
 
         public static Player Me { get; } = new Player();
+
+        public static Gump WaitForGump() => GumpObservers.WaitForGump();
 
         public static event EventHandler<string> CommandReceived
         {
@@ -75,7 +80,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void UseType(ushort type)
         {
-            UseType((ModelId)type);
+            UseType((ModelId) type);
         }
 
         public static void UseType(ModelId type)
@@ -227,7 +232,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void PickupFromGround(ushort type)
         {
-            PickupFromGround((ModelId)type);
+            PickupFromGround((ModelId) type);
         }
 
         public static void PickupFromGround(params ModelId[] type)
@@ -236,7 +241,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
             var itemsOnGround = Items.OfType(type).OnGround();
             foreach (var item in itemsOnGround)
-            { 
+            {
                 Log($"Picking up {item.Type}");
                 Pickup(item);
                 Wait(1000);
@@ -246,6 +251,11 @@ namespace UltimaRX.Proxy.InjectionApi
         public static void Log(string message)
         {
             Program.Print(message);
+        }
+
+        public static void SelectGumpButton(string buttonLabel)
+        {
+            GumpObservers.SelectGumpButton(buttonLabel);
         }
     }
 }

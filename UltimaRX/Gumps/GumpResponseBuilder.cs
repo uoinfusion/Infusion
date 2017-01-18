@@ -14,9 +14,9 @@ namespace UltimaRX.Gumps
             this.sendPacket = sendPacket;
         }
 
-        public GumpResponse PushButton(string buttonLabel)
+        public GumpResponse PushButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
-            var processor = new SelectButtonByLabelGumpParserProcessor(buttonLabel);
+            var processor = new SelectButtonByLabelGumpParserProcessor(buttonLabel, labelPosition);
             var parser = new GumpParser(processor);
             parser.Parse(gump);
 

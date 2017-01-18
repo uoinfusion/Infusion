@@ -55,9 +55,9 @@ namespace UltimaRX.Proxy.InjectionApi
             return currentGump;
         }
 
-        internal void SelectGumpButton(string buttonLabel)
+        internal void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
-            new GumpResponseBuilder(currentGump, Program.SendToServer).PushButton(buttonLabel).Execute();
+            new GumpResponseBuilder(currentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition).Execute();
         }
 
         internal void CloseGump()

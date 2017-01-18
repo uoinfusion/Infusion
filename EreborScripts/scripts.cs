@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using UltimaRX.Gumps;
 using UltimaRX.Packets;
 using UltimaRX.Proxy.InjectionApi;
 using static UltimaRX.Proxy.InjectionApi.Injection;
@@ -352,7 +353,7 @@ public static class Scripts
         {
             Use(menu);
             WaitForGump();
-            SelectGumpButton("Otevrit banku");
+            SelectGumpButton("Otevrit banku", GumpLabelPosition.Before);
         }
         else
             Log("Cannot find HouseMenu");

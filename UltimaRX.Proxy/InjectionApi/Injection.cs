@@ -253,9 +253,9 @@ namespace UltimaRX.Proxy.InjectionApi
             Program.Print(message);
         }
 
-        public static void SelectGumpButton(string buttonLabel)
+        public static void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
-            GumpObservers.SelectGumpButton(buttonLabel);
+            GumpObservers.SelectGumpButton(buttonLabel, labelPosition);
         }
 
         public static void GumpInfo()

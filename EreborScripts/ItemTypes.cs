@@ -49,10 +49,12 @@ public static class ItemTypes
 
     public static readonly ModelId BackPack = (ModelId) 0xE75;
 
-    public static readonly ModelId OpenDoor = (ModelId) 0x06E6;
-    public static readonly ModelId ClosedDoor = (ModelId) 0x06E5;
+    public static readonly ModelId OpenWoodenDoor = (ModelId) 0x06E6;
+    public static readonly ModelId ClosedWoodenDoor = (ModelId) 0x06E5;
+    public static readonly ModelId OpenedSteelDoor = (ModelId) 0x0680;
+    public static readonly ModelId ClosedSteelDoor = (ModelId) 0x067F;
 
-    public static readonly ModelId[] Doors = { OpenDoor, ClosedDoor };
+    public static readonly ModelId[] Doors = {OpenWoodenDoor, ClosedWoodenDoor, OpenedSteelDoor, ClosedSteelDoor};
 
     public static readonly ModelId HouseMenu = (ModelId) 0x0BD1;
 }

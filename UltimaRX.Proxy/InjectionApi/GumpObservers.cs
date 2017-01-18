@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Text;
+using System.Threading;
 using UltimaRX.Gumps;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Server;
@@ -42,7 +43,6 @@ namespace UltimaRX.Proxy.InjectionApi
                 {
                     Injection.CheckCancellation();
                 }
-
             }
             finally
             {
@@ -53,8 +53,34 @@ namespace UltimaRX.Proxy.InjectionApi
 
         internal void SelectGumpButton(string buttonLabel)
         {
-            var gumpResponseBuilder = new GumpResponseBuilder(currentGump, Program.SendToServer);
-            gumpResponseBuilder.PushButton(buttonLabel).Execute();
+            new GumpResponseBuilder(currentGump, Program.SendToServer).PushButton(buttonLabel).Execute();
+        }
+
+        internal void CloseGump()
+        {
+            new GumpResponseBuilder(currentGump, Program.SendToServer).Cancel().Execute();
+        }
+
+        public string GumpInfo()
+        {
+            WaitForGump();
+            var gump = currentGump;
+            if (gump == null)
+                return "no gump";
+
+            var processor = new GumpParserDescriptionProcessor();
+            var parser = new GumpParser(processor);
+            parser.Parse(gump);
+
+            var builder = new StringBuilder();
+            builder.AppendLine($"Id {gump.Id:X8}, GumpId {gump.GumpId:X8}");
+            builder.AppendLine(gump.Commands);
+            builder.AppendLine("-----------------");
+            builder.AppendLine(processor.GetDescription());
+
+            CloseGump();
+
+            return builder.ToString();
         }
     }
 }

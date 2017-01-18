@@ -30,7 +30,7 @@ namespace UltimaRX.Gumps
 
         public GumpResponse Cancel()
         {
-            return new CancelGumpResponse(gump);
+            return new CancelGumpResponse(gump, sendPacket);
         }
     }
 }

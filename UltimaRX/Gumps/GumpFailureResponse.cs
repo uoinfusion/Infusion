@@ -2,7 +2,7 @@
 
 namespace UltimaRX.Gumps
 {
-    public sealed class GumpFailureResponse : GumpResponse
+    internal sealed class GumpFailureResponse : GumpResponse
     {
         public GumpFailureResponse(Gump gump, string failureMessage) : base(gump)
         {

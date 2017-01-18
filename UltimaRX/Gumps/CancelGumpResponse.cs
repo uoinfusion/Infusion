@@ -1,14 +1,23 @@
-﻿namespace UltimaRX.Gumps
+﻿using System;
+using UltimaRX.Packets;
+using UltimaRX.Packets.Client;
+
+namespace UltimaRX.Gumps
 {
-    public sealed class CancelGumpResponse : GumpResponse
+    internal sealed class CancelGumpResponse : GumpResponse
     {
-        public CancelGumpResponse(Gump gump) : base(gump)
+        private readonly Gump gump;
+        private readonly Action<Packet> sendPacket;
+
+        public CancelGumpResponse(Gump gump, Action<Packet> sendPacket) : base(gump)
         {
+            this.gump = gump;
+            this.sendPacket = sendPacket;
         }
 
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            sendPacket(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, 0).RawPacket);
         }
     }
 }

@@ -67,7 +67,6 @@
     <Compile Include="FakePackets.cs" />
     <Compile Include="Gumps\GumpParserTests.cs" />
     <Compile Include="Gumps\GumpResponseBuilderTests.cs" />
-    <Compile Include="Gumps\TriggerGumpResponseTests.cs" />
     <Compile Include="IO\HuffmanStreamTests.cs" />
     <Compile Include="Packets\Both\TargetCursorPacketTests.cs" />
     <Compile Include="Packets\MoveRequestTests.cs" />

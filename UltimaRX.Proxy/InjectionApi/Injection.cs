@@ -257,5 +257,11 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             GumpObservers.SelectGumpButton(buttonLabel);
         }
+
+        public static void GumpInfo()
+        {
+            string gumpInfo = GumpObservers.GumpInfo();
+            Log(gumpInfo);
+        }
     }
 }

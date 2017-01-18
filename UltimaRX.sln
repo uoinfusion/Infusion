@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Proxy", "UltimaRX.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EreborScripts", "EreborScripts\EreborScripts.csproj", "{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.PacketParser", "UltimaRX.PacketParser\UltimaRX.PacketParser.csproj", "{E713F921-DC46-493C-91B1-A0BC2569CE71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.PacketParser.Tests", "UltimaRX.PacketParser.Tests\UltimaRX.PacketParser.Tests.csproj", "{EED62173-B1C0-4898-8ACB-214D67013916}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E713F921-DC46-493C-91B1-A0BC2569CE71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E713F921-DC46-493C-91B1-A0BC2569CE71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E713F921-DC46-493C-91B1-A0BC2569CE71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E713F921-DC46-493C-91B1-A0BC2569CE71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EED62173-B1C0-4898-8ACB-214D67013916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EED62173-B1C0-4898-8ACB-214D67013916}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EED62173-B1C0-4898-8ACB-214D67013916}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EED62173-B1C0-4898-8ACB-214D67013916}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

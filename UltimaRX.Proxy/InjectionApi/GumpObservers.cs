@@ -10,7 +10,8 @@ namespace UltimaRX.Proxy.InjectionApi
     {
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private Gump currentGump;
-        private bool waitingForGump;
+        private bool showNextAwaitedGump;
+        private bool awaitingGump;
 
         public GumpObservers(ServerPacketHandler serverPacketHandler)
         {
@@ -19,21 +20,24 @@ namespace UltimaRX.Proxy.InjectionApi
 
         private Packet? FilterSendGumpMenuDialog(Packet rawPacket)
         {
-            if (waitingForGump && rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
+            if (awaitingGump && rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
                 var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
                 currentGump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
                 gumpReceivedEvent.Set();
 
-                return null;
+                if (!showNextAwaitedGump)
+                    return null;
+                showNextAwaitedGump = false;
             }
 
             return rawPacket;
         }
 
-        internal Gump WaitForGump()
+        internal Gump WaitForGump(bool showGump = false)
         {
-            waitingForGump = true;
+            awaitingGump = true;
+            showNextAwaitedGump = showGump;
 
             try
             {
@@ -46,7 +50,7 @@ namespace UltimaRX.Proxy.InjectionApi
             }
             finally
             {
-                waitingForGump = false;
+                awaitingGump = false;
             }
             return currentGump;
         }
@@ -63,7 +67,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public string GumpInfo()
         {
-            WaitForGump();
+            WaitForGump(true);
             var gump = currentGump;
             if (gump == null)
                 return "no gump";

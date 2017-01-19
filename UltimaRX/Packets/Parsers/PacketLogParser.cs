@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace UltimaRX.PacketParser
+namespace UltimaRX.Packets.Parsers
 {
     public class PacketLogParser
     {
@@ -25,7 +25,9 @@ namespace UltimaRX.PacketParser
 
             while (position < log.Length)
             {
-                yield return ParsePacket();
+                var packet = ParsePacket();
+                if (packet != null)
+                    yield return packet;
                 if (position < log.Length)
                     NextLine();
             }
@@ -257,6 +259,9 @@ namespace UltimaRX.PacketParser
 
         private bool ConsumeChar(char ch)
         {
+            if (position >= log.Length)
+                return false;
+
             if (log[position] == ch)
             {
                 position++;

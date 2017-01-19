@@ -53,7 +53,7 @@
     <Compile Include="Scripts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="constants.csx" />
+    <None Include="configuration.csx" />
     <None Include="main.csx" />
   </ItemGroup>
   <ItemGroup>

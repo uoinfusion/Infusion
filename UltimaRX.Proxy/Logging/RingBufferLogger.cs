@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace UltimaRX.Proxy.Logging
 {
@@ -30,15 +31,23 @@ namespace UltimaRX.Proxy.Logging
             }
         }
 
-        public void Dump()
+        public string DumpToString()
         {
             lock (bufferLock)
             {
+                StringBuilder dumpBuilder = new StringBuilder();
                 while (ringBufferQueue.Count > 0)
                 {
-                    dumpLogger.WriteLine(ringBufferQueue.Dequeue());
+                    dumpBuilder.AppendLine(ringBufferQueue.Dequeue());
                 }
+
+                return dumpBuilder.ToString();
             }
+        }
+
+        public void Dump()
+        {
+            dumpLogger.WriteLine(DumpToString());
         }
 
         public void Clear()

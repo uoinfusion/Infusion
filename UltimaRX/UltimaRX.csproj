@@ -96,6 +96,9 @@
     <Compile Include="Packets\Client\TargetLocationRequest.cs" />
     <Compile Include="Packets\Layer.cs" />
     <Compile Include="Packets\Notoriety.cs" />
+    <Compile Include="Packets\Parsers\PacketLogEntry.cs" />
+    <Compile Include="Packets\Parsers\PacketLogEntryEnumerableExtensions.cs" />
+    <Compile Include="Packets\Parsers\PacketLogParser.cs" />
     <Compile Include="Packets\Server\AddItemToContainerPacket.cs" />
     <Compile Include="Packets\Server\AddMultipleItemsInContainerPacket.cs" />
     <Compile Include="Packets\Color.cs" />

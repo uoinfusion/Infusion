@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -8,6 +9,7 @@ using UltimaRX.IO;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
+using UltimaRX.Packets.Parsers;
 using UltimaRX.Packets.Server;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;
@@ -86,13 +88,13 @@ namespace UltimaRX.Proxy
 
         private static void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
-            string message = (packet.Name ?? string.Empty) + ": " + packet.Message;
+            var message = (packet.Name ?? string.Empty) + ": " + packet.Message;
             Console.WriteLine(message);
         }
 
         private static void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            string message = (packet.Name ?? string.Empty) + ": " + packet.Message;
+            var message = (packet.Name ?? string.Empty) + ": " + packet.Message;
             Console.WriteLine(message);
         }
 
@@ -108,6 +110,9 @@ namespace UltimaRX.Proxy
         {
             PacketRingBufferLogger.Dump();
         }
+
+        public static IEnumerable<PacketLogEntry> ParsePacketLogDump()
+            => new PacketLogParser().Parse(PacketRingBufferLogger.DumpToString());
 
         public static void ClearPacketLog()
         {
@@ -186,7 +191,7 @@ namespace UltimaRX.Proxy
             if (rawPacket.Id == PacketDefinitions.ConnectToGameServer.Id)
             {
                 var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
-                packet.GameServerIp = new byte[] { 0x7F, 0x00, 0x00, 0x01 };
+                packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
                 packet.GameServerPort = 33333;
                 rawPacket = packet.RawPacket;
                 needServerReconnect = true;
@@ -199,7 +204,7 @@ namespace UltimaRX.Proxy
         {
             try
             {
-                Packet? handledPacket = HandleServerPacket(rawPacket);
+                var handledPacket = HandleServerPacket(rawPacket);
                 if (!handledPacket.HasValue)
                     return;
 

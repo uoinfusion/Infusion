@@ -8,7 +8,7 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     public class Player
     {
-        private const int MaxEnqueuedWalkRequests = 1;
+        private const int MaxEnqueuedWalkRequests = 0;
         private static readonly ModelId BackPackType = (ModelId) 0x0E75;
 
         private static readonly TimeSpan TimeBetweenSteps = TimeSpan.FromMilliseconds(190);
@@ -49,21 +49,26 @@ namespace UltimaRX.Proxy.InjectionApi
             WalkRequestQueue.Reset();
         }
 
-        internal void WaitWalk()
+        internal void WaitToAvoidFastWalk()
         {
-            var timeSinceLastEnqueue = WalkRequestQueue.TimeSinceLastEnqueue;
-            if (timeSinceLastEnqueue < TimeBetweenSteps)
+            var lastEnqueueTime = WalkRequestQueue.LastEnqueueTime;
+            if (lastEnqueueTime < TimeBetweenSteps)
             {
-                var waitTime = TimeBetweenSteps - timeSinceLastEnqueue;
-                Program.Diagnostic.WriteLine($"Walk: waiting minimal time between steps {waitTime}");
+                var waitTime = TimeBetweenSteps - lastEnqueueTime;
+                Program.Diagnostic.WriteLine($"WaitToAvoidFastWalk: waiting minimal time between steps {TimeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
                 Injection.Wait(waitTime.Milliseconds);
             }
+        }
+
+        internal void WaitWalkAcknowledged()
+        {
+            Program.Diagnostic.WriteLine($"WaitWalkAcknowledged: WalkRequestQueue.Count = {WalkRequestQueue.Count}");
 
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
-                Program.Diagnostic.WriteLine("Walk: too many walk requests");
+                Program.Diagnostic.WriteLine($"WaitWalkAcknowledged: too many walk WalkRequestQueue.Count = {WalkRequestQueue.Count}");
                 Injection.CheckCancellation();
-                walkRequestDequeueEvent.WaitOne(1000);
+                walkRequestDequeueEvent.WaitOne(200);
             }
         }
 
@@ -74,6 +79,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         internal void Walk(Direction direction, MovementType movementType)
         {
+            Program.Diagnostic.WriteLine($"Walk: direction = {direction}, movementType = {movementType}");
             var packet = new MoveRequest
             {
                 Movement = new Movement(direction, movementType),

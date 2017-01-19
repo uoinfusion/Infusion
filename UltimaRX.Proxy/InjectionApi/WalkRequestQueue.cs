@@ -20,7 +20,7 @@ namespace UltimaRX.Proxy.InjectionApi
             }
         }
 
-        public TimeSpan TimeSinceLastEnqueue
+        public TimeSpan LastEnqueueTime
         {
             get
             {

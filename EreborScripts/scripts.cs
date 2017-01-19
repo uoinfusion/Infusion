@@ -1,16 +1,15 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using UltimaRX.Gumps;
 using UltimaRX.Packets;
+using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using static UltimaRX.Proxy.InjectionApi.Injection;
-using static Scripts;
 
 public static class ScriptImplementation
 {
-    public static string[] skipOre = { "Copper Ore" };
+    public static string[] skipOre = {"Copper Ore"};
 
     public static void HarvestTrees(string mapFileInfoFile)
     {
@@ -25,7 +24,7 @@ public static class ScriptImplementation
     public static void Harvest(string mapFileInfoFile, Action<string> harvestAction)
     {
         var mapLines = File.ReadAllLines(mapFileInfoFile);
-        int line = 1;
+        var line = 1;
         foreach (var mapLine in mapLines)
         {
             Log($"Processing line {line}");
@@ -37,7 +36,7 @@ public static class ScriptImplementation
     public static void Harvest(string mapFileInfoFile)
     {
         var mapLines = File.ReadAllLines(mapFileInfoFile);
-        int line = 1;
+        var line = 1;
         foreach (var mapLine in mapLines)
         {
             Log($"Processing line {line}");
@@ -156,28 +155,35 @@ public static class ScriptImplementation
 
     public static void StepToward(Location2D currentLocation, Location2D targetLocation)
     {
+        Program.Diagnostic.WriteLine($"StepToward: {currentLocation} -> {targetLocation}");
         var walkVector = (targetLocation - currentLocation).Normalize();
         if (walkVector != Vector.NullVector)
         {
-            WaitWalk();
+            Program.Diagnostic.WriteLine($"StepToward: walkVector = {walkVector}");
+            WaitToAvoidFastWalk();
             Walk(walkVector.ToDirection(), MovementType.Run);
+            WaitWalkAcknowledged();
         }
+        else
+            Program.Diagnostic.WriteLine("walkVector is Vector.NullVector");
     }
 
     public static void StepToward(Item item)
     {
-        StepToward((Location2D)item.Location);
+        StepToward((Location2D) item.Location);
     }
 
     public static void StepToward(Location2D targetLocation)
     {
-        StepToward((Location2D)Me.PredictedLocation, targetLocation);
+        StepToward((Location2D) Me.Location, targetLocation);
     }
 
     public static void WalkTo(Location2D targetLocation)
     {
-        while ((Location2D)Me.PredictedLocation != targetLocation)
+        while ((Location2D) Me.Location != targetLocation)
         {
+            Program.Diagnostic.WriteLine($"WalkTo: {Me.Location} != {targetLocation}");
+
             StepToward(targetLocation);
         }
     }
@@ -315,7 +321,10 @@ public static class ScriptImplementation
         do
         {
             var subject =
-                Items.OfType(ItemTypes.MassKillSubjects).MaxDistance(Me.Location, 30).OrderByDistance(Me.Location).First();
+                Items.OfType(ItemTypes.MassKillSubjects)
+                    .MaxDistance(Me.Location, 30)
+                    .OrderByDistance(Me.Location)
+                    .First();
             if (subject == null)
             {
                 Log("nothing to kill");
@@ -332,8 +341,13 @@ public static class Scripts
     public static Action MassKill = Script.Create(ScriptImplementation.MassKill);
     public static Action Cook = Script.Create(ScriptImplementation.Cook);
     public static Action Loot = Script.Create(ScriptImplementation.Loot);
-    public static Action DolAmrothLumber1 = Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking.map"));
-    public static Action DolAmrothLumber2 = Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking2.map"));
+
+    public static Action DolAmrothLumber1 =
+        Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking.map"));
+
+    public static Action DolAmrothLumber2 =
+        Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking2.map"));
+
     public static Action DolAmrothKilling = Script.Create(() => ScriptImplementation.Harvest("dolamroth-killing.map"));
 
     public static void ToggleNearestDoors()

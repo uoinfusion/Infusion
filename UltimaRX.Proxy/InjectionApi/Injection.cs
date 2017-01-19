@@ -137,9 +137,14 @@ namespace UltimaRX.Proxy.InjectionApi
             Thread.Sleep(milliseconds);
         }
 
-        public static void WaitWalk()
+        public static void WaitToAvoidFastWalk()
         {
-            Me.WaitWalk();
+            Me.WaitToAvoidFastWalk();
+        }
+
+        public static void WaitWalkAcknowledged()
+        {
+            Me.WaitWalkAcknowledged();
         }
 
         public static void Walk(Direction direction, MovementType movementType = MovementType.Walk)
@@ -224,7 +229,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
             var pickupPacket = new PickupItemRequest(item.Id, item.Amount);
             Program.SendToServer(pickupPacket.RawPacket);
-            Wait(1000);
+            Wait(250);
 
             var dropPacket = new DropItemRequest(item.Id, Me.BackPack.Id);
             Program.SendToServer(dropPacket.RawPacket);
@@ -244,7 +249,7 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 Log($"Picking up {item.Type}");
                 Pickup(item);
-                Wait(1000);
+                Wait(250);
             }
         }
 

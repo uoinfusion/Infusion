@@ -54,20 +54,6 @@ namespace UltimaRX.Proxy
             Console.WriteLine(message);
         }
 
-        public static void Say(string message)
-        {
-            var packet = new SpeechRequest
-            {
-                Type = SpeechType.Normal,
-                Text = message,
-                Font = 0x02b2,
-                Color = 0x0003,
-                Language = "ENU"
-            };
-
-            SendToServer(packet.RawPacket);
-        }
-
         public static void Main()
         {
             Injection.Initialize();
@@ -379,6 +365,10 @@ namespace UltimaRX.Proxy
             else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
             {
                 ClientPacketHandler.Publish<TargetCursorPacket>(rawPacket);
+            }
+            else if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id)
+            {
+                ClientPacketHandler.Publish<GumpMenuSelectionRequest>(rawPacket);
             }
 
             SendToServer(rawPacket);

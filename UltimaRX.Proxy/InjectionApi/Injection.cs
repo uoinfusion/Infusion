@@ -25,7 +25,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         static Injection()
         {
-            GumpObservers = new GumpObservers(Program.ServerPacketHandler);
+            GumpObservers = new GumpObservers(Program.ServerPacketHandler, Program.ClientPacketHandler);
             Items = new ItemCollection(Me);
             ItemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
             Me.LocationChanged += ItemsObserver.OnPlayerPositionChanged;
@@ -38,6 +38,8 @@ namespace UltimaRX.Proxy.InjectionApi
             BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 
+        public static Gump CurrentGump => GumpObservers.CurrentGump;
+
         internal static CancellationToken? CancellationToken
         {
             get { return cancellationToken.Value; }
@@ -47,6 +49,20 @@ namespace UltimaRX.Proxy.InjectionApi
         public static ItemCollection Items { get; }
 
         public static Player Me { get; } = new Player();
+
+        public static void Say(string message)
+        {
+            var packet = new SpeechRequest
+            {
+                Type = SpeechType.Normal,
+                Text = message,
+                Font = 0x02b2,
+                Color = 0x0003,
+                Language = "ENU"
+            };
+
+            Program.SendToServer(packet.RawPacket);
+        }
 
         public static Gump WaitForGump() => GumpObservers.WaitForGump();
 
@@ -132,9 +148,17 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void Wait(int milliseconds)
         {
-            CheckCancellation();
+            while (milliseconds > 0)
+            {
+                CheckCancellation();
+                Thread.Sleep(50);
+                milliseconds -= 50;
+            }
+        }
 
-            Thread.Sleep(milliseconds);
+        public static void Wait(TimeSpan span)
+        {
+            Wait(span.Milliseconds);
         }
 
         public static void WaitToAvoidFastWalk()
@@ -215,42 +239,20 @@ namespace UltimaRX.Proxy.InjectionApi
             Targeting.WaitForTarget();
         }
 
-        public static void Pickup(Item item)
+        public static void DropItem(Item item, Item targetContainer)
         {
             CheckCancellation();
 
-            var refreshedItem = Items.RefreshItem(item);
-            if (refreshedItem == null)
-            {
-                Log($"Cannot pickup item {item.Type}, it disappeared.");
-                return;
-            }
-            item = refreshedItem;
-
-            var pickupPacket = new PickupItemRequest(item.Id, item.Amount);
-            Program.SendToServer(pickupPacket.RawPacket);
-            Wait(250);
-
-            var dropPacket = new DropItemRequest(item.Id, Me.BackPack.Id);
+            var dropPacket = new DropItemRequest(item.Id, targetContainer.Id);
             Program.SendToServer(dropPacket.RawPacket);
         }
 
-        public static void PickupFromGround(ushort type)
-        {
-            PickupFromGround((ModelId) type);
-        }
-
-        public static void PickupFromGround(params ModelId[] type)
+        public static void DragItem(Item item)
         {
             CheckCancellation();
 
-            var itemsOnGround = Items.OfType(type).OnGround();
-            foreach (var item in itemsOnGround)
-            {
-                Log($"Picking up {item.Type}");
-                Pickup(item);
-                Wait(250);
-            }
+            var pickupPacket = new PickupItemRequest(item.Id, item.Amount);
+            Program.SendToServer(pickupPacket.RawPacket);
         }
 
         public static void Log(string message)
@@ -265,8 +267,13 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void GumpInfo()
         {
-            string gumpInfo = GumpObservers.GumpInfo();
+            var gumpInfo = GumpObservers.GumpInfo();
             Log(gumpInfo);
+        }
+
+        public static void CloseGump()
+        {
+            GumpObservers.CloseGump();
         }
     }
 }

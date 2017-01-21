@@ -16,8 +16,11 @@ namespace UltimaRX.Packets.Parsers
         public static IEnumerable<string> Format(this IEnumerable<PacketLogEntry> entries,
             Func<PacketLogEntry, string> formatter) => entries.Select(e => formatter(e));
 
-        public static IEnumerable<string> ShortFormat(this IEnumerable<PacketLogEntry> entries)
+        public static IEnumerable<string> FormatShort(this IEnumerable<PacketLogEntry> entries)
             => Format(entries, LogFormat.Short);
+
+        public static IEnumerable<string> FormatFullOneLine(this IEnumerable<PacketLogEntry> entries)
+            => Format(entries, LogFormat.FullOneLine);
 
         public static IEnumerable<string> Format(this IEnumerable<PacketLogEntry> entries, LogFormat format)
         {
@@ -27,11 +30,20 @@ namespace UltimaRX.Packets.Parsers
                 case LogFormat.Short:
                     formatter = e => $"{e.Created}\t{e.Direction}\t\t{e.Name}";
                     break;
+                case LogFormat.FullOneLine:
+                    formatter = e =>
+                        $"{e.Created}\t{e.Direction}\t\t{e.Name}\t\t\t{FormatOneLinePayload(e.Payload)}";
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(format), $"Unknown format {format}.");
             }
 
             return Format(entries, formatter);
+        }
+
+        private static string FormatOneLinePayload(byte[] payload)
+        {
+            return payload.Select(x => x.ToString("X2")).Aggregate((l, r) => l + ", " + r);
         }
 
         public static void ToConsole(this IEnumerable<string> entries)
@@ -45,6 +57,7 @@ namespace UltimaRX.Packets.Parsers
 
     public enum LogFormat
     {
-        Short
+        Short,
+        FullOneLine
     }
 }

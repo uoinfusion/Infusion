@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UltimaRX.Gumps;
@@ -7,34 +8,16 @@ using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 
-public static class ScriptImplementation
+public static class Scripts
 {
     public static string[] skipOre = {"Copper Ore"};
 
-    public static void HarvestTrees(string mapFileInfoFile)
-    {
-        Harvest(mapFileInfoFile, HarvestTree);
-    }
-
-    public static void HarvestOre(string mapFileInfoFile)
-    {
-        Harvest(mapFileInfoFile, Mine);
-    }
-
-    public static void Harvest(string mapFileInfoFile, Action<string> harvestAction)
-    {
-        var mapLines = File.ReadAllLines(mapFileInfoFile);
-        var line = 1;
-        foreach (var mapLine in mapLines)
-        {
-            Log($"Processing line {line}");
-            ProcessHarvestMapLine(mapLine, harvestAction);
-            line++;
-        }
-    }
+    public static DateTime lastFailedLumberjackingAttempt;
 
     public static void Harvest(string mapFileInfoFile)
     {
+        Log($"Map: {mapFileInfoFile}");
+
         var mapLines = File.ReadAllLines(mapFileInfoFile);
         var line = 1;
         foreach (var mapLine in mapLines)
@@ -131,6 +114,15 @@ public static class ScriptImplementation
 
         var treeHarvestable = true;
 
+        var sinceLastFail = DateTime.UtcNow - lastFailedLumberjackingAttempt;
+        Log($"Since last lumberjacking fail: {sinceLastFail}");
+        if (sinceLastFail < TimeSpan.FromSeconds(6))
+        {
+            var waitSpan = TimeSpan.FromSeconds(6) - sinceLastFail;
+            Log($"Waiting due to lumberjacking fail: {waitSpan}");
+            Wait(waitSpan);
+        }
+
         while (treeHarvestable)
         {
             Wait(1000);
@@ -144,8 +136,12 @@ public static class ScriptImplementation
 
             treeHarvestable =
                 !InJournal("of a way to use", "immune", "There are no logs here to chop.", "You cannot reach that");
-
-            if (treeHarvestable && InJournal("Jeste nemuzes pouzit skill."))
+            if (!treeHarvestable)
+            {
+                lastFailedLumberjackingAttempt = DateTime.UtcNow;
+                Log($"Last lumberjacking fail: {lastFailedLumberjackingAttempt:T}");
+            }
+            else if (InJournal("Jeste nemuzes pouzit skill."))
             {
                 Log("waiting for skill");
                 Wait(5000);
@@ -267,15 +263,61 @@ public static class ScriptImplementation
 
     public static void Loot(Item container)
     {
-        var itemsInContainer = Items.InContainer(container);
-        Log("Looting");
-        foreach (var item in itemsInContainer)
+        var items = Items.InContainer(container).ToArray();
+        while (items.Any())
         {
-            Log($"Looting item {item.Type}");
-            Pickup(item);
+            Log($"Looting, {items.Length} items remaining ");
+            Pickup(items.First());
+            items = Items.InContainer(container).ToArray();
         }
 
         Log("Looting finished");
+    }
+
+    public static void Pickup(Item item)
+    {
+        MoveItem(item, Me.BackPack);
+    }
+
+    public static void MoveItems(IEnumerable<Item> items, Item targetContainer)
+    {
+        foreach (var item in items)
+        {
+            MoveItem(item, targetContainer);
+        }
+    }
+
+    public static void MoveItem(Item item, Item targetContainer)
+    {
+        var refreshedItem = Items.RefreshItem(item);
+        if (refreshedItem == null)
+        {
+            Log($"Cannot move item {item.Type}, it disappeared.");
+            return;
+        }
+        item = refreshedItem;
+
+        DragItem(item);
+        Wait(200);
+
+        DropItem(item, targetContainer);
+        Wait(200);
+    }
+
+    public static void PickupFromGround(ushort type)
+    {
+        PickupFromGround((ModelId) type);
+    }
+
+    public static void PickupFromGround(params ModelId[] type)
+    {
+        var itemsOnGround = Items.OfType(type).OnGround();
+        foreach (var item in itemsOnGround)
+        {
+            Log($"Picking up {item.Type}");
+            Pickup(item);
+            Wait(250);
+        }
     }
 
     public static void Kill(Item subject)
@@ -322,7 +364,7 @@ public static class ScriptImplementation
         {
             var subject =
                 Items.OfType(ItemTypes.MassKillSubjects)
-                    .MaxDistance(Me.Location, 30)
+                    .MaxDistance(Me.Location, 20)
                     .OrderByDistance(Me.Location)
                     .First();
             if (subject == null)
@@ -334,29 +376,34 @@ public static class ScriptImplementation
             Kill(subject);
         } while (true);
     }
-}
 
-public static class Scripts
-{
-    public static Action MassKill = Script.Create(ScriptImplementation.MassKill);
-    public static Action Cook = Script.Create(ScriptImplementation.Cook);
-    public static Action Loot = Script.Create(ScriptImplementation.Loot);
-
-    public static Action DolAmrothLumber1 =
-        Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking.map"));
-
-    public static Action DolAmrothLumber2 =
-        Script.Create(() => ScriptImplementation.Harvest("dolamroth-lumberjacking2.map"));
-
-    public static Action DolAmrothKilling = Script.Create(() => ScriptImplementation.Harvest("dolamroth-killing.map"));
-
-    public static void ToggleNearestDoors()
+    public static void ToggleNearestDoor()
     {
         var nearestDoor = Items.OfType(ItemTypes.Doors).MaxDistance(Me.Location, 5).OrderByDistance(Me.Location).First();
         if (nearestDoor != null)
             Use(nearestDoor);
         else
+            Log("Cannot find doors");
+    }
+
+    public static void OpenNearestDoor()
+    {
+        var nearestDoor =
+            Items.OfType(ItemTypes.ClosedDoors).MaxDistance(Me.Location, 5).OrderByDistance(Me.Location).First();
+        if (nearestDoor != null)
+            Use(nearestDoor);
+        else
             Log("Cannot find closed doors");
+    }
+
+    public static void CloseNearestDoor()
+    {
+        var nearestDoor =
+            Items.OfType(ItemTypes.OpenDoors).MaxDistance(Me.Location, 5).OrderByDistance(Me.Location).First();
+        if (nearestDoor != null)
+            Use(nearestDoor);
+        else
+            Log("Cannot find open doors");
     }
 
     public static void OpenBankFromHouseMenu()

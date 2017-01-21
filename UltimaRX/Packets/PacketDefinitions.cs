@@ -176,8 +176,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition<SpeechRequest> SpeechRequest = new PacketDefinition<SpeechRequest>(0xAD,
             new VariablePacketLength(), "SpeechRequest", (packet) => new SpeechRequest());
 
-        public static readonly PacketDefinition GumpMenuSelection = new PacketDefinition(0xB1,
-            new VariablePacketLength(), "GumpMenuSelection");
+        public static readonly PacketDefinition<GumpMenuSelectionRequest> GumpMenuSelection = new PacketDefinition<GumpMenuSelectionRequest>(0xB1,
+            new VariablePacketLength(), "GumpMenuSelection", packet => new GumpMenuSelectionRequest());
 
         public static readonly PacketDefinition ChatText = new PacketDefinition(0xB3,
             new VariablePacketLength(), "ChatText");

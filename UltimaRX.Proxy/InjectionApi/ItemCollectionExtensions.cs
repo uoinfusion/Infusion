@@ -6,6 +6,9 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     public static class ItemCollectionExtensions
     {
+        public static IEnumerable<Item> OfLayer(this IEnumerable<Item> items, Layer layer)
+            => items.Where(i => i.Layer == layer);
+
         public static IEnumerable<Item> OfType(this IEnumerable<Item> items, ModelId type)
             => items.Where(i => i.Type == type);
 

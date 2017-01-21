@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ItemTypes.cs" />
     <Compile Include="HarvestMapBuilder.cs" />
+    <Compile Include="Pipka.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripts.cs" />
   </ItemGroup>

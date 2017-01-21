@@ -15,6 +15,8 @@ namespace UltimaRX.Proxy.InjectionApi
         private readonly Action scriptAction;
         private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
+        public int ThreadId { get; private set; }
+
         public static Action Create(Action action) => () =>
         {
             new Script(action).Run();
@@ -23,12 +25,19 @@ namespace UltimaRX.Proxy.InjectionApi
         public Script Run()
         {
             if (currentScript != null)
-                throw new InvalidOperationException("A script already running, terminate it first.");
+            {
+                if (currentScript.ThreadId != Thread.CurrentThread.ManagedThreadId)
+                    throw new InvalidOperationException("A script already running, terminate it first.");
+
+                scriptAction();
+                return this;
+            }
 
             currentScript = this;
 
             scriptTask = Task.Run(() =>
             {
+                ThreadId = Thread.CurrentThread.ManagedThreadId;
                 Injection.CancellationToken = cancellationTokenSource.Token;
                 try
                 {

@@ -6,13 +6,14 @@ public static class ItemTypes
     public static readonly ModelId Hatchet2 = (ModelId) 0x0F43;
     public static readonly ModelId CopperExecutionersAxe = (ModelId) 0x0F45;
     public static readonly ModelId CopperVikingSword = (ModelId) 0x13B9;
+    public static readonly ModelId VeriteVikingSword = (ModelId) 0x13BA;
 
     public static readonly ModelId PickAxe = (ModelId) 0xE86;
 
     public static readonly ModelId FishingPole = (ModelId) 0x0DBF;
 
     public static readonly ModelId[] Hatchets = {Hatchet, Hatchet2, CopperExecutionersAxe};
-    public static readonly ModelId[] Knives = {CopperVikingSword};
+    public static readonly ModelId[] Knives = {CopperVikingSword, VeriteVikingSword};
 
     public static readonly ModelId Fish1 = (ModelId) 0x09CF;
     public static readonly ModelId Fish2 = (ModelId) 0x09CD;
@@ -51,10 +52,18 @@ public static class ItemTypes
 
     public static readonly ModelId OpenWoodenDoor = (ModelId) 0x06E6;
     public static readonly ModelId ClosedWoodenDoor = (ModelId) 0x06E5;
-    public static readonly ModelId OpenedSteelDoor = (ModelId) 0x0680;
-    public static readonly ModelId ClosedSteelDoor = (ModelId) 0x067F;
+    public static readonly ModelId OpenSteelDoor = (ModelId)0x0680;
+    public static readonly ModelId OpenSteelDoor2 = (ModelId)0x067E;
+    public static readonly ModelId ClosedSteelDoor = (ModelId)0x067F;
+    public static readonly ModelId ClosedSteelDoor2 = (ModelId)0x067D;
 
-    public static readonly ModelId[] Doors = {OpenWoodenDoor, ClosedWoodenDoor, OpenedSteelDoor, ClosedSteelDoor};
+    public static readonly ModelId[] Doors = {OpenWoodenDoor, ClosedWoodenDoor, OpenSteelDoor, ClosedSteelDoor};
+    public static readonly ModelId[] ClosedDoors = { ClosedSteelDoor, ClosedSteelDoor2, ClosedWoodenDoor };
+    public static readonly ModelId[] OpenDoors = { OpenSteelDoor, OpenSteelDoor2, OpenWoodenDoor };
 
+    public static readonly ModelId PileOfHides = (ModelId)0x1078;
+    public static readonly ModelId Furs = (ModelId)0x11F6;
+    public static readonly ModelId Logs = (ModelId)0x1BDD;
+    
     public static readonly ModelId HouseMenu = (ModelId) 0x0BD1;
 }

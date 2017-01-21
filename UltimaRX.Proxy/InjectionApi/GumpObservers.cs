@@ -2,6 +2,7 @@
 using System.Threading;
 using UltimaRX.Gumps;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Client;
 using UltimaRX.Packets.Server;
 
 namespace UltimaRX.Proxy.InjectionApi
@@ -9,26 +10,38 @@ namespace UltimaRX.Proxy.InjectionApi
     internal sealed class GumpObservers
     {
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
-        private Gump currentGump;
-        private bool showNextAwaitedGump;
-        private bool awaitingGump;
+        private bool showNextAwaitedGump = true;
 
-        public GumpObservers(ServerPacketHandler serverPacketHandler)
+        public GumpObservers(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
             serverPacketHandler.RegisterFilter(FilterSendGumpMenuDialog);
+            clientPacketHandler.Subscribe(PacketDefinitions.GumpMenuSelection, GumpMenuSelectionRequest);
+        }
+
+        public Gump CurrentGump { get; private set; }
+
+        private void GumpMenuSelectionRequest(GumpMenuSelectionRequest packet)
+        {
+            if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpId == CurrentGump.GumpId &&
+                packet.TriggerId == 0)
+            {
+                CurrentGump = null;
+            }
         }
 
         private Packet? FilterSendGumpMenuDialog(Packet rawPacket)
         {
-            if (awaitingGump && rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
+            if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
                 var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
-                currentGump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+                CurrentGump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
                 gumpReceivedEvent.Set();
 
                 if (!showNextAwaitedGump)
+                {
+                    showNextAwaitedGump = true;
                     return null;
-                showNextAwaitedGump = false;
+                }
             }
 
             return rawPacket;
@@ -36,53 +49,51 @@ namespace UltimaRX.Proxy.InjectionApi
 
         internal Gump WaitForGump(bool showGump = false)
         {
-            awaitingGump = true;
+            if (CurrentGump != null)
+                return CurrentGump;
+
             showNextAwaitedGump = showGump;
 
-            try
-            {
-                gumpReceivedEvent.Reset();
+            gumpReceivedEvent.Reset();
 
-                while (!gumpReceivedEvent.WaitOne(1000))
-                {
-                    Injection.CheckCancellation();
-                }
-            }
-            finally
+            while (!gumpReceivedEvent.WaitOne(1000))
             {
-                awaitingGump = false;
+                Injection.CheckCancellation();
             }
-            return currentGump;
+            return CurrentGump;
         }
 
         internal void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
-            new GumpResponseBuilder(currentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition).Execute();
+            if (CurrentGump != null)
+            {
+                new GumpResponseBuilder(CurrentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition)
+                    .Execute();
+                CurrentGump = null;
+            }
         }
 
         internal void CloseGump()
         {
-            new GumpResponseBuilder(currentGump, Program.SendToServer).Cancel().Execute();
+            if (CurrentGump != null)
+                new GumpResponseBuilder(CurrentGump, Program.SendToServer).Cancel().Execute();
+            CurrentGump = null;
         }
 
         public string GumpInfo()
         {
-            WaitForGump(true);
-            var gump = currentGump;
-            if (gump == null)
+            if (CurrentGump == null)
                 return "no gump";
 
             var processor = new GumpParserDescriptionProcessor();
             var parser = new GumpParser(processor);
-            parser.Parse(gump);
+            parser.Parse(CurrentGump);
 
             var builder = new StringBuilder();
-            builder.AppendLine($"Id {gump.Id:X8}, GumpId {gump.GumpId:X8}");
-            builder.AppendLine(gump.Commands);
+            builder.AppendLine($"Id {CurrentGump.Id:X8}, GumpId {CurrentGump.GumpId:X8}");
+            builder.AppendLine(CurrentGump.Commands);
             builder.AppendLine("-----------------");
             builder.AppendLine(processor.GetDescription());
-
-            CloseGump();
 
             return builder.ToString();
         }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,17 +7,19 @@ namespace UltimaRX.Proxy.InjectionApi
     public class Script
     {
         private static Script currentScript;
+        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private readonly Action scriptAction;
 
         private Task scriptTask;
-        private readonly Action scriptAction;
-        private readonly CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+        public Script(Action scriptAction)
+        {
+            this.scriptAction = scriptAction;
+        }
 
         public int ThreadId { get; private set; }
 
-        public static Action Create(Action action) => () =>
-        {
-            new Script(action).Run();
-        };
+        public static Action Create(Action action) => () => { new Script(action).Run(); };
 
         public Script Run()
         {
@@ -29,7 +28,7 @@ namespace UltimaRX.Proxy.InjectionApi
                 if (currentScript.ThreadId != Thread.CurrentThread.ManagedThreadId)
                     throw new InvalidOperationException("A script already running, terminate it first.");
 
-                scriptAction();
+                RunAction(scriptAction);
                 return this;
             }
 
@@ -39,37 +38,41 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 ThreadId = Thread.CurrentThread.ManagedThreadId;
                 Injection.CancellationToken = cancellationTokenSource.Token;
-                try
-                {
-                    Program.Print("Starting script");
-
-                    scriptAction();
-                }
-                catch (OperationCanceledException)
-                {
-                    Program.Print("Script cancelled.");
-                }
-                finally
-                {
-                    Program.Print("Script finished.");
-                    Injection.CancellationToken = null;
-                    currentScript = null;
-                }
+                RunAction(scriptAction);
             });
 
             return this;
         }
 
-        public Script(Action scriptAction)
+        private void RunAction(Action action)
         {
-            this.scriptAction = scriptAction;
+            try
+            {
+                Program.Print("Starting script");
+
+                action();
+            }
+            catch (OperationCanceledException)
+            {
+                Program.Print("Script cancelled.");
+            }
+            catch (Exception ex)
+            {
+                Program.Print(ex.ToString());
+                throw;
+            }
+            finally
+            {
+                Program.Print("Script finished.");
+                Injection.CancellationToken = null;
+                currentScript = null;
+            }
         }
 
         public static void Terminate()
         {
             currentScript?.Stop();
         }
-
 
         public void Stop()
         {

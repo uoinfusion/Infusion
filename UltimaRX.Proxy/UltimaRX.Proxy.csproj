@@ -56,7 +56,9 @@
     <Compile Include="InjectionApi\ItemCollectionExtensions.cs" />
     <Compile Include="InjectionApi\ItemsObservers.cs" />
     <Compile Include="InjectionApi\ItemCollection.cs" />
-    <Compile Include="InjectionApi\Journal.cs" />
+    <Compile Include="InjectionApi\JournalEntries.cs" />
+    <Compile Include="InjectionApi\JournalEntriesExtensions.cs" />
+    <Compile Include="InjectionApi\JournalEntry.cs" />
     <Compile Include="InjectionApi\JournalObservers.cs" />
     <Compile Include="InjectionApi\PlayerObservers.cs" />
     <Compile Include="InjectionApi\Script.cs" />

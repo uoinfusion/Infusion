@@ -1,0 +1,20 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UltimaRX.Proxy.InjectionApi
+{
+    public static class JournalEntriesExtensions
+    {
+        public static IEnumerable<JournalEntry> After(this IEnumerable<JournalEntry> entries, DateTime createdAfter)
+            => entries.Where(e => e.Created > createdAfter);
+
+        public static IEnumerable<JournalEntry> ByAnyName(this IEnumerable<JournalEntry> entries, params string[] names)
+            => entries.Where(e => names.Contains(e.Name.ToLower()));
+
+        public static IEnumerable<JournalEntry> ContainsAnyWord(this IEnumerable<JournalEntry> entries, params string[] words)
+            => entries.Where(e => words.Any(w => e.Message.ToLower().Contains(w)));
+    }
+}

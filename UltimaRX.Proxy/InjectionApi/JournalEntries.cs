@@ -4,23 +4,24 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using UltimaRX.Packets.Server;
 
 namespace UltimaRX.Proxy.InjectionApi
 {
-    public class Journal : IEnumerable<string>
+    public class JournalEntries : IEnumerable<JournalEntry>
     {
         private static readonly AutoResetEvent ReceivedAwaitedWordsEvent = new AutoResetEvent(false);
         private static string[] awaitingWords = {};
-        private ImmutableList<string> journal = ImmutableList<string>.Empty;
+        private ImmutableList<JournalEntry> journal = ImmutableList<JournalEntry>.Empty;
 
-        public IEnumerator<string> GetEnumerator() => journal.GetEnumerator();
+        public IEnumerator<JournalEntry> GetEnumerator() => journal.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => journal.GetEnumerator();
 
-        public bool InJournal(params string[] words) => journal.Any(line => words.Any(w => line.Contains(w)));
+        public bool InJournal(params string[] words) => journal.Any(line => words.Any(w => line.Message.Contains(w)));
 
         public void DeleteJournal()
         {
-            journal = ImmutableList<string>.Empty;
+            journal = ImmutableList<JournalEntry>.Empty;
         }
 
         public void WaitForJournal(params string[] words)
@@ -36,11 +37,11 @@ namespace UltimaRX.Proxy.InjectionApi
             awaitingWords = new string[] {};
         }
 
-        public void AddMessage(string message)
+        internal void AddMessage(JournalEntry entry)
         {
-            journal = journal.Add(message);
+            journal = journal.Add(entry);
 
-            if (awaitingWords.Any(w => message.Contains(w)))
+            if (awaitingWords.Any(w => entry.Message.Contains(w)))
             {
                 ReceivedAwaitedWordsEvent.Set();
             }

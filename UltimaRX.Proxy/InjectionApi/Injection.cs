@@ -11,7 +11,6 @@ namespace UltimaRX.Proxy.InjectionApi
     public static class Injection
     {
         private static readonly ItemsObservers ItemsObserver;
-        private static readonly Journal Journal;
         private static readonly JournalObservers JournalObservers;
         private static readonly PlayerObservers PlayerObservers;
         private static readonly BlockedPacketsFilters BlockedPacketsFilters;
@@ -29,7 +28,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Items = new ItemCollection(Me);
             ItemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
             Me.LocationChanged += ItemsObserver.OnPlayerPositionChanged;
-            Journal = new Journal();
+            Journal = new JournalEntries();
             JournalObservers = new JournalObservers(Journal, Program.ServerPacketHandler);
             PlayerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
             PlayerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
@@ -115,6 +114,8 @@ namespace UltimaRX.Proxy.InjectionApi
             UseType(types.ToModelIds());
         }
 
+        public static JournalEntries Journal { get; }
+
         public static void UseType(params ModelId[] types)
         {
             CheckCancellation();
@@ -158,7 +159,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void Wait(TimeSpan span)
         {
-            Wait(span.Milliseconds);
+            Wait((int)span.TotalMilliseconds);
         }
 
         public static void WaitToAvoidFastWalk()

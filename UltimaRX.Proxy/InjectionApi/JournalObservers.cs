@@ -10,9 +10,9 @@ namespace UltimaRX.Proxy.InjectionApi
 {
     internal class JournalObservers
     {
-        private readonly Journal journal;
+        private readonly JournalEntries journal;
 
-        public JournalObservers(Journal journal, ServerPacketHandler serverPacketHandler)
+        public JournalObservers(JournalEntries journal, ServerPacketHandler serverPacketHandler)
         {
             this.journal = journal;
             serverPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
@@ -21,18 +21,12 @@ namespace UltimaRX.Proxy.InjectionApi
 
         private void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            string name = string.IsNullOrEmpty(packet.Name) ? string.Empty : $"{packet.Name}: ";
-            string message = name + packet.Message;
-
-            journal.AddMessage(message);
+            journal.AddMessage(new JournalEntry(packet.Name, packet.Message, packet.Id, packet.Model));
         }
 
         private void HanldeSendSpeechPacket(SendSpeechPacket packet)
         {
-            string name = string.IsNullOrEmpty(packet.Name) ? string.Empty : $"{packet.Name}: ";
-            string message = name + packet.Message;
-
-            journal.AddMessage(message);
+            journal.AddMessage(new JournalEntry(packet.Name, packet.Message, packet.Id, packet.Model));
         }
     }
 }

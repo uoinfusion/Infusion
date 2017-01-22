@@ -33,30 +33,48 @@ public static class Pipka
         DolAmrothKilling,
         DolAmrothLumberjacking2,
         LinhirHome2DolAmroth,
+        DolAmrothGate2Bank,
         UnloadInDolAmrothBank
     };
 
-
     public static void DolAmroth()
     {
-        DolAmroth(DolAmrothBank2Gate);
+        DolAmroth(DolAmrothCycle.First());
+    }
+
+    public static void Test1()
+    {
+        Log("Test1");
+        Wait(1000);
+    }
+
+    public static void Test2()
+    {
+        Log("Test2");
+        Wait(1000);
+
+        throw new InvalidOperationException();
     }
 
     public static void DolAmroth(Action startAction)
     {
         Run(() =>
         {
-            bool execute = false;
+            var skipping = true;
 
             while (true)
             {
                 foreach (var action in DolAmrothCycle)
                 {
-                    if (!execute && action == startAction)
-                        execute = true;
-
-                    if (execute)
+                    if (skipping)
+                    {
+                        if (action == startAction)
+                            skipping = false;
+                    }
+                    else
+                    {
                         action();
+                    }
                 }
             }
         });
@@ -94,7 +112,7 @@ public static class Pipka
     {
         WalkTo(2253, 3209);
         OpenNearestDoor();
-        
+
         WalkTo(2249, 3209);
         WalkTo(2249, 3204);
         WalkTo(2248, 3204);

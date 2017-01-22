@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using UltimaRX.Gumps;
@@ -13,6 +14,16 @@ public static class Scripts
     public static string[] skipOre = {"Copper Ore"};
 
     public static DateTime lastFailedLumberjackingAttempt;
+
+    private static readonly string[] AfkNames =
+    {
+        "desttro", "elbereth", "finn", "gothmog", "houba", "iustus", "myke", "yavanna",
+        "nightmare"
+    };
+
+    private static readonly string[] AfkMessages = {"afk", "kontrola"};
+
+    private static DateTime lastCheckTime;
 
     public static void Harvest(string mapFileInfoFile)
     {
@@ -30,25 +41,41 @@ public static class Scripts
 
     public static void ProcessHarvestMapLine(string mapLine, Action<string> harvestAction)
     {
-        if (mapLine.StartsWith("harvest: "))
-        {
-            var parameters = mapLine.Substring("harvest: ".Length);
-            harvestAction?.Invoke(parameters);
-        }
-        if (mapLine.StartsWith("lumber:"))
-        {
-            var parameters = mapLine.Substring("lumber: ".Length);
-            HarvestTree(parameters);
-        }
-        else if (mapLine.StartsWith("walk: "))
+        if (mapLine.StartsWith("walk: "))
         {
             var parameters = mapLine.Substring("walk: ".Length).Split(',').Select(x => ushort.Parse(x.Trim())).ToArray();
             Log($"Walking to: {parameters[0]}, {parameters[1]}");
             WalkTo(parameters[0], parameters[1]);
         }
-        else if (mapLine.StartsWith("masskill"))
+
+        try
         {
-            MassKill();
+            if (!EscapeMode)
+            {
+                if (mapLine.StartsWith("harvest: "))
+                {
+                    var parameters = mapLine.Substring("harvest: ".Length);
+                    harvestAction?.Invoke(parameters);
+                }
+                if (mapLine.StartsWith("lumber:"))
+                {
+                    var parameters = mapLine.Substring("lumber: ".Length);
+                    HarvestTree(parameters);
+                }
+                else if (mapLine.StartsWith("masskill"))
+                {
+                    MassKill();
+                }
+            }
+            else
+            {
+                Log($"In escape mode, just check attackers, and do no other action.");
+                AttackCheck();
+            }
+        }
+        catch (AttackException e)
+        {
+            // just continue
         }
     }
 
@@ -108,6 +135,8 @@ public static class Scripts
         }
     }
 
+    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(5);
+
     public static void HarvestTree(string tileInfo)
     {
         Log($"Lumberjacking {tileInfo}");
@@ -116,23 +145,27 @@ public static class Scripts
 
         var sinceLastFail = DateTime.UtcNow - lastFailedLumberjackingAttempt;
         Log($"Since last lumberjacking fail: {sinceLastFail}");
-        if (sinceLastFail < TimeSpan.FromSeconds(6))
+        if (sinceLastFail < FailedLumberjackingWait)
         {
-            var waitSpan = TimeSpan.FromSeconds(6) - sinceLastFail;
-            Log($"Waiting due to lumberjacking fail: {waitSpan}");
+            var waitSpan = FailedLumberjackingWait - sinceLastFail;
+            Log($"{DateTime.UtcNow:T} Waiting due to lumberjacking fail: {waitSpan}, {(int)waitSpan.TotalMilliseconds} ms");
             Wait(waitSpan);
+            Log($"{DateTime.UtcNow:T} waiting finished");
         }
 
         while (treeHarvestable)
         {
             Wait(1000);
             DeleteJournal();
+            Log("Using any hatchet");
             UseType(ItemTypes.Hatchets);
             WaitForTarget();
             TargetTile(tileInfo);
 
             WaitForJournal("You put", "Drevo se nepodarilo", "of a way to use", "immune", "There are no logs",
                 "You cannot reach that");
+
+            Checks();
 
             treeHarvestable =
                 !InJournal("of a way to use", "immune", "There are no logs here to chop.", "You cannot reach that");
@@ -146,6 +179,101 @@ public static class Scripts
                 Log("waiting for skill");
                 Wait(5000);
             }
+        }
+    }
+
+    private static void Checks()
+    {
+        AfkCheck();
+        AttackCheck();
+
+        lastCheckTime = DateTime.UtcNow;
+    }
+
+    public static readonly ModelId[] SafeAttackers =
+    {
+        ItemTypes.Cow,
+        ItemTypes.Cow2,
+        ItemTypes.Bird,
+        ItemTypes.Dog,
+        ItemTypes.Rabbit,
+        ItemTypes.Rat
+    };
+
+    public static uint[] Attackers = {};
+
+    public static bool EscapeMode;
+
+    public static IEnumerable<uint> FindAttackers()
+    {
+        // for tests:
+        //return Items.OfType(SafeAttackers)
+        //    .MaxDistance(Me.Location, 20)
+        //    .Select(i => i.Id);
+
+        return Journal
+            .After(lastCheckTime)
+            .ContainsAnyWord("is attacking you")
+            .Where(e => !SafeAttackers.Contains(e.Type))
+            .Select(e => e.SpeakerId);
+    }
+
+    public static IEnumerable<uint> UpdateAttackers(IEnumerable<uint> currentAttackers)
+    {
+        var newAttackers = FindAttackers();
+        var myLocation = (Location2D)Me.Location;
+
+        var relevantAttackers = currentAttackers.Select(id => Items[id])
+            .MaxDistance(myLocation, 30)
+            .Select(i => i.Id);
+
+        return newAttackers.Concat(relevantAttackers);
+    }
+
+    public static void AttackCheck()
+    {
+        var updatedAttackers = UpdateAttackers(Attackers);
+
+        Attackers = updatedAttackers.ToArray();
+
+        bool escapeMode = Attackers.Any();
+        if (escapeMode != EscapeMode)
+        {
+            EscapeMode = escapeMode;
+            if (EscapeMode)
+            {
+                Log($"{Attackers.Length} attackers detected -> escape mode");
+                throw new AttackException();
+            }
+            else
+                Log("No attackers -> leaving escape mode.");
+        }
+    }
+
+    private static void AfkCheck()
+    {
+        var afkAlertRequired = Journal
+            .After(lastCheckTime)
+            .ByAnyName(AfkNames)
+            .ContainsAnyWord(AfkMessages).Any();
+
+        if (afkAlertRequired)
+        {
+            AfkAlert();
+        }
+    }
+
+    public static void AfkAlert()
+    {
+        while (true)
+        {
+            if (InJournal("tak zpet do prace"))
+                break;
+            DeleteJournal();
+
+            System.Media.SystemSounds.Asterisk.Play();
+
+            Wait(1000);
         }
     }
 
@@ -419,4 +547,8 @@ public static class Scripts
         else
             Log("Cannot find HouseMenu");
     }
+}
+
+public class AttackException : Exception
+{
 }

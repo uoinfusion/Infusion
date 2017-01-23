@@ -28,7 +28,9 @@ public static class ItemTypes
     public static readonly ModelId Bird = (ModelId) 0x0006;
     public static readonly ModelId RippadbleBody = (ModelId) 0x2006;
     public static readonly ModelId RawBird = (ModelId) 0x09B9;
+    public static readonly ModelId CookedBird = (ModelId) 0x09B7;
     public static readonly ModelId RawRibs = (ModelId) 0x09F1;
+    public static readonly ModelId Ribs = (ModelId) 0x09F2;
 
     public static readonly ModelId Rabbit = (ModelId) 0x00CD;
 
@@ -43,6 +45,7 @@ public static class ItemTypes
     public static readonly ModelId[] RippableBodies = {RippadbleBody};
 
     public static readonly ModelId[] RawFood = {RawBird, RawFishSteak, RawRibs};
+    public static readonly ModelId[] Food = {Ribs, CookedBird};
 
     public static readonly ModelId Campfire = (ModelId) 0x0DE3;
     public static readonly ModelId Forge = (ModelId) 0x0FB1;
@@ -52,18 +55,24 @@ public static class ItemTypes
 
     public static readonly ModelId OpenWoodenDoor = (ModelId) 0x06E6;
     public static readonly ModelId ClosedWoodenDoor = (ModelId) 0x06E5;
-    public static readonly ModelId OpenSteelDoor = (ModelId)0x0680;
-    public static readonly ModelId OpenSteelDoor2 = (ModelId)0x067E;
-    public static readonly ModelId ClosedSteelDoor = (ModelId)0x067F;
-    public static readonly ModelId ClosedSteelDoor2 = (ModelId)0x067D;
+    public static readonly ModelId OpenSteelDoor = (ModelId) 0x0680;
+    public static readonly ModelId OpenSteelDoor2 = (ModelId) 0x067E;
+    public static readonly ModelId ClosedSteelDoor = (ModelId) 0x067F;
+    public static readonly ModelId ClosedSteelDoor2 = (ModelId) 0x067D;
 
     public static readonly ModelId[] Doors = {OpenWoodenDoor, ClosedWoodenDoor, OpenSteelDoor, ClosedSteelDoor};
-    public static readonly ModelId[] ClosedDoors = { ClosedSteelDoor, ClosedSteelDoor2, ClosedWoodenDoor };
-    public static readonly ModelId[] OpenDoors = { OpenSteelDoor, OpenSteelDoor2, OpenWoodenDoor };
+    public static readonly ModelId[] ClosedDoors = {ClosedSteelDoor, ClosedSteelDoor2, ClosedWoodenDoor};
+    public static readonly ModelId[] OpenDoors = {OpenSteelDoor, OpenSteelDoor2, OpenWoodenDoor};
 
-    public static readonly ModelId PileOfHides = (ModelId)0x1078;
-    public static readonly ModelId Furs = (ModelId)0x11F6;
-    public static readonly ModelId Logs = (ModelId)0x1BDD;
-    
+    public static readonly ModelId PileOfHides = (ModelId) 0x1078;
+    public static readonly ModelId Furs = (ModelId) 0x11F6;
+    public static readonly ModelId Logs = (ModelId) 0x1BDD;
+
+    public static readonly ModelId PotionKeg = (ModelId) 0x1AD6;
+    public static readonly Color NightSightKegColor = (Color) 0x0980;
+    public static readonly ModelId Bottle = (ModelId) 0x0F0E;
+    public static readonly Color EmptyBottleColor = (Color) 0x0000;
+    public static readonly Color GreaterHealBottleColor = (Color) 0x0160;
+
     public static readonly ModelId HouseMenu = (ModelId) 0x0BD1;
 }

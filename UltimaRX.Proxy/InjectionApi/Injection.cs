@@ -132,6 +132,7 @@ namespace UltimaRX.Proxy.InjectionApi
         }
 
         public static bool InJournal(params string[] words) => Journal.InJournal(words);
+        public static bool InJournal(DateTime createdAfter, params string[] words) => Journal.InJournal(createdAfter,words);
 
         public static void DeleteJournal()
         {
@@ -169,6 +170,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void WaitWalkAcknowledged()
         {
+            CheckCancellation();
             Me.WaitWalkAcknowledged();
         }
 
@@ -250,9 +252,14 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void DragItem(Item item)
         {
+            DragItem(item, item.Amount);
+        }
+
+        public static void DragItem(Item item, ushort amount)
+        {
             CheckCancellation();
 
-            var pickupPacket = new PickupItemRequest(item.Id, item.Amount);
+            var pickupPacket = new PickupItemRequest(item.Id, amount);
             Program.SendToServer(pickupPacket.RawPacket);
         }
 

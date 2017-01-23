@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using UltimaRX.Gumps;
 using UltimaRX.Packets;
@@ -23,77 +24,51 @@ public static class Pipka
     public static readonly Action DolAmrothKilling = Script.Create(() => Harvest("DolAmroth-killing.map"));
     public static readonly Action LinhirHome2DolAmroth = Script.Create(() => Harvest("Linhir2DolAmroth.map"));
 
-    private static readonly Action[] DolAmrothCycle =
-    {
-        DolAmrothBank2Gate,
-        DolAmrothLumberjacking,
-        DolAmrothGate2Bank,
-        UnloadInDolAmrothBank,
-        DolAmrothBank2Gate,
-        DolAmrothKilling,
-        DolAmrothLumberjacking2,
-        LinhirHome2DolAmroth,
-        DolAmrothGate2Bank,
-        UnloadInDolAmrothBank
-    };
-
     public static void DolAmroth()
-    {
-        DolAmroth(DolAmrothCycle.First());
-    }
-
-    public static void Test1()
-    {
-        Log("Test1");
-        Wait(1000);
-    }
-
-    public static void Test2()
-    {
-        Log("Test2");
-        Wait(1000);
-
-        throw new InvalidOperationException();
-    }
-
-    public static void DolAmroth(Action startAction)
     {
         Run(() =>
         {
-            var skipping = true;
-
             while (true)
             {
-                foreach (var action in DolAmrothCycle)
-                {
-                    if (skipping)
-                    {
-                        if (action == startAction)
-                            skipping = false;
-                    }
-                    else
-                    {
-                        action();
-                    }
-                }
+                Harvest("DolAmroth-bank2gate.map");
+                Harvest("dolamroth-lumberjacking.map");
+                Harvest("DolAmroth-gate2bank.map");
+                ReloadInDolAmrothBank();
             }
         });
     }
 
-    public static void UnloadInDolAmrothBank()
+    public static void ReloadInDolAmrothBank()
     {
         Log("Unloading to bank in Dol Amroth");
 
         WalkToBanker();
         Wait(1000);
 
-        OpenDolAmrothBank();
+        OpenBank();
         Wait(1000);
 
-        Unload();
+        UnloadToBank();
         Wait(1000);
+
+        RefreshFromBank();
 
         WalkOutFromBank();
+    }
+
+    public static void RefreshFromBank()
+    {
+        Log("Reloading from bank");
+
+        if (Me.BankBox == null)
+        {
+            Log("Bank not opened");
+            return;
+        }
+
+        ReloadPotion(Me.BankBox, ItemTypes.NightSightKegColor);
+        Eat();
+        Reload(Me.BankBox, 10, ItemTypes.Food);
     }
 
     private static void WalkOutFromBank()
@@ -121,14 +96,14 @@ public static class Pipka
         WalkTo(2244, 3206);
     }
 
-    private static void Unload()
+    private static void UnloadToBank()
     {
         var items = Items.OfType(TypesToUnload).InContainer(Me.BackPack);
         var unloadContainer = Items.Get(UnloadContainerId);
         MoveItems(items, unloadContainer);
     }
 
-    private static void OpenDolAmrothBank()
+    private static void OpenBank()
     {
         Say("Hi");
         WaitForGump();

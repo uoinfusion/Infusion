@@ -19,6 +19,8 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public bool InJournal(params string[] words) => journal.Any(line => words.Any(w => line.Message.Contains(w)));
 
+        public bool InJournal(DateTime createdAfter, params string[] words) => journal.Any(line => line.Created > createdAfter && words.Any(w => line.Message.Contains(w)));
+
         public void DeleteJournal()
         {
             journal = ImmutableList<JournalEntry>.Empty;

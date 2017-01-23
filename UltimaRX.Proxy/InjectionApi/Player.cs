@@ -38,7 +38,9 @@ namespace UltimaRX.Proxy.InjectionApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => Injection.Items.First(i => i.Type == BackPackType && i.ContainerId == PlayerId);
+        public Item BackPack => Injection.Items.FirstOrDefault(i => i.Type == BackPackType && i.ContainerId == PlayerId);
+        public Item BankBox => Injection.Items.OnLayer(Layer.BankBox).FirstOrDefault();
+
         public Color Color { get; set; }
         public ModelId BodyType { get; set; }
         public ushort CurrentHealth { get; set; }

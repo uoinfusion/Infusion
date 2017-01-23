@@ -15,15 +15,15 @@ public static class Scripts
 
     public static DateTime lastFailedLumberjackingAttempt;
 
-    private static readonly string[] AfkNames =
+    public static readonly string[] AfkNames =
     {
         "desttro", "elbereth", "finn", "gothmog", "houba", "iustus", "myke", "yavanna",
         "nightmare"
     };
 
-    private static readonly string[] AfkMessages = {"afk", "kontrola"};
+    public static readonly string[] AfkMessages = {"afk", "kontrola"};
 
-    private static DateTime lastCheckTime;
+    public static DateTime LastCheckTime;
 
     public static void Harvest(string mapFileInfoFile)
     {
@@ -135,7 +135,7 @@ public static class Scripts
         }
     }
 
-    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(5);
+    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(4);
 
     public static void HarvestTree(string tileInfo)
     {
@@ -182,12 +182,18 @@ public static class Scripts
         }
     }
 
-    private static void Checks()
+    public static void Checks()
     {
         AfkCheck();
         AttackCheck();
+        LightCheck();
 
-        lastCheckTime = DateTime.UtcNow;
+        LastCheckTime = DateTime.UtcNow;
+    }
+
+    private static void LightCheck()
+    {
+        // TODO: je spatne videt
     }
 
     public static readonly ModelId[] SafeAttackers =
@@ -212,7 +218,7 @@ public static class Scripts
         //    .Select(i => i.Id);
 
         return Journal
-            .After(lastCheckTime)
+            .After(LastCheckTime)
             .ContainsAnyWord("is attacking you")
             .Where(e => !SafeAttackers.Contains(e.Type))
             .Select(e => e.SpeakerId);
@@ -250,11 +256,14 @@ public static class Scripts
         }
     }
 
-    private static void AfkCheck()
+    public static void AfkCheck()
     {
         var afkAlertRequired = Journal
-            .After(lastCheckTime)
-            .ByAnyName(AfkNames)
+            .After(LastCheckTime)
+            .ByAnyName(AfkNames).Any();
+
+        afkAlertRequired |= Journal
+            .After(LastCheckTime)
             .ContainsAnyWord(AfkMessages).Any();
 
         if (afkAlertRequired)
@@ -265,15 +274,16 @@ public static class Scripts
 
     public static void AfkAlert()
     {
+        DeleteJournal();
         while (true)
         {
-            if (InJournal("tak zpet do prace"))
-                break;
-            DeleteJournal();
-
             System.Media.SystemSounds.Asterisk.Play();
 
             Wait(1000);
+
+            if (InJournal("tak zpet do prace"))
+                break;
+            DeleteJournal();
         }
     }
 
@@ -330,6 +340,8 @@ public static class Scripts
             WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
             Wait(500);
 
+            Checks();
+
             rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();
         }
     }
@@ -347,35 +359,40 @@ public static class Scripts
             WaitForJournal("Jidlo neni pozivatelne", "Mmm, smells good");
             Wait(500);
 
+            Checks();
+
             rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();
         }
     }
 
     public static void Cook()
     {
-        var cookingPlace = Items.OfType(ItemTypes.CookingPlaces).OnGround().MaxDistance(Me.Location, 2).First();
-
-        string cookingPlaceTile = null;
-        if (cookingPlace == null)
+        Run(() =>
         {
-            Log("Cooking place not found, specify a cooking place tile");
-            cookingPlaceTile = Info();
-            if (cookingPlaceTile == null)
-            {
-                Log("No cooking place tile found");
-                return;
-            }
-        }
+            var cookingPlace = Items.OfType(ItemTypes.CookingPlaces).OnGround().MaxDistance(Me.Location, 2).First();
 
-        var rawFood = Items.OfType(ItemTypes.RawFood).InContainer(Me.BackPack).First();
-        while (rawFood != null)
-        {
+            string cookingPlaceTile = null;
             if (cookingPlace == null)
-                Cook(rawFood.Type, cookingPlaceTile);
-            else
-                Cook(rawFood.Type, cookingPlace);
-            rawFood = Items.OfType(ItemTypes.RawFood).InContainer(Me.BackPack).First();
-        }
+            {
+                Log("Cooking place not found, specify a cooking place tile");
+                cookingPlaceTile = Info();
+                if (cookingPlaceTile == null)
+                {
+                    Log("No cooking place tile found");
+                    return;
+                }
+            }
+
+            var rawFood = Items.OfType(ItemTypes.RawFood).InContainer(Me.BackPack).First();
+            while (rawFood != null)
+            {
+                if (cookingPlace == null)
+                    Cook(rawFood.Type, cookingPlaceTile);
+                else
+                    Cook(rawFood.Type, cookingPlace);
+                rawFood = Items.OfType(ItemTypes.RawFood).InContainer(Me.BackPack).First();
+            }
+        });
     }
 
     public static void Loot()
@@ -415,7 +432,103 @@ public static class Scripts
         }
     }
 
+    public static void MoveItems(IEnumerable<Item> items, ushort amount, Item targetContainer)
+    {
+        foreach (var item in items)
+        {
+            if (amount == 0)
+                break;
+
+            if (item.Amount <= amount)
+            {
+                MoveItem(item, targetContainer);
+                amount -= item.Amount;
+            }
+            else
+            {
+                MoveItem(item, amount, targetContainer);
+                amount = 0;
+            }
+        }
+    }
+
+    public static void Reload(Item sourceContainer, ushort targetAmount, params ModelId[] typesToReload)
+    {
+        Log("Reloading");
+
+        var currentItemsAmount = Items.InContainer(Me.BackPack).OfType(typesToReload).Sum(i => i.Amount);
+        if (currentItemsAmount >= targetAmount)
+        {
+            Log($"Current amount ({currentItemsAmount}) is higher than or equal to target amount ({targetAmount}), no reloading");
+            return;
+        }
+
+        var sourceItemsToReload = Items.InContainer(sourceContainer).OfType(typesToReload).ToArray();
+        if (sourceItemsToReload.Length <= 0)
+        {
+            Log($"No items to reload found in {sourceContainer}");
+            return;
+        }
+
+        MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), Me.BackPack);
+    }
+
+    public static void Eat()
+    {
+        var itemsToEat = Items.OfType(ItemTypes.Food);
+        var journalCheck = DateTime.UtcNow;
+
+        foreach (var foodItem in itemsToEat)
+        {
+            var food = foodItem;
+            while (food != null && food.Amount > 0)
+            {
+                Use(food);
+                WaitForJournal("You eat some", "You are simply too full", "You can't think of a way to use that item");
+                Wait(200);
+
+                if (InJournal(journalCheck, "You are simply too full", "You can't think of a way to use that item"))
+                    return;
+
+                journalCheck = DateTime.UtcNow;
+                food = Items.RefreshItem(food);
+            }
+        }
+    }
+
+    public static void ReloadPotion(Item sourceContainer, Color kegColor)
+    {
+        Log($"Reloading potion: {kegColor}");
+
+        var emptyBottles =
+            Items.InContainer(Me.BackPack).OfType(ItemTypes.Bottle).OfColor(ItemTypes.EmptyBottleColor).First();
+        if (emptyBottles != null)
+        {
+            var potionKeg =
+                Items.InContainer(sourceContainer).OfType(ItemTypes.PotionKeg).OfColor(kegColor).First();
+            if (potionKeg != null)
+            {
+                Use(potionKeg);
+                WaitForTarget();
+                Target(emptyBottles);
+            }
+            else
+            {
+                Log("No potion keg");
+            }
+        }
+        else
+        {
+            Log("No empty bottles for the potion");
+        }
+    }
+
     public static void MoveItem(Item item, Item targetContainer)
+    {
+        MoveItem(item, item.Amount, targetContainer);
+    }
+
+    public static void MoveItem(Item item, ushort amount, Item targetContainer)
     {
         var refreshedItem = Items.RefreshItem(item);
         if (refreshedItem == null)
@@ -425,10 +538,12 @@ public static class Scripts
         }
         item = refreshedItem;
 
-        DragItem(item);
+        Log($"Dragging {amount} item {item}");
+        DragItem(item, amount);
         Wait(200);
 
         DropItem(item, targetContainer);
+        Log($"Dropping {amount} item {item}");
         Wait(200);
     }
 

@@ -4,7 +4,7 @@
 #load "ItemTypes.cs"
 #load "HarvestMapBuilder.cs"
 #load "Scripts.cs"
-#load "Pipka.cs"
+#load "PipkaDolAmroth.cs"
 #load "MapRecorder.cs"
 
 using System;

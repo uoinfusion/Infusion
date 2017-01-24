@@ -134,7 +134,7 @@ public static class Scripts
         }
     }
 
-    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(1);
+    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(2);
 
     public static void HarvestTree(string tileInfo)
     {
@@ -155,6 +155,7 @@ public static class Scripts
         while (treeHarvestable)
         {
             Wait(1000);
+            Checks();
             DeleteJournal();
             Log("Using any hatchet");
             UseType(ItemTypes.Hatchets);
@@ -162,12 +163,12 @@ public static class Scripts
             TargetTile(tileInfo);
 
             WaitForJournal("You put", "Drevo se nepodarilo", "of a way to use", "immune", "There are no logs",
-                "You cannot reach that");
-
-            Checks();
+                "You cannot reach that", "is attacking you");
 
             treeHarvestable =
                 !InJournal("of a way to use", "immune", "There are no logs here to chop.", "You cannot reach that");
+            Checks();
+
             if (!treeHarvestable)
             {
                 lastFailedLumberjackingAttempt = DateTime.UtcNow;
@@ -177,6 +178,7 @@ public static class Scripts
             {
                 Log("waiting for skill");
                 Wait(5000);
+                Checks();
             }
         }
     }

@@ -7,7 +7,7 @@ using UltimaRX.Proxy.InjectionApi;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 using static Scripts;
 
-public static class Pipka
+public static class PipkaDolAmroth
 {
     public const int UnloadContainerId = 0x40057064;
 
@@ -17,11 +17,13 @@ public static class Pipka
             .Concat(ItemTypes.Fishes)
             .ToArray();
 
-    public static readonly Action DolAmrothBank2Gate = Script.Create(() => Harvest("DolAmroth-bank2gate.map"));
-    public static readonly Action DolAmrothGate2Bank = Script.Create(() => Harvest("DolAmroth-gate2bank.map"));
-    public static readonly Action DolAmrothLumberjacking = Script.Create(() => Harvest("dolamroth-lumberjacking.map"));
-    public static readonly Action DolAmrothLumberjacking2 = Script.Create(() => Harvest("dolamroth-lumberjacking2.map"));
-    public static readonly Action DolAmrothKilling = Script.Create(() => Harvest("DolAmroth-killing.map"));
+    public static readonly Action Bank2Gate = Script.Create(() => Harvest("DolAmroth-bank2gate.map"));
+    public static readonly Action Bank2NorthGate = Script.Create(() => Harvest("DolAmroth-bank2northgate.map"));
+    public static readonly Action NorthGate2Gate = Script.Create(() => Harvest("DolAmroth-northgate2bank.map"));
+    public static readonly Action Gate2Bank = Script.Create(() => Harvest("DolAmroth-gate2bank.map"));
+    public static readonly Action Lumberjacking = Script.Create(() => Harvest("dolamroth-lumberjacking.map"));
+    public static readonly Action LumberjackingNorth = Script.Create(() => Harvest("DolAmroth-lumberjacking-north.map"));
+    public static readonly Action Killing = Script.Create(() => Harvest("DolAmroth-killing.map"));
     public static readonly Action LinhirHome2DolAmroth = Script.Create(() => Harvest("Linhir2DolAmroth.map"));
 
     public static void DolAmroth()
@@ -30,15 +32,18 @@ public static class Pipka
         {
             while (true)
             {
+                Harvest("DolAmroth-bank2northgate.map");
+                Harvest("DolAmroth-lumberjacking-north.map");
+                Harvest("DolAmroth-northgate2bank.map");
+                ReloadInBank();
                 Harvest("DolAmroth-bank2gate.map");
                 Harvest("dolamroth-lumberjacking.map");
                 Harvest("DolAmroth-gate2bank.map");
-                ReloadInDolAmrothBank();
             }
         });
     }
 
-    public static void ReloadInDolAmrothBank()
+    public static void ReloadInBank()
     {
         Log("Unloading to bank in Dol Amroth");
 
@@ -93,7 +98,7 @@ public static class Pipka
         WalkTo(2248, 3204);
         OpenNearestDoor();
         WalkTo(2244, 3204);
-        WalkTo(2244, 3206);
+        WalkTo(2244, 3207);
     }
 
     private static void UnloadToBank()
@@ -105,7 +110,7 @@ public static class Pipka
 
     private static void OpenBank()
     {
-        Say("Hi");
+        Say("hi");
         WaitForGump();
         GumpInfo();
         Wait(1000);

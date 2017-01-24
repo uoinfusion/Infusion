@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Client;
 
 namespace UltimaRX.Proxy
 {
     public class PacketHandler
     {
-        private readonly Dictionary<int, List<Delegate>> Observers = new Dictionary<int, List<Delegate>>();
+        private ImmutableDictionary<int, ImmutableList<Delegate>> Observers = ImmutableDictionary<int, ImmutableList<Delegate>>.Empty;
         private readonly List<Func<Packet, Packet?>> Filters = new List<Func<Packet, Packet?>>();
 
         public Packet? Filter(Packet packet)
@@ -26,7 +28,7 @@ namespace UltimaRX.Proxy
 
         public void Publish<TPacket>(Packet rawPacket) where TPacket : MaterializedPacket
         {
-            List<Delegate> observerList;
+            ImmutableList<Delegate> observerList;
             if (Observers.TryGetValue(rawPacket.Id, out observerList))
             {
                 var packet =
@@ -48,13 +50,29 @@ namespace UltimaRX.Proxy
         public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
             where TPacket : MaterializedPacket
         {
-            List<Delegate> observers;
-            if (!Observers.TryGetValue(definition.Id, out observers))
+            ImmutableList<Delegate> observerList;
+            if (!Observers.TryGetValue(definition.Id, out observerList))
             {
-                observers = new List<Delegate>();
-                Observers.Add(definition.Id, observers);
+                observerList = ImmutableList.Create((Delegate)observer);
+                Observers = Observers.Add(definition.Id, observerList);
             }
-            observers.Add(observer);
+            else
+            {
+                observerList = observerList.Add(observer);
+                Observers = Observers.SetItem(definition.Id, observerList);
+            }
+        }
+
+        public void Unsubscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
+            where TPacket : MaterializedPacket
+        {
+            ImmutableList<Delegate> observerList;
+
+            if (Observers.TryGetValue(definition.Id, out observerList))
+            {
+                observerList = observerList.Remove(observer);
+                Observers = Observers.SetItem(definition.Id, observerList);
+            }
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using UltimaRX.Gumps;
@@ -69,11 +68,11 @@ public static class Scripts
             }
             else
             {
-                Log($"In escape mode, just check attackers, and do no other action.");
+                Log("In escape mode, just check attackers, and do no other action.");
                 AttackCheck();
             }
         }
-        catch (AttackException e)
+        catch (AttackException)
         {
             // just continue
         }
@@ -135,7 +134,7 @@ public static class Scripts
         }
     }
 
-    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(4);
+    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(1);
 
     public static void HarvestTree(string tileInfo)
     {

@@ -5,6 +5,7 @@
 #load "HarvestMapBuilder.cs"
 #load "Scripts.cs"
 #load "Pipka.cs"
+#load "MapRecorder.cs"
 
 using System;
 using System.Threading;

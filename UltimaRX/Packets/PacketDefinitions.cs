@@ -29,8 +29,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition AttackRequest = new PacketDefinition(0x05,
             new StaticPacketLength(5), "AttackRequest");
 
-        public static readonly PacketDefinition DoubleClick = new PacketDefinition(0x06,
-            new StaticPacketLength(5), "DoubleClick");
+        public static readonly PacketDefinition<DoubleClickRequest> DoubleClick = new PacketDefinition<DoubleClickRequest>(0x06,
+            new StaticPacketLength(5), "DoubleClick", packet => new DoubleClickRequest());
 
         public static readonly PacketDefinition PickUpItem = new PacketDefinition(0x07,
             new StaticPacketLength(7), "PickUpItem");

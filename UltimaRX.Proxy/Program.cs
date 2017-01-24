@@ -349,26 +349,39 @@ namespace UltimaRX.Proxy
 
         private static void ClientConnectionOnPacketReceived(object sender, Packet rawPacket)
         {
-            var filteredPacket = ClientPacketHandler.Filter(rawPacket);
-            if (!filteredPacket.HasValue)
-                return;
-            rawPacket = filteredPacket.Value;
+            try
+            {
+                var filteredPacket = ClientPacketHandler.Filter(rawPacket);
+                if (!filteredPacket.HasValue)
+                    return;
+                rawPacket = filteredPacket.Value;
 
-            if (rawPacket.Id == PacketDefinitions.MoveRequest.Id)
-            {
-                ClientPacketHandler.Publish<MoveRequest>(rawPacket);
+                if (rawPacket.Id == PacketDefinitions.MoveRequest.Id)
+                {
+                    ClientPacketHandler.Publish<MoveRequest>(rawPacket);
+                }
+                else if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
+                {
+                    ClientPacketHandler.Publish<SpeechRequest>(rawPacket);
+                }
+                else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
+                {
+                    ClientPacketHandler.Publish<TargetCursorPacket>(rawPacket);
+                }
+                else if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id)
+                {
+                    ClientPacketHandler.Publish<GumpMenuSelectionRequest>(rawPacket);
+                }
+                else if (rawPacket.Id == PacketDefinitions.DoubleClick.Id)
+                {
+                    ClientPacketHandler.Publish<DoubleClickRequest>(rawPacket);
+                }
+
             }
-            else if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
+            catch (Exception ex)
             {
-                ClientPacketHandler.Publish<SpeechRequest>(rawPacket);
-            }
-            else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
-            {
-                ClientPacketHandler.Publish<TargetCursorPacket>(rawPacket);
-            }
-            else if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id)
-            {
-                ClientPacketHandler.Publish<GumpMenuSelectionRequest>(rawPacket);
+                Print(ex.ToString());
+                throw;
             }
 
             SendToServer(rawPacket);

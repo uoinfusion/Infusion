@@ -7,19 +7,37 @@ using UltimaRX.IO;
 
 namespace UltimaRX.Packets.Client
 {
-    public class DoubleClickRequest
+    public class DoubleClickRequest : MaterializedPacket
     {
-        public DoubleClickRequest(uint objectId)
+        private Packet rawPacket;
+
+        public DoubleClickRequest()
+        {
+        }
+
+        public DoubleClickRequest(uint itemId)
         {
             byte[] payload = new byte[5];
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte)PacketDefinitions.DoubleClick.Id);
-            writer.WriteUInt(objectId);
+            writer.WriteUInt(itemId);
+            rawPacket = new Packet(PacketDefinitions.DoubleClick.Id, payload);
 
-            RawPacket = new Packet(PacketDefinitions.DoubleClick.Id, payload);
+            ItemId = itemId;
         }
 
-        public Packet RawPacket { get; }
+        public override Packet RawPacket => rawPacket;
+
+        public override void Deserialize(Packet rawPacket)
+        {
+            this.rawPacket = rawPacket;
+
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+            reader.Skip(1);
+            ItemId = reader.ReadUInt();
+        }
+
+        public uint ItemId { get; private set; }
     }
 }

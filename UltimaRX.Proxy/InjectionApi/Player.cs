@@ -24,8 +24,11 @@ namespace UltimaRX.Proxy.InjectionApi
             get { return location; }
             set
             {
-                location = value;
-                OnLocationChanged(value);
+                if (location != value)
+                {
+                    location = value;
+                    OnLocationChanged(value);
+                }
             }
         }
 

@@ -24,6 +24,23 @@ namespace UltimaRX.Proxy.InjectionApi
             serverPacketHandler.Subscribe(PacketDefinitions.DrawGamePlayer, HandleDrawGamePlayerPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.CharMoveRejection, HandleCharMoveRejectionPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentStamina, HandleUpdateCurrentStaminaPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
+        }
+
+        private void HandleStatusBarInfoPacket(StatusBarInfoPacket packet)
+        {
+            if (packet.PlayerId == player.PlayerId)
+            {
+                player.CurrentStamina = packet.CurrentStamina;
+                player.MaxStamina = packet.MaxStamina;
+                player.CurrentHealth = packet.CurrentHealth;
+                player.MaxHealth = packet.MaxHealth;
+                player.Weight = packet.Weight;
+                player.Intelligence = packet.Intelligence;
+                player.Dexterity = packet.Dexterity;
+                player.Strength = packet.Strength;
+            }
         }
 
         private Packet? FilterClientPackets(Packet rawPacket)
@@ -51,6 +68,15 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 player.CurrentHealth = packet.CurrentHealth;
                 player.MaxHealth = packet.MaxHealth;
+            }
+        }
+
+        private void HandleUpdateCurrentStaminaPacket(UpdateCurrentStaminaPacket packet)
+        {
+            if (player.PlayerId == packet.PlayerId)
+            {
+                player.CurrentStamina = packet.CurrentStamina;
+                player.MaxStamina = packet.MaxStamina;
             }
         }
 

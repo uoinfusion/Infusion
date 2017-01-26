@@ -11,7 +11,8 @@ namespace UltimaRX.Proxy.InjectionApi
         private const int MaxEnqueuedWalkRequests = 0;
         private static readonly ModelId BackPackType = (ModelId) 0x0E75;
 
-        private static readonly TimeSpan TimeBetweenSteps = TimeSpan.FromMilliseconds(190);
+        private static readonly TimeSpan TimeBetweenRunningSteps = TimeSpan.FromMilliseconds(190);
+        private static readonly TimeSpan TimeBetweenWalkingSteps = TimeSpan.FromMilliseconds(400);
 
         private readonly AutoResetEvent walkRequestDequeueEvent = new AutoResetEvent(false);
 
@@ -48,19 +49,40 @@ namespace UltimaRX.Proxy.InjectionApi
         public ModelId BodyType { get; set; }
         public ushort CurrentHealth { get; set; }
         public ushort MaxHealth { get; set; }
+        public ushort CurrentStamina { get; set; }
+        public ushort MaxStamina { get; set; }
+        public ushort Weight { get; set; }
+        public ushort Dexterity { get; set; }
+        public ushort Strength { get; set; }
+        public ushort Intelligence { get; set; }
 
         internal void ResetWalkRequestQueue()
         {
             WalkRequestQueue.Reset();
         }
 
-        internal void WaitToAvoidFastWalk()
+        internal void WaitToAvoidFastWalk(MovementType movementType)
         {
             var lastEnqueueTime = WalkRequestQueue.LastEnqueueTime;
-            if (lastEnqueueTime < TimeBetweenSteps)
+            TimeSpan timeBetweenSteps;
+
+            switch (movementType)
             {
-                var waitTime = TimeBetweenSteps - lastEnqueueTime;
-                Program.Diagnostic.WriteLine($"WaitToAvoidFastWalk: waiting minimal time between steps {TimeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
+                case MovementType.Walk:
+                    // TODO: time for stepping
+                    timeBetweenSteps = TimeBetweenWalkingSteps;
+                    break;
+                case MovementType.Run:
+                    timeBetweenSteps = TimeBetweenRunningSteps;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(movementType), $"Unknown MovementType {movementType}");
+            }
+
+            if (lastEnqueueTime < timeBetweenSteps)
+            {
+                var waitTime = timeBetweenSteps - lastEnqueueTime;
+                Program.Diagnostic.WriteLine($"WaitToAvoidFastWalk: waiting minimal time between steps {timeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
                 Injection.Wait(waitTime.Milliseconds);
             }
         }

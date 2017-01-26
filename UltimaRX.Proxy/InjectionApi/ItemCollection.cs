@@ -35,7 +35,14 @@ namespace UltimaRX.Proxy.InjectionApi
             return items.TryGetValue(id, out item);
         }
 
-        public Item Get(uint id) => items[id];
+        public Item Get(uint id)
+        {
+            Item item;
+            if (items.TryGetValue(id, out item))
+                return item;
+
+            return null;
+        }
 
         public Item RefreshItem(Item item)
         {

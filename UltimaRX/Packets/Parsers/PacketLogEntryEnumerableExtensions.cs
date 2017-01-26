@@ -43,7 +43,7 @@ namespace UltimaRX.Packets.Parsers
 
         private static string FormatOneLinePayload(byte[] payload)
         {
-            return payload.Select(x => x.ToString("X2")).Aggregate((l, r) => l + ", " + r);
+            return payload.Select(x => "0x" + x.ToString("X2")).Aggregate((l, r) => l + ", " + r);
         }
 
         public static void ToConsole(this IEnumerable<string> entries)

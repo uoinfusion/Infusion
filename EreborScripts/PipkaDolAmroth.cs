@@ -19,7 +19,7 @@ public static class PipkaDolAmroth
 
     public static readonly Action Bank2Gate = Script.Create(() => Harvest("DolAmroth-bank2gate.map"));
     public static readonly Action Bank2NorthGate = Script.Create(() => Harvest("DolAmroth-bank2northgate.map"));
-    public static readonly Action NorthGate2Gate = Script.Create(() => Harvest("DolAmroth-northgate2bank.map"));
+    public static readonly Action NorthGate2Bank = Script.Create(() => Harvest("DolAmroth-northgate2bank.map"));
     public static readonly Action Gate2Bank = Script.Create(() => Harvest("DolAmroth-gate2bank.map"));
     public static readonly Action Lumberjacking = Script.Create(() => Harvest("dolamroth-lumberjacking.map"));
     public static readonly Action LumberjackingNorth = Script.Create(() => Harvest("DolAmroth-lumberjacking-north.map"));
@@ -39,6 +39,7 @@ public static class PipkaDolAmroth
                 Harvest("DolAmroth-bank2gate.map");
                 Harvest("dolamroth-lumberjacking.map");
                 Harvest("DolAmroth-gate2bank.map");
+                ReloadInBank();
             }
         });
     }
@@ -48,7 +49,7 @@ public static class PipkaDolAmroth
         Log("Unloading to bank in Dol Amroth");
 
         WalkToBanker();
-        Wait(1000);
+        Wait(5000);
 
         OpenBank();
         Wait(1000);

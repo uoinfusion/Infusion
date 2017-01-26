@@ -163,9 +163,9 @@ namespace UltimaRX.Proxy.InjectionApi
             Wait((int)span.TotalMilliseconds);
         }
 
-        public static void WaitToAvoidFastWalk()
+        public static void WaitToAvoidFastWalk(MovementType movementType)
         {
-            Me.WaitToAvoidFastWalk();
+            Me.WaitToAvoidFastWalk(movementType);
         }
 
         public static void WaitWalkAcknowledged()

@@ -201,8 +201,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition Damage = new PacketDefinition(0x0B,
             new VariablePacketLength(), "Damage");
 
-        public static readonly PacketDefinition StatusBarInfo = new PacketDefinition(0x11,
-            new VariablePacketLength(), "StatusBarInfo");
+        public static readonly PacketDefinition<StatusBarInfoPacket> StatusBarInfo = new PacketDefinition<StatusBarInfoPacket>(0x11,
+            new VariablePacketLength(), "StatusBarInfo", packet => new StatusBarInfoPacket());
 
         public static readonly PacketDefinition NewHealthBarStatusUpdate = new PacketDefinition(0x16,
             new VariablePacketLength(), "NewHealthBarStatusUpdate");
@@ -349,14 +349,16 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition SellList = new PacketDefinition(0x9E,
             new VariablePacketLength(), "SellList");
 
-        public static readonly PacketDefinition<UpdateCurrentHealthPacket> UpdateCurrentHealth = new PacketDefinition<UpdateCurrentHealthPacket>(0xA1,
-            new StaticPacketLength(9), "UpdateCurrentHealth", packet => new UpdateCurrentHealthPacket());
+        public static readonly PacketDefinition<UpdateCurrentHealthPacket> UpdateCurrentHealth =
+            new PacketDefinition<UpdateCurrentHealthPacket>(0xA1,
+                new StaticPacketLength(9), "UpdateCurrentHealth", packet => new UpdateCurrentHealthPacket());
 
         public static readonly PacketDefinition UpdateCurrentMana = new PacketDefinition(0xA2,
             new StaticPacketLength(9), "UpdateCurrentMana");
 
-        public static readonly PacketDefinition UpdateCurrentStamina = new PacketDefinition(0xA3,
-            new StaticPacketLength(9), "UpdateCurrentStamina");
+        public static readonly PacketDefinition<UpdateCurrentStaminaPacket> UpdateCurrentStamina =
+            new PacketDefinition<UpdateCurrentStaminaPacket>(0xA3,
+                new StaticPacketLength(9), "UpdateCurrentStamina", packet => new UpdateCurrentStaminaPacket());
 
         public static readonly PacketDefinition OpenWebBrowser = new PacketDefinition(0xA5,
             new VariablePacketLength(), "OpenWebBrowser");

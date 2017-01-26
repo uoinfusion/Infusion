@@ -84,6 +84,8 @@
     <Compile Include="Packets\Server\SendGumpMenuDialogPacketTests.cs" />
     <Compile Include="Packets\Server\SendSpeechPacketTests.cs" />
     <Compile Include="Packets\Server\SpeechMessagePacketTests.cs" />
+    <Compile Include="Packets\Server\StatusBarInfoPacketTests.cs" />
+    <Compile Include="Packets\Server\UpdateCurrentStaminaPacketTests.cs" />
     <Compile Include="Packets\Server\UpdatePlayerPacketTests.cs" />
     <Compile Include="Packets\Server\WornItemPacketTests.cs" />
     <Compile Include="Packets\SpeechRequestTests.cs" />

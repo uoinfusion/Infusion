@@ -117,7 +117,9 @@
     <Compile Include="Packets\Server\SendGumpMenuDialogPacket.cs" />
     <Compile Include="Packets\Server\SendSpeechPacket.cs" />
     <Compile Include="Packets\Server\SpeechMessagePacket.cs" />
+    <Compile Include="Packets\Server\StatusBarInfoPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentHealthPacket.cs" />
+    <Compile Include="Packets\Server\UpdateCurrentStaminaPacket.cs" />
     <Compile Include="Packets\Server\UpdatePlayerPacket.cs" />
     <Compile Include="Packets\Server\WornItemPacket.cs" />
     <Compile Include="Packets\SpeechType.cs" />

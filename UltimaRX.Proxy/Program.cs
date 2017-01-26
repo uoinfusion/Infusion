@@ -268,6 +268,10 @@ namespace UltimaRX.Proxy
             {
                 ServerPacketHandler.Publish<UpdateCurrentHealthPacket>(rawPacket);
             }
+            else if (rawPacket.Id == PacketDefinitions.UpdateCurrentStamina.Id)
+            {
+                ServerPacketHandler.Publish<UpdateCurrentStaminaPacket>(rawPacket);
+            }
             else if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
                 ServerPacketHandler.Publish<SendGumpMenuDialogPacket>(rawPacket);
@@ -275,6 +279,10 @@ namespace UltimaRX.Proxy
             else if (rawPacket.Id == PacketDefinitions.WornItem.Id)
             {
                 ServerPacketHandler.Publish<WornItemPacket>(rawPacket);
+            }
+            else if (rawPacket.Id == PacketDefinitions.StatusBarInfo.Id)
+            {
+                ServerPacketHandler.Publish<StatusBarInfoPacket>(rawPacket);
             }
 
             return rawPacket;

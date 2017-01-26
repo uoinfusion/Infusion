@@ -63,10 +63,18 @@ namespace UltimaRX.IO
         public string ReadString(int length)
         {
             var str = new StringBuilder();
+            bool nullReached = false;
             while (length > 0)
             {
                 var ch = ReadByte();
-                str.Append(value: (char) ch);
+                if (!nullReached)
+                {
+                    if (ch == '\0')
+                        nullReached = true;
+                    else
+                        str.Append(value: (char) ch);
+                }
+
                 length--;
             }
 

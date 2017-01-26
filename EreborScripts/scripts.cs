@@ -24,6 +24,24 @@ public static class Scripts
 
     public static DateTime LastCheckTime;
 
+    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(2);
+
+    public static readonly ModelId[] SafeAttackers =
+    {
+        ItemTypes.Cow,
+        ItemTypes.Cow2,
+        ItemTypes.Bird,
+        ItemTypes.Dog,
+        ItemTypes.Rabbit,
+        ItemTypes.Rat
+    };
+
+    public static uint[] Attackers = {};
+
+    public static bool EscapeMode;
+
+    public static ushort MaxWeight => 480;
+
     public static void Harvest(string mapFileInfoFile)
     {
         Log($"Map: {mapFileInfoFile}");
@@ -33,12 +51,12 @@ public static class Scripts
         foreach (var mapLine in mapLines)
         {
             Log($"Processing line {line}");
-            ProcessHarvestMapLine(mapLine, null);
+            ProcessHarvestMapLine(mapLine);
             line++;
         }
     }
 
-    public static void ProcessHarvestMapLine(string mapLine, Action<string> harvestAction)
+    public static void ProcessHarvestMapLine(string mapLine)
     {
         if (mapLine.StartsWith("walk: "))
         {
@@ -51,25 +69,26 @@ public static class Scripts
         {
             if (!EscapeMode)
             {
-                if (mapLine.StartsWith("harvest: "))
+                if (Me.Weight < MaxWeight)
                 {
-                    var parameters = mapLine.Substring("harvest: ".Length);
-                    harvestAction?.Invoke(parameters);
+                    if (mapLine.StartsWith("lumber:"))
+                    {
+                        var parameters = mapLine.Substring("lumber: ".Length);
+                        HarvestTree(parameters);
+                    }
+                    else if (mapLine.StartsWith("masskill"))
+                    {
+                        MassKill();
+                    }
                 }
-                if (mapLine.StartsWith("lumber:"))
-                {
-                    var parameters = mapLine.Substring("lumber: ".Length);
-                    HarvestTree(parameters);
-                }
-                else if (mapLine.StartsWith("masskill"))
-                {
-                    MassKill();
-                }
+                else
+                    Log($"I'm overweight {Me.Weight}, maximum is {MaxWeight}");
             }
             else
             {
                 Log("In escape mode, just check attackers, and do no other action.");
                 AttackCheck();
+                LastCheckTime = DateTime.UtcNow;
             }
         }
         catch (AttackException)
@@ -134,8 +153,6 @@ public static class Scripts
         }
     }
 
-    public static readonly TimeSpan FailedLumberjackingWait = TimeSpan.FromSeconds(2);
-
     public static void HarvestTree(string tileInfo)
     {
         Log($"Lumberjacking {tileInfo}");
@@ -147,7 +164,8 @@ public static class Scripts
         if (sinceLastFail < FailedLumberjackingWait)
         {
             var waitSpan = FailedLumberjackingWait - sinceLastFail;
-            Log($"{DateTime.UtcNow:T} Waiting due to lumberjacking fail: {waitSpan}, {(int)waitSpan.TotalMilliseconds} ms");
+            Log(
+                $"{DateTime.UtcNow:T} Waiting due to lumberjacking fail: {waitSpan}, {(int) waitSpan.TotalMilliseconds} ms");
             Wait(waitSpan);
             Log($"{DateTime.UtcNow:T} waiting finished");
         }
@@ -194,22 +212,17 @@ public static class Scripts
 
     private static void LightCheck()
     {
-        // TODO: je spatne videt
+        if (InJournal(LastCheckTime, "Je spatne videt"))
+        {
+            var nightsight =
+                Items.InContainer(Me.BackPack).OfType(ItemTypes.Bottle).OfColor(ItemTypes.NightSightKegColor).First();
+            if (nightsight != null)
+            {
+                Use(nightsight);
+                Wait(1000);
+            }
+        }
     }
-
-    public static readonly ModelId[] SafeAttackers =
-    {
-        ItemTypes.Cow,
-        ItemTypes.Cow2,
-        ItemTypes.Bird,
-        ItemTypes.Dog,
-        ItemTypes.Rabbit,
-        ItemTypes.Rat
-    };
-
-    public static uint[] Attackers = {};
-
-    public static bool EscapeMode;
 
     public static IEnumerable<uint> FindAttackers()
     {
@@ -228,9 +241,10 @@ public static class Scripts
     public static IEnumerable<uint> UpdateAttackers(IEnumerable<uint> currentAttackers)
     {
         var newAttackers = FindAttackers();
-        var myLocation = (Location2D)Me.Location;
+        var myLocation = (Location2D) Me.Location;
 
-        var relevantAttackers = currentAttackers.Select(id => Items[id])
+        var relevantAttackers = currentAttackers.Select(id => Items.Get(id))
+            .Where(i => i != null)
             .MaxDistance(myLocation, 30)
             .Select(i => i.Id);
 
@@ -243,7 +257,7 @@ public static class Scripts
 
         Attackers = updatedAttackers.ToArray();
 
-        bool escapeMode = Attackers.Any();
+        var escapeMode = Attackers.Any();
         if (escapeMode != EscapeMode)
         {
             EscapeMode = escapeMode;
@@ -252,8 +266,7 @@ public static class Scripts
                 Log($"{Attackers.Length} attackers detected -> escape mode");
                 throw new AttackException();
             }
-            else
-                Log("No attackers -> leaving escape mode.");
+            Log("No attackers -> leaving escape mode.");
         }
     }
 
@@ -295,8 +308,10 @@ public static class Scripts
         if (walkVector != Vector.NullVector)
         {
             Program.Diagnostic.WriteLine($"StepToward: walkVector = {walkVector}");
-            WaitToAvoidFastWalk();
-            Walk(walkVector.ToDirection(), MovementType.Run);
+            var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
+
+            WaitToAvoidFastWalk(movementType);
+            Walk(walkVector.ToDirection(), movementType);
             WaitWalkAcknowledged();
         }
         else
@@ -460,7 +475,8 @@ public static class Scripts
         var currentItemsAmount = Items.InContainer(Me.BackPack).OfType(typesToReload).Sum(i => i.Amount);
         if (currentItemsAmount >= targetAmount)
         {
-            Log($"Current amount ({currentItemsAmount}) is higher than or equal to target amount ({targetAmount}), no reloading");
+            Log(
+                $"Current amount ({currentItemsAmount}) is higher than or equal to target amount ({targetAmount}), no reloading");
             return;
         }
 
@@ -471,7 +487,7 @@ public static class Scripts
             return;
         }
 
-        MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), Me.BackPack);
+        MoveItems(sourceItemsToReload, (ushort) (targetAmount - currentItemsAmount), Me.BackPack);
     }
 
     public static void Eat()

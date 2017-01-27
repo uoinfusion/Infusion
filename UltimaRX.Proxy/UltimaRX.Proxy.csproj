@@ -70,6 +70,7 @@
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Logging\DiagnosticLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\MultiplexLogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Logging\RingBufferLogger.cs" />
     <Compile Include="InjectionApi\Player.cs" />

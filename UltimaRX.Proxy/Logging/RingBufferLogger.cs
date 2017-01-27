@@ -3,16 +3,14 @@ using System.Text;
 
 namespace UltimaRX.Proxy.Logging
 {
-    internal sealed class RingBufferLogger : ILogger
+    public sealed class RingBufferLogger : ILogger
     {
         private readonly int capacity;
-        private readonly ILogger dumpLogger;
         private readonly Queue<string> ringBufferQueue;
         private readonly object bufferLock = new object();
 
-        public RingBufferLogger(ILogger dumpLogger, int capacity)
+        public RingBufferLogger(int capacity)
         {
-            this.dumpLogger = dumpLogger;
             this.capacity = capacity;
             ringBufferQueue = new Queue<string>(capacity);
         }
@@ -45,9 +43,17 @@ namespace UltimaRX.Proxy.Logging
             }
         }
 
-        public void Dump()
+        public void Dump(ILogger dumpLogger)
         {
             dumpLogger.WriteLine(DumpToString());
+        }
+
+        public string[] Dump()
+        {
+            lock (bufferLock)
+            {
+                return ringBufferQueue.ToArray();
+            }
         }
 
         public void Clear()

@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "title";
+}
+
+<
+
+<div>
+    <strong>Say: </strong>
+    <input type="text" id="message" style='width: 100%' />
+    <input type="button" id="sendmessage" value="Send"/>
+</div>
+
+<h2>Journal</h2>
+<div class="container">
+    <div id="messages">
+        <ul id="log-messages">
+        </ul>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Scripts/jquery.signalR-2.2.1.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+    
+    <script>
+        $(function () {
+            var nazghulHub = $.connection.NazghulHub;
+            nazghulHub.client.sendLog = function (message) {
+                $('#log-messages').prepend('<li>' + htmlEncode(message) + '</li>');
+            };
+            nazghulHub.client.sendAllLogs = function (messages) {
+                $('#log-messages').empty();
+                for (i = messages.length - 1; i >= 0; i--) {
+                    $('#log-messages').append('<li>' + htmlEncode(messages[i]) + '</li>');
+                }
+            };
+            $.connection.hub.start().done(function () {
+                nazghulHub.server.requestAllLogs();
+                $('#sendmessage').click(function () {
+                    // Call the Send method on the hub. 
+                    nazghulHub.server.say($('#message').val());
+                    // Clear text box and reset focus for next comment. 
+                    $('#message').val('').focus();
+                });
+                $('#message').keypress(function (e) {
+                    if (e.keyCode === 13)
+                        $('#sendmessage').click();
+                });
+            });
+        });
+
+        // This optional function html-encodes messages for display in the page.
+        function htmlEncode(value) {
+            var encodedValue = $('<div />').text(value).html();
+            return encodedValue;
+        }        
+    </script>
+}

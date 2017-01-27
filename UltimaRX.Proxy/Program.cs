@@ -35,10 +35,10 @@ namespace UltimaRX.Proxy
 
         private static readonly object ServerStreamLock = new object();
 
-        public static readonly ILogger Console = new ConsoleLogger();
+        public static ILogger Console { get; set; } = new ConsoleLogger();
         public static ILogger Diagnostic = NullLogger.Instance;
 
-        private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(Console, 1000);
+        private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(1000);
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
@@ -94,7 +94,7 @@ namespace UltimaRX.Proxy
 
         public static void DumpPacketLog()
         {
-            PacketRingBufferLogger.Dump();
+            PacketRingBufferLogger.Dump(Console);
         }
 
         public static IEnumerable<PacketLogEntry> ParsePacketLogDump()
@@ -178,7 +178,7 @@ namespace UltimaRX.Proxy
             {
                 var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
-                packet.GameServerPort = 33333;
+                packet.GameServerPort = 33334;
                 rawPacket = packet.RawPacket;
                 needServerReconnect = true;
             }

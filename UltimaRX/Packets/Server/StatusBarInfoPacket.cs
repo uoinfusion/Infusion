@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UltimaRX.IO;
 
 namespace UltimaRX.Packets.Server
@@ -16,7 +12,7 @@ namespace UltimaRX.Packets.Server
         public ushort CurrentHealth { get; private set; }
         public ushort MaxHealth { get; private set; }
         public ushort CurrentStamina { get; private set; }
-        public ushort  MaxStamina { get; private set; }
+        public ushort MaxStamina { get; private set; }
         public ushort CurrentMana { get; private set; }
         public ushort MaxMana { get; private set; }
         public uint Gold { get; private set; }
@@ -24,6 +20,9 @@ namespace UltimaRX.Packets.Server
         public ushort Strength { get; private set; }
         public ushort Dexterity { get; private set; }
         public ushort Intelligence { get; private set; }
+
+        public override Packet RawPacket => rawPacket;
+        public byte Status { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -36,9 +35,13 @@ namespace UltimaRX.Packets.Server
             CurrentHealth = reader.ReadUShort();
             MaxHealth = reader.ReadUShort();
             reader.ReadByte(); // name change flag
-            byte validStats = reader.ReadByte(); // status flag / valid stats
+            var validStats = reader.ReadByte(); // status flag / valid stats
+
             if (validStats == 0)
-                throw new NotImplementedException("validStats is 0");
+                return;
+
+            if (validStats != 1 && validStats != 7)
+                throw new NotImplementedException($"unknown validStats {validStats}");
 
             reader.ReadByte(); // sex + race
             Strength = reader.ReadUShort();
@@ -52,7 +55,5 @@ namespace UltimaRX.Packets.Server
             reader.ReadUShort();
             Weight = reader.ReadUShort();
         }
-
-        public override Packet RawPacket => rawPacket;
     }
 }

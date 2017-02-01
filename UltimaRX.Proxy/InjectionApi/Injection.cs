@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using UltimaRX.Gumps;
 using UltimaRX.Packets;
 using UltimaRX.Packets.Both;
@@ -14,7 +15,7 @@ namespace UltimaRX.Proxy.InjectionApi
         private static readonly JournalObservers JournalObservers;
         private static readonly PlayerObservers PlayerObservers;
         private static readonly BlockedPacketsFilters BlockedPacketsFilters;
-        private static readonly InjectionCommandHandler InjectionCommandHandler;
+        private static readonly CommandHandlerObservers InjectionCommandHandler;
         private static readonly GumpObservers GumpObservers;
 
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
@@ -33,8 +34,17 @@ namespace UltimaRX.Proxy.InjectionApi
             PlayerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
             PlayerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
             Targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
-            InjectionCommandHandler = new InjectionCommandHandler(Program.ClientPacketHandler);
+
+            RegisterDefaultScripts();
+
+            InjectionCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
             BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
+        }
+
+        private static void RegisterDefaultScripts()
+        {
+            CommandHandler.RegisterCommand(new Command("terminate", () => Terminate(), CommandExecutionMode.OwnThread));
+            CommandHandler.RegisterCommand(new Command("walkto", (parameters) => WalkTo(parameters)));
         }
 
         public static Gump CurrentGump => GumpObservers.CurrentGump;
@@ -44,6 +54,8 @@ namespace UltimaRX.Proxy.InjectionApi
             get { return cancellationToken.Value; }
             set { cancellationToken.Value = value; }
         }
+
+        public static CommandHandler CommandHandler { get; } = new CommandHandler();
 
         public static ItemCollection Items { get; }
 
@@ -64,12 +76,6 @@ namespace UltimaRX.Proxy.InjectionApi
         }
 
         public static Gump WaitForGump() => GumpObservers.WaitForGump();
-
-        public static event EventHandler<string> CommandReceived
-        {
-            add { InjectionCommandHandler.CommandReceived += value; }
-            remove { InjectionCommandHandler.CommandReceived -= value; }
-        }
 
         public static void Initialize()
         {
@@ -213,7 +219,7 @@ namespace UltimaRX.Proxy.InjectionApi
             Targeting.Target(item);
         }
 
-        public static void Run(Action scriptAction) => Script.Create(scriptAction)();
+        public static void Run(Action scriptAction) => Script.Run(scriptAction);
 
         public static void Terminate()
         {
@@ -282,6 +288,54 @@ namespace UltimaRX.Proxy.InjectionApi
         public static void CloseGump()
         {
             GumpObservers.CloseGump();
+        }
+
+        public static void StepToward(Location2D currentLocation, Location2D targetLocation)
+        {
+            Program.Diagnostic.WriteLine($"StepToward: {currentLocation} -> {targetLocation}");
+            var walkVector = (targetLocation - currentLocation).Normalize();
+            if (walkVector != Vector.NullVector)
+            {
+                Program.Diagnostic.WriteLine($"StepToward: walkVector = {walkVector}");
+                var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
+
+                WaitToAvoidFastWalk(movementType);
+                Walk(walkVector.ToDirection(), movementType);
+                WaitWalkAcknowledged();
+            }
+            else
+                Program.Diagnostic.WriteLine("walkVector is Vector.NullVector");
+        }
+
+        public static void StepToward(Item item)
+        {
+            StepToward((Location2D)item.Location);
+        }
+
+        public static void StepToward(Location2D targetLocation)
+        {
+            StepToward((Location2D)Me.Location, targetLocation);
+        }
+
+        public static void WalkTo(Location2D targetLocation)
+        {
+            while ((Location2D)Me.Location != targetLocation)
+            {
+                Program.Diagnostic.WriteLine($"WalkTo: {Me.Location} != {targetLocation}");
+
+                StepToward(targetLocation);
+            }
+        }
+
+        public static void WalkTo(ushort xloc, ushort yloc)
+        {
+            WalkTo(new Location2D(xloc, yloc));
+        }
+
+        internal static void WalkTo(string parameters)
+        {
+            var parser = new CommandParameterParser(parameters);
+            WalkTo((ushort)parser.ParseInt(), (ushort)parser.ParseInt());
         }
     }
 }

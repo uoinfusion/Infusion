@@ -301,48 +301,6 @@ public static class Scripts
         }
     }
 
-    public static void StepToward(Location2D currentLocation, Location2D targetLocation)
-    {
-        Program.Diagnostic.WriteLine($"StepToward: {currentLocation} -> {targetLocation}");
-        var walkVector = (targetLocation - currentLocation).Normalize();
-        if (walkVector != Vector.NullVector)
-        {
-            Program.Diagnostic.WriteLine($"StepToward: walkVector = {walkVector}");
-            var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
-
-            WaitToAvoidFastWalk(movementType);
-            Walk(walkVector.ToDirection(), movementType);
-            WaitWalkAcknowledged();
-        }
-        else
-            Program.Diagnostic.WriteLine("walkVector is Vector.NullVector");
-    }
-
-    public static void StepToward(Item item)
-    {
-        StepToward((Location2D) item.Location);
-    }
-
-    public static void StepToward(Location2D targetLocation)
-    {
-        StepToward((Location2D) Me.Location, targetLocation);
-    }
-
-    public static void WalkTo(Location2D targetLocation)
-    {
-        while ((Location2D) Me.Location != targetLocation)
-        {
-            Program.Diagnostic.WriteLine($"WalkTo: {Me.Location} != {targetLocation}");
-
-            StepToward(targetLocation);
-        }
-    }
-
-    public static void WalkTo(ushort xloc, ushort yloc)
-    {
-        WalkTo(new Location2D(xloc, yloc));
-    }
-
     public static void Cook(ModelId rawFoodType, string campfireTile)
     {
         var rawFood = Items.OfType(rawFoodType).InContainer(Me.BackPack).First();

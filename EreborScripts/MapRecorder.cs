@@ -30,24 +30,19 @@ public class MapRecorder : IDisposable
         RecordWalkTo(Me.Location);
 
         Me.LocationChanged += OnPlayerLocationChanged;
-        CommandReceived += HandleMapRecorderCommands;
+        lastUseCommand = Injection.CommandHandler.RegisterCommand("lastuse", LastUse);
     }
 
-    private void HandleMapRecorderCommands(object sender, string command)
+    private void LastUse()
     {
-        switch (command)
+        if (lastUsedItemId.HasValue && lastUsedItemType.HasValue)
         {
-            case "lastuse":
-                if (lastUsedItemId.HasValue && lastUsedItemType.HasValue)
-                {
-                    itemTypeAboutToBeUsed = lastUsedItemType.Value;
-                    Use(lastUsedItemId.Value);
-                }
-                else
-                {
-                    Log("No last used item.");
-                }
-                break;
+            itemTypeAboutToBeUsed = lastUsedItemType.Value;
+            Use(lastUsedItemId.Value);
+        }
+        else
+        {
+            Log("No last used item.");
         }
     }
 
@@ -92,6 +87,7 @@ public class MapRecorder : IDisposable
 
     private ModelId? itemTypeAboutToBeUsed;
     private Location3D stepBeforeLocation;
+    private readonly Command lastUseCommand;
 
     private void HandleDoubleClickRequest(DoubleClickRequest packet)
     {
@@ -128,7 +124,7 @@ public class MapRecorder : IDisposable
     public void Dispose()
     {
         Me.LocationChanged -= OnPlayerLocationChanged;
-        CommandReceived -= HandleMapRecorderCommands;
+        Injection.CommandHandler.Unregister(lastUseCommand);
         Program.ClientPacketHandler.Unsubscribe(PacketDefinitions.DoubleClick, HandleDoubleClickRequest);
 
         if (lastLocation != Me.Location)

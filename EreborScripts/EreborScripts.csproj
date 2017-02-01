@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ItemTypes.cs" />
-    <Compile Include="HarvestMapBuilder.cs" />
     <Compile Include="MapRecorder.cs" />
     <Compile Include="PipkaDolAmroth.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

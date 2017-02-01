@@ -40,7 +40,14 @@ namespace UltimaRX.Nazghul.Proxy
 
         public void Say(string text)
         {
-            Injection.Say(text);
+            if (Injection.CommandHandler.IsInvocationSyntax(text))
+            {
+                Injection.CommandHandler.Invoke(text);
+            }
+            else
+            {
+                Injection.Say(text);
+            }
         }
     }
 }

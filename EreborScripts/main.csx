@@ -3,7 +3,6 @@
 #r "..\UltimaRX.Nazghul.Proxy\bin\Debug\UltimaRX.Nazghul.Proxy.dll"
 #load "configuration.csx"
 #load "ItemTypes.cs"
-#load "HarvestMapBuilder.cs"
 #load "Scripts.cs"
 #load "PipkaDolAmroth.cs"
 #load "MapRecorder.cs"
@@ -29,4 +28,3 @@ void StartNazghul()
     Program.Start(currentConnection, 33334);
     var nazghulProxy = new NazghulProxy("http://localhost:9094/");
 }
-

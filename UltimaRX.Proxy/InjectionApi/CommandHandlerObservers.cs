@@ -8,12 +8,13 @@ using UltimaRX.Packets.Client;
 
 namespace UltimaRX.Proxy.InjectionApi
 {
-    internal sealed class InjectionCommandHandler
+    internal sealed class CommandHandlerObservers
     {
-        public event EventHandler<string> CommandReceived;
+        private readonly CommandHandler scriptHandler;
 
-        public InjectionCommandHandler(ClientPacketHandler clientPacketHandler)
+        public CommandHandlerObservers(ClientPacketHandler clientPacketHandler, CommandHandler scriptHandler)
         {
+            this.scriptHandler = scriptHandler;
             clientPacketHandler.RegisterFilter(FilterClientSpeech);
         }
 
@@ -22,16 +23,9 @@ namespace UltimaRX.Proxy.InjectionApi
             if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
             {
                 var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
-                if (packet.Text.StartsWith(","))
+                if (scriptHandler.IsInvocationSyntax(packet.Text))
                 {
-                    if (CommandReceived == null)
-                    {
-                        Console.WriteLine($"Unhandled command: {packet.Text}");
-                    }
-                    else
-                    {
-                        CommandReceived?.Invoke(null, packet.Text.TrimStart(','));
-                    }
+                    scriptHandler.Invoke(packet.Text);
 
                     return null;
                 }

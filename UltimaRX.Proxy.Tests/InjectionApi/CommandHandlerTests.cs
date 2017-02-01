@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UltimaRX.Proxy.InjectionApi;
@@ -35,11 +36,11 @@ namespace UltimaRX.Proxy.Tests.InjectionApi
         [TestMethod]
         public void Can_invoke_script_parameterless_script()
         {
-            var executed = false;
-            scriptHandler.RegisterCommand("testName", () => executed = true);
+            var ev = new AutoResetEvent(false);
+            scriptHandler.RegisterCommand("testName", () => ev.Set());
 
             scriptHandler.Invoke(",testName");
-            executed.Should().BeTrue();
+            ev.WaitOne(1000).Should().BeTrue();
         }
 
         [TestMethod]
@@ -78,10 +79,16 @@ namespace UltimaRX.Proxy.Tests.InjectionApi
         public void Can_invoke_parametrized_script()
         {
             var actualParameters = string.Empty;
+            var ev = new AutoResetEvent(false);
 
-            scriptHandler.RegisterCommand("testName", parameters => { actualParameters = parameters; });
+            scriptHandler.RegisterCommand("testName", parameters =>
+            {
+                actualParameters = parameters;
+                ev.Set();
+            });
 
             scriptHandler.Invoke(",testName parameter1 parameter2");
+            ev.WaitOne(1000).Should().BeTrue();
             actualParameters.Should().Be("parameter1 parameter2");
         }
 

@@ -28,3 +28,4 @@ void StartNazghul()
     Program.Start(currentConnection, 33334);
     var nazghulProxy = new NazghulProxy("http://localhost:9094/");
 }
+

@@ -2,15 +2,26 @@
     ViewBag.Title = "title";
 }
 
-<
+<div>
+    <div>
+        <strong>Position:</strong><span id="xloc">----</span>,<span id="yloc">----</span>
+    </div>
+    <div>
+        <strong>HP:</strong><span id="currentHealth">--</span>
+    </div>
+    <div>
+        <strong>Stamina:</strong><span id="currentStamina">--</span>
+    </div>
+    <div>
+        <strong>Weight:</strong><span id="weight">---</span>
+    </div>
+</div>
 
 <div>
-    <strong>Say: </strong>
     <input type="text" id="message" style='width: 100%' />
     <input type="button" id="sendmessage" value="Send"/>
 </div>
 
-<h2>Journal</h2>
 <div class="container">
     <div id="messages">
         <ul id="log-messages">
@@ -28,18 +39,34 @@
             nazghulHub.client.sendLog = function (message) {
                 $('#log-messages').prepend('<li>' + htmlEncode(message) + '</li>');
             };
+
             nazghulHub.client.sendAllLogs = function (messages) {
                 $('#log-messages').empty();
                 for (i = messages.length - 1; i >= 0; i--) {
                     $('#log-messages').append('<li>' + htmlEncode(messages[i]) + '</li>');
                 }
             };
+
+            nazghulHub.client.sendStatus = function (status) {
+                if (status == null) {
+                    $('#xloc').text("----");
+                    $('#yloc').text("----");
+                    $('#currentHealth').text("--");
+                    $('#currentStamina').text("--");
+                    $('#weight').text("---");
+                } else {
+                    $('#xloc').text(status.XLoc);
+                    $('#yloc').text(status.YLoc);
+                    $('#currentHealth').text(status.CurrentHealth);
+                    $('#currentStamina').text(status.CurrentStamina);
+                    $('#weight').text(status.Weight);
+                }
+            };
+
             $.connection.hub.start().done(function () {
-                nazghulHub.server.requestAllLogs();
+                nazghulHub.server.requestInitialInfo();
                 $('#sendmessage').click(function () {
-                    // Call the Send method on the hub. 
                     nazghulHub.server.say($('#message').val());
-                    // Clear text box and reset focus for next comment. 
                     $('#message').val('').focus();
                 });
                 $('#message').keypress(function (e) {

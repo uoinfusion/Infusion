@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using UltimaRX.Nazghul.Common;
 
 namespace UltimaRX.Nazghul.WebServer
 {
@@ -21,6 +22,11 @@ namespace UltimaRX.Nazghul.WebServer
             Clients.Others.SendLog(message);
         }
 
+        public void RequestInitialInfo()
+        {
+            Clients.Others.RequestInitialInfo();
+        }
+
         public void RequestAllLogs()
         {
             Clients.Others.RequestAllLogs();
@@ -29,6 +35,17 @@ namespace UltimaRX.Nazghul.WebServer
         public void SendAllLogs(IEnumerable<string> messages)
         {
             Clients.Others.SendAllLogs(messages);
+        }
+
+        public void RequestStatus()
+        {
+            Clients.Others.RequestStatus();
+        }
+
+
+        public void SendStatus(PlayerStatus status)
+        {
+            Clients.Others.SendStatus(status);
         }
 
         public void Say(string message)

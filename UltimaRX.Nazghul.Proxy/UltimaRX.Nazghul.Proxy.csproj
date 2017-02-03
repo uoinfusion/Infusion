@@ -56,6 +56,10 @@
     <Compile Include="StringArrayLogger.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UltimaRX.Nazghul.Common\UltimaRX.Nazghul.Common.csproj">
+      <Project>{07ef2466-dd17-474c-8368-6f13dfecdc26}</Project>
+      <Name>UltimaRX.Nazghul.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UltimaRX.Proxy\UltimaRX.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
       <Name>UltimaRX.Proxy</Name>

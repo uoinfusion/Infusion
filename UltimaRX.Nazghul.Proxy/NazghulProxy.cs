@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -14,17 +15,20 @@ namespace UltimaRX.Nazghul.Proxy
 {
     public sealed class NazghulProxy : IDisposable
     {
+        private readonly string nazghulApiUrl;
         private readonly HubConnection hubConnection;
         private readonly IHubProxy nazghulHub;
         private readonly RingBufferLogger ringBufferLogger = new RingBufferLogger(64);
 
-        public NazghulProxy(string hubUrl)
+        public NazghulProxy(string nazghulApiUrl)
         {
-            hubConnection = new HubConnection(hubUrl);
+            this.nazghulApiUrl = nazghulApiUrl;
+            hubConnection = new HubConnection(nazghulApiUrl);
             nazghulHub = hubConnection.CreateHubProxy("NazghulHub");
             nazghulHub.On("RequestInitialInfo", RequestInitialInfo);
             nazghulHub.On("RequestAllLogs", RequestAllLogs);
             nazghulHub.On("ReqeustStatus", RequestStatus);
+            nazghulHub.On("RequestScreenshot", RequestScreenshot);
             nazghulHub.On<string>("Say", Say);
             hubConnection.Start().Wait();
 
@@ -34,6 +38,34 @@ namespace UltimaRX.Nazghul.Proxy
 
             RequestAllLogs();
             RequestStatus();
+        }
+
+        public void RequestScreenshot()
+        {
+            using (var client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(nazghulApiUrl);
+                using (var content = new MultipartFormDataContent())
+                {
+                    byte[] contentBytes;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        ScreenshotHelpers.TakeScreenshot("NoCryptClient", memoryStream);
+                        contentBytes = memoryStream.ToArray();
+                    }
+
+                    var fileContent = new ByteArrayContent(contentBytes);
+
+                    fileContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+                    {
+                        FileName = "image.jpg"
+                    };
+                    content.Add(fileContent);
+
+                    var requestUri = "/api/screenshot";
+                    var result = client.PostAsync(requestUri, content).Result;
+                }
+            }
         }
 
         private DateTime lastLocationChanged;

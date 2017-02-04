@@ -26,11 +26,6 @@ public static class PipkaDolAmroth
     public static readonly Action Killing = Script.Create(() => Harvest("DolAmroth-killing.map"));
     public static readonly Action LinhirHome2DolAmroth = Script.Create(() => Harvest("Linhir2DolAmroth.map"));
 
-    static PipkaDolAmroth()
-    {
-        Injection.CommandHandler.RegisterCommand(new Command("dolamroth", DolAmroth));
-    }
-
     public static void DolAmroth()
     {
         Run(() =>

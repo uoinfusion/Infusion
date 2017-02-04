@@ -15,11 +15,13 @@
     <div>
         <strong>Weight:</strong><span id="weight">---</span>
     </div>
+    <img id="screenshot"/>
 </div>
 
 <div>
     <input type="text" id="message" style='width: 100%' />
-    <input type="button" id="sendmessage" value="Send"/>
+    <input type="button" id="sendmessage" value="Send" />
+    <input type="button" id="requestScreenshot" value="Screenshot" />
 </div>
 
 <div class="container">
@@ -47,6 +49,11 @@
                 }
             };
 
+            nazghulHub.client.screenshotReady = function () {
+                $("#screenshot").attr("src", "");
+                $("#screenshot").attr("src", "/api/screenshot");
+            };
+
             nazghulHub.client.sendStatus = function (status) {
                 if (status == null) {
                     $('#xloc').text("----");
@@ -65,6 +72,12 @@
 
             $.connection.hub.start().done(function () {
                 nazghulHub.server.requestInitialInfo();
+                $('screenshot').click(function() {
+                    $("#screenshot").attr("src", "");
+                });
+                $('#requestScreenshot').click(function() {
+                    nazghulHub.server.requestScreenshot();
+                });
                 $('#sendmessage').click(function () {
                     nazghulHub.server.say($('#message').val());
                     $('#message').val('').focus();

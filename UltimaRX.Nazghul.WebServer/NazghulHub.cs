@@ -42,6 +42,15 @@ namespace UltimaRX.Nazghul.WebServer
             Clients.Others.RequestStatus();
         }
 
+        public void RequestScreenshot()
+        {
+            Clients.Others.RequestScreenshot();
+        }
+
+        public void ScreenshotReady()
+        {
+            Clients.All.ScreenshotReady();
+        }
 
         public void SendStatus(PlayerStatus status)
         {

@@ -29,6 +29,16 @@ namespace UltimaRX.Proxy.InjectionApi
                 return newPacket.RawPacket;
             }
 
+            if (rawPacket.Id == PacketDefinitions.OverallLightLevel.Id)
+            {
+                var newPacket = new OverallLightLevelPacket()
+                {
+                    Level = 0,
+                };
+
+                return newPacket.RawPacket;
+            }
+
             return rawPacket;
         }
     }

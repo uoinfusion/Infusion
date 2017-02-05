@@ -214,11 +214,11 @@ public static class Scripts
     {
         if (InJournal(LastCheckTime, "Je spatne videt"))
         {
-            var nightsight =
-                Items.InContainer(Me.BackPack).OfType(ItemTypes.Bottle).OfColor(ItemTypes.NightSightKegColor).First();
-            if (nightsight != null)
+            var torch =
+                Items.InContainer(Me.BackPack).OfType(ItemTypes.Torch).First();
+            if (torch != null)
             {
-                Use(nightsight);
+                Use(torch);
                 Wait(1000);
             }
         }
@@ -299,48 +299,6 @@ public static class Scripts
                 break;
             DeleteJournal();
         }
-    }
-
-    public static void StepToward(Location2D currentLocation, Location2D targetLocation)
-    {
-        Program.Diagnostic.WriteLine($"StepToward: {currentLocation} -> {targetLocation}");
-        var walkVector = (targetLocation - currentLocation).Normalize();
-        if (walkVector != Vector.NullVector)
-        {
-            Program.Diagnostic.WriteLine($"StepToward: walkVector = {walkVector}");
-            var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
-
-            WaitToAvoidFastWalk(movementType);
-            Walk(walkVector.ToDirection(), movementType);
-            WaitWalkAcknowledged();
-        }
-        else
-            Program.Diagnostic.WriteLine("walkVector is Vector.NullVector");
-    }
-
-    public static void StepToward(Item item)
-    {
-        StepToward((Location2D) item.Location);
-    }
-
-    public static void StepToward(Location2D targetLocation)
-    {
-        StepToward((Location2D) Me.Location, targetLocation);
-    }
-
-    public static void WalkTo(Location2D targetLocation)
-    {
-        while ((Location2D) Me.Location != targetLocation)
-        {
-            Program.Diagnostic.WriteLine($"WalkTo: {Me.Location} != {targetLocation}");
-
-            StepToward(targetLocation);
-        }
-    }
-
-    public static void WalkTo(ushort xloc, ushort yloc)
-    {
-        WalkTo(new Location2D(xloc, yloc));
     }
 
     public static void Cook(ModelId rawFoodType, string campfireTile)
@@ -429,6 +387,12 @@ public static class Scripts
         {
             Log($"Looting, {items.Length} items remaining ");
             Pickup(items.First());
+            Wait(100);
+            if (InJournal("Ne tak rychle!"))
+            {
+                DeleteJournal();
+                Wait(500);
+            }
             items = Items.InContainer(container).ToArray();
         }
 

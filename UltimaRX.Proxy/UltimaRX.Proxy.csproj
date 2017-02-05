@@ -50,9 +50,13 @@
   <ItemGroup>
     <Compile Include="ClientPacketHandler.cs" />
     <Compile Include="InjectionApi\BlockedPacketsFilters.cs" />
+    <Compile Include="InjectionApi\Command.cs" />
+    <Compile Include="InjectionApi\CommandExecutionMode.cs" />
+    <Compile Include="InjectionApi\CommandInvocationException.cs" />
+    <Compile Include="InjectionApi\CommandParameterParser.cs" />
     <Compile Include="InjectionApi\GumpObservers.cs" />
     <Compile Include="InjectionApi\Injection.cs" />
-    <Compile Include="InjectionApi\InjectionCommandHandler.cs" />
+    <Compile Include="InjectionApi\CommandHandlerObservers.cs" />
     <Compile Include="InjectionApi\ItemCollectionExtensions.cs" />
     <Compile Include="InjectionApi\ItemsObservers.cs" />
     <Compile Include="InjectionApi\ItemCollection.cs" />
@@ -62,6 +66,7 @@
     <Compile Include="InjectionApi\JournalObservers.cs" />
     <Compile Include="InjectionApi\PlayerObservers.cs" />
     <Compile Include="InjectionApi\Script.cs" />
+    <Compile Include="InjectionApi\CommandHandler.cs" />
     <Compile Include="InjectionApi\Targeting.cs" />
     <Compile Include="InjectionApi\WalkRequest.cs" />
     <Compile Include="InjectionApi\WalkRequestQueue.cs" />
@@ -70,6 +75,7 @@
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Logging\DiagnosticLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\MultiplexLogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Logging\RingBufferLogger.cs" />
     <Compile Include="InjectionApi\Player.cs" />

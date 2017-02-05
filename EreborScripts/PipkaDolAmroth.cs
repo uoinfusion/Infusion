@@ -72,9 +72,9 @@ public static class PipkaDolAmroth
             return;
         }
 
-        ReloadPotion(Me.BankBox, ItemTypes.NightSightKegColor);
         Eat();
-        Reload(Me.BankBox, 10, ItemTypes.Food);
+        Reload(Me.BankBox, 5, ItemTypes.Food);
+        Reload(Me.BankBox, 10, ItemTypes.Torch);
     }
 
     private static void WalkOutFromBank()

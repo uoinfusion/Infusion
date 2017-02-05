@@ -19,7 +19,12 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public int ThreadId { get; private set; }
 
-        public static Action Create(Action action) => () => { new Script(action).Run(); };
+        public static void Run(Action action) => new Script(action).Run();
+
+        public static Action Create(Action action) => () =>
+        {
+            new Script(action).Run();
+        };
 
         public Script Run()
         {

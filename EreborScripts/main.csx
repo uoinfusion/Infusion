@@ -1,8 +1,8 @@
 ﻿#r "..\UltimaRX\bin\Debug\UltimaRX.dll"
 #r "..\UltimaRX.Proxy\bin\Debug\UltimaRX.Proxy.exe"
+#r "..\UltimaRX.Nazghul.Proxy\bin\Debug\UltimaRX.Nazghul.Proxy.dll"
 #load "configuration.csx"
 #load "ItemTypes.cs"
-#load "HarvestMapBuilder.cs"
 #load "Scripts.cs"
 #load "PipkaDolAmroth.cs"
 #load "MapRecorder.cs"
@@ -14,7 +14,21 @@ using UltimaRX.Packets;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Packets.Parsers;
 using UltimaRX.Gumps;
+using UltimaRX.Nazghul.Proxy;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 using static Scripts;
 
-Program.Start(currentConnection, 33333);
+void Start()
+{
+    Program.Start(currentConnection, 33334);
+}
+
+void StartNazghul()
+{
+    Program.Start(currentConnection, 33334);
+    //var nazghulProxy = new NazghulProxy("http://localhost:9094/");
+    var nazghulProxy = new NazghulProxy("http://nazghul.azurewebsites.net/");
+}
+
+Injection.CommandHandler.RegisterCommand(new Command("dolamroth", PipkaDolAmroth.DolAmroth));
+Injection.CommandHandler.RegisterCommand(new Command("gate2bank", () => Harvest("DolAmroth-gate2bank.map")));

@@ -132,6 +132,11 @@ namespace UltimaRX.Proxy.InjectionApi
             WalkRequest walkRequest;
             var discardCurrentPacket = false;
 
+            if (rawPacket.Id != PacketDefinitions.CharacterMoveAck.Id)
+            {
+                return rawPacket;
+            }
+
             if (player.WalkRequestQueue.TryDequeue(out walkRequest))
             {
                 try
@@ -175,6 +180,7 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 Program.Diagnostic.WriteLine("CharacterMoveAck received but MoveRequestQueue is empty.");
             }
+
 
             return discardCurrentPacket ? (Packet?) null : rawPacket;
         }

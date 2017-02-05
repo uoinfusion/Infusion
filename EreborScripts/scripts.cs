@@ -214,11 +214,11 @@ public static class Scripts
     {
         if (InJournal(LastCheckTime, "Je spatne videt"))
         {
-            var nightsight =
-                Items.InContainer(Me.BackPack).OfType(ItemTypes.Bottle).OfColor(ItemTypes.NightSightKegColor).First();
-            if (nightsight != null)
+            var torch =
+                Items.InContainer(Me.BackPack).OfType(ItemTypes.Torch).First();
+            if (torch != null)
             {
-                Use(nightsight);
+                Use(torch);
                 Wait(1000);
             }
         }
@@ -387,6 +387,12 @@ public static class Scripts
         {
             Log($"Looting, {items.Length} items remaining ");
             Pickup(items.First());
+            Wait(100);
+            if (InJournal("Ne tak rychle!"))
+            {
+                DeleteJournal();
+                Wait(500);
+            }
             items = Items.InContainer(container).ToArray();
         }
 

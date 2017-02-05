@@ -4,7 +4,8 @@ public static class ItemTypes
 {
     public static readonly ModelId Hatchet = (ModelId) 0x0F44;
     public static readonly ModelId Hatchet2 = (ModelId) 0x0F43;
-    public static readonly ModelId CopperExecutionersAxe = (ModelId) 0x0F45;
+    public static readonly ModelId CopperExecutionersAxe = (ModelId)0x0F45;
+    public static readonly ModelId CopperExecutionersAxe2 = (ModelId)0x0F46;
     public static readonly ModelId CopperVikingSword = (ModelId) 0x13B9;
     public static readonly ModelId VeriteVikingSword = (ModelId) 0x13BA;
 
@@ -12,7 +13,7 @@ public static class ItemTypes
 
     public static readonly ModelId FishingPole = (ModelId) 0x0DBF;
 
-    public static readonly ModelId[] Hatchets = {Hatchet, Hatchet2, CopperExecutionersAxe};
+    public static readonly ModelId[] Hatchets = {Hatchet, Hatchet2, CopperExecutionersAxe, CopperExecutionersAxe2};
     public static readonly ModelId[] Knives = {CopperVikingSword, VeriteVikingSword};
 
     public static readonly ModelId Fish1 = (ModelId) 0x09CF;
@@ -75,4 +76,6 @@ public static class ItemTypes
     public static readonly Color GreaterHealBottleColor = (Color) 0x0160;
 
     public static readonly ModelId HouseMenu = (ModelId) 0x0BD1;
+
+    public static readonly ModelId Torch = (ModelId) 0x0F64;
 }

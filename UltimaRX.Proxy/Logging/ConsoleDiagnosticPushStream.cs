@@ -13,7 +13,7 @@ namespace UltimaRX.Proxy.Logging
 
         protected override void OnPacketFinished()
         {
-            logger.WriteLine(Flush());
+            logger.Debug(Flush());
         }
     }
 }

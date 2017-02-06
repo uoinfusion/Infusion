@@ -10,7 +10,23 @@ namespace UltimaRX.Proxy.Logging
     {
         public static ILogger Instance { get; } = new NullLogger();
 
-        public void WriteLine(string message)
+        public void Info(string message)
+        {
+        }
+
+        public void Speech(SpeechMessage message)
+        {
+        }
+
+        public void Debug(string message)
+        {
+        }
+
+        public void Critical(string message)
+        {
+        }
+
+        public void Error(string message)
         {
         }
     }

@@ -47,16 +47,16 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             if (discardNextClientAck && rawPacket.Id == PacketDefinitions.CharacterMoveAck.Id)
             {
-                Program.Diagnostic.WriteLine("Received client CharacterMoveAck that is candidate for discard");
+                Program.Diagnostic.Debug("Received client CharacterMoveAck that is candidate for discard");
                 var packet = PacketDefinitionRegistry.Materialize<CharacterMoveAckPacket>(rawPacket);
 
                 if (packet.MovementSequenceKey == 0)
                 {
-                    Program.Diagnostic.WriteLine("Discarding client CharacterMoveAck");
+                    Program.Diagnostic.Debug("Discarding client CharacterMoveAck");
                     discardNextClientAck = false;
                     return null;
                 }
-                Program.Diagnostic.WriteLine("Client CharacterMoveAck not discarded");
+                Program.Diagnostic.Debug("Client CharacterMoveAck not discarded");
             }
 
             return rawPacket;
@@ -105,7 +105,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
                 OnWalkRequestDequeued();
 
-                Program.Diagnostic.WriteLine(
+                Program.Diagnostic.Debug(
                     $"WalkRequestQueue cleared, currentSequenceKey = {player.CurrentSequenceKey}");
             }
         }
@@ -121,7 +121,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
             OnWalkRequestDequeued();
 
-            Program.Diagnostic.WriteLine(
+            Program.Diagnostic.Debug(
                 $"CharMoveRejection: currentSequenceKey={player.CurrentSequenceKey}, new location:{player.Location}, new direction:{player.Movement}");
         }
 
@@ -141,7 +141,7 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 try
                 {
-                    Program.Diagnostic.WriteLine($"WalkRequest dequeued, queue length: {player.WalkRequestQueue.Count}");
+                    Program.Diagnostic.Debug($"WalkRequest dequeued, queue length: {player.WalkRequestQueue.Count}");
 
                     if (walkRequest.IssuedByProxy)
                     {
@@ -150,24 +150,24 @@ namespace UltimaRX.Proxy.InjectionApi
                         discardNextClientAck = true;
                         Program.SendToClient(drawGamePlayerPacket.RawPacket);
                         discardCurrentPacket = true;
-                        Program.Diagnostic.WriteLine("WalkRequest issued by proxy, discarding packet");
+                        Program.Diagnostic.Debug("WalkRequest issued by proxy, discarding packet");
                     }
                     else
                     {
-                        Program.Diagnostic.WriteLine("WalkRequest issued by client, sending to client");
+                        Program.Diagnostic.Debug("WalkRequest issued by client, sending to client");
                     }
 
                     if (player.Movement.Direction != walkRequest.Movement.Direction)
                     {
-                        Program.Diagnostic.WriteLine(
+                        Program.Diagnostic.Debug(
                             $"Old direction: {player.Movement}, new direction: {walkRequest.Movement} - no position change");
                         player.Movement = walkRequest.Movement;
                     }
                     else
                     {
-                        Program.Diagnostic.WriteLine($"Old location: {player.Location}, direction = {walkRequest.Movement}");
+                        Program.Diagnostic.Debug($"Old location: {player.Location}, direction = {walkRequest.Movement}");
                         player.Location = player.Location.LocationInDirection(walkRequest.Movement.Direction);
-                        Program.Diagnostic.WriteLine($"New location: {player.Location}");
+                        Program.Diagnostic.Debug($"New location: {player.Location}");
                     }
 
                 }
@@ -178,7 +178,7 @@ namespace UltimaRX.Proxy.InjectionApi
             }
             else
             {
-                Program.Diagnostic.WriteLine("CharacterMoveAck received but MoveRequestQueue is empty.");
+                Program.Diagnostic.Debug("CharacterMoveAck received but MoveRequestQueue is empty.");
             }
 
 
@@ -190,7 +190,7 @@ namespace UltimaRX.Proxy.InjectionApi
             player.CurrentSequenceKey = (byte) (packet.SequenceKey + 1);
             player.WalkRequestQueue.Enqueue(new WalkRequest(packet.SequenceKey,
                 packet.Movement, false));
-            Program.Diagnostic.WriteLine(
+            Program.Diagnostic.Debug(
                 $"MoveRequest from client: WalkRequest enqueued, {packet.Movement}, packetSequenceKey={packet.SequenceKey}, currentSequenceKey = {player.CurrentSequenceKey}, queue length = {player.WalkRequestQueue.Count}");
         }
 

@@ -292,11 +292,11 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public static void StepToward(Location2D currentLocation, Location2D targetLocation)
         {
-            Program.Diagnostic.WriteLine($"StepToward: {currentLocation} -> {targetLocation}");
+            Program.Diagnostic.Debug($"StepToward: {currentLocation} -> {targetLocation}");
             var walkVector = (targetLocation - currentLocation).Normalize();
             if (walkVector != Vector.NullVector)
             {
-                Program.Diagnostic.WriteLine($"StepToward: walkVector = {walkVector}");
+                Program.Diagnostic.Debug($"StepToward: walkVector = {walkVector}");
                 var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
 
                 WaitToAvoidFastWalk(movementType);
@@ -304,7 +304,7 @@ namespace UltimaRX.Proxy.InjectionApi
                 WaitWalkAcknowledged();
             }
             else
-                Program.Diagnostic.WriteLine("walkVector is Vector.NullVector");
+                Program.Diagnostic.Debug("walkVector is Vector.NullVector");
         }
 
         public static void StepToward(Item item)
@@ -321,7 +321,7 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             while ((Location2D)Me.Location != targetLocation)
             {
-                Program.Diagnostic.WriteLine($"WalkTo: {Me.Location} != {targetLocation}");
+                Program.Diagnostic.Debug($"WalkTo: {Me.Location} != {targetLocation}");
 
                 StepToward(targetLocation);
             }

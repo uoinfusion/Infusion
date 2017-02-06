@@ -51,7 +51,7 @@ namespace UltimaRX.Proxy
 
         public static void Print(string message)
         {
-            Console.WriteLine(message);
+            Console.Info(message);
         }
 
         public static void Main()
@@ -74,14 +74,24 @@ namespace UltimaRX.Proxy
 
         private static void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
-            var message = (packet.Name ?? string.Empty) + ": " + packet.Message;
-            Console.WriteLine(message);
+            Console.Speech(new SpeechMessage()
+            {
+                Type = packet.Type,
+                Message = packet.Message,
+                Name = packet.Name,
+                SpeakerId = packet.Id,
+            });
         }
 
         private static void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            var message = (packet.Name ?? string.Empty) + ": " + packet.Message;
-            Console.WriteLine(message);
+            Console.Speech(new SpeechMessage()
+            {
+                Type = packet.Type,
+                Message = packet.Message,
+                Name = packet.Name,
+                SpeakerId = packet.Id,
+            });
         }
 
         private static void Main(int port, ILogger logger)
@@ -198,7 +208,7 @@ namespace UltimaRX.Proxy
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                Console.Error(ex.ToString());
                 // just log exception and continue, do not interrupt proxy
             }
 

@@ -10,6 +10,11 @@ using static UltimaRX.Proxy.InjectionApi.Injection;
 
 public static class Scripts
 {
+    static Scripts()
+    {
+        RegisterHarvestingPauseCommands();
+    }
+
     public static string[] skipOre = {"Copper Ore"};
 
     public static DateTime lastFailedLumberjackingAttempt;
@@ -155,19 +160,19 @@ public static class Scripts
 
     public static void HarvestTree(string tileInfo)
     {
-        Log($"Lumberjacking {tileInfo}");
+        Program.Diagnostic.Debug($"Lumberjacking {tileInfo}");
 
         var treeHarvestable = true;
 
         var sinceLastFail = DateTime.UtcNow - lastFailedLumberjackingAttempt;
-        Log($"Since last lumberjacking fail: {sinceLastFail}");
+        Program.Diagnostic.Debug($"Since last lumberjacking fail: {sinceLastFail}");
         if (sinceLastFail < FailedLumberjackingWait)
         {
             var waitSpan = FailedLumberjackingWait - sinceLastFail;
-            Log(
+            Program.Diagnostic.Debug(
                 $"{DateTime.UtcNow:T} Waiting due to lumberjacking fail: {waitSpan}, {(int) waitSpan.TotalMilliseconds} ms");
             Wait(waitSpan);
-            Log($"{DateTime.UtcNow:T} waiting finished");
+            Program.Diagnostic.Debug($"{DateTime.UtcNow:T} waiting finished");
         }
 
         while (treeHarvestable)
@@ -175,7 +180,7 @@ public static class Scripts
             Wait(1000);
             Checks();
             DeleteJournal();
-            Log("Using any hatchet");
+            Program.Diagnostic.Debug("Using any hatchet");
             UseType(ItemTypes.Hatchets);
             WaitForTarget();
             TargetTile(tileInfo);
@@ -190,11 +195,11 @@ public static class Scripts
             if (!treeHarvestable)
             {
                 lastFailedLumberjackingAttempt = DateTime.UtcNow;
-                Log($"Last lumberjacking fail: {lastFailedLumberjackingAttempt:T}");
+                Program.Diagnostic.Debug($"Last lumberjacking fail: {lastFailedLumberjackingAttempt:T}");
             }
             else if (InJournal("Jeste nemuzes pouzit skill."))
             {
-                Log("waiting for skill");
+                Program.Diagnostic.Debug("waiting for skill");
                 Wait(5000);
                 Checks();
             }
@@ -206,9 +211,27 @@ public static class Scripts
         AfkCheck();
         AttackCheck();
         LightCheck();
+        PauseCheck();
 
         LastCheckTime = DateTime.UtcNow;
     }
+
+    private static bool harvestingPaused;
+
+    private static void PauseCheck()
+    {
+        while (harvestingPaused)
+        {
+            Wait(1000);
+        }
+    }
+
+    private static void RegisterHarvestingPauseCommands()
+    {
+        Injection.CommandHandler.RegisterCommand("pauseharvesting", () => harvestingPaused = true);
+        Injection.CommandHandler.RegisterCommand("resumeharvesting", () => harvestingPaused = true);
+    }
+
 
     private static void LightCheck()
     {
@@ -292,6 +315,7 @@ public static class Scripts
         while (true)
         {
             System.Media.SystemSounds.Asterisk.Play();
+            Program.Console.Critical("Afk kontrola");
 
             Wait(1000);
 
@@ -519,12 +543,12 @@ public static class Scripts
         }
         item = refreshedItem;
 
-        Log($"Dragging {amount} item {item}");
+        Program.Diagnostic.Debug($"Dragging {amount} item {item}");
         DragItem(item, amount);
         Wait(200);
 
         DropItem(item, targetContainer);
-        Log($"Dropping {amount} item {item}");
+        Program.Diagnostic.Debug($"Dropping {amount} item {item}");
         Wait(200);
     }
 

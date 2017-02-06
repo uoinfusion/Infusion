@@ -24,7 +24,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         private void HanldeServerTargetCursorPacket(TargetCursorPacket packet)
         {
-            Program.Diagnostic.WriteLine("TargetCursorPacket received from server");
+            Program.Diagnostic.Debug("TargetCursorPacket received from server");
             targetFromServerReceivedEvent.Set();
         }
 
@@ -41,10 +41,10 @@ namespace UltimaRX.Proxy.InjectionApi
                 if (packet.Location.X == 0xFFFF && packet.Location.Y == 0xFFFF &&
                     packet.ClickedOnId == 0)
                 {
-                    Program.Diagnostic.WriteLine("discarding empty TargetCursorPacket sent from client");
+                    Program.Diagnostic.Debug("discarding empty TargetCursorPacket sent from client");
                     return null;
                 }
-                Program.Diagnostic.WriteLine("non empty TargetCursorPacket sent from client - discarding cancelled");
+                Program.Diagnostic.Debug("non empty TargetCursorPacket sent from client - discarding cancelled");
             }
 
             if (packet.CursorId == 0xDEADBEEF)
@@ -72,14 +72,14 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void WaitForTarget()
         {
-            Program.Diagnostic.WriteLine("WaitForTarget");
+            Program.Diagnostic.Debug("WaitForTarget");
             targetFromServerReceivedEvent.Reset();
             while (!targetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
                 Injection.CheckCancellation();
             }
 
-            Program.Diagnostic.WriteLine("WaitForTarget - done");
+            Program.Diagnostic.Debug("WaitForTarget - done");
         }
 
         public string Info()
@@ -99,11 +99,11 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void TargetTile(Location3D location, ModelId tileType)
         {
-            Program.Diagnostic.WriteLine("TargetTile");
+            Program.Diagnostic.Debug("TargetTile");
             var targetRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Harmful);
             Program.SendToServer(targetRequest.RawPacket);
 
-            Program.Diagnostic.WriteLine(
+            Program.Diagnostic.Debug(
                 "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
             var cancelRequest = new TargetLocationRequest(0x00000025, location, tileType, CursorType.Cancel);
             discardNextTargetLocationRequestIfEmpty = true;
@@ -146,12 +146,12 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void Target(Item item)
         {
-            Program.Diagnostic.WriteLine("Target");
+            Program.Diagnostic.Debug("Target");
             var targetRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Harmful, item.Location,
                 item.Type);
             Program.SendToServer(targetRequest.RawPacket);
 
-            Program.Diagnostic.WriteLine(
+            Program.Diagnostic.Debug(
                 "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
             var cancelRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Cancel, item.Location,
                 item.Type);

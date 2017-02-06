@@ -26,9 +26,6 @@ void Start()
 void StartNazghul()
 {
     Program.Start(currentConnection, 33334);
-    //var nazghulProxy = new NazghulProxy("http://localhost:9094/");
-    var nazghulProxy = new NazghulProxy("http://nazghul.azurewebsites.net/");
+    var nazghulProxy = new NazghulProxy("http://localhost:9094/");
+    //var nazghulProxy = new NazghulProxy("http://nazghul.azurewebsites.net/");
 }
-
-Injection.CommandHandler.RegisterCommand(new Command("dolamroth", PipkaDolAmroth.DolAmroth));
-Injection.CommandHandler.RegisterCommand(new Command("gate2bank", () => Harvest("DolAmroth-gate2bank.map")));

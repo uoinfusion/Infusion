@@ -17,7 +17,7 @@ namespace UltimaRX.Nazghul.WebServer
             await base.OnConnected();
         }
 
-        public void SendLog(string message)
+        public void SendLog(LogMessage message)
         {
             Clients.Others.SendLog(message);
         }

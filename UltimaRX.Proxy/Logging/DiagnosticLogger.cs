@@ -16,9 +16,32 @@ namespace UltimaRX.Proxy.Logging
             this.baseLogger = baseLogger;
         }
 
-        public void WriteLine(string message)
+        public string Format(string message)
+            => $"{DateTime.UtcNow:hh:mm:ss.fff} - {Thread.CurrentThread.ManagedThreadId} - {message}";
+
+        public void Info(string message)
         {
-            baseLogger.WriteLine($"{DateTime.UtcNow:hh:mm:ss.fff} - {Thread.CurrentThread.ManagedThreadId} - {message}");
+            baseLogger.Info(Format(message));
+        }
+
+        public void Speech(SpeechMessage message)
+        {
+            baseLogger.Speech(message);
+        }
+
+        public void Debug(string message)
+        {
+            baseLogger.Debug(Format(message));
+        }
+
+        public void Critical(string message)
+        {
+            baseLogger.Critical(Format(message));
+        }
+
+        public void Error(string message)
+        {
+            baseLogger.Error(Format(message));
         }
     }
 }

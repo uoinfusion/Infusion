@@ -82,18 +82,18 @@ namespace UltimaRX.Proxy.InjectionApi
             if (lastEnqueueTime < timeBetweenSteps)
             {
                 var waitTime = timeBetweenSteps - lastEnqueueTime;
-                Program.Diagnostic.WriteLine($"WaitToAvoidFastWalk: waiting minimal time between steps {timeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
+                Program.Diagnostic.Debug($"WaitToAvoidFastWalk: waiting minimal time between steps {timeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
                 Injection.Wait(waitTime.Milliseconds);
             }
         }
 
         internal void WaitWalkAcknowledged()
         {
-            Program.Diagnostic.WriteLine($"WaitWalkAcknowledged: WalkRequestQueue.Count = {WalkRequestQueue.Count}");
+            Program.Diagnostic.Debug($"WaitWalkAcknowledged: WalkRequestQueue.Count = {WalkRequestQueue.Count}");
 
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
-                Program.Diagnostic.WriteLine($"WaitWalkAcknowledged: too many walk WalkRequestQueue.Count = {WalkRequestQueue.Count}");
+                Program.Diagnostic.Debug($"WaitWalkAcknowledged: too many walk WalkRequestQueue.Count = {WalkRequestQueue.Count}");
                 Injection.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(200);
             }
@@ -106,7 +106,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         internal void Walk(Direction direction, MovementType movementType)
         {
-            Program.Diagnostic.WriteLine($"Walk: direction = {direction}, movementType = {movementType}");
+            Program.Diagnostic.Debug($"Walk: direction = {direction}, movementType = {movementType}");
             var packet = new MoveRequest
             {
                 Movement = new Movement(direction, movementType),
@@ -124,7 +124,7 @@ namespace UltimaRX.Proxy.InjectionApi
             }
 
             CurrentSequenceKey++;
-            Program.Diagnostic.WriteLine(
+            Program.Diagnostic.Debug(
                 $"Walk: WalkRequest enqueued, Direction = {direction}, usedSequenceKey={packet.SequenceKey}, currentSequenceKey = {CurrentSequenceKey}, queue length = {WalkRequestQueue.Count}");
 
             Program.SendToServer(packet.RawPacket);

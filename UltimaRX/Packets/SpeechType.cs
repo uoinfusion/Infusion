@@ -5,6 +5,7 @@
         Normal = 0x00,
         BroadcastSystem = 0x01,
         Emote = 0x02,
+        Speach = 0x03,
         LowerCorner = 0x06,
         CornerWithName = 0x07,
         Whisper = 0x08,

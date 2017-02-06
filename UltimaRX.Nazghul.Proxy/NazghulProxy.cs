@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR.Client;
 using UltimaRX.Nazghul.Common;
 using UltimaRX.Packets;
@@ -15,10 +14,12 @@ namespace UltimaRX.Nazghul.Proxy
 {
     public sealed class NazghulProxy : IDisposable
     {
-        private readonly string nazghulApiUrl;
         private readonly HubConnection hubConnection;
+        private readonly string nazghulApiUrl;
         private readonly IHubProxy nazghulHub;
         private readonly RingBufferLogger ringBufferLogger = new RingBufferLogger(64);
+
+        private DateTime lastLocationChanged;
 
         public NazghulProxy(string nazghulApiUrl)
         {
@@ -32,12 +33,17 @@ namespace UltimaRX.Nazghul.Proxy
             nazghulHub.On<string>("Say", Say);
             hubConnection.Start().Wait();
 
-            Program.Console = new MultiplexLogger(Program.Console, ringBufferLogger, new NazghulLogger(nazghulHub));
+            Program.Console = new MultiplexLogger(Program.Console, ringBufferLogger, new NazghulLogger(this));
 
             Injection.Me.LocationChanged += OnLocationChanged;
 
             RequestAllLogs();
             RequestStatus();
+        }
+
+        public void Dispose()
+        {
+            hubConnection?.Dispose();
         }
 
         public void RequestScreenshot()
@@ -68,8 +74,6 @@ namespace UltimaRX.Nazghul.Proxy
             }
         }
 
-        private DateTime lastLocationChanged;
-
         private void OnLocationChanged(object sender, Location3D location3D)
         {
             var currentTime = DateTime.UtcNow;
@@ -88,36 +92,41 @@ namespace UltimaRX.Nazghul.Proxy
 
         private void RequestStatus()
         {
-            nazghulHub.Invoke("SendStatus", new PlayerStatus()
+            nazghulHub.Invoke("SendStatus", new PlayerStatus
             {
                 XLoc = Injection.Me.Location.X,
                 YLoc = Injection.Me.Location.Y,
                 CurrentHealth = Injection.Me.CurrentHealth,
                 CurrentStamina = Injection.Me.CurrentStamina,
-                Weight = Injection.Me.Weight,
+                Weight = Injection.Me.Weight
             });
         }
 
         private void RequestAllLogs()
         {
-            nazghulHub.Invoke("SendAllLogs", (IEnumerable<string>)ringBufferLogger.Dump());
-        }
-
-        public void Dispose()
-        {
-            hubConnection?.Dispose();
+            nazghulHub.Invoke("SendAllLogs", (IEnumerable<string>) ringBufferLogger.Dump());
         }
 
         public void Say(string text)
         {
             if (Injection.CommandHandler.IsInvocationSyntax(text))
-            {
                 Injection.CommandHandler.Invoke(text);
-            }
             else
-            {
                 Injection.Say(text);
-            }
+        }
+
+        public void SendLog(string message)
+        {
+            SendLog(new LogMessage
+            {
+                Type = LogMessageType.Info,
+                Message = message
+            });
+        }
+
+        public void SendLog(LogMessage message)
+        {
+            nazghulHub.Invoke("SendLog", message);
         }
     }
 }

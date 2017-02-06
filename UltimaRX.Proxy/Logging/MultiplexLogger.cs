@@ -15,12 +15,37 @@ namespace UltimaRX.Proxy.Logging
             this.outputLoggers = outputLoggers;
         }
 
-        public void WriteLine(string message)
+        public void ForeachLogger(Action<ILogger> loggerAction)
         {
             foreach (var logger in outputLoggers)
             {
-                logger.WriteLine(message);
+                loggerAction(logger);
             }
+        }
+
+        public void Info(string message)
+        {
+            ForeachLogger(logger => logger.Info(message));
+        }
+
+        public void Speech(SpeechMessage message)
+        {
+            ForeachLogger(logger => logger.Speech(message));
+        }
+
+        public void Debug(string message)
+        {
+            ForeachLogger(logger => logger.Debug(message));
+        }
+
+        public void Critical(string message)
+        {
+            ForeachLogger(logger => logger.Critical(message));
+        }
+
+        public void Error(string message)
+        {
+            ForeachLogger(logger => logger.Error(message));
         }
     }
 }

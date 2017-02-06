@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26127.3
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX", "UltimaRX\UltimaRX.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
 EndProject
@@ -22,6 +22,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Proxy.Tests", "UltimaRX.Proxy.Tests\UltimaRX.Proxy.Tests.csproj", "{DFCE9C0F-0E66-4637-BAE9-0EE4D652EA19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Nazghul.Common", "UltimaRX.Nazghul.Common\UltimaRX.Nazghul.Common.csproj", "{07EF2466-DD17-474C-8368-6F13DFECDC26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Nazghul.DesktopClient", "UltimaRX.Nazghul.DesktopClient\UltimaRX.Nazghul.DesktopClient.csproj", "{A695D94B-5553-4549-A0DC-B4E360315432}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +131,18 @@ Global
 		{07EF2466-DD17-474C-8368-6F13DFECDC26}.Release|x64.Build.0 = Release|Any CPU
 		{07EF2466-DD17-474C-8368-6F13DFECDC26}.Release|x86.ActiveCfg = Release|Any CPU
 		{07EF2466-DD17-474C-8368-6F13DFECDC26}.Release|x86.Build.0 = Release|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Debug|x64.Build.0 = Debug|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Debug|x86.Build.0 = Debug|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Release|x64.ActiveCfg = Release|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Release|x64.Build.0 = Release|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Release|x86.ActiveCfg = Release|Any CPU
+		{A695D94B-5553-4549-A0DC-B4E360315432}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

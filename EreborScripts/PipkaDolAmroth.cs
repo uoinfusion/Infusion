@@ -23,6 +23,7 @@ public static class PipkaDolAmroth
     public static readonly Action Gate2Bank = Script.Create(() => Harvest("DolAmroth-gate2bank.map"));
     public static readonly Action Lumberjacking = Script.Create(() => Harvest("dolamroth-lumberjacking.map"));
     public static readonly Action LumberjackingNorth = Script.Create(() => Harvest("DolAmroth-lumberjacking-north.map"));
+    public static readonly Action LumberjackingNorth2 = Script.Create(() => Harvest("DolAmroth-lumberjacking-north2.map"));
     public static readonly Action Killing = Script.Create(() => Harvest("DolAmroth-killing.map"));
     public static readonly Action LinhirHome2DolAmroth = Script.Create(() => Harvest("Linhir2DolAmroth.map"));
 
@@ -33,12 +34,16 @@ public static class PipkaDolAmroth
             while (true)
             {
                 Harvest("DolAmroth-bank2northgate.map");
-                Harvest("DolAmroth-lumberjacking-north.map");
+                Harvest("DolAmroth-lumberjacking-north2.map");
                 Harvest("DolAmroth-northgate2bank.map");
                 ReloadInBank();
                 Harvest("DolAmroth-bank2gate.map");
                 Harvest("dolamroth-lumberjacking.map");
                 Harvest("DolAmroth-gate2bank.map");
+                ReloadInBank();
+                Harvest("DolAmroth-bank2northgate.map");
+                Harvest("DolAmroth-lumberjacking-north.map");
+                Harvest("DolAmroth-northgate2bank.map");
                 ReloadInBank();
             }
         });

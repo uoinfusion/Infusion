@@ -188,7 +188,7 @@ namespace UltimaRX.Proxy
             {
                 var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
-                packet.GameServerPort = 33334;
+                packet.GameServerPort = 33333;
                 rawPacket = packet.RawPacket;
                 needServerReconnect = true;
             }
@@ -398,8 +398,8 @@ namespace UltimaRX.Proxy
             }
             catch (Exception ex)
             {
+                // just ignore exception
                 Print(ex.ToString());
-                throw;
             }
 
             SendToServer(rawPacket);

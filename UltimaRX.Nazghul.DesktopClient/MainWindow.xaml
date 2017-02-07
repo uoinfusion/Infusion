@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UltimaRX.Nazghul.DesktopClient"
         mc:Ignorable="d"
-        Title="Nazghul" Height="350" Width="525">
+        Title="Nazghul" Height="644.393" Width="780.14">
     <ScrollViewer Name="Scroller" Margin="0" Background="Black">
         <StackPanel>
             <ItemsControl ItemsSource="{Binding ConsoleOutput, Mode=OneWay}">

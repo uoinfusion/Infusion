@@ -9,7 +9,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
+    using System.Windows.Forms;
+    using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -18,6 +19,7 @@ using System.Windows.Shapes;
     using Windows.UI.Notifications;
     using Microsoft.AspNet.SignalR.Client;
     using UltimaRX.Nazghul.Common;
+    using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace UltimaRX.Nazghul.DesktopClient
 {
@@ -120,9 +122,10 @@ namespace UltimaRX.Nazghul.DesktopClient
 
         private HashSet<string> ignoredMessages = new HashSet<string>()
         {
-            "Anna Del Tir",
-            "Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
-            "Brinley: Nice speaking to you Pipka"
+            //"Anna Del Tir",
+            //"Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
+            //"Brinley: Nice speaking to you Pipka",
+            //"Brinley: Well it was nice speaking to you Pipka but i must go about my business",
         };
 
         private bool IsIgnoredMessage(string message) => ignoredMessages.Contains(message);
@@ -188,7 +191,7 @@ namespace UltimaRX.Nazghul.DesktopClient
 
             public void Add(string message)
             {
-                ConsoleOutput.Add(message);
+                ConsoleOutput.Add($"{DateTime.Now:hh:mm:ss} - {message}");
                 if (ConsoleOutput.Count > 256)
                     ConsoleOutput.RemoveAt(0);
             }

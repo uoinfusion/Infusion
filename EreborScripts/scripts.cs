@@ -22,10 +22,10 @@ public static class Scripts
     public static readonly string[] AfkNames =
     {
         "desttro", "elbereth", "finn", "gothmog", "houba", "iustus", "myke", "yavanna",
-        "nightmare"
+        "nightmare", "sirglorg", "ustus", "levtar"
     };
 
-    public static readonly string[] AfkMessages = {"afk", "kontrola"};
+    public static readonly string[] AfkMessages = {"afk", "kontrola", "makro", "maker", "jsi t", "byl jsi objeven", "gm", "halo", "lagr"};
 
     public static DateTime LastCheckTime;
 
@@ -228,8 +228,8 @@ public static class Scripts
 
     private static void RegisterHarvestingPauseCommands()
     {
-        Injection.CommandHandler.RegisterCommand("pauseharvesting", () => harvestingPaused = true);
-        Injection.CommandHandler.RegisterCommand("resumeharvesting", () => harvestingPaused = true);
+        Injection.CommandHandler.RegisterCommand(new Command("pauseharvesting", () => harvestingPaused = true, CommandExecutionMode.OwnThread));
+        Injection.CommandHandler.RegisterCommand(new Command("resumeharvesting", () => harvestingPaused = false, CommandExecutionMode.OwnThread));
     }
 
 

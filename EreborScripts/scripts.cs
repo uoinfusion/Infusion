@@ -220,15 +220,23 @@ public static class Scripts
 
     private static void PauseCheck()
     {
-        while (harvestingPaused)
+        if (harvestingPaused)
         {
-            Wait(1000);
+            Program.Console.Info("Harvesting paused");
+
+            do
+            {
+                Wait(1000);
+            } while (harvestingPaused);
+
+            Program.Console.Info("Harvesting resumed");
         }
     }
 
     private static void RegisterHarvestingPauseCommands()
     {
         Injection.CommandHandler.RegisterCommand(new Command("pauseharvesting", () => harvestingPaused = true, CommandExecutionMode.OwnThread));
+        Injection.CommandHandler.RegisterCommand(new Command("toggleharvestingpause", () => harvestingPaused = !harvestingPaused, CommandExecutionMode.OwnThread));
         Injection.CommandHandler.RegisterCommand(new Command("resumeharvesting", () => harvestingPaused = false, CommandExecutionMode.OwnThread));
     }
 

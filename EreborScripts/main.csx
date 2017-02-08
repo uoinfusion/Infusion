@@ -20,12 +20,14 @@ using static Scripts;
 
 void Start()
 {
-    Program.Start(currentConnection, 33334);
+    Program.Start(currentConnection, 33333);
 }
 
 void StartNazghul()
 {
-    Program.Start(currentConnection, 33334);
+    Program.Start(currentConnection, 33333);
     var nazghulProxy = new NazghulProxy("http://localhost:9094/");
     //var nazghulProxy = new NazghulProxy("http://nazghul.azurewebsites.net/");
 }
+
+Injection.CommandHandler.RegisterCommand(new Command("masskill", MassKill));

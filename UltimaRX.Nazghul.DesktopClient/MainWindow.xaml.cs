@@ -122,10 +122,10 @@ namespace UltimaRX.Nazghul.DesktopClient
 
         private HashSet<string> ignoredMessages = new HashSet<string>()
         {
-            //"Anna Del Tir",
-            //"Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
-            //"Brinley: Nice speaking to you Pipka",
-            //"Brinley: Well it was nice speaking to you Pipka but i must go about my business",
+            "Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
+            "Brinley: Nice speaking to you Pipka",
+            "Brinley: Well it was nice speaking to you Pipka but i must go about my business",
+            "Cullin: Anna Del Tir",
         };
 
         private bool IsIgnoredMessage(string message) => ignoredMessages.Contains(message);

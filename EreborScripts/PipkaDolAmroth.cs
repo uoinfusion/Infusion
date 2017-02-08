@@ -79,7 +79,7 @@ public static class PipkaDolAmroth
 
         Eat();
         Reload(Me.BankBox, 5, ItemTypes.Food);
-        Reload(Me.BankBox, 10, ItemTypes.Torch);
+        Reload(Me.BankBox, 2, ItemTypes.Torch);
     }
 
     private static void WalkOutFromBank()

@@ -70,7 +70,7 @@ namespace UltimaRX.Nazghul.DesktopClient
             Dispatcher.Invoke(() =>
             {
                 dc.ConsoleOutput = new ObservableCollection<string>(logs.ToList());
-                Scroller.ScrollToBottom();
+                _scroller.ScrollToBottom();
             });
         }
 
@@ -79,7 +79,7 @@ namespace UltimaRX.Nazghul.DesktopClient
             Dispatcher.Invoke(() =>
             {
                 dc.Add(log.Message);
-                Scroller.ScrollToBottom();
+                _scroller.ScrollToBottom();
 
                 if (log.Type == LogMessageType.Speech || log.Type == LogMessageType.Alert)
                 {
@@ -142,7 +142,7 @@ namespace UltimaRX.Nazghul.DesktopClient
             {
                 RunCommand();
                 InputBlock.Focus();
-                Scroller.ScrollToBottom();
+                _scroller.ScrollToBottom();
             }
         }
         public void RunCommand()

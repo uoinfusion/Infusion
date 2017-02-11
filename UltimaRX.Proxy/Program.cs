@@ -60,7 +60,7 @@ namespace UltimaRX.Proxy
             Main(33333, new ConsoleLogger());
         }
 
-        public static Task Start(IPEndPoint serverAddress, int localProxyPort = 33333)
+        public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {
             Injection.Initialize();
 
@@ -94,9 +94,12 @@ namespace UltimaRX.Proxy
             });
         }
 
-        private static void Main(int port, ILogger logger)
+        private static ushort proxyLocalPort;
+
+        private static void Main(ushort port, ILogger logger)
         {
-            listener = new TcpListener(new IPEndPoint(IPAddress.Any, port));
+            proxyLocalPort = port;
+            listener = new TcpListener(new IPEndPoint(IPAddress.Any, proxyLocalPort));
             listener.Start();
 
             ClientLoop(logger);
@@ -188,7 +191,7 @@ namespace UltimaRX.Proxy
             {
                 var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
-                packet.GameServerPort = 33334;
+                packet.GameServerPort = proxyLocalPort;
                 rawPacket = packet.RawPacket;
                 needServerReconnect = true;
             }

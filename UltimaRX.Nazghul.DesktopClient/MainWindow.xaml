@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:UltimaRX.Nazghul.DesktopClient"
         mc:Ignorable="d"
         Title="Nazghul" Height="644.393" Width="780.14">
-    <ScrollViewer Name="Scroller" Margin="0" Background="Black">
+    <ScrollViewer Name="_scroller" Margin="0" Background="Black">
         <StackPanel>
             <ItemsControl ItemsSource="{Binding ConsoleOutput, Mode=OneWay}">
                 <ItemsControl.ItemTemplate>

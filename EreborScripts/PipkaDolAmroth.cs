@@ -45,6 +45,10 @@ public static class PipkaDolAmroth
                 Harvest("DolAmroth-lumberjacking-north.map");
                 Harvest("DolAmroth-northgate2bank.map");
                 ReloadInBank();
+                Harvest("DolAmroth-bank2northgate.map");
+                Harvest("DolAmroth-lumberjacking-north3.map");
+                Harvest("DolAmroth-northgate2bank.map");
+                ReloadInBank();
             }
         });
     }
@@ -77,6 +81,7 @@ public static class PipkaDolAmroth
             return;
         }
 
+        //ReloadPotion(Me.BankBox, ItemTypes.NightSightKegColor);
         Eat();
         Reload(Me.BankBox, 5, ItemTypes.Food);
         Reload(Me.BankBox, 2, ItemTypes.Torch);

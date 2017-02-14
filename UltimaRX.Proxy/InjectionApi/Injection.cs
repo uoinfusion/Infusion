@@ -126,7 +126,12 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(types).First();
+            var item = Items.OfType(types).InContainer(Me.BackPack).First()
+                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).First()
+                       ?? Items.OfType(types).OnLayer(Layer.TwoHandedWeapon).First()
+                       ?? Items.OfType(types).OnLayer(Layer.Backpack).First()
+                       ?? Items.OfType(types).First();
+
             if (item != null)
                 Use(item);
             else

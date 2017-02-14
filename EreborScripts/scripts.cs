@@ -210,10 +210,26 @@ public static class Scripts
     {
         AfkCheck();
         AttackCheck();
+        HealthCheck();
         LightCheck();
         PauseCheck();
 
         LastCheckTime = DateTime.UtcNow;
+    }
+
+    private static DateTime lastHealthWarning;
+
+    private static void HealthCheck()
+    {
+        if (Me.CurrentHealth < Me.MaxHealth / 10)
+        {
+            var now = DateTime.UtcNow;
+            if (lastHealthWarning.AddSeconds(10) < now)
+            {
+                Program.Console.Critical($"Low health: {Me.CurrentHealth}/{Me.MaxHealth}");
+                lastHealthWarning = now;
+            }
+        }
     }
 
     private static bool harvestingPaused;
@@ -222,14 +238,14 @@ public static class Scripts
     {
         if (harvestingPaused)
         {
-            Program.Console.Info("Harvesting paused");
+            Program.Console.Critical("Harvesting paused");
 
             do
             {
                 Wait(1000);
             } while (harvestingPaused);
 
-            Program.Console.Info("Harvesting resumed");
+            Program.Console.Critical("Harvesting resumed");
         }
     }
 
@@ -245,11 +261,13 @@ public static class Scripts
     {
         if (InJournal(LastCheckTime, "Je spatne videt"))
         {
-            var torch =
+            var item =
                 Items.InContainer(Me.BackPack).OfType(ItemTypes.Torch).First();
-            if (torch != null)
+            //var item =
+            //    Items.InContainer(Me.BackPack).OfType(ItemTypes.Bottle).OfColor(ItemTypes.NightSightKegColor).First();
+            if (item != null)
             {
-                Use(torch);
+                Use(item);
                 Wait(1000);
             }
         }

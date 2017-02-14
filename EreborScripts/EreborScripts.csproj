@@ -64,10 +64,6 @@
     <None Include="main.csx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX.Nazghul.Proxy\UltimaRX.Nazghul.Proxy.csproj">
-      <Project>{ad250e27-e6e0-4465-8ca8-9fc196f8c30d}</Project>
-      <Name>UltimaRX.Nazghul.Proxy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UltimaRX.Proxy\UltimaRX.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
       <Name>UltimaRX.Proxy</Name>

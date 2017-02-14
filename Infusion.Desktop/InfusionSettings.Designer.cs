@@ -34,5 +34,17 @@ namespace Infusion.Desktop {
                 this["Profiles"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SelectedProfileId {
+            get {
+                return ((string)(this["SelectedProfileId"]));
+            }
+            set {
+                this["SelectedProfileId"] = value;
+            }
+        }
     }
 }

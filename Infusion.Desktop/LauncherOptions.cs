@@ -14,6 +14,7 @@ namespace Infusion.Desktop
         public string UserName { get; set; }
         public string Password { get; set; }
         public ushort ProxyPort { get; set; } = 33333;
+        public string InitialScriptFileName { get; set; }
 
         public string EncryptPassword()
         { 

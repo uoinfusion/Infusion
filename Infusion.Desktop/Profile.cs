@@ -22,7 +22,7 @@ namespace Infusion.Desktop
             }
         }
 
-        public string Id { get; } = Guid.NewGuid().ToString();
+        public string Id { get; set; }
 
         public LauncherOptions LauncherOptions { get; } = new LauncherOptions();
         public event PropertyChangedEventHandler PropertyChanged;

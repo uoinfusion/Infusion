@@ -5,27 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Infusion.Desktop"
         mc:Ignorable="d"
+        Icon="pack://application:,,,/infusion.png"
         Title="Infusion" Height="550" Width="400">
     <TabControl>
         <TabItem Header="Console">
-            <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                        <RowDefinition Height="Auto" />
-                    </Grid.RowDefinitions>
-                    <ScrollViewer Name="_scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Auto">
-                        <ItemsControl ItemsSource="{Binding Path=ConsoleOutput, Mode=OneWay}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Path=Message}" Foreground="{Binding Path=TextBrush}" FontFamily="Consolas" TextWrapping="WrapWithOverflow"/>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                    </ScrollViewer>
-                    <TextBox x:Name="_inputBlock" Grid.Row="1"
-                                KeyDown="_inputBlock_OnKeyDown"
-                                Background="Black" Foreground="White" FontFamily="Consolas" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" />
-                </Grid>
+            <local:Console x:Name="_console" />
         </TabItem>
     </TabControl>
 </Window>

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        Icon="pack://application:,,,/infusion.png"
         Title="Infusion launcher" Height="346.146" Width="405.049">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
@@ -32,6 +33,7 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <TextBlock>Profile:</TextBlock>
             <ComboBox Grid.Row="0" Grid.Column="1" IsEditable="True" IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
@@ -47,8 +49,10 @@
             <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Path=SelectedProfile.LauncherOptions.UserName}" />
             <TextBlock Grid.Column="0" Grid.Row="4">Password:</TextBlock>
             <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Path=SelectedProfile.LauncherOptions.Password}" />
-            <TextBlock Grid.Row="5">Advanced options:</TextBlock>
-            <CheckBox Grid.Row="5" Grid.Column="1" Margin="0,3,0,0" x:Name="_advancedOptionsCheckBox" />
+            <TextBlock Grid.Column="0" Grid.Row="5">Initial Script:</TextBlock>
+            <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Path=SelectedProfile.LauncherOptions.InitialScriptFileName}" />
+            <TextBlock Grid.Column="0" Grid.Row="6">Advanced options:</TextBlock>
+            <CheckBox Grid.Column="1" Grid.Row="6" Margin="0,3,0,0" x:Name="_advancedOptionsCheckBox" />
         </Grid>
         <Grid Row="1" Margin="10 10 10 0" Visibility="{Binding IsChecked, ElementName=_advancedOptionsCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>

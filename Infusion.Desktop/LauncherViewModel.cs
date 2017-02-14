@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -53,7 +54,7 @@ namespace Infusion.Desktop
 
         public void NewProfile()
         {
-            var profile = new Profile {Name = "new profile"};
+            var profile = new Profile {Name = "new profile", Id = Guid.NewGuid().ToString()};
             Profiles.Add(profile);
             SelectedProfile = profile;
             OnPropertyChanged("CanDeleteSelectedProfile");

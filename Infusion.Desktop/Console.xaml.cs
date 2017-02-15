@@ -66,11 +66,6 @@ namespace Infusion.Desktop
                 _inputBlock.Focus();
                 _scroller.ScrollToBottom();
             }
-            else if (e.Key == Key.F2 && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-            {
-                _consoleModeComboBox.Focus();
-                _consoleModeComboBox.IsDropDownOpen = true;
-            }
         }
 
         private void RunCommand()
@@ -105,6 +100,15 @@ namespace Infusion.Desktop
         private void OnConsoleModeSelected(object sender, RoutedEventArgs e)
         {
             _inputBlock.Focus();
+        }
+
+        private void Console_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F2 && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                _consoleModeComboBox.Focus();
+                _consoleModeComboBox.IsDropDownOpen = true;
+            }
         }
     }
 }

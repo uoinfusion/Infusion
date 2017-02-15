@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Windows.UI.Notifications;
 using UltimaRX.Proxy;
+using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;
 
 namespace Infusion.Desktop
@@ -35,8 +36,15 @@ namespace Infusion.Desktop
 
         public void Speech(SpeechMessage message)
         {
-            WriteLine(message.Text, Brushes.White);
-            ToastNotification(message.Text);
+            if (message.SpeakerId == 0 || message.SpeakerId == Injection.Me.PlayerId || message.IsName)
+            {
+                WriteLine(message.Text, Brushes.DarkGray);
+            }
+            else
+            {
+                WriteLine(message.Text, Brushes.White);
+                ToastNotification(message.Text);
+            }
         }
 
         public void Debug(string message)

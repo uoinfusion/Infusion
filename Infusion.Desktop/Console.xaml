@@ -3,9 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Infusion.Desktop"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" KeyDown="Console_OnKeyDown">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -13,12 +12,12 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ScrollViewer Name="_scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Path=ConsoleOutput, Mode=OneWay}">
+                <ItemsControl ItemsSource="{Binding Path=ConsoleOutput, Mode=OneWay}" IsTabStop="False">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <TextBox Text="{Binding Path=Message, Mode=OneWay}" Background="Transparent" Foreground="{Binding Path=TextBrush}"
                                        FontFamily="Consolas" IsReadOnly="True" BorderThickness="0" 
-                                       TextWrapping="WrapWithOverflow" />
+                                       TextWrapping="WrapWithOverflow" IsTabStop="False" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -28,11 +27,11 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ComboBox x:Name="_consoleModeComboBox" Grid.Column="0" SelectionChanged="OnConsoleModeSelected">
+                <ComboBox x:Name="_consoleModeComboBox" Grid.Column="0" SelectionChanged="OnConsoleModeSelected" TabIndex="1">
                     <ComboBoxItem x:Name="_sayConsoleMode"  Content="Say" />
                     <ComboBoxItem x:Name="_csharpConsoleMode" Content="C#"/>
                 </ComboBox>
-                <TextBox x:Name="_inputBlock" Grid.Column="1"
+                <TextBox x:Name="_inputBlock" Grid.Column="1" Focusable="True" TabIndex="0"
                          Padding="0 5 0 0"
                          KeyDown="_inputBlock_OnKeyDown"
                          Background="Black" Foreground="White" FontFamily="Consolas" BorderBrush="{x:Null}"

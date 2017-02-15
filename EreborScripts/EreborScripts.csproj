@@ -38,6 +38,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -55,14 +59,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="configuration.csx" />
-    <None Include="main.csx" />
     <None Include="packages.config" />
+    <None Include="pipka-dolamroth-lumberjacking.csx" />
+    <None Include="main.csx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX.Nazghul.Proxy\UltimaRX.Nazghul.Proxy.csproj">
-      <Project>{ad250e27-e6e0-4465-8ca8-9fc196f8c30d}</Project>
-      <Name>UltimaRX.Nazghul.Proxy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\UltimaRX.Proxy\UltimaRX.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
       <Name>UltimaRX.Proxy</Name>

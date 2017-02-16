@@ -26,7 +26,7 @@ namespace Infusion.Desktop
                     connectedToServerEvent.Set();
                 };
                 var proxyTask = Program.Start(serverEndPoint, options.ProxyPort);
-                if (!connectedToServerEvent.WaitOne(TimeSpan.FromSeconds(5)))
+                if (!connectedToServerEvent.WaitOne(TimeSpan.FromSeconds(30)))
                 {
                     throw new TimeoutException("Server connection timeout.");
                 }

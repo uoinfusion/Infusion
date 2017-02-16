@@ -191,8 +191,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Console.xaml.cs">
-      <DependentUpon>Console.xaml</DependentUpon>
+    <Compile Include="ConsoleControl.xaml.cs">
+      <DependentUpon>ConsoleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConsoleContent.cs" />
     <Compile Include="CSharpScriptEngine.cs" />
@@ -208,10 +208,14 @@
     <Compile Include="InterProcessCommunication.cs" />
     <Compile Include="IScriptOutput.cs" />
     <Compile Include="LauncherViewModel.cs" />
+    <Compile Include="OptionsControl.xaml.cs">
+      <DependentUpon>OptionsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Options.cs" />
     <Compile Include="Profile.cs" />
     <Compile Include="ScriptOutput.cs" />
     <Compile Include="UltimaConfiguration.cs" />
-    <Page Include="Console.xaml">
+    <Page Include="ConsoleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -234,6 +238,10 @@
       <DependentUpon>LaunhcerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="OptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

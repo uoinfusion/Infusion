@@ -1,4 +1,4 @@
-﻿<Window x:Class="Infusion.Desktop.InfusionWindow"
+﻿    <Window x:Class="Infusion.Desktop.InfusionWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,7 +9,10 @@
         Title="Infusion" Height="550" Width="685.061">
     <TabControl>
         <TabItem Header="Console">
-            <local:Console x:Name="_console" />
+            <local:ConsoleControl x:Name="_console" />
+        </TabItem>
+        <TabItem Header="Options">
+            <local:OptionsControl />
         </TabItem>
     </TabControl>
 </Window>

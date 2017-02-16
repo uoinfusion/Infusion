@@ -49,7 +49,7 @@ namespace Infusion.Desktop
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == WindowState.Minimized)
+            if (WindowState == WindowState.Minimized && Options.Instance.HideWhenMinimized)
                 Hide();
 
             base.OnStateChanged(e);

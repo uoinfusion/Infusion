@@ -70,8 +70,11 @@ namespace Infusion.Desktop
 
         private void ToastNotification(string message)
         {
-            if (IsIgnoredMessage(message))
+            if (!Options.Instance.CanShowToastNotification || !Options.Instance.ConversationToastNotificationEnabled ||
+                IsIgnoredMessage(message))
+            {
                 return;
+            }
 
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
 
@@ -92,8 +95,11 @@ namespace Infusion.Desktop
 
         private void ToastAlertNotification(string message)
         {
-            if (IsIgnoredMessage(message))
+            if (!Options.Instance.CanShowToastNotification || !Options.Instance.AlertToastNotificationEnabled ||
+                IsIgnoredMessage(message))
+            {
                 return;
+            }
 
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 

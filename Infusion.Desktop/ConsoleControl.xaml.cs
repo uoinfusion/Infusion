@@ -18,15 +18,12 @@ using UltimaRX.Proxy.Logging;
 
 namespace Infusion.Desktop
 {
-    /// <summary>
-    /// Interaction logic for Console.xaml
-    /// </summary>
-    public partial class Console : UserControl
+    public partial class ConsoleControl : UserControl
     {
         private CSharpScriptEngine scriptEngine;
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
-        public Console()
+        public ConsoleControl()
         {
             InitializeComponent();
 

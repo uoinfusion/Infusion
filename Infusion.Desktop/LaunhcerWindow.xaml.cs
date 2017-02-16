@@ -54,7 +54,23 @@ namespace Infusion.Desktop
             InfusionSettings.Default.Profiles = JsonConvert.SerializeObject(launcherViewModel.Profiles);
             InfusionSettings.Default.SelectedProfileId = launcherViewModel.SelectedProfile.Id;
             InfusionSettings.Default.Save();
-            await Launcher.Launch(launcherViewModel.SelectedProfile.LauncherOptions);
+            IsEnabled = false;
+            string originalTitle = Title;
+
+            var launcherOptions = launcherViewModel.SelectedProfile.LauncherOptions;
+            Title = $"Connecting to {launcherOptions.ServerEndpoint}";
+
+            try
+            {
+                await Launcher.Launch(launcherOptions);
+            }
+            catch (Exception)
+            {
+                IsEnabled = true;
+                Title = originalTitle;
+                MessageBox.Show(this, $"Cannot connect to {launcherOptions.ServerEndpoint}");
+                return;
+            }
             
             var infusionWindow = new InfusionWindow();
             Application.Current.MainWindow = infusionWindow;

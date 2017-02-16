@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Ultima;
 using UltimaRX.Proxy;
@@ -13,22 +14,35 @@ namespace Infusion.Desktop
 {
     public static class Launcher
     {
-        public static async Task Launch(LauncherOptions options)
+        public static Task Launch(LauncherOptions options)
         {
-            var serverEndPoint = await options.ResolveServerEndpoint();
-            var proxyTask = Program.Start(serverEndPoint, options.ProxyPort);
+            return Task.Run(() =>
+            {
+                var serverEndPoint = options.ResolveServerEndpoint().Result;
 
-            LoginConfiguration.SetServerAddress("127.0.0.1", options.ProxyPort);
-            if (!string.IsNullOrEmpty(options.UserName))
-                UltimaConfiguration.SetUserName(options.UserName);
-            if (!string.IsNullOrEmpty(options.Password))
-                UltimaConfiguration.SetPassword(options.EncryptPassword());
+                var connectedToServerEvent = new AutoResetEvent(false);
+                Program.ConnectedToServer += (sender, args) =>
+                {
+                    connectedToServerEvent.Set();
+                };
+                var proxyTask = Program.Start(serverEndPoint, options.ProxyPort);
+                if (!connectedToServerEvent.WaitOne(TimeSpan.FromSeconds(5)))
+                {
+                    throw new TimeoutException("Server connection timeout.");
+                }
 
-            string ultimaExecutablePath = Path.Combine(Files.RootDir, "NoCryptClient.exe");
+                LoginConfiguration.SetServerAddress("127.0.0.1", options.ProxyPort);
+                if (!string.IsNullOrEmpty(options.UserName))
+                    UltimaConfiguration.SetUserName(options.UserName);
+                if (!string.IsNullOrEmpty(options.Password))
+                    UltimaConfiguration.SetPassword(options.EncryptPassword());
 
-            Process.Start(ultimaExecutablePath);
+                string ultimaExecutablePath = Path.Combine(Files.RootDir, "NoCryptClient.exe");
 
-            InterProcessCommunication.StartReceiving();
+                Process.Start(ultimaExecutablePath);
+
+                InterProcessCommunication.StartReceiving();
+            });
         }
     }
 }

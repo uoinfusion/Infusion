@@ -154,11 +154,8 @@ namespace UltimaRX.Proxy
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(serverDiagnosticPullStream.Flush());
-                System.Console.WriteLine();
-                System.Console.WriteLine(ex);
-                System.Console.WriteLine();
-
+                Console.Error(serverDiagnosticPullStream.Flush());
+                Console.Error(ex.ToString());
                 throw;
             }
         }
@@ -331,10 +328,8 @@ namespace UltimaRX.Proxy
             }
             catch (Exception ex)
             {
-                System.Console.WriteLine(serverDiagnosticPullStream.Flush());
-                System.Console.WriteLine();
-                System.Console.WriteLine(ex);
-                System.Console.WriteLine();
+                Console.Error(serverDiagnosticPullStream.Flush());
+                Console.Error(ex.ToString());
                 throw;
             }
         }
@@ -347,11 +342,14 @@ namespace UltimaRX.Proxy
             serverSocket = null;
         }
 
+        public static event EventHandler ConnectedToServer;
+
         private static NetworkStream ConnectToServer()
         {
             // localhost:
             serverSocket = new Socket(serverEndpoint.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Connect(serverEndpoint);
+            ConnectedToServer?.Invoke(null, EventArgs.Empty);
 
             return new NetworkStream(serverSocket);
         }

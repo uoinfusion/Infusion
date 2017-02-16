@@ -14,6 +14,7 @@ namespace Infusion.Desktop
         public static void StartReceiving()
         {
             var receivingThread = new Thread(ReceivingLoop);
+            receivingThread.IsBackground = true;
             receivingThread.Start();
         }
 

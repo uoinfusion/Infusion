@@ -24,7 +24,7 @@ namespace UltimaRX.Proxy.InjectionApi
         {
             if (commands.ContainsKey(command.Name))
             {
-                throw new CommandInvocationException($"Command {command.Name} already exists.");
+                throw new InvalidOperationException($"Command {command.Name} already exists.");
             }
 
             commands = commands.Add(command.Name, command);
@@ -41,33 +41,42 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void Invoke(string commandInvocationSyntax)
         {
-            var firstSpaceIndex = commandInvocationSyntax.IndexOf(' ');
-            if (firstSpaceIndex < 0)
+            try
             {
-                Command command;
-                string commandName = commandInvocationSyntax.Substring(1, commandInvocationSyntax.Length - 1);
+                var firstSpaceIndex = commandInvocationSyntax.IndexOf(' ');
+                if (firstSpaceIndex < 0)
+                {
+                    Command command;
+                    string commandName = commandInvocationSyntax.Substring(1, commandInvocationSyntax.Length - 1);
 
-                if (!commands.TryGetValue(commandName, out command))
-                    throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
+                    if (!commands.TryGetValue(commandName, out command))
+                        throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
-                command.Invoke();
+                    command.Invoke();
+                }
+                else
+                {
+                    Command command;
+
+                    var commandName = commandInvocationSyntax.Substring(1, firstSpaceIndex - 1);
+
+                    if (!commands.TryGetValue(commandName, out command))
+                        throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
+
+                    if (firstSpaceIndex + 1 >= commandInvocationSyntax.Length)
+                        throw new CommandInvocationException($"No parameters for command specified {commandInvocationSyntax}");
+
+                    var parameters = commandInvocationSyntax.Substring(firstSpaceIndex + 1,
+                        commandInvocationSyntax.Length - firstSpaceIndex - 1);
+
+                    command.Invoke(parameters);
+                }
+
             }
-            else
+            catch (CommandInvocationException ex)
             {
-                Command command;
-
-                var commandName = commandInvocationSyntax.Substring(1, firstSpaceIndex - 1);
-
-                if (!commands.TryGetValue(commandName, out command))
-                    throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
-
-                if (firstSpaceIndex + 1 >= commandInvocationSyntax.Length)
-                    throw new CommandInvocationException($"No parameters for command specified {commandInvocationSyntax}");
-
-                var parameters = commandInvocationSyntax.Substring(firstSpaceIndex + 1,
-                    commandInvocationSyntax.Length - firstSpaceIndex - 1);
-
-                command.Invoke(parameters);
+                Program.Console.Error(ex.Message);
+                return;
             }
         }
 

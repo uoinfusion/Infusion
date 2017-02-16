@@ -1,7 +1,4 @@
-﻿#r "..\UltimaRX\bin\Debug\UltimaRX.dll"
-#r "..\UltimaRX.Proxy\bin\Debug\UltimaRX.Proxy.exe"
-#r "..\UltimaRX.Nazghul.Proxy\bin\Debug\UltimaRX.Nazghul.Proxy.dll"
-#load "configuration.csx"
+﻿#load "configuration.csx"
 #load "ItemTypes.cs"
 #load "Scripts.cs"
 #load "PipkaDolAmroth.cs"
@@ -14,20 +11,8 @@ using UltimaRX.Packets;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Packets.Parsers;
 using UltimaRX.Gumps;
-using UltimaRX.Nazghul.Proxy;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 using static Scripts;
 
-void Start()
-{
-    Program.Start(currentConnection, 33333);
-}
-
-void StartNazghul()
-{
-    Program.Start(currentConnection, 33333);
-    var nazghulProxy = new NazghulProxy("http://localhost:9094/");
-    //var nazghulProxy = new NazghulProxy("http://nazghul.azurewebsites.net/");
-}
-
 Injection.CommandHandler.RegisterCommand(new Command("masskill", MassKill));
+Injection.CommandHandler.RegisterCommand(new Command("loot", Loot));

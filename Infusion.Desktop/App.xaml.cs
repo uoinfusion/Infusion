@@ -13,5 +13,18 @@ namespace Infusion.Desktop
     /// </summary>
     public partial class App : Application
     {
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            if (e.Args.Length == 2)
+            {
+                if (e.Args[0] == "command")
+                {
+                    InterProcessCommunication.SendCommand(e.Args[1]);
+                    Shutdown(0);
+                }
+            }
+
+            base.OnStartup(e);
+        }
     }
 }

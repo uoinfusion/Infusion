@@ -48,7 +48,7 @@ namespace Infusion.Desktop
 
         public async Task ExecuteScript(string scriptPath)
         {
-            scriptOutput.Info("Loading script...");
+            scriptOutput.Info($"Loading script: {scriptPath}");
             var scriptLines = File.ReadAllLines(scriptPath);
 
             string scriptDirectory = Path.GetDirectoryName(scriptPath);

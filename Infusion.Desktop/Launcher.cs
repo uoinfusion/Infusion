@@ -27,6 +27,8 @@ namespace Infusion.Desktop
             string ultimaExecutablePath = Path.Combine(Files.RootDir, "NoCryptClient.exe");
 
             Process.Start(ultimaExecutablePath);
+
+            InterProcessCommunication.StartReceiving();
         }
     }
 }

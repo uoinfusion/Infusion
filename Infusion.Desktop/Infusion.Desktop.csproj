@@ -205,6 +205,7 @@
     <Compile Include="InfusionWindow.xaml.cs">
       <DependentUpon>InfusionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InterProcessCommunication.cs" />
     <Compile Include="IScriptOutput.cs" />
     <Compile Include="LauncherViewModel.cs" />
     <Compile Include="Profile.cs" />

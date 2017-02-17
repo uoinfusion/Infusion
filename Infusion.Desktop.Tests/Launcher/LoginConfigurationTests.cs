@@ -1,8 +1,8 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Infusion.Desktop.Launcher;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infusion.Desktop.Tests
+namespace Infusion.Desktop.Tests.Launcher
 {
     [TestClass]
     public class LoginConfigurationTests

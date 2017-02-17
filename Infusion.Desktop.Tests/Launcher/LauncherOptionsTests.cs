@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 using FluentAssertions;
+using Infusion.Desktop.Launcher;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infusion.Desktop.Tests
+namespace Infusion.Desktop.Tests.Launcher
 {
     [TestClass]
     public class LauncherOptionsTests

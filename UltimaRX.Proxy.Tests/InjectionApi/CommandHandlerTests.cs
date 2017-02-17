@@ -18,15 +18,6 @@ namespace UltimaRX.Proxy.Tests.InjectionApi
         }
 
         [TestMethod]
-        public void Throws_when_creating_script_with_already_existing_name()
-        {
-            scriptHandler.RegisterCommand("testName1", () => { });
-
-            Action action = () => scriptHandler.RegisterCommand("testName1", () => { });
-            action.ShouldThrow<CommandInvocationException>();
-        }
-
-        [TestMethod]
         public void Can_create_two_scripts_with_different_names()
         {
             scriptHandler.RegisterCommand("testName1", () => { });
@@ -44,35 +35,9 @@ namespace UltimaRX.Proxy.Tests.InjectionApi
         }
 
         [TestMethod]
-        public void Throws_when_invoking_unknown_parameterless_script()
-        {
-            Action action = () => scriptHandler.Invoke(",testName");
-
-            action.ShouldThrow<CommandInvocationException>();
-        }
-
-        [TestMethod]
         public void Can_create_parametrized_script()
         {
             scriptHandler.RegisterCommand("testName", parameters => { });
-        }
-
-        [TestMethod]
-        public void Throws_when_parameterless_and_parametrized_scripts_are_created_with_same_name()
-        {
-            scriptHandler.RegisterCommand("testName", () => { });
-            Action action = () => scriptHandler.RegisterCommand("testName", parameters => { });
-
-            action.ShouldThrow<CommandInvocationException>();
-        }
-
-        [TestMethod]
-        public void Throws_when_parametrized_and_parameterless_scripts_are_created_with_same_name()
-        {
-            scriptHandler.RegisterCommand("testName", parameters => { });
-            Action action = () => scriptHandler.RegisterCommand("testName", () => { });
-
-            action.ShouldThrow<CommandInvocationException>();
         }
 
         [TestMethod]
@@ -90,15 +55,6 @@ namespace UltimaRX.Proxy.Tests.InjectionApi
             scriptHandler.Invoke(",testName parameter1 parameter2");
             ev.WaitOne(1000).Should().BeTrue();
             actualParameters.Should().Be("parameter1 parameter2");
-        }
-
-        [TestMethod]
-        public void Throws_when_no_parameters_for_parametrized_script()
-        {
-            scriptHandler.RegisterCommand("testName", parameters => { });
-
-            Action action = () => scriptHandler.Invoke(",testName ");
-            action.ShouldThrow<CommandInvocationException>();
         }
 
         [TestMethod]

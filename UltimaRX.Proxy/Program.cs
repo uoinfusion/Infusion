@@ -69,7 +69,7 @@ namespace UltimaRX.Proxy
             ServerPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
 
             serverEndpoint = serverAddress;
-            return Task.Run(() => Main(localProxyPort, PacketRingBufferLogger));
+            return Main(localProxyPort, PacketRingBufferLogger);
         }
 
         private static void HandleSendSpeechPacket(SendSpeechPacket packet)
@@ -96,13 +96,13 @@ namespace UltimaRX.Proxy
 
         private static ushort proxyLocalPort;
 
-        private static void Main(ushort port, ILogger logger)
+        private static Task Main(ushort port, ILogger logger)
         {
             proxyLocalPort = port;
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, proxyLocalPort));
             listener.Start();
 
-            ClientLoop(logger);
+            return Task.Run(() => ClientLoop(logger));
         }
 
         public static void DumpPacketLog()

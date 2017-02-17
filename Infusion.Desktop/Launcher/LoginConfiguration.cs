@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ultima;
 
-namespace Infusion.Desktop
+namespace Infusion.Desktop.Launcher
 {
     public static class LoginConfiguration
     {

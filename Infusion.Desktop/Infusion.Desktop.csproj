@@ -207,7 +207,7 @@
     </Compile>
     <Compile Include="InterProcessCommunication.cs" />
     <Compile Include="IScriptOutput.cs" />
-    <Compile Include="LauncherViewModel.cs" />
+    <Compile Include="Launcher\LauncherViewModel.cs" />
     <Compile Include="OptionsControl.xaml.cs">
       <DependentUpon>OptionsControl.xaml</DependentUpon>
     </Compile>
@@ -223,7 +223,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="LaunhcerWindow.xaml">
+    <Page Include="Launcher\LaunhcerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -231,10 +231,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Launcher.cs" />
-    <Compile Include="LauncherOptions.cs" />
-    <Compile Include="LoginConfiguration.cs" />
-    <Compile Include="LaunhcerWindow.xaml.cs">
+    <Compile Include="Launcher\Launcher.cs" />
+    <Compile Include="Launcher\LauncherOptions.cs" />
+    <Compile Include="Launcher\LoginConfiguration.cs" />
+    <Compile Include="Launcher\LaunhcerWindow.xaml.cs">
       <DependentUpon>LaunhcerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>

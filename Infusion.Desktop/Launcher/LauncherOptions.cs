@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infusion.Desktop
+namespace Infusion.Desktop.Launcher
 {
     public class LauncherOptions
     {
@@ -49,6 +48,18 @@ namespace Infusion.Desktop
             ushort port = parts.Length > 1 ? ushort.Parse(parts[1]) : (ushort)2593;
 
             return new IPEndPoint(address, port);
+        }
+
+        public bool Validate(out string validationMessage)
+        {
+            if (string.IsNullOrEmpty(ServerEndpoint))
+            {
+                validationMessage = "Please enter server address, including port. For example: server.uoerebor.com,2593";
+                return false;
+            }
+
+            validationMessage = string.Empty;
+            return true;
         }
     }
 }

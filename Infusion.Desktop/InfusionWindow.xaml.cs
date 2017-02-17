@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using Infusion.Desktop.Launcher;
 using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;

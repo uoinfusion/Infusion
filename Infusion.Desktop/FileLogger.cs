@@ -1,0 +1,65 @@
+using System;
+using System.IO;
+using UltimaRX.Proxy;
+using UltimaRX.Proxy.Logging;
+
+namespace Infusion.Desktop
+{
+    internal sealed class FileLogger : ILogger
+    {
+        private void WriteLine(string message)
+        {
+            try
+            {
+                if (!Options.Instance.LogToFileEnabled)
+                    return;
+
+                string logsPath = Options.Instance.LogPath;
+
+                var now = DateTime.Now;
+
+                if (Directory.Exists(logsPath))
+                {
+                    string fileName = Path.Combine(logsPath, $"{now:yyyy-MM-dd}.log");
+
+                    if (!File.Exists(fileName))
+                    {
+                        File.Create(fileName).Dispose();
+                    }
+
+                    File.AppendAllText(fileName, $@"{now:T}: {message}{Environment.NewLine}");
+                }
+
+            }
+            catch (Exception)
+            {
+                // just swallow the exception, we don't want to terminate game because of logging problems
+            }
+        }
+
+        public void Info(string message)
+        {
+            WriteLine(message);
+        }
+
+        public void Speech(SpeechMessage message)
+        {
+            WriteLine(message.Text);
+        }
+
+        public void Debug(string message)
+        {
+            WriteLine(message);
+        }
+
+        public void Critical(string message)
+        {
+            WriteLine(message);
+        }
+
+        public void Error(string message)
+        {
+            WriteLine(message);
+        }
+    }
+}

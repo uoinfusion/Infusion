@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +30,7 @@ namespace Infusion.Desktop
             _consoleModeComboBox.SelectedItem = _sayConsoleMode;
             scriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
             Program.Console = new MultiplexLogger(Program.Console,
-                new InfusionConsoleLogger(consoleContent, Dispatcher));
+                new InfusionConsoleLogger(consoleContent, Dispatcher), new FileLogger());
             DataContext = consoleContent;
         }
 

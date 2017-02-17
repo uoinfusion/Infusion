@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Infusion.Desktop.Properties;
+using Newtonsoft.Json;
 
 namespace Infusion.Desktop
 {
@@ -9,6 +11,8 @@ namespace Infusion.Desktop
         private bool alertToastNotificationEnabled;
         private bool conversationToastNotificationEnabled;
         private bool hideWhenMinimized;
+        private bool logToFileEnabled;
+        private string logPath;
         public bool CanShowToastNotification => Environment.OSVersion.Version.Major >= 6;
 
         public bool ConversationToastNotificationEnabled
@@ -41,7 +45,27 @@ namespace Infusion.Desktop
             }
         }
 
-        public static Options Instance { get; } = new Options();
+        public bool LogToFileEnabled
+        {
+            get { return logToFileEnabled; }
+            set
+            {
+                logToFileEnabled = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public string LogPath
+        {
+            get { return logPath; }
+            set
+            {
+                logPath = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public static Options Instance { get; set; } = new Options();
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

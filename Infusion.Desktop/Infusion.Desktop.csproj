@@ -196,6 +196,7 @@
     </Compile>
     <Compile Include="ConsoleContent.cs" />
     <Compile Include="CSharpScriptEngine.cs" />
+    <Compile Include="FileLogger.cs" />
     <Compile Include="InfusionConsoleLogger.cs" />
     <Compile Include="InfusionSettings.Designer.cs">
       <AutoGen>True</AutoGen>

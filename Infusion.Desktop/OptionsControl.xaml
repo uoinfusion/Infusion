@@ -10,5 +10,7 @@
         <CheckBox Content="Show toast notification for conversation (requires Windows 10)" IsChecked="{Binding Path=ConversationToastNotificationEnabled}" IsEnabled="{Binding Path=CanShowToastNotification}" />
         <CheckBox Content="Show toast notification for alerts (requires Windows 10)" IsChecked="{Binding Path=AlertToastNotificationEnabled}" IsEnabled="{Binding Path=CanShowToastNotification}" />
         <CheckBox Content="Hide to tray when minimized" IsChecked="{Binding Path=HideWhenMinimized}" />
+        <CheckBox Content="Log console output to a folder:" IsChecked="{Binding Path=LogToFileEnabled}" Margin="0 10 0 0" />
+        <TextBox Text="{Binding Path=LogPath}" IsEnabled="{Binding Path=LogToFileEnabled}" Margin="20 5 20 10"/>
     </StackPanel>
 </UserControl>

@@ -82,6 +82,7 @@ namespace UltimaRX.Packets
             Register(PacketDefinitions.ResendCharactersAfterDelete);
             Register(PacketDefinitions.OpenPaperdoll);
             Register(PacketDefinitions.CorpseClothing);
+            Register(PacketDefinitions.DisplaySign);
             Register(PacketDefinitions.MapMessage);
             Register(PacketDefinitions.MovePlayer);
             Register(PacketDefinitions.RequestAssistance);

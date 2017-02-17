@@ -337,6 +337,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition<ConnectToGameServerPacket> ConnectToGameServer = new PacketDefinition<ConnectToGameServerPacket>(0x8C,
             new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServerPacket());
 
+        public static readonly  PacketDefinition DisplaySign = new PacketDefinition(0x8b, new VariablePacketLength(), "DisplaySign");
+
         public static readonly PacketDefinition MapMessage = new PacketDefinition(0x90,
             new StaticPacketLength(19), "MapMessage");
 

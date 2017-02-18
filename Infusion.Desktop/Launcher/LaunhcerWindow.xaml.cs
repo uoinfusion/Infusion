@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Infusion.Desktop.Profiles;
 using Newtonsoft.Json;
 
 namespace Infusion.Desktop.Launcher
@@ -14,7 +15,6 @@ namespace Infusion.Desktop.Launcher
     public partial class MainWindow : Window
     {
         private readonly LauncherViewModel launcherViewModel = new LauncherViewModel();
-        private readonly InfusionSettings settings = (InfusionSettings)SettingsBase.Synchronized(InfusionSettings.Default);
         private readonly DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 
 
@@ -31,45 +31,25 @@ namespace Infusion.Desktop.Launcher
         {
             InitializeComponent();
 
-            var profiles = LoadProfiles();
+            var profiles = ProfileRepositiory.LoadProfiles();
             if (profiles != null)
                 launcherViewModel.Profiles = new ObservableCollection<Profile>(profiles);
 
-            if (profiles != null && !string.IsNullOrEmpty(settings.SelectedProfileId))
+            string selectedProfileId = ProfileRepositiory.LoadSelectedProfileId();
+            if (profiles != null && !string.IsNullOrEmpty(selectedProfileId))
             {
-                launcherViewModel.SelectedProfile = launcherViewModel.Profiles.FirstOrDefault(p => p.Id == settings.SelectedProfileId);
+                launcherViewModel.SelectedProfile = launcherViewModel.Profiles.FirstOrDefault(p => p.Id == selectedProfileId) ?? launcherViewModel.Profiles.FirstOrDefault();
             }
             DataContext = launcherViewModel;
 
             dispatcherTimer.Tick += (sender, args) => HideError();
         }
 
-        private IEnumerable<Profile> LoadProfiles()
-        {
-            var profiles = settings.Profiles;
-
-            if (string.IsNullOrEmpty(profiles))
-            {
-                return null;
-            }
-
-            try
-            {
-                return JsonConvert.DeserializeObject<Profile[]>(profiles);
-            }
-            catch
-            {
-                // just throw away potentially malformed settings
-                return null;
-            }
-        }
-
-
         private async void OnLaunchButtonClicked(object sender, RoutedEventArgs e)
         {
-            InfusionSettings.Default.Profiles = JsonConvert.SerializeObject(launcherViewModel.Profiles);
-            InfusionSettings.Default.SelectedProfileId = launcherViewModel.SelectedProfile.Id;
-            InfusionSettings.Default.Save();
+            ProfileRepositiory.SaveProfiles(launcherViewModel.Profiles);
+            ProfileRepositiory.SelectedProfile = launcherViewModel.SelectedProfile;
+            ProfileRepositiory.SaveSelectedProfileId(launcherViewModel.SelectedProfile.Id);
 
             var launcherOptions = launcherViewModel.SelectedProfile.LauncherOptions;
             string validationMessage;

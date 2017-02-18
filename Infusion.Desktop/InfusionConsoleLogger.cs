@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Windows.UI.Notifications;
+using Infusion.Desktop.Profiles;
 using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;
@@ -70,7 +71,8 @@ namespace Infusion.Desktop
 
         private void ToastNotification(string message)
         {
-            if (!Options.Instance.CanShowToastNotification || !Options.Instance.ConversationToastNotificationEnabled ||
+            if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification ||
+                !ProfileRepositiory.SelectedProfile.Options.ConversationToastNotificationEnabled ||
                 IsIgnoredMessage(message))
             {
                 return;
@@ -95,7 +97,7 @@ namespace Infusion.Desktop
 
         private void ToastAlertNotification(string message)
         {
-            if (!Options.Instance.CanShowToastNotification || !Options.Instance.AlertToastNotificationEnabled ||
+            if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification || !ProfileRepositiory.SelectedProfile.Options.AlertToastNotificationEnabled ||
                 IsIgnoredMessage(message))
             {
                 return;

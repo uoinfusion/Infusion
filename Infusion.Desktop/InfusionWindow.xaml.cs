@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using Infusion.Desktop.Launcher;
+using Infusion.Desktop.Profiles;
 using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;
@@ -39,6 +40,8 @@ namespace Infusion.Desktop
 
         protected override void OnClosed(EventArgs e)
         {
+            ProfileRepositiory.SaveProfile(ProfileRepositiory.SelectedProfile);
+
             if (notifyIcon != null)
             {
                 notifyIcon.Dispose();
@@ -50,7 +53,7 @@ namespace Infusion.Desktop
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == WindowState.Minimized && Options.Instance.HideWhenMinimized)
+            if (WindowState == WindowState.Minimized && ProfileRepositiory.SelectedProfile.Options.HideWhenMinimized)
                 Hide();
 
             base.OnStateChanged(e);

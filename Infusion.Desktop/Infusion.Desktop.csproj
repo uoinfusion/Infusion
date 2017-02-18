@@ -198,22 +198,18 @@
     <Compile Include="CSharpScriptEngine.cs" />
     <Compile Include="FileLogger.cs" />
     <Compile Include="InfusionConsoleLogger.cs" />
-    <Compile Include="InfusionSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>InfusionSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="InfusionWindow.xaml.cs">
       <DependentUpon>InfusionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="InterProcessCommunication.cs" />
     <Compile Include="IScriptOutput.cs" />
     <Compile Include="Launcher\LauncherViewModel.cs" />
-    <Compile Include="OptionsControl.xaml.cs">
+    <Compile Include="Profiles\OptionsControl.xaml.cs">
       <DependentUpon>OptionsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Options.cs" />
-    <Compile Include="Profile.cs" />
+    <Compile Include="Profiles\Options.cs" />
+    <Compile Include="Profiles\Profile.cs" />
+    <Compile Include="Profiles\ProfileRepositiory.cs" />
     <Compile Include="ScriptOutput.cs" />
     <Compile Include="UltimaConfiguration.cs" />
     <Page Include="ConsoleControl.xaml">
@@ -239,7 +235,7 @@
       <DependentUpon>LaunhcerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="OptionsControl.xaml">
+    <Page Include="Profiles\OptionsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -263,10 +259,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="InfusionSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>InfusionSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

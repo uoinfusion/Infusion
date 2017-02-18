@@ -44,7 +44,7 @@
                     <Button Content="New" Padding="15 0 15 0" Click="OnNewProfileButtonClick" />
                     <Button Content="Delete" Margin="10 0 0 0" Padding="15 0 15 0" Click="OnDeleteProfileButtonClick" IsEnabled="{Binding Path=CanDeleteSelectedProfile}" />
                 </StackPanel>
-                <TextBlock Grid.Column="0" Grid.Row="2" Margin="0 10 0 0">Server:</TextBlock>
+                <TextBlock Grid.Column="0" Grid.Row="2" Margin="0 10 0 0">Server address:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="2" Margin="0 10 0 5" Text="{Binding Path=SelectedProfile.LauncherOptions.ServerEndpoint}" />
                 <TextBlock Grid.Column="0" Grid.Row="3">User name:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Path=SelectedProfile.LauncherOptions.UserName}" />

@@ -1,10 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Infusion.Desktop.Properties;
-using Newtonsoft.Json;
 
-namespace Infusion.Desktop
+namespace Infusion.Desktop.Profiles
 {
     internal sealed class Options : INotifyPropertyChanged
     {
@@ -65,7 +63,6 @@ namespace Infusion.Desktop
             }
         }
 
-        public static Options Instance { get; set; } = new Options();
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Infusion.Desktop"
+        xmlns:Profiles="clr-namespace:Infusion.Desktop.Profiles"
         mc:Ignorable="d"
         Icon="pack://application:,,,/infusion.png"
         Title="Infusion" Height="550" Width="685.061">
@@ -12,7 +13,7 @@
             <local:ConsoleControl x:Name="_console" />
         </TabItem>
         <TabItem Header="Options">
-            <local:OptionsControl />
+            <Profiles:OptionsControl />
         </TabItem>
     </TabControl>
 </Window>

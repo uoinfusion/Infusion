@@ -3,10 +3,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Infusion.Desktop.Profiles;
 
 namespace Infusion.Desktop.Launcher
 {
-    public class LauncherViewModel : INotifyPropertyChanged
+    internal sealed class LauncherViewModel : INotifyPropertyChanged
     {
         private Profile selectedProfile;
         private ObservableCollection<Profile> profiles = new ObservableCollection<Profile>
@@ -53,9 +54,11 @@ namespace Infusion.Desktop.Launcher
 
         public void NewProfile()
         {
-            var profile = new Profile {Name = "new profile", Id = Guid.NewGuid().ToString()};
+            var profile = new Profile {Name = "new profile"};
             Profiles.Add(profile);
             SelectedProfile = profile;
+            
+            // ReSharper disable once ExplicitCallerInfoArgument
             OnPropertyChanged("CanDeleteSelectedProfile");
         }
 
@@ -68,13 +71,16 @@ namespace Infusion.Desktop.Launcher
                 var profileToRemove = SelectedProfile;
                 SelectedProfile = Profiles.First(x => x != profileToRemove);
                 Profiles.Remove(profileToRemove);
+                ProfileRepositiory.DeleteProfile(profileToRemove);
+
             }
+            // ReSharper disable once ExplicitCallerInfoArgument
             OnPropertyChanged("CanDeleteSelectedProfile");
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

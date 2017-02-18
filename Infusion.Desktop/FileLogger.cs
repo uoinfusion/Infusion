@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Infusion.Desktop.Profiles;
 using UltimaRX.Proxy;
 using UltimaRX.Proxy.Logging;
 
@@ -11,10 +12,10 @@ namespace Infusion.Desktop
         {
             try
             {
-                if (!Options.Instance.LogToFileEnabled)
+                if (!ProfileRepositiory.SelectedProfile.Options.LogToFileEnabled)
                     return;
 
-                string logsPath = Options.Instance.LogPath;
+                string logsPath = ProfileRepositiory.SelectedProfile.Options.LogPath;
 
                 var now = DateTime.Now;
 

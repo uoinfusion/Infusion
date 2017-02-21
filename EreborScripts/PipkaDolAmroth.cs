@@ -116,7 +116,7 @@ public static class PipkaDolAmroth
     {
         var items = Items.OfType(TypesToUnload).InContainer(Me.BackPack);
         var unloadContainer = Items.Get(UnloadContainerId);
-        MoveItems(items, unloadContainer);
+        Scripts.MoveItems(items, unloadContainer);
     }
 
     private static void OpenBank()

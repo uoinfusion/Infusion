@@ -18,8 +18,10 @@ namespace UltimaRX.Proxy.InjectionApi
         public static IEnumerable<Item> OfColor(this IEnumerable<Item> items, Color color)
             => items.Where(i => i.Color == color);
 
-        public static IEnumerable<Item> OnLayer(this IEnumerable<Item> items, Layer layer)
-            => items.Where(i => i.Layer.HasValue && i.Layer.Value == layer);
+        public static IEnumerable<Item> OnLayer(this IEnumerable<Item> items, Layer layer) =>
+            items.Where(i =>
+                i.Layer.HasValue && i.Layer.Value == layer &&
+                i.ContainerId.HasValue && i.ContainerId.Value == Injection.Me.PlayerId);
 
         public static Item First(this IEnumerable<Item> items) => items.FirstOrDefault();
 

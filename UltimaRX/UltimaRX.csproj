@@ -93,6 +93,7 @@
     <Compile Include="Packets\Client\GumpMenuSelectionRequest.cs" />
     <Compile Include="Packets\Client\PickupItemRequest.cs" />
     <Compile Include="Packets\Both\RequestWarMode.cs" />
+    <Compile Include="Packets\Client\WearItemRequest.cs" />
     <Compile Include="Packets\ModelId.cs" />
     <Compile Include="Packets\Movement.cs" />
     <Compile Include="Packets\MovementType.cs" />

@@ -45,6 +45,12 @@ namespace UltimaRX.Proxy.InjectionApi
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
         {
+            Item existingItem;
+            if (items.TryGet(packet.ItemId, out existingItem))
+            {
+                items.RemoveItem(existingItem.Id);
+            }
+
             items.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
                 packet.Color, packet.ContainerId));
         }
@@ -89,6 +95,11 @@ namespace UltimaRX.Proxy.InjectionApi
             {
                 lastItemPurgeLocation = newPosition;
             }
+        }
+
+        public void Ignore(Item item)
+        {
+            items.UpdateItem(item.Ignore());
         }
     }
 }

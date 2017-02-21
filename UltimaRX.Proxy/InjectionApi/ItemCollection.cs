@@ -22,12 +22,12 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public IEnumerator<Item> GetEnumerator()
         {
-            return items.Values.GetEnumerator();
+            return items.Values.Where(i => !i.Ignored).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return items.Values.GetEnumerator();
+            return items.Values.Where(i => !i.Ignored).GetEnumerator();
         }
 
         public bool TryGet(uint id, out Item item)

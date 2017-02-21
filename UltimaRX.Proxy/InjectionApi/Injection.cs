@@ -342,5 +342,19 @@ namespace UltimaRX.Proxy.InjectionApi
             var parser = new CommandParameterParser(parameters);
             WalkTo((ushort)parser.ParseInt(), (ushort)parser.ParseInt());
         }
+
+        public static void Wear(Item item, Layer layer)
+        {
+            DragItem(item, 1);
+
+
+            var request = new WearItemRequest(item.Id, layer, Me.PlayerId);
+            Program.SendToServer(request.RawPacket);
+        }
+
+        public static void Ignore(Item item)
+        {
+            ItemsObserver.Ignore(item);
+        }
     }
 }

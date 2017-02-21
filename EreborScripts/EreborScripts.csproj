@@ -58,7 +58,10 @@
     <Compile Include="Scripts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="configuration.csx" />
+    <None Include="common.csx" />
+    <None Include="commands.csx" />
+    <None Include="cooking.csx" />
+    <None Include="looting.csx" />
     <None Include="packages.config" />
     <None Include="pipka-dolamroth-lumberjacking.csx" />
     <None Include="main.csx" />

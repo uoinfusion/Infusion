@@ -1,8 +1,11 @@
-﻿#load "configuration.csx"
-#load "ItemTypes.cs"
-#load "Scripts.cs"
+﻿#load "ItemTypes.cs"
 #load "PipkaDolAmroth.cs"
 #load "MapRecorder.cs"
+#load "common.csx"
+#load "Scripts.cs"
+#load "cooking.csx"
+#load "looting.csx"
+#load "commands.csx"
 
 using System;
 using System.Threading;
@@ -14,5 +17,7 @@ using UltimaRX.Gumps;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 using static Scripts;
 
-Injection.CommandHandler.RegisterCommand(new Command("masskill", MassKill));
-Injection.CommandHandler.RegisterCommand(new Command("loot", Loot));
+void Start()
+{
+    Program.Start(new System.Net.IPEndPoint(System.Net.IPAddress.Parse("89.185.244.24"), 2593), 33334);
+}

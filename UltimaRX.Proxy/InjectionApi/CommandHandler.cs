@@ -22,12 +22,7 @@ namespace UltimaRX.Proxy.InjectionApi
 
         public void RegisterCommand(Command command)
         {
-            if (commands.ContainsKey(command.Name))
-            {
-                throw new InvalidOperationException($"Command {command.Name} already exists.");
-            }
-
-            commands = commands.Add(command.Name, command);
+            commands = commands.SetItem(command.Name, command);
         }
 
         public Command RegisterCommand(string name, Action<string> commandAction)

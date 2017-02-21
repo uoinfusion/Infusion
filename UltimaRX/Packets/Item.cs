@@ -95,5 +95,15 @@ namespace UltimaRX.Packets
 
             return updatedItem;
         }
+
+        public Item Ignore()
+        {
+            var ignoredItem = Duplicate();
+            ignoredItem.Ignored = true;
+
+            return ignoredItem;
+        }
+
+        public bool Ignored { get; private set; }
     }
 }

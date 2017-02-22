@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using UltimaRX.Packets;
+using UltimaRX.Packets.Both;
 using UltimaRX.Packets.Client;
 
 namespace UltimaRX.Proxy.InjectionApi
@@ -133,6 +136,13 @@ namespace UltimaRX.Proxy.InjectionApi
         private void OnLocationChanged(Location3D e)
         {
             LocationChanged?.Invoke(this, e);
+        }
+
+        public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } = ImmutableDictionary<Skill, SkillValue>.Empty;
+
+        public void UpdateSkills(IEnumerable<SkillValue> skillValues)
+        {
+            Skills = Skills.SetItems(skillValues.Select(x => new KeyValuePair<Skill, SkillValue>(x.Skill, x)));
         }
     }
 }

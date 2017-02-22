@@ -92,7 +92,7 @@ public static class ItemTypes
     public static readonly ModelId Torso8 = (ModelId)0x1CE4;
 
     public static readonly ModelId[] Torsos = new ModelId[] {Torso1, Torso2, Torso3, Torso4, Torso5, Torso6, Torso7, Torso8,
-        (ModelId)0x1DA3, (ModelId)0x1DA1, (ModelId)0x1D9F, (ModelId) 0x1DA0, (ModelId)0x1CE7, (ModelId)0x1CE2, (ModelId)0x1CEC, (ModelId)0x1CE8, (ModelId)0x1CE0, (ModelId)0x1CDD, (ModelId)0x1CE5, (ModelId)0x1CE1 };
+        (ModelId)0x1DA3, (ModelId)0x1DA1, (ModelId)0x1D9F, (ModelId) 0x1DA0, (ModelId)0x1CE7, (ModelId)0x1CE2, (ModelId)0x1CEC, (ModelId)0x1CE8, (ModelId)0x1CE0, (ModelId)0x1CDD, (ModelId)0x1CE5, (ModelId)0x1CE1, (ModelId)0x1DA4, (ModelId)0x1CED };
 
     public static readonly ModelId Torch = (ModelId) 0x0F64;
 }

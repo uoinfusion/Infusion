@@ -87,6 +87,7 @@
     <Compile Include="PacketParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
     <Compile Include="Packets\Both\CharacterMoveAckPacket.cs" />
+    <Compile Include="Packets\Both\SendSkillsPacket.cs" />
     <Compile Include="Packets\Client\AttackRequest.cs" />
     <Compile Include="Packets\Client\DoubleClickRequest.cs" />
     <Compile Include="Packets\Client\DropItemRequest.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Packets\Server\UpdateCurrentStaminaPacket.cs" />
     <Compile Include="Packets\Server\UpdatePlayerPacket.cs" />
     <Compile Include="Packets\Server\WornItemPacket.cs" />
+    <Compile Include="Packets\Skill.cs" />
     <Compile Include="Packets\SpeechType.cs" />
     <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />

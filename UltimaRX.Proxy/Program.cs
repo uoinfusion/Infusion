@@ -294,6 +294,10 @@ namespace UltimaRX.Proxy
             {
                 ServerPacketHandler.Publish<StatusBarInfoPacket>(rawPacket);
             }
+            else if (rawPacket.Id == PacketDefinitions.SendSkills.Id)
+            {
+                ServerPacketHandler.Publish<SendSkillsPacket>(rawPacket);
+            }
 
             return rawPacket;
         }

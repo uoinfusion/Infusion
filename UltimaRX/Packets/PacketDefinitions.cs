@@ -474,8 +474,8 @@ namespace UltimaRX.Packets
         public static readonly PacketDefinition RemoveGroup = new PacketDefinition(0x39,
             new StaticPacketLength(9), "RemoveGroup");
 
-        public static readonly PacketDefinition SendSkills = new PacketDefinition(0x3A,
-            new VariablePacketLength(), "SendSkills");
+        public static readonly PacketDefinition<SendSkillsPacket> SendSkills = new PacketDefinition<SendSkillsPacket>(0x3A,
+            new VariablePacketLength(), "SendSkills", (packet) => new SendSkillsPacket());
 
         public static readonly PacketDefinition MapPacket = new PacketDefinition(0x56,
             new StaticPacketLength(11), "MapPacket");

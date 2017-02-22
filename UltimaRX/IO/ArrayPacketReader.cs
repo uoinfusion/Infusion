@@ -158,5 +158,7 @@ namespace UltimaRX.IO
             }
             return false;
         }
+
+        public Skill ReadSkill() => (Skill)ReadUShort();
     }
 }

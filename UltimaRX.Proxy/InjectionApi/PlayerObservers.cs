@@ -26,6 +26,27 @@ namespace UltimaRX.Proxy.InjectionApi
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentStamina, HandleUpdateCurrentStaminaPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.SendSkills, HandleSendSkillsPacket);
+        }
+
+        private void HandleSendSkillsPacket(SendSkillsPacket packet)
+        {
+            if (packet.Values.Length == 1)
+            {
+                SkillValue currentSkillValue;
+                if (player.Skills.TryGetValue(packet.Values[0].Skill, out currentSkillValue))
+                {
+                    if (currentSkillValue.Value < packet.Values[0].Value)
+                    {
+                        var delta = packet.Values[0].Percentage - currentSkillValue.Percentage;
+                        Program.Console.Info(
+                            $"Skill {packet.Values[0].Skill} increased by {delta:F1}, currently it is {packet.Values[0].Percentage:F1} %");
+                    }
+                }
+            }
+
+            if (packet.Values.Length > 1)
+                player.UpdateSkills(packet.Values);
         }
 
         private void HandleStatusBarInfoPacket(StatusBarInfoPacket packet)

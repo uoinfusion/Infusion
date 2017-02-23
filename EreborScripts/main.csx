@@ -1,9 +1,8 @@
 ﻿#load "ItemTypes.cs"
-#load "common.csx"
 #load "Scripts.cs"
+#load "common.csx"
 #load "cooking.csx"
 #load "looting.csx"
-#load "PipkaDolAmroth.cs"
 #load "MapRecorder.cs"
 #load "commands.csx"
 
@@ -17,7 +16,7 @@ using UltimaRX.Gumps;
 using static UltimaRX.Proxy.InjectionApi.Injection;
 using static Scripts;
 
-void Start()
-{
-    Program.Start(new System.Net.IPEndPoint(System.Net.IPAddress.Parse("89.185.244.24"), 2593), 33334);
-}
+//void Start()
+//{
+//    Program.Start(new System.Net.IPEndPoint(System.Net.IPAddress.Parse("89.185.244.24"), 2593), 33334);
+//}

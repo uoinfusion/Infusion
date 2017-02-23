@@ -40,13 +40,12 @@ namespace UltimaRX.Proxy.InjectionApi
                     {
                         var delta = packet.Values[0].Percentage - currentSkillValue.Percentage;
                         Program.Console.Info(
-                            $"Skill {packet.Values[0].Skill} increased by {delta:F1}, currently it is {packet.Values[0].Percentage:F1} %");
+                            $"Skill {packet.Values[0].Skill} increased by {delta:F1} %, currently it is {packet.Values[0].Percentage:F1} %");
                     }
                 }
             }
 
-            if (packet.Values.Length > 1)
-                player.UpdateSkills(packet.Values);
+            player.UpdateSkills(packet.Values);
         }
 
         private void HandleStatusBarInfoPacket(StatusBarInfoPacket packet)

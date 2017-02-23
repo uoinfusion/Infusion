@@ -15,19 +15,20 @@ namespace Infusion.Desktop.Launcher
             return Task.Run(() =>
             {
                 var serverEndPoint = options.ResolveServerEndpoint().Result;
+                ushort proxyPort = options.ResolveProxyPort();
 
                 var connectedToServerEvent = new AutoResetEvent(false);
                 Program.ConnectedToServer += (sender, args) =>
                 {
                     connectedToServerEvent.Set();
                 };
-                var proxyTask = Program.Start(serverEndPoint, options.ProxyPort);
+                var proxyTask = Program.Start(serverEndPoint, proxyPort);
                 if (!connectedToServerEvent.WaitOne(TimeSpan.FromSeconds(30)))
                 {
                     throw new TimeoutException("Server connection timeout.");
                 }
 
-                LoginConfiguration.SetServerAddress("127.0.0.1", options.ProxyPort);
+                LoginConfiguration.SetServerAddress("127.0.0.1", proxyPort);
                 if (!string.IsNullOrEmpty(options.UserName))
                     UltimaConfiguration.SetUserName(options.UserName);
                 if (!string.IsNullOrEmpty(options.Password))

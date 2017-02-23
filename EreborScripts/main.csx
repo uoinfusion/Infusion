@@ -1,10 +1,10 @@
 ﻿#load "ItemTypes.cs"
-#load "PipkaDolAmroth.cs"
-#load "MapRecorder.cs"
 #load "common.csx"
 #load "Scripts.cs"
 #load "cooking.csx"
 #load "looting.csx"
+#load "PipkaDolAmroth.cs"
+#load "MapRecorder.cs"
 #load "commands.csx"
 
 using System;

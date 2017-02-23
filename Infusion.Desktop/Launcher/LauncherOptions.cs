@@ -12,7 +12,7 @@ namespace Infusion.Desktop.Launcher
         public string ServerEndpoint { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public ushort ProxyPort { get; set; } = 33333;
+        public ushort ProxyPort { get; set; } = 0;
         public string InitialScriptFileName { get; set; }
 
         public string EncryptPassword()
@@ -60,6 +60,19 @@ namespace Infusion.Desktop.Launcher
 
             validationMessage = string.Empty;
             return true;
+        }
+
+        public ushort ResolveProxyPort()
+        {
+            if (ProxyPort > 0)
+                return ProxyPort;
+
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+
+            return (ushort)port;
         }
     }
 }

@@ -84,7 +84,8 @@
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
-    <Compile Include="PacketParser.cs" />
+    <Compile Include="Parsers\OutputLogParser.cs" />
+    <Compile Include="Parsers\PacketLogParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
     <Compile Include="Packets\Both\CharacterMoveAckPacket.cs" />
     <Compile Include="Packets\Both\SendSkillsPacket.cs" />
@@ -102,6 +103,7 @@
     <Compile Include="Packets\Client\TargetLocationRequest.cs" />
     <Compile Include="Packets\Layer.cs" />
     <Compile Include="Packets\Notoriety.cs" />
+    <Compile Include="Packets\PacketMaterializationException.cs" />
     <Compile Include="Packets\Parsers\PacketLogEntry.cs" />
     <Compile Include="Packets\Parsers\PacketLogEntryEnumerableExtensions.cs" />
     <Compile Include="Packets\Parsers\PacketLogParser.cs" />

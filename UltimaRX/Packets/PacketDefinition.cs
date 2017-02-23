@@ -50,8 +50,15 @@ namespace UltimaRX.Packets
 
             var materializedPacket = MaterializeImpl(rawPacket);
 
-            materializedPacket.Deserialize(rawPacket);
+            try
+            {
+                materializedPacket.Deserialize(rawPacket);
 
+            }
+            catch (Exception e)
+            {
+                throw new PacketMaterializationException($"Packet id = {rawPacket.Id}", e);
+            }
             return materializedPacket;
         }
 

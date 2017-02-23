@@ -45,14 +45,12 @@
         Swordsmanship = 41,
         MaceFighting = 42,
         Fencing = 43,
-        //Wrestling = 44,
-        Lumberjacking = 44,
+        Wrestling = 44,
+        Lumberjacking = 45,
         Mining = 46,
         Meditation = 47,
         Stealth = 48,
         RemoveTrap = 49,
         Necromancy = 50,
-        Focus = 51,
-        Chivalry = 52
     }
 }

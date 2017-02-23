@@ -21,19 +21,35 @@ namespace UltimaRX.Packets.Both
 
             var values = new List<SkillValue>();
 
-            var skillValue = ReadSkillValue(reader);
+            ushort skill;
+            ushort value;
+            ushort unmodifiedValue;
+
             switch (type)
             {
                 case 0x00:
-                    while (skillValue.HasValue)
+                    skill = reader.ReadUShort();
+
+                    while (skill != 0)
                     {
-                        values.Add(skillValue.Value);
-                        skillValue = ReadSkillValue(reader);
+                        value = reader.ReadUShort();
+                        unmodifiedValue = reader.ReadUShort();
+                        reader.Skip(1); // skill lock
+
+                        values.Add(new SkillValue((Skill)skill, value, unmodifiedValue));
+
+                        skill = reader.ReadUShort();
                     }
                     break;
                 case 0xFF:
-                    if (skillValue.HasValue)
-                        values.Add(skillValue.Value);
+                    skill = reader.ReadUShort();
+                    if (skill == 0)
+                        throw new NotImplementedException($"Unexpected skill = 0 for single skill update.");
+
+                    value = reader.ReadUShort();
+                    unmodifiedValue = reader.ReadUShort();
+                    reader.Skip(1); // skill lock
+                    values.Add(new SkillValue((Skill)(skill + 1), value, unmodifiedValue));
                     break;
                 default:
                     throw new NotImplementedException($"Unknown type {type} of SendSkills packet.");
@@ -41,19 +57,6 @@ namespace UltimaRX.Packets.Both
 
 
             Values = values.ToArray();
-        }
-
-        private SkillValue? ReadSkillValue(ArrayPacketReader reader)
-        {
-            var skill = reader.ReadSkill();
-            if (skill == 0)
-                return null;
-
-            ushort value = reader.ReadUShort();
-            ushort unmodifiedValue = reader.ReadUShort();
-            reader.Skip(1); // skill lock
-
-            return new SkillValue(skill, value, unmodifiedValue);
         }
 
         private Packet rawPacket;

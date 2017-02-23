@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using UltimaRX.IO;
 using UltimaRX.Packets;
 
-namespace UltimaRX
+namespace UltimaRX.Parsers
 {
-    public static class PacketParser
+    public static class PacketLogParser
     {
         public static IEnumerable<Packet> ParseBatch(IPullStream inputStream)
         {

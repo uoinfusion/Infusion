@@ -2,6 +2,7 @@
 using System.IO;
 using UltimaRX.IO;
 using UltimaRX.Packets;
+using UltimaRX.Parsers;
 
 namespace UltimaRX
 {
@@ -49,7 +50,7 @@ namespace UltimaRX
                     break;
             }
 
-            foreach (var packet in PacketParser.ParseBatch(diagnosticPullStream))
+            foreach (var packet in PacketLogParser.ParseBatch(diagnosticPullStream))
             {
                 OnPacketReceived(packet);
                 switch (Status)

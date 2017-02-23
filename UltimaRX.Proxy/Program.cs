@@ -152,6 +152,13 @@ namespace UltimaRX.Proxy
                     }
                 }
             }
+            catch (PacketMaterializationException ex)
+            {
+                Console.Error(serverDiagnosticPullStream.Flush());
+                Console.Error(ex.ToString());
+                DumpPacketLog();
+                throw;
+            }
             catch (Exception ex)
             {
                 Console.Error(serverDiagnosticPullStream.Flush());
@@ -206,10 +213,16 @@ namespace UltimaRX.Proxy
 
                 rawPacket = handledPacket.Value;
             }
+            catch (PacketMaterializationException ex)
+            {
+                // just log exception and continue, do not interrupt proxy
+                Console.Error(ex.ToString());
+                DumpPacketLog();
+            }
             catch (Exception ex)
             {
-                Console.Error(ex.ToString());
                 // just log exception and continue, do not interrupt proxy
+                Console.Error(ex.ToString());
             }
 
             SendToClient(rawPacket);
@@ -401,9 +414,13 @@ namespace UltimaRX.Proxy
                 }
 
             }
+            catch (PacketMaterializationException ex)
+            {
+                Console.Error(ex.ToString());
+                DumpPacketLog();
+            }
             catch (Exception ex)
             {
-                // just ignore exception
                 Print(ex.ToString());
             }
 

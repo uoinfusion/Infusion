@@ -152,17 +152,11 @@ namespace UltimaRX.Proxy
                     }
                 }
             }
-            catch (PacketMaterializationException ex)
-            {
-                Console.Error(serverDiagnosticPullStream.Flush());
-                Console.Error(ex.ToString());
-                DumpPacketLog();
-                throw;
-            }
             catch (Exception ex)
             {
                 Console.Error(serverDiagnosticPullStream.Flush());
                 Console.Error(ex.ToString());
+                DumpPacketLog();
                 throw;
             }
         }
@@ -338,7 +332,17 @@ namespace UltimaRX.Proxy
 
                     if (ServerStream.DataAvailable)
                     {
-                        serverConnection.Receive(new NetworkStreamToPullStreamAdapter(ServerStream));
+                        try
+                        {
+                            serverConnection.Receive(new NetworkStreamToPullStreamAdapter(ServerStream));
+
+                        }
+                        catch (EndOfStreamException ex)
+                        {
+                            Console.Error(ex.ToString());
+                            DumpPacketLog();
+                            // just swallow this exception, wait for the next batch
+                        }
                     }
                     Thread.Yield();
                 }
@@ -347,6 +351,7 @@ namespace UltimaRX.Proxy
             {
                 Console.Error(serverDiagnosticPullStream.Flush());
                 Console.Error(ex.ToString());
+                DumpPacketLog();
                 throw;
             }
         }

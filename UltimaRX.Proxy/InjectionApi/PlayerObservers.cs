@@ -105,7 +105,7 @@ namespace UltimaRX.Proxy.InjectionApi
             player.PlayerId = packet.PlayerId;
             player.Location = packet.Location;
             player.PredictedLocation = packet.Location;
-            player.Movement = new Movement(packet.Direction, MovementType.Walk);
+            player.Movement = packet.Movement;
             player.PredictedMovement = player.Movement;
         }
 

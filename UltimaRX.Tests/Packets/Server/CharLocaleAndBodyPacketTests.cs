@@ -44,7 +44,7 @@ namespace UltimaRX.Tests.Packets.Server
             packet.Location.X.Should().Be(0x1297);
             packet.Location.Y.Should().Be(0x0546);
             packet.Location.Z.Should().Be(0x0A);
-            packet.Direction.Should().Be(Direction.Southeast);
+            packet.Movement.Should().Be(new Movement(Direction.Southeast, MovementType.Walk));
         }
     }
 }

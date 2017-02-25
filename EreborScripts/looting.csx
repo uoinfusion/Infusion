@@ -75,6 +75,17 @@ void RipAndLootNearest()
     }
 }
 
+void LootNearest()
+{
+    var corpse = Items.OfType(ItemTypes.Corpse).MaxDistance(Me.Location, 3).OrderByDistance(Me.Location).First();
+
+    if (corpse != null)
+    {
+        Loot(corpse);
+        Ignore(corpse);
+    }
+}
+
 void Loot()
 {
     var container = ItemInfo();
@@ -132,4 +143,5 @@ void Rip(Item container)
     }
 }
 
-Injection.CommandHandler.RegisterCommand(new Command("loot", RipAndLootNearest));
+Injection.CommandHandler.RegisterCommand(new Command("ripandloot", RipAndLootNearest));
+Injection.CommandHandler.RegisterCommand(new Command("loot", LootNearest));

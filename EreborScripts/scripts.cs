@@ -602,7 +602,7 @@ public static class Scripts
     public static void OpenNearestDoor()
     {
         var nearestDoor =
-            Items.OfType(ItemTypes.ClosedDoors).MaxDistance(Me.Location, 1).OrderByDistance(Me.Location).First();
+            Items.OfType(ItemTypes.ClosedDoors).MaxDistance(Me.Location, 2).OrderByDistance(Me.Location).First();
         if (nearestDoor != null)
             Use(nearestDoor);
         else
@@ -612,7 +612,7 @@ public static class Scripts
     public static void CloseNearestDoor()
     {
         var nearestDoor =
-            Items.OfType(ItemTypes.OpenDoors).MaxDistance(Me.Location, 1).OrderByDistance(Me.Location).First();
+            Items.OfType(ItemTypes.OpenDoors).MaxDistance(Me.Location, 2).OrderByDistance(Me.Location).First();
         if (nearestDoor != null)
             Use(nearestDoor);
         else

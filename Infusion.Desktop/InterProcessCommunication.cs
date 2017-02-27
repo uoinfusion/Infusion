@@ -2,7 +2,7 @@
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
-using UltimaRX.Proxy.InjectionApi;
+using Infusion.Proxy.InjectionApi;
 
 namespace Infusion.Desktop
 {

@@ -1,7 +1,7 @@
 ﻿using System;
-using UltimaRX.IO;
+using Infusion.IO;
 
-namespace UltimaRX.Packets
+namespace Infusion.Packets
 {
     // TODO: move materialization from packet to a materializer so it is possible to implement different protocol versions (two versions of the same packet)
     public class PacketDefinition<TPacket> : PacketDefinition

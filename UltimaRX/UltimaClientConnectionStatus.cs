@@ -1,4 +1,4 @@
-﻿namespace UltimaRX
+﻿namespace Infusion
 {
     public enum UltimaClientConnectionStatus
     {

@@ -1,7 +1,6 @@
 ﻿using System.IO;
-using UltimaRX.Packets;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public class StreamPacketReader : IPacketReader
     {

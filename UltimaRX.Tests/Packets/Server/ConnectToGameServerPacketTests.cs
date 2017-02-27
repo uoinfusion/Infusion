@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
+using Infusion.Packets.Server;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets.Server;
 
-namespace UltimaRX.Tests.Packets.Server
+namespace Infusion.Tests.Packets.Server
 {
     [TestClass]
     public class ConnectToGameServerPacketTests

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UltimaRX.Packets.Server
+namespace Infusion.Packets.Server
 {
     public class MovePlayerPacket : MaterializedPacket
     {

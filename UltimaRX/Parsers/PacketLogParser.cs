@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using UltimaRX.IO;
-using UltimaRX.Packets;
+using Infusion.IO;
+using Infusion.Packets;
 
-namespace UltimaRX.Parsers
+namespace Infusion.Parsers
 {
     public static class PacketLogParser
     {

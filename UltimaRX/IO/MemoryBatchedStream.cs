@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public class MemoryBatchedStream : IPullStream
     {

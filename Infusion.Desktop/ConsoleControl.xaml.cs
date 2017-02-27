@@ -12,11 +12,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Infusion.Desktop.Launcher;
+using Infusion.Proxy;
+using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.Logging;
 using RoslynPad;
 using RoslynPad.UI;
-using UltimaRX.Proxy;
-using UltimaRX.Proxy.InjectionApi;
-using UltimaRX.Proxy.Logging;
 
 namespace Infusion.Desktop
 {

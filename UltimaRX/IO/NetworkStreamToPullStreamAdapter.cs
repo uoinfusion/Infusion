@@ -1,6 +1,6 @@
 using System.Net.Sockets;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public class NetworkStreamToPullStreamAdapter : IPullStream
     {

@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using Infusion.Desktop.Profiles;
-using UltimaRX.Proxy;
-using UltimaRX.Proxy.Logging;
+using Infusion.Proxy;
+using Infusion.Proxy.Logging;
 
 namespace Infusion.Desktop
 {

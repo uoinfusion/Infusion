@@ -1,6 +1,6 @@
 using System;
 
-namespace UltimaRX.Packets
+namespace Infusion.Packets
 {
     public struct Location3D
     {

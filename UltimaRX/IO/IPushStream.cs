@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public interface IPushStream : IDisposable
     {

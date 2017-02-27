@@ -1,7 +1,7 @@
-﻿using UltimaRX.IO;
-using UltimaRX.Packets.Client;
+﻿using Infusion.IO;
+using Infusion.Packets.Client;
 
-namespace UltimaRX.Packets.Both
+namespace Infusion.Packets.Both
 {
     public class TargetCursorPacket : MaterializedPacket
     {

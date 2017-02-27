@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX", "UltimaRX\UltimaRX.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion", "UltimaRX\Infusion.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Tests", "UltimaRX.Tests\UltimaRX.Tests.csproj", "{F6658DAD-8158-4105-A9F4-AEDF23748FAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Tests", "UltimaRX.Tests\Infusion.Tests.csproj", "{F6658DAD-8158-4105-A9F4-AEDF23748FAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Proxy", "UltimaRX.Proxy\UltimaRX.Proxy.csproj", "{5E814151-7F4C-4D71-BCB2-97FD303F04A8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Proxy", "UltimaRX.Proxy\Infusion.Proxy.csproj", "{5E814151-7F4C-4D71-BCB2-97FD303F04A8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EreborScripts", "EreborScripts\EreborScripts.csproj", "{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UltimaRX.Proxy.Tests", "UltimaRX.Proxy.Tests\UltimaRX.Proxy.Tests.csproj", "{DFCE9C0F-0E66-4637-BAE9-0EE4D652EA19}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Proxy.Tests", "UltimaRX.Proxy.Tests\Infusion.Proxy.Tests.csproj", "{DFCE9C0F-0E66-4637-BAE9-0EE4D652EA19}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ultima", "UltimaSdk\Ultima.csproj", "{5D66ACE6-B2A4-400F-B5A5-24525959AC5C}"
 EndProject

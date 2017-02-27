@@ -6,8 +6,8 @@
     <ProjectGuid>{DFCE9C0F-0E66-4637-BAE9-0EE4D652EA19}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UltimaRX.Proxy.Tests</RootNamespace>
-    <AssemblyName>UltimaRX.Proxy.Tests</AssemblyName>
+    <RootNamespace>Infusion.Proxy.Tests</RootNamespace>
+    <AssemblyName>Infusion.Proxy.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -66,9 +66,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX.Proxy\UltimaRX.Proxy.csproj">
+    <ProjectReference Include="..\UltimaRX.Proxy\Infusion.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
-      <Name>UltimaRX.Proxy</Name>
+      <Name>Infusion.Proxy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

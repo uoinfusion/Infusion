@@ -67,13 +67,13 @@
     <None Include="main.csx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX.Proxy\UltimaRX.Proxy.csproj">
+    <ProjectReference Include="..\UltimaRX.Proxy\Infusion.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
-      <Name>UltimaRX.Proxy</Name>
+      <Name>Infusion.Proxy</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UltimaRX\UltimaRX.csproj">
+    <ProjectReference Include="..\UltimaRX\Infusion.csproj">
       <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
-      <Name>UltimaRX</Name>
+      <Name>Infusion</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

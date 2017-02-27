@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
+using Infusion.Packets.Both;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets.Both;
 
-namespace UltimaRX.Tests.Packets.Both
+namespace Infusion.Tests.Packets.Both
 {
     [TestClass]
     public class CharacterMoveAckPacketTests

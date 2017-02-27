@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UltimaRX.Proxy.Logging
+namespace Infusion.Proxy.Logging
 {
     internal sealed class ConsoleLogger : ILogger
     {

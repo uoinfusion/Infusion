@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UltimaRX.IO;
+﻿using Infusion.IO;
 
-namespace UltimaRX.Packets.Client
+namespace Infusion.Packets.Client
 {
     public class DropItemRequest
     {

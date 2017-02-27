@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Server;
+﻿using Infusion.Packets;
+using Infusion.Packets.Server;
 
-namespace UltimaRX.Proxy.InjectionApi
+namespace Infusion.Proxy.InjectionApi
 {
     internal class JournalObservers
     {

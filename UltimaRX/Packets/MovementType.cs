@@ -1,4 +1,4 @@
-﻿namespace UltimaRX.Packets
+﻿namespace Infusion.Packets
 {
     public enum MovementType
     {

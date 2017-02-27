@@ -1,4 +1,4 @@
-﻿namespace UltimaRX.Packets.Client
+﻿namespace Infusion.Packets.Client
 {
     public class MoveRequest : MaterializedPacket
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using UltimaRX.IO;
-using UltimaRX.Packets;
-using UltimaRX.Parsers;
+using Infusion.IO;
+using Infusion.Packets;
+using Infusion.Parsers;
 
-namespace UltimaRX
+namespace Infusion
 {
     public class UltimaClientConnection
     {

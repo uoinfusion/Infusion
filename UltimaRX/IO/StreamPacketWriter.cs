@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public class StreamPacketWriter
     {

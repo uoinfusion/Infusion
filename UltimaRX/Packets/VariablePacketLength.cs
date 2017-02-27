@@ -1,6 +1,6 @@
-﻿using UltimaRX.IO;
+﻿using Infusion.IO;
 
-namespace UltimaRX.Packets
+namespace Infusion.Packets
 {
     public class VariablePacketLength : PacketLength
     {

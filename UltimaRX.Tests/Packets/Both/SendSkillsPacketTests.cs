@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using FluentAssertions;
+using Infusion.Packets;
+using Infusion.Packets.Both;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
 
-namespace UltimaRX.Tests.Packets.Both
+namespace Infusion.Tests.Packets.Both
 {
     [TestClass]
     public class SendSkillsPacketTests

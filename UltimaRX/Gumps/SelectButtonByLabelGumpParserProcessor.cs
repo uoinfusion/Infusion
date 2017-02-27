@@ -1,6 +1,6 @@
 using System;
 
-namespace UltimaRX.Gumps
+namespace Infusion.Gumps
 {
     public class SelectButtonByLabelGumpParserProcessor : IGumpParserProcessor
     {

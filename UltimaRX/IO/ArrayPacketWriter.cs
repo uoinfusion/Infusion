@@ -1,7 +1,7 @@
 ﻿using System;
-using UltimaRX.Packets;
+using Infusion.Packets;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public class ArrayPacketWriter
     {

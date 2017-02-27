@@ -1,10 +1,9 @@
 ﻿using System.IO;
-using System.Linq;
 using FluentAssertions;
+using Infusion.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.IO;
 
-namespace UltimaRX.Tests.IO
+namespace Infusion.Tests.IO
 {
     [TestClass]
     public class HuffmanStreamTests

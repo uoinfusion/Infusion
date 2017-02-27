@@ -1,6 +1,6 @@
-﻿using UltimaRX.IO;
+﻿using Infusion.IO;
 
-namespace UltimaRX.Packets.Both
+namespace Infusion.Packets.Both
 {
     public class RequestWarMode
     {

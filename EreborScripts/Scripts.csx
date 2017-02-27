@@ -4,11 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UltimaRX.Gumps;
-using UltimaRX.Packets;
-using UltimaRX.Proxy;
-using UltimaRX.Proxy.InjectionApi;
-using static UltimaRX.Proxy.InjectionApi.Injection;
+using Infusion.Gumps;
+using Infusion.Packets;
+using Infusion.Proxy;
+using Infusion.Proxy.InjectionApi;
+using static Infusion.Proxy.InjectionApi.Injection;
 
 public static class Scripts
 {

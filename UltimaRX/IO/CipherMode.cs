@@ -1,4 +1,4 @@
-﻿namespace UltimaRX.IO
+﻿namespace Infusion.IO
 {
     internal enum CipherMode
     {

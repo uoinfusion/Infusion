@@ -1,4 +1,4 @@
-﻿namespace UltimaRX.Proxy.Logging
+﻿namespace Infusion.Proxy.Logging
 {
     public interface ILogger
     {

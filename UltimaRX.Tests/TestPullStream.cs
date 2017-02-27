@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using UltimaRX.IO;
+using Infusion.IO;
 
-namespace UltimaRX.Tests
+namespace Infusion.Tests
 {
     public class TestPullStream : IPullStream
     {

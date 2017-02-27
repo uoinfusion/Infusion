@@ -1,8 +1,8 @@
 ﻿using System;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Client;
+using Infusion.Packets;
+using Infusion.Packets.Client;
 
-namespace UltimaRX.Gumps
+namespace Infusion.Gumps
 {
     internal sealed class TriggerGumpResponse : GumpResponse
     {

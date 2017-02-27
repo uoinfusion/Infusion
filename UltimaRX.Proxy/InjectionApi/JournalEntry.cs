@@ -1,7 +1,7 @@
 ﻿using System;
-using UltimaRX.Packets;
+using Infusion.Packets;
 
-namespace UltimaRX.Proxy.InjectionApi
+namespace Infusion.Proxy.InjectionApi
 {
     public class JournalEntry
     {

@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UltimaRX.Proxy.InjectionApi
+namespace Infusion.Proxy.InjectionApi
 {
     public class Script
     {

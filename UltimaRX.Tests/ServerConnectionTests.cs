@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
+using Infusion.IO;
+using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.IO;
-using UltimaRX.Packets;
 
-namespace UltimaRX.Tests
+namespace Infusion.Tests
 {
     [TestClass]
     public class ServerConnectionTests

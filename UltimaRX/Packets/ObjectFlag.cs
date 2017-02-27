@@ -1,6 +1,6 @@
 using System;
 
-namespace UltimaRX.Packets
+namespace Infusion.Packets
 {
     [Flags]
     public enum ObjectFlag : byte

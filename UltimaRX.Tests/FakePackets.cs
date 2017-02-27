@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using UltimaRX.IO;
-using UltimaRX.Packets;
+using Infusion.IO;
+using Infusion.Packets;
 
-namespace UltimaRX.Tests
+namespace Infusion.Tests
 {
     public static class FakePackets
     {

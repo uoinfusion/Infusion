@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using UltimaRX.IO;
+using Infusion.IO;
 
-namespace UltimaRX.Packets.Server
+namespace Infusion.Packets.Server
 {
     public sealed class AddMultipleItemsInContainerPacket : MaterializedPacket
     {

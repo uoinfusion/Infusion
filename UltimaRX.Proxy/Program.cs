@@ -5,20 +5,20 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using UltimaRX.IO;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
-using UltimaRX.Packets.Client;
-using UltimaRX.Packets.Parsers;
-using UltimaRX.Packets.Server;
-using UltimaRX.Proxy.InjectionApi;
-using UltimaRX.Proxy.Logging;
+using Infusion.IO;
+using Infusion.Packets;
+using Infusion.Packets.Both;
+using Infusion.Packets.Client;
+using Infusion.Packets.Parsers;
+using Infusion.Packets.Server;
+using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.Logging;
 
 // TODO: lumberjacking skill increase
 //12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
 //0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
 
-namespace UltimaRX.Proxy
+namespace Infusion.Proxy
 {
     public static class Program
     {

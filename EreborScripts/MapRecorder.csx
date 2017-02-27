@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
-using UltimaRX.Packets.Client;
-using UltimaRX.Proxy;
-using UltimaRX.Proxy.InjectionApi;
-using static UltimaRX.Proxy.InjectionApi.Injection;
+using Infusion.Packets;
+using Infusion.Packets.Both;
+using Infusion.Packets.Client;
+using Infusion.Proxy;
+using Infusion.Proxy.InjectionApi;
+using static Infusion.Proxy.InjectionApi.Injection;
 
 public class MapRecorder : IDisposable
 {

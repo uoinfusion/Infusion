@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Infusion.Packets.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets.Client;
 
-namespace UltimaRX.Tests.Packets
+namespace Infusion.Tests.Packets
 {
     [TestClass]
     public class SpeechRequestTests

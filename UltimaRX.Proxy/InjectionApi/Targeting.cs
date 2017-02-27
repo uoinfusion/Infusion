@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
-using UltimaRX.Packets.Client;
+using Infusion.Packets;
+using Infusion.Packets.Both;
+using Infusion.Packets.Client;
 
-namespace UltimaRX.Proxy.InjectionApi
+namespace Infusion.Proxy.InjectionApi
 {
     internal sealed class Targeting
     {

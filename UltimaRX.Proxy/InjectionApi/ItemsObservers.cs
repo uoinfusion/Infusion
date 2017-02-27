@@ -1,7 +1,7 @@
-﻿using UltimaRX.Packets;
-using UltimaRX.Packets.Server;
+﻿using Infusion.Packets;
+using Infusion.Packets.Server;
 
-namespace UltimaRX.Proxy.InjectionApi
+namespace Infusion.Proxy.InjectionApi
 {
     internal class ItemsObservers
     {

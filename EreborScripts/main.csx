@@ -8,12 +8,12 @@
 
 using System;
 using System.Threading;
-using UltimaRX.Proxy;
-using UltimaRX.Packets;
-using UltimaRX.Proxy.InjectionApi;
-using UltimaRX.Packets.Parsers;
-using UltimaRX.Gumps;
-using static UltimaRX.Proxy.InjectionApi.Injection;
+using Infusion.Proxy;
+using Infusion.Packets;
+using Infusion.Proxy.InjectionApi;
+using Infusion.Packets.Parsers;
+using Infusion.Gumps;
+using static Infusion.Proxy.InjectionApi.Injection;
 using static Scripts;
 
 //void Start()

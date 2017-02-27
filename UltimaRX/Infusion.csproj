@@ -7,8 +7,8 @@
     <ProjectGuid>{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UltimaRX</RootNamespace>
-    <AssemblyName>UltimaRX</AssemblyName>
+    <RootNamespace>Infusion</RootNamespace>
+    <AssemblyName>Infusion</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

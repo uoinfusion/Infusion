@@ -1,6 +1,6 @@
-﻿using UltimaRX.IO;
+﻿using Infusion.IO;
 
-namespace UltimaRX.Packets.Client
+namespace Infusion.Packets.Client
 {
     public class AttackRequest
     {

@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
-using UltimaRX.IO;
+﻿using System.IO;
+using Infusion.IO;
 
-namespace UltimaRX.Packets.Client
+namespace Infusion.Packets.Client
 {
     public class SpeechRequest : MaterializedPacket
     {

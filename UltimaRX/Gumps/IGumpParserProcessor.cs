@@ -1,4 +1,4 @@
-namespace UltimaRX.Gumps
+namespace Infusion.Gumps
 {
     public interface IGumpParserProcessor
     {

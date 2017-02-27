@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace UltimaRX.Packets.Parsers
+namespace Infusion.Packets.Parsers
 {
     public class PacketLogEntry
     {

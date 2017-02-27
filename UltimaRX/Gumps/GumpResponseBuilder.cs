@@ -1,7 +1,7 @@
 ﻿using System;
-using UltimaRX.Packets;
+using Infusion.Packets;
 
-namespace UltimaRX.Gumps
+namespace Infusion.Gumps
 {
     public class GumpResponseBuilder
     {

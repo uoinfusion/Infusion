@@ -1,4 +1,4 @@
-﻿namespace UltimaRX.Proxy.InjectionApi
+﻿namespace Infusion.Proxy.InjectionApi
 {
     public enum CommandExecutionMode
     {

@@ -1,8 +1,8 @@
-﻿using UltimaRX.Packets.Both;
-using UltimaRX.Packets.Client;
-using UltimaRX.Packets.Server;
+﻿using Infusion.Packets.Both;
+using Infusion.Packets.Client;
+using Infusion.Packets.Server;
 
-namespace UltimaRX.Packets
+namespace Infusion.Packets
 {
     public static class PacketDefinitions
     {

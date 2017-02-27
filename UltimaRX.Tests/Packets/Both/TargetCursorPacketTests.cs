@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
+using Infusion.Packets;
+using Infusion.Packets.Both;
+using Infusion.Packets.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
-using UltimaRX.Packets.Client;
 
-namespace UltimaRX.Tests.Packets.Both
+namespace Infusion.Tests.Packets.Both
 {
     [TestClass]
     public class TargetCursorPacketTests

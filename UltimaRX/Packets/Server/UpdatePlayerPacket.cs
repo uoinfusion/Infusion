@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UltimaRX.IO;
+﻿using Infusion.IO;
 
-namespace UltimaRX.Packets.Server
+namespace Infusion.Packets.Server
 {
     public class UpdatePlayerPacket : MaterializedPacket
     {

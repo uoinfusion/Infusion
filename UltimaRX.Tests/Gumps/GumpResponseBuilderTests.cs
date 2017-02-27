@@ -1,10 +1,10 @@
 ﻿using System;
 using FluentAssertions;
+using Infusion.Gumps;
+using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Gumps;
-using UltimaRX.Packets;
 
-namespace UltimaRX.Tests.Gumps
+namespace Infusion.Tests.Gumps
 {
     [TestClass]
     public class GumpResponseBuilderTests

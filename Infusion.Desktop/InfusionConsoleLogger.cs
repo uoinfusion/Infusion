@@ -4,9 +4,9 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Windows.UI.Notifications;
 using Infusion.Desktop.Profiles;
-using UltimaRX.Proxy;
-using UltimaRX.Proxy.InjectionApi;
-using UltimaRX.Proxy.Logging;
+using Infusion.Proxy;
+using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.Logging;
 
 namespace Infusion.Desktop
 {

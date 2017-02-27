@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace UltimaRX.Gumps
+namespace Infusion.Gumps
 {
     public class GumpParserDescriptionProcessor : IGumpParserProcessor
     {

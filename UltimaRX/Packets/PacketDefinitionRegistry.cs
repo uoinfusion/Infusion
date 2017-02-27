@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using UltimaRX.Packets.Server;
 
-namespace UltimaRX.Packets
+namespace Infusion.Packets
 {
     public static class PacketDefinitionRegistry
     {

@@ -1,4 +1,4 @@
-﻿using UltimaRX.Packets;
+﻿using Infusion.Packets;
 
 public static class ItemTypes
 {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
+using Infusion.Packets.Parsers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets.Parsers;
 
-namespace UltimaRX.Tests.Packets.Parsers
+namespace Infusion.Tests.Packets.Parsers
 {
     [TestClass]
     public class PacketLogParserTests

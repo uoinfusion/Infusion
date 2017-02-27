@@ -6,8 +6,8 @@
     <ProjectGuid>{F6658DAD-8158-4105-A9F4-AEDF23748FAE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UltimaRX.Tests</RootNamespace>
-    <AssemblyName>UltimaRX.Tests</AssemblyName>
+    <RootNamespace>Infusion.Tests</RootNamespace>
+    <AssemblyName>Infusion.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -97,9 +97,9 @@
     <Compile Include="UltimaClientConnectionTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX\UltimaRX.csproj">
+    <ProjectReference Include="..\UltimaRX\Infusion.csproj">
       <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
-      <Name>UltimaRX</Name>
+      <Name>Infusion</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

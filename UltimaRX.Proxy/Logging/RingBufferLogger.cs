@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace UltimaRX.Proxy.Logging
+namespace Infusion.Proxy.Logging
 {
     public sealed class RingBufferLogger : ILogger
     {

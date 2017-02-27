@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace UltimaRX.IO
+namespace Infusion.IO
 {
     public class NewGameStream : Stream
     {

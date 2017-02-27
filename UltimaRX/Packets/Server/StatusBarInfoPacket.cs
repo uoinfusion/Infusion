@@ -1,7 +1,7 @@
 ﻿using System;
-using UltimaRX.IO;
+using Infusion.IO;
 
-namespace UltimaRX.Packets.Server
+namespace Infusion.Packets.Server
 {
     public class StatusBarInfoPacket : MaterializedPacket
     {

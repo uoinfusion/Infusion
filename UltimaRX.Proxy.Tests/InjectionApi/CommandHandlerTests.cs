@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using FluentAssertions;
+using Infusion.Proxy.InjectionApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Proxy.InjectionApi;
 
-namespace UltimaRX.Proxy.Tests.InjectionApi
+namespace Infusion.Proxy.Tests.InjectionApi
 {
     [TestClass]
     public class CommandHandlerTests

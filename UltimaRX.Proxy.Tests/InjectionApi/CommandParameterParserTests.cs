@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
+using Infusion.Proxy.InjectionApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Proxy.InjectionApi;
 
-namespace UltimaRX.Proxy.Tests.InjectionApi
+namespace Infusion.Proxy.Tests.InjectionApi
 {
     [TestClass]
     public class CommandParameterParserTests

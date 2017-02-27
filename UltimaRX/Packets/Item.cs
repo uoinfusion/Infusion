@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace UltimaRX.Packets
+﻿namespace Infusion.Packets
 {
     public sealed class Item
     {

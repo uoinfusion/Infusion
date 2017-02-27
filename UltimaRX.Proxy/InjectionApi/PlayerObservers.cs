@@ -1,10 +1,10 @@
 ﻿using System;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Both;
-using UltimaRX.Packets.Client;
-using UltimaRX.Packets.Server;
+using Infusion.Packets;
+using Infusion.Packets.Both;
+using Infusion.Packets.Client;
+using Infusion.Packets.Server;
 
-namespace UltimaRX.Proxy.InjectionApi
+namespace Infusion.Proxy.InjectionApi
 {
     internal class PlayerObservers
     {

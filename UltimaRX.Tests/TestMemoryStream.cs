@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace UltimaRX.Tests
+namespace Infusion.Tests
 {
     public class TestMemoryStream : MemoryStream
     {

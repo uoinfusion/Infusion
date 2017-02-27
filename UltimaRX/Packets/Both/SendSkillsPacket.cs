@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UltimaRX.IO;
+using Infusion.IO;
 
-namespace UltimaRX.Packets.Both
+namespace Infusion.Packets.Both
 {
     public class SendSkillsPacket : MaterializedPacket
     {

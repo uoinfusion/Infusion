@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using UltimaRX.Packets;
-using UltimaRX.Packets.Client;
+using Infusion.Packets;
 
-namespace UltimaRX.Proxy
+namespace Infusion.Proxy
 {
     public class PacketHandler
     {

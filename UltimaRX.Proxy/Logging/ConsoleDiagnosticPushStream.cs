@@ -1,6 +1,6 @@
-﻿using UltimaRX.IO;
+﻿using Infusion.IO;
 
-namespace UltimaRX.Proxy.Logging
+namespace Infusion.Proxy.Logging
 {
     internal sealed class ConsoleDiagnosticPushStream : DiagnosticPushStream
     {

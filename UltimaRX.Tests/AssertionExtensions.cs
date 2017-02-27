@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using UltimaRX.Packets;
 
-namespace UltimaRX.Tests
+namespace Infusion.Tests
 {
     public static class AssertionExtensions
     {

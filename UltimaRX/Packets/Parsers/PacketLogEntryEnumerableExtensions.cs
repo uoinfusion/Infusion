@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace UltimaRX.Packets.Parsers
+namespace Infusion.Packets.Parsers
 {
     public static class PacketLogEntryEnumerableExtensions
     {

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Linq;
-using UltimaRX.Gumps;
-using UltimaRX.Packets;
-using UltimaRX.Proxy.InjectionApi;
-using static UltimaRX.Proxy.InjectionApi.Injection;
+using Infusion.Gumps;
+using Infusion.Packets;
+using Infusion.Proxy.InjectionApi;
+using static Infusion.Proxy.InjectionApi.Injection;
 using static Scripts;
 
 public static class PipkaDolAmroth

@@ -51,11 +51,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ItemTypes.cs" />
-    <Compile Include="MapRecorder.cs" />
-    <Compile Include="PipkaDolAmroth.cs" />
+    <None Include="ItemTypes.csx" />
+    <None Include="MapRecorder.csx" />
+    <None Include="PipkaDolAmroth.csx" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scripts.cs" />
+    <None Include="Scripts.csx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="common.csx" />

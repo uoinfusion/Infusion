@@ -1,9 +1,9 @@
-﻿#load "ItemTypes.cs"
-#load "Scripts.cs"
+#load "ItemTypes.csx"
+#load "Scripts.csx"
 #load "common.csx"
 #load "cooking.csx"
 #load "looting.csx"
-#load "MapRecorder.cs"
+#load "MapRecorder.csx"
 #load "commands.csx"
 
 using System;

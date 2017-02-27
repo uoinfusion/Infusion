@@ -10,6 +10,7 @@ using Infusion.Desktop.Profiles;
 using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;
+using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
 
@@ -36,6 +37,7 @@ namespace Infusion.Desktop
         public void Initialize(LauncherOptions options)
         {
             _console.Initialize(options);
+            _scriptsControl.Initialize(_console.ScriptEngine, options);
         }
 
         protected override void OnClosed(EventArgs e)
@@ -48,7 +50,7 @@ namespace Infusion.Desktop
                 notifyIcon = null;
             }
 
-            base.OnClosed(e);
+            Application.Current.Shutdown();
         }
 
         protected override void OnStateChanged(EventArgs e)

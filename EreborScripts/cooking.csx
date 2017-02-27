@@ -1,4 +1,6 @@
-﻿using System;
+#load "Scripts.csx"
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UltimaRX.Gumps;
@@ -73,3 +75,4 @@ void Cook()
 }
 
 Injection.CommandHandler.RegisterCommand(new Command("cook", () => Cook()));
+

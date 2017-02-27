@@ -1,4 +1,7 @@
-﻿using System;
+#load "ItemTypes.csx"
+#load "Scripts.csx"
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;

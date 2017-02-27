@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Infusion.Desktop.Launcher;
+using RoslynPad;
+using RoslynPad.UI;
 using UltimaRX.Proxy;
 using UltimaRX.Proxy.InjectionApi;
 using UltimaRX.Proxy.Logging;
@@ -20,7 +22,7 @@ namespace Infusion.Desktop
 {
     public partial class ConsoleControl : UserControl
     {
-        private CSharpScriptEngine scriptEngine;
+        public CSharpScriptEngine ScriptEngine { get; private set; }
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
         public ConsoleControl()
@@ -28,7 +30,7 @@ namespace Infusion.Desktop
             InitializeComponent();
 
             _consoleModeComboBox.SelectedItem = _sayConsoleMode;
-            scriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
+            ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
             Program.Console = new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher), new FileLogger());
             DataContext = consoleContent;
@@ -38,11 +40,11 @@ namespace Infusion.Desktop
         {
             Task.Run(() =>
             {
-                scriptEngine.AddDefaultImports().Wait();
+                ScriptEngine.AddDefaultImports().Wait();
                 var scriptFileName = options.InitialScriptFileName?.Trim();
                 if (!string.IsNullOrEmpty(scriptFileName))
                 {
-                    scriptEngine.ExecuteScript(scriptFileName).Wait();
+                    ScriptEngine.ExecuteScript(scriptFileName).Wait();
                 }
             });
         }
@@ -89,7 +91,7 @@ namespace Infusion.Desktop
             {
                 Task.Run(() =>
                 {
-                    scriptEngine.Execute(command).Wait();
+                    ScriptEngine.Execute(command).Wait();
                 });
             }
         }

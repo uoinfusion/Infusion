@@ -36,24 +36,52 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CodeAnalysis, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Features, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Features.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Features.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Features, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Features.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.Features.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.2.0.0-rc2\lib\netstandard1.3\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.2.0.0-rc2\lib\net46\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.2.0.0-rc2\lib\net46\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.IO.Compression, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.IO.Compression.4.1.0\lib\net46\System.IO.Compression.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Reflection.Metadata, Version=1.4.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.1.4.1-beta-24430-01\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Windows.Foundation.UniversalApiContract">
       <HintPath>C:\Program Files (x86)\Windows Kits\10\References\Windows.Foundation.UniversalApiContract\3.0.0.0\Windows.Foundation.UniversalApiContract.winmd</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.1.3.2\lib\net45\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.1.3.2\lib\net45\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.1.3.2\lib\dotnet\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=1.3.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.1.3.2\lib\dotnet\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -118,10 +146,6 @@
     <Reference Include="System.Numerics" />
     <Reference Include="System.Reflection, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reflection.4.1.0\lib\net462\System.Reflection.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.1.3.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Runtime, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -195,15 +219,16 @@
       <DependentUpon>ConsoleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConsoleContent.cs" />
-    <Compile Include="CSharpScriptEngine.cs" />
     <Compile Include="FileLogger.cs" />
     <Compile Include="InfusionConsoleLogger.cs" />
     <Compile Include="InfusionWindow.xaml.cs">
       <DependentUpon>InfusionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="InterProcessCommunication.cs" />
-    <Compile Include="IScriptOutput.cs" />
     <Compile Include="Launcher\LauncherViewModel.cs" />
+    <Compile Include="Launcher\TestOuputWindow.xaml.cs">
+      <DependentUpon>TestOuputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Profiles\OptionsControl.xaml.cs">
       <DependentUpon>OptionsControl.xaml</DependentUpon>
     </Compile>
@@ -211,6 +236,9 @@
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Profiles\ProfileRepositiory.cs" />
     <Compile Include="ScriptOutput.cs" />
+    <Compile Include="ScriptsControl.xaml.cs">
+      <DependentUpon>ScriptsControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UltimaConfiguration.cs" />
     <Page Include="ConsoleControl.xaml">
       <SubType>Designer</SubType>
@@ -235,7 +263,15 @@
       <DependentUpon>LaunhcerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Launcher\TestOuputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Profiles\OptionsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ScriptsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -272,6 +308,30 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common.UI\RoslynPad.Common.UI.csproj">
+      <Project>{47c8dfa4-e7e9-4e44-86c4-b906229a25e0}</Project>
+      <Name>RoslynPad.Common.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common\RoslynPad.Common.csproj">
+      <Project>{fae8af1b-5004-42b6-8b42-eff1db5b677f}</Project>
+      <Name>RoslynPad.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj">
+      <Project>{5fc3a02c-33b5-4e32-8512-7053474d9c57}</Project>
+      <Name>RoslynPad.Editor.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Roslyn.Windows\RoslynPad.Roslyn.Windows.csproj">
+      <Project>{075292f0-dbcd-4a01-9791-9637d396ccb8}</Project>
+      <Name>RoslynPad.Roslyn.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Roslyn\RoslynPad.Roslyn.csproj">
+      <Project>{ac9f325f-a3ff-4561-941e-49ce4736cbd0}</Project>
+      <Name>RoslynPad.Roslyn</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad\RoslynPad.csproj">
+      <Project>{2f7723c1-297b-416f-9a78-153156d319b9}</Project>
+      <Name>RoslynPad</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UltimaRX.Proxy\UltimaRX.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
       <Name>UltimaRX.Proxy</Name>

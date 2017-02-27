@@ -1,3 +1,6 @@
 [submodule "UltimaSdk"]
 	path = UltimaSdk
 	url = https://github.com/msturgill/ultimasdk.git
+[submodule "RoslynPad"]
+	path = RoslynPad
+	url = git@github.com:JakubLinhart/RoslynPad.git

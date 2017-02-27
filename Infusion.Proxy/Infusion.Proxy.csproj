@@ -90,7 +90,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX\Infusion.csproj">
+    <ProjectReference Include="..\Infusion\Infusion.csproj">
       <Project>{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}</Project>
       <Name>Infusion</Name>
     </ProjectReference>

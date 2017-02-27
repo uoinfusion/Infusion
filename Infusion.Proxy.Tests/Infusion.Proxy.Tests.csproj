@@ -3,12 +3,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F6658DAD-8158-4105-A9F4-AEDF23748FAE}</ProjectGuid>
+    <ProjectGuid>{DFCE9C0F-0E66-4637-BAE9-0EE4D652EA19}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Infusion.Tests</RootNamespace>
-    <AssemblyName>Infusion.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <RootNamespace>Infusion.Proxy.Tests</RootNamespace>
+    <AssemblyName>Infusion.Proxy.Tests</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -56,50 +56,19 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
-          <Private>False</Private>
-        </Reference>
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="AssertionExtensions.cs" />
-    <Compile Include="FakePackets.cs" />
-    <Compile Include="Gumps\GumpParserTests.cs" />
-    <Compile Include="Gumps\GumpResponseBuilderTests.cs" />
-    <Compile Include="IO\HuffmanStreamTests.cs" />
-    <Compile Include="Packets\Both\SendSkillsPacketTests.cs" />
-    <Compile Include="Packets\Both\TargetCursorPacketTests.cs" />
-    <Compile Include="Packets\MoveRequestTests.cs" />
-    <Compile Include="Packets\PacketDefinitionRegistryTests.cs" />
-    <Compile Include="Packets\Parsers\PacketLogParserTests.cs" />
-    <Compile Include="Packets\Server\AddItemToContainerPacketTests.cs" />
-    <Compile Include="Packets\Server\AddMultipleItemsInContainerPacketTests.cs" />
-    <Compile Include="Packets\Both\CharacterMoveAckPacketTests.cs" />
-    <Compile Include="Packets\Server\CharLocaleAndBodyPacketTests.cs" />
-    <Compile Include="Packets\Server\CharMoveRejectionPacketTests.cs" />
-    <Compile Include="Packets\Server\ConnectToGameServerPacketTests.cs" />
-    <Compile Include="Packets\Server\DrawGamePlayerPacketTests.cs" />
-    <Compile Include="Packets\Server\DrawObjectPacketTests.cs" />
-    <Compile Include="Packets\Server\ObjectInfoPacketTests.cs" />
-    <Compile Include="Packets\Server\SendGumpMenuDialogPacketTests.cs" />
-    <Compile Include="Packets\Server\SendSpeechPacketTests.cs" />
-    <Compile Include="Packets\Server\SpeechMessagePacketTests.cs" />
-    <Compile Include="Packets\Server\StatusBarInfoPacketTests.cs" />
-    <Compile Include="Packets\Server\UpdateCurrentStaminaPacketTests.cs" />
-    <Compile Include="Packets\Server\UpdatePlayerPacketTests.cs" />
-    <Compile Include="Packets\Server\WornItemPacketTests.cs" />
-    <Compile Include="Packets\SpeechRequestTests.cs" />
+    <Compile Include="InjectionApi\CommandHandlerTests.cs" />
+    <Compile Include="InjectionApi\CommandParameterParserTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerConnectionTests.cs" />
-    <Compile Include="TestMemoryStream.cs" />
-    <Compile Include="TestPullStream.cs" />
-    <Compile Include="UltimaClientConnectionTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UltimaRX\Infusion.csproj">
-      <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
-      <Name>Infusion</Name>
+    <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj">
+      <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
+      <Name>Infusion.Proxy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

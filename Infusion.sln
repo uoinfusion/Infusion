@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Tests", "Infusion.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Proxy", "Infusion.Proxy\Infusion.Proxy.csproj", "{5E814151-7F4C-4D71-BCB2-97FD303F04A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EreborScripts", "EreborScripts\EreborScripts.csproj", "{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.ExampleScripts", "Infusion.ExampleScripts\Infusion.ExampleScripts.csproj", "{C246A6DA-D4D2-4602-AE43-2AB9EC587B66}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Proxy.Tests", "Infusion.Proxy.Tests\Infusion.Proxy.Tests.csproj", "{DFCE9C0F-0E66-4637-BAE9-0EE4D652EA19}"
 EndProject

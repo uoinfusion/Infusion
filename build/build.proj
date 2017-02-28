@@ -6,10 +6,14 @@
         <ItemGroup>
             <BinFiles Include="..\Infusion.Desktop\bin\release\**\*.*" /> 
         </ItemGroup>
+        <ItemGroup>
+            <ExampleFiles Include="..\Infusion.ExampleScripts\*.csx" />
+        </ItemGroup>
 
-        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts" />
+        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts;\release\examples" />
         <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
         <Copy SourceFiles=".\Run.cmd" DestinationFolder=".\release" />
+        <Copy SourceFiles="@(ExampleFiles)" DestinationFolder=".\release\examples" />
     </Target>
 
     <Target Name="Clean">

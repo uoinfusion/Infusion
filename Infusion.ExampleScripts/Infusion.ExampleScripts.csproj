@@ -52,18 +52,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ItemTypes.csx" />
-    <None Include="MapRecorder.csx" />
-    <None Include="PipkaDolAmroth.csx" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Scripts.csx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="common.csx" />
-    <None Include="commands.csx" />
     <None Include="cooking.csx" />
     <None Include="looting.csx" />
     <None Include="packages.config" />
-    <None Include="pipka-dolamroth-lumberjacking.csx" />
     <None Include="main.csx" />
   </ItemGroup>
   <ItemGroup>

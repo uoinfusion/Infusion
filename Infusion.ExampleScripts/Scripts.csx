@@ -1,4 +1,4 @@
-﻿#load "ItemTypes.csx"
+#load "ItemTypes.csx"
 
 using System;
 using System.Collections.Generic;
@@ -12,22 +12,9 @@ using static Infusion.Proxy.LegacyApi.Legacy;
 
 public static class Scripts
 {
-    static Scripts()
-    {
-        RegisterHarvestingPauseCommands();
-    }
-
     public static string[] skipOre = {"Copper Ore"};
 
     public static DateTime lastFailedLumberjackingAttempt;
-
-    public static readonly string[] AfkNames =
-    {
-        "desttro", "elbereth", "finn", "gothmog", "houba", "iustus", "myke", "yavanna",
-        "nightmare", "sirglorg", "ustus", "levtar"
-    };
-
-    public static readonly string[] AfkMessages = {"afk", "kontrola", "makro", "maker", "jsi t", "byl jsi objeven", "gm", "halo", "lagr"};
 
     public static DateTime LastCheckTime;
 
@@ -48,88 +35,6 @@ public static class Scripts
     public static bool EscapeMode;
 
     public static ushort MaxWeight => 480;
-
-    public static void Harvest(string mapFileInfoFile)
-    {
-        Log($"Map: {mapFileInfoFile}");
-
-        var mapLines = File.ReadAllLines(mapFileInfoFile);
-        var line = 1;
-        foreach (var mapLine in mapLines)
-        {
-            Log($"Processing line {line}");
-            ProcessHarvestMapLine(mapLine);
-            line++;
-        }
-    }
-
-    public static void ProcessHarvestMapLine(string mapLine)
-    {
-        if (mapLine.StartsWith("walk: "))
-        {
-            var parameters = mapLine.Substring("walk: ".Length).Split(',').Select(x => ushort.Parse(x.Trim())).ToArray();
-            Log($"Walking to: {parameters[0]}, {parameters[1]}");
-            WalkTo(parameters[0], parameters[1]);
-        }
-
-        try
-        {
-            if (!EscapeMode)
-            {
-                if (Me.Weight < MaxWeight)
-                {
-                    if (mapLine.StartsWith("lumber:"))
-                    {
-                        var parameters = mapLine.Substring("lumber: ".Length);
-                        HarvestTree(parameters);
-                    }
-                    else if (mapLine.StartsWith("masskill"))
-                    {
-                        MassKill();
-                    }
-                }
-                else
-                    Log($"I'm overweight {Me.Weight}, maximum is {MaxWeight}");
-            }
-            else
-            {
-                Log("In escape mode, just check attackers, and do no other action.");
-                AttackCheck();
-                LastCheckTime = DateTime.UtcNow;
-            }
-        }
-        catch (AttackException)
-        {
-            // just continue
-        }
-    }
-
-    public static void Mine(string tileInfo)
-    {
-        Log($"Mining {tileInfo}");
-        var canMine = true;
-
-        while (canMine)
-        {
-            Wait(1000);
-            DeleteJournal();
-            UseType(ItemTypes.PickAxe);
-            WaitForTarget();
-            TargetTile(tileInfo);
-
-            WaitForJournal("You put", "Nevykopal jsi nic zajimaveho", "Try mining in rock",
-                "There is no ore here to mine");
-
-            canMine = !InJournal("Try mining in rock", "There is no ore here to mine");
-            canMine &= !skipOre.Any(s => InJournal(s));
-
-            if (canMine && InJournal("Jeste nemuzes pouzit skill."))
-            {
-                Log("waiting for skill");
-                Wait(5000);
-            }
-        }
-    }
 
     public static void Fish(string tileInfo)
     {
@@ -217,7 +122,6 @@ public static class Scripts
 
     public static void Checks()
     {
-        AfkCheck();
         AttackCheck();
         HealthCheck();
         LightCheck();
@@ -257,14 +161,6 @@ public static class Scripts
             Program.Console.Critical("Harvesting resumed");
         }
     }
-
-    private static void RegisterHarvestingPauseCommands()
-    {
-        Legacy.CommandHandler.RegisterCommand(new Command("pauseharvesting", () => harvestingPaused = true, CommandExecutionMode.OwnThread));
-        Legacy.CommandHandler.RegisterCommand(new Command("toggleharvestingpause", () => harvestingPaused = !harvestingPaused, CommandExecutionMode.OwnThread));
-        Legacy.CommandHandler.RegisterCommand(new Command("resumeharvesting", () => harvestingPaused = false, CommandExecutionMode.OwnThread));
-    }
-
 
     private static void LightCheck()
     {
@@ -328,68 +224,6 @@ public static class Scripts
         }
     }
 
-    public static void AfkCheck()
-    {
-        var afkAlertRequired = Journal
-            .After(LastCheckTime)
-            .ByAnyName(AfkNames).Any();
-
-        afkAlertRequired |= Journal
-            .After(LastCheckTime)
-            .ContainsAnyWord(AfkMessages).Any();
-
-        if (afkAlertRequired)
-        {
-            AfkAlert();
-        }
-    }
-
-    public static void AfkAlert()
-    {
-        DeleteJournal();
-        while (true)
-        {
-            System.Media.SystemSounds.Asterisk.Play();
-            Program.Console.Critical("Afk kontrola");
-
-            Wait(1000);
-
-            if (InJournal("tak zpet do prace"))
-                break;
-            DeleteJournal();
-        }
-    }
-
-    public static void Loot()
-    {
-        var container = ItemInfo();
-        if (container != null)
-        {
-            Loot(container);
-        }
-        else
-            Log("no container for loot");
-    }
-
-    public static void Loot(Item container)
-    {
-        var items = Items.InContainer(container).ToArray();
-        while (items.Any())
-        {
-            Log($"Looting, {items.Length} items remaining ");
-            Pickup(items.First());
-            Wait(100);
-            if (InJournal("Ne tak rychle!"))
-            {
-                DeleteJournal();
-                Wait(500);
-            }
-            items = Items.InContainer(container).ToArray();
-        }
-
-        Log("Looting finished");
-    }
-
     public static void Pickup(Item item)
     {
         MoveItem(item, Me.BackPack);
@@ -423,28 +257,6 @@ public static class Scripts
         }
     }
 
-    public static void Reload(Item sourceContainer, ushort targetAmount, params ModelId[] typesToReload)
-    {
-        Log("Reloading");
-
-        var currentItemsAmount = Items.InContainer(Me.BackPack).OfType(typesToReload).Sum(i => i.Amount);
-        if (currentItemsAmount >= targetAmount)
-        {
-            Log(
-                $"Current amount ({currentItemsAmount}) is higher than or equal to target amount ({targetAmount}), no reloading");
-            return;
-        }
-
-        var sourceItemsToReload = Items.InContainer(sourceContainer).OfType(typesToReload).ToArray();
-        if (sourceItemsToReload.Length <= 0)
-        {
-            Log($"No items to reload found in {sourceContainer}");
-            return;
-        }
-
-        MoveItems(sourceItemsToReload, (ushort) (targetAmount - currentItemsAmount), Me.BackPack);
-    }
-
     public static void Eat()
     {
         var itemsToEat = Items.OfType(ItemTypes.Food);
@@ -465,33 +277,6 @@ public static class Scripts
                 journalCheck = DateTime.UtcNow;
                 food = Items.RefreshItem(food);
             }
-        }
-    }
-
-    public static void ReloadPotion(Item sourceContainer, Color kegColor)
-    {
-        Log($"Reloading potion: {kegColor}");
-
-        var emptyBottles =
-            Items.InContainer(Me.BackPack).OfType(ItemTypes.Bottle).OfColor(ItemTypes.EmptyBottleColor).First();
-        if (emptyBottles != null)
-        {
-            var potionKeg =
-                Items.InContainer(sourceContainer).OfType(ItemTypes.PotionKeg).OfColor(kegColor).First();
-            if (potionKeg != null)
-            {
-                Use(potionKeg);
-                WaitForTarget();
-                Target(emptyBottles);
-            }
-            else
-            {
-                Log("No potion keg");
-            }
-        }
-        else
-        {
-            Log("No empty bottles for the potion");
         }
     }
 
@@ -558,7 +343,6 @@ public static class Scripts
             Target(bodyOfSubject);
             WaitForJournal("Rozrezal jsi mrtvolu.");
             Wait(1000);
-            Loot(bodyOfSubject);
         }
         else
             Log("no body found");
@@ -571,25 +355,6 @@ public static class Scripts
         var subjectToKill = ItemInfo();
         if (subjectToKill != null)
             Kill(subjectToKill);
-    }
-
-    public static void MassKill()
-    {
-        do
-        {
-            var subject =
-                Items.OfType(ItemTypes.MassKillSubjects)
-                    .MaxDistance(Me.Location, 20)
-                    .OrderByDistance(Me.Location)
-                    .First();
-            if (subject == null)
-            {
-                Log("nothing to kill");
-                break;
-            }
-
-            Kill(subject);
-        } while (true);
     }
 
     public static void ToggleNearestDoor()

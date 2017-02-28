@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     internal class WalkRequestQueue
     {

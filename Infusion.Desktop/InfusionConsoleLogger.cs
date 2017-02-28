@@ -5,7 +5,7 @@ using System.Windows.Threading;
 using Windows.UI.Notifications;
 using Infusion.Desktop.Profiles;
 using Infusion.Proxy;
-using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
 
 namespace Infusion.Desktop

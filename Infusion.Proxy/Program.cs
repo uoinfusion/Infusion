@@ -11,7 +11,7 @@ using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Parsers;
 using Infusion.Packets.Server;
-using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
 
 // TODO: lumberjacking skill increase

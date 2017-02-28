@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Infusion.Packets;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     public class ItemCollection : IEnumerable<Item>
     {

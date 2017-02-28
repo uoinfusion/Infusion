@@ -6,7 +6,7 @@ using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     public static class Injection
     {

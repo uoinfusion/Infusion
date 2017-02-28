@@ -1,7 +1,7 @@
 ﻿using Infusion.Packets;
 using Infusion.Packets.Client;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     internal sealed class CommandHandlerObservers
     {

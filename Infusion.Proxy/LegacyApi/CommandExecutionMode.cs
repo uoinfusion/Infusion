@@ -1,4 +1,4 @@
-﻿namespace Infusion.Proxy.InjectionApi
+﻿namespace Infusion.Proxy.LegacyApi
 {
     public enum CommandExecutionMode
     {

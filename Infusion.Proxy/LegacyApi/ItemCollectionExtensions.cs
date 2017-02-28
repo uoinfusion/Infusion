@@ -2,7 +2,7 @@
 using System.Linq;
 using Infusion.Packets;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     public static class ItemCollectionExtensions
     {

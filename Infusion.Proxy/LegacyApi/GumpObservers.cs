@@ -5,7 +5,7 @@ using Infusion.Packets;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     internal sealed class GumpObservers
     {

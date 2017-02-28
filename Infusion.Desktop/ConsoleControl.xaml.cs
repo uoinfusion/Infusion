@@ -13,7 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Infusion.Desktop.Launcher;
 using Infusion.Proxy;
-using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
 using RoslynPad;
 using RoslynPad.UI;

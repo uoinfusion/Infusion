@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     public class CommandParameterParser
     {

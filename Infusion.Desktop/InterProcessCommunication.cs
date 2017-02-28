@@ -2,7 +2,7 @@
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Threading;
-using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.LegacyApi;
 
 namespace Infusion.Desktop
 {

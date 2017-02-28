@@ -3,8 +3,8 @@ using System.ComponentModel;
 using System.Linq;
 using Infusion.Gumps;
 using Infusion.Packets;
-using Infusion.Proxy.InjectionApi;
-using static Infusion.Proxy.InjectionApi.Injection;
+using Infusion.Proxy.LegacyApi;
+using static Infusion.Proxy.LegacyApi.Injection;
 using static Scripts;
 
 public static class PipkaDolAmroth

@@ -1,6 +1,6 @@
 ﻿using Infusion.Packets;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     internal struct WalkRequest
     {

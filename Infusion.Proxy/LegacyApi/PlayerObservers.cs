@@ -4,7 +4,7 @@ using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     internal class PlayerObservers
     {

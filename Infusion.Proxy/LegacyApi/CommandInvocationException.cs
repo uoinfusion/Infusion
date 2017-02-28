@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Infusion.Proxy.InjectionApi
+namespace Infusion.Proxy.LegacyApi
 {
     public class CommandInvocationException : Exception
     {

@@ -5,8 +5,8 @@ using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Proxy;
-using Infusion.Proxy.InjectionApi;
-using static Infusion.Proxy.InjectionApi.Injection;
+using Infusion.Proxy.LegacyApi;
+using static Infusion.Proxy.LegacyApi.Injection;
 
 public class MapRecorder : IDisposable
 {

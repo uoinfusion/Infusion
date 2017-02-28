@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using FluentAssertions;
-using Infusion.Proxy.InjectionApi;
+using Infusion.Proxy.LegacyApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infusion.Proxy.Tests.InjectionApi
+namespace Infusion.Proxy.Tests.LegacyApi
 {
     [TestClass]
     public class CommandHandlerTests

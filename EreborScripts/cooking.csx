@@ -6,8 +6,8 @@ using System.Linq;
 using Infusion.Gumps;
 using Infusion.Packets;
 using Infusion.Proxy;
-using Infusion.Proxy.InjectionApi;
-using static Infusion.Proxy.InjectionApi.Injection;
+using Infusion.Proxy.LegacyApi;
+using static Infusion.Proxy.LegacyApi.Injection;
 
 void Cook(ModelId rawFoodType, string campfireTile)
 {

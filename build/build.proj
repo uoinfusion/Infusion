@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="Build">
+        <MSBuild Projects="..\Infusion.sln" Properties="Configuration=Release;Platform=Any CPU" />
+
+        <ItemGroup>
+            <BinFiles Include="..\Infusion.Desktop\bin\release\**\*.*" /> 
+        </ItemGroup>
+
+        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts" />
+        <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
+        <Copy SourceFiles=".\Run.cmd" DestinationFolder=".\release" />
+    </Target>
+
+    <Target Name="Clean">
+       <ItemGroup>
+          <DirsToClean Include=".\release" />
+        </ItemGroup>
+        <RemoveDir Directories="@(DirsToClean)" />
+    </Target>
+</Project>

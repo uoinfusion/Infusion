@@ -32,7 +32,7 @@ namespace Infusion.Proxy.LegacyApi
 
             ReceivedAwaitedWordsEvent.Reset();
             while (!ReceivedAwaitedWordsEvent.WaitOne(TimeSpan.FromSeconds(1)))
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
 
             awaitingWords = new string[] {};
         }

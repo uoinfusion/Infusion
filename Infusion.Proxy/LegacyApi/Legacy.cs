@@ -8,13 +8,13 @@ using Infusion.Packets.Client;
 
 namespace Infusion.Proxy.LegacyApi
 {
-    public static class Injection
+    public static class Legacy
     {
         private static readonly ItemsObservers ItemsObserver;
         private static readonly JournalObservers JournalObservers;
         private static readonly PlayerObservers PlayerObservers;
         private static readonly BlockedPacketsFilters BlockedPacketsFilters;
-        private static readonly CommandHandlerObservers InjectionCommandHandler;
+        private static readonly CommandHandlerObservers LegacyCommandHandler;
         private static readonly GumpObservers GumpObservers;
 
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
@@ -22,7 +22,7 @@ namespace Infusion.Proxy.LegacyApi
 
         private static readonly Targeting Targeting;
 
-        static Injection()
+        static Legacy()
         {
             GumpObservers = new GumpObservers(Program.ServerPacketHandler, Program.ClientPacketHandler);
             Items = new ItemCollection(Me);
@@ -36,7 +36,7 @@ namespace Infusion.Proxy.LegacyApi
 
             RegisterDefaultScripts();
 
-            InjectionCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
+            LegacyCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
             BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 

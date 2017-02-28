@@ -58,7 +58,7 @@ namespace Infusion.Proxy.LegacyApi
 
             while (!gumpReceivedEvent.WaitOne(1000))
             {
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
             }
             return CurrentGump;
         }

@@ -7,7 +7,7 @@ using Infusion.Gumps;
 using Infusion.Packets;
 using Infusion.Proxy;
 using Infusion.Proxy.LegacyApi;
-using static Infusion.Proxy.LegacyApi.Injection;
+using static Infusion.Proxy.LegacyApi.Legacy;
 
 void Cook(ModelId rawFoodType, string campfireTile)
 {
@@ -74,5 +74,5 @@ void Cook()
     }
 }
 
-Injection.CommandHandler.RegisterCommand(new Command("cook", () => Cook()));
+Legacy.CommandHandler.RegisterCommand(new Command("cook", () => Cook()));
 

@@ -56,13 +56,13 @@ namespace Infusion.Proxy
 
         public static void Main()
         {
-            Injection.Initialize();
+            Legacy.Initialize();
             Main(33333, new ConsoleLogger());
         }
 
         public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {
-            Injection.Initialize();
+            Legacy.Initialize();
 
             ServerPacketHandler.RegisterFilter(RedirectConnectToGameServer);
             ServerPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);

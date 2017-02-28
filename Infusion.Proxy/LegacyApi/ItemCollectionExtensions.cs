@@ -21,7 +21,7 @@ namespace Infusion.Proxy.LegacyApi
         public static IEnumerable<Item> OnLayer(this IEnumerable<Item> items, Layer layer) =>
             items.Where(i =>
                 i.Layer.HasValue && i.Layer.Value == layer &&
-                i.ContainerId.HasValue && i.ContainerId.Value == Injection.Me.PlayerId);
+                i.ContainerId.HasValue && i.ContainerId.Value == Legacy.Me.PlayerId);
 
         public static Item First(this IEnumerable<Item> items) => items.FirstOrDefault();
 

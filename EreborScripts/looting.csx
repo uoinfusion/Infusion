@@ -10,7 +10,7 @@ using Infusion.Packets;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Packets.Parsers;
 using Infusion.Gumps;
-using static Infusion.Proxy.LegacyApi.Injection;
+using static Infusion.Proxy.LegacyApi.Legacy;
 using static Scripts;
 
 ModelId[] ignoredLoot = ItemTypes.Torsos;
@@ -146,5 +146,5 @@ void Rip(Item container)
     }
 }
 
-Injection.CommandHandler.RegisterCommand(new Command("ripandloot", RipAndLootNearest));
-Injection.CommandHandler.RegisterCommand(new Command("loot", LootNearest));
+Legacy.CommandHandler.RegisterCommand(new Command("ripandloot", RipAndLootNearest));
+Legacy.CommandHandler.RegisterCommand(new Command("loot", LootNearest));

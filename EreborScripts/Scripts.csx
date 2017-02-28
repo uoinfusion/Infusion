@@ -8,7 +8,7 @@ using Infusion.Gumps;
 using Infusion.Packets;
 using Infusion.Proxy;
 using Infusion.Proxy.LegacyApi;
-using static Infusion.Proxy.LegacyApi.Injection;
+using static Infusion.Proxy.LegacyApi.Legacy;
 
 public static class Scripts
 {
@@ -260,9 +260,9 @@ public static class Scripts
 
     private static void RegisterHarvestingPauseCommands()
     {
-        Injection.CommandHandler.RegisterCommand(new Command("pauseharvesting", () => harvestingPaused = true, CommandExecutionMode.OwnThread));
-        Injection.CommandHandler.RegisterCommand(new Command("toggleharvestingpause", () => harvestingPaused = !harvestingPaused, CommandExecutionMode.OwnThread));
-        Injection.CommandHandler.RegisterCommand(new Command("resumeharvesting", () => harvestingPaused = false, CommandExecutionMode.OwnThread));
+        Legacy.CommandHandler.RegisterCommand(new Command("pauseharvesting", () => harvestingPaused = true, CommandExecutionMode.OwnThread));
+        Legacy.CommandHandler.RegisterCommand(new Command("toggleharvestingpause", () => harvestingPaused = !harvestingPaused, CommandExecutionMode.OwnThread));
+        Legacy.CommandHandler.RegisterCommand(new Command("resumeharvesting", () => harvestingPaused = false, CommandExecutionMode.OwnThread));
     }
 
 

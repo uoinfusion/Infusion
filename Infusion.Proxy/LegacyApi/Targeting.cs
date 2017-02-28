@@ -76,7 +76,7 @@ namespace Infusion.Proxy.LegacyApi
             targetFromServerReceivedEvent.Reset();
             while (!targetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
             }
 
             Program.Diagnostic.Debug("WaitForTarget - done");
@@ -91,7 +91,7 @@ namespace Infusion.Proxy.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
             }
 
             return lastTargetInfo;
@@ -168,7 +168,7 @@ namespace Infusion.Proxy.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
             }
 
             return lastTypeInfo;
@@ -183,7 +183,7 @@ namespace Infusion.Proxy.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
             }
 
             return lastItemIdInfo;

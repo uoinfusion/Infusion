@@ -6,7 +6,7 @@ using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Proxy;
 using Infusion.Proxy.LegacyApi;
-using static Infusion.Proxy.LegacyApi.Injection;
+using static Infusion.Proxy.LegacyApi.Legacy;
 
 public class MapRecorder : IDisposable
 {
@@ -30,7 +30,7 @@ public class MapRecorder : IDisposable
         RecordWalkTo(Me.Location);
 
         Me.LocationChanged += OnPlayerLocationChanged;
-        lastUseCommand = Injection.CommandHandler.RegisterCommand("lastuse", LastUse);
+        lastUseCommand = Legacy.CommandHandler.RegisterCommand("lastuse", LastUse);
     }
 
     private void LastUse()
@@ -124,7 +124,7 @@ public class MapRecorder : IDisposable
     public void Dispose()
     {
         Me.LocationChanged -= OnPlayerLocationChanged;
-        Injection.CommandHandler.Unregister(lastUseCommand);
+        Legacy.CommandHandler.Unregister(lastUseCommand);
         Program.ClientPacketHandler.Unsubscribe(PacketDefinitions.DoubleClick, HandleDoubleClickRequest);
 
         if (lastLocation != Me.Location)

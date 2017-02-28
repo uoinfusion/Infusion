@@ -40,9 +40,9 @@ namespace Infusion.Desktop
                 if (!string.IsNullOrEmpty(command))
                 {
                     if (command.StartsWith(","))
-                        Injection.CommandHandler.Invoke(command);
+                        Legacy.CommandHandler.Invoke(command);
                     else
-                        Injection.CommandHandler.Invoke("," + command);
+                        Legacy.CommandHandler.Invoke("," + command);
                 }
             }
         }

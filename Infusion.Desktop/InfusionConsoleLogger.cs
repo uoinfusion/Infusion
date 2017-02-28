@@ -37,7 +37,7 @@ namespace Infusion.Desktop
 
         public void Speech(SpeechMessage message)
         {
-            if (message.SpeakerId == 0 || message.SpeakerId == Injection.Me.PlayerId || message.IsName)
+            if (message.SpeakerId == 0 || message.SpeakerId == Legacy.Me.PlayerId || message.IsName)
             {
                 WriteLine(message.Text, Brushes.DarkGray);
             }

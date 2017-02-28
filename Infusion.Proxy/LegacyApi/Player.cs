@@ -45,8 +45,8 @@ namespace Infusion.Proxy.LegacyApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => Injection.Items.FirstOrDefault(i => i.Type == BackPackType && i.ContainerId == PlayerId);
-        public Item BankBox => Injection.Items.OnLayer(Layer.BankBox).FirstOrDefault();
+        public Item BackPack => Legacy.Items.FirstOrDefault(i => i.Type == BackPackType && i.ContainerId == PlayerId);
+        public Item BankBox => Legacy.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
         public Color Color { get; set; }
         public ModelId BodyType { get; set; }
@@ -86,7 +86,7 @@ namespace Infusion.Proxy.LegacyApi
             {
                 var waitTime = timeBetweenSteps - lastEnqueueTime;
                 Program.Diagnostic.Debug($"WaitToAvoidFastWalk: waiting minimal time between steps {timeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
-                Injection.Wait(waitTime.Milliseconds);
+                Legacy.Wait(waitTime.Milliseconds);
             }
         }
 
@@ -97,7 +97,7 @@ namespace Infusion.Proxy.LegacyApi
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
                 Program.Diagnostic.Debug($"WaitWalkAcknowledged: too many walk WalkRequestQueue.Count = {WalkRequestQueue.Count}");
-                Injection.CheckCancellation();
+                Legacy.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(200);
             }
         }

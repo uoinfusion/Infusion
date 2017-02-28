@@ -13,7 +13,7 @@ using Infusion.Packets;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Packets.Parsers;
 using Infusion.Gumps;
-using static Infusion.Proxy.LegacyApi.Injection;
+using static Infusion.Proxy.LegacyApi.Legacy;
 using static Scripts;
 
 //void Start()

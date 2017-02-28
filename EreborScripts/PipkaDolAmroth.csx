@@ -4,7 +4,7 @@ using System.Linq;
 using Infusion.Gumps;
 using Infusion.Packets;
 using Infusion.Proxy.LegacyApi;
-using static Infusion.Proxy.LegacyApi.Injection;
+using static Infusion.Proxy.LegacyApi.Legacy;
 using static Scripts;
 
 public static class PipkaDolAmroth

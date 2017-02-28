@@ -1,5 +1,3 @@
 #load "cooking.csx"
+#load "looting.csx"
 
-Cook();
-
-asdf

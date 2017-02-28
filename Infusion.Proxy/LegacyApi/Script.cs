@@ -42,7 +42,7 @@ namespace Infusion.Proxy.LegacyApi
             scriptTask = Task.Run(() =>
             {
                 ThreadId = Thread.CurrentThread.ManagedThreadId;
-                Injection.CancellationToken = cancellationTokenSource.Token;
+                Legacy.CancellationToken = cancellationTokenSource.Token;
                 RunAction(scriptAction);
             });
 
@@ -69,7 +69,7 @@ namespace Infusion.Proxy.LegacyApi
             finally
             {
                 Program.Print("Script finished.");
-                Injection.CancellationToken = null;
+                Legacy.CancellationToken = null;
                 currentScript = null;
             }
         }

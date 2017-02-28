@@ -82,10 +82,10 @@ namespace Infusion.Desktop
         {
             if (ReferenceEquals(_consoleModeComboBox.SelectedItem, _sayConsoleMode))
             {
-                if (Injection.CommandHandler.IsInvocationSyntax(command))
-                    Injection.CommandHandler.Invoke(command);
+                if (Legacy.CommandHandler.IsInvocationSyntax(command))
+                    Legacy.CommandHandler.Invoke(command);
                 else
-                    Injection.Say(command);
+                    Legacy.Say(command);
             }
             else
             {

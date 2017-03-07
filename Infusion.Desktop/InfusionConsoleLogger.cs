@@ -24,6 +24,8 @@ namespace Infusion.Desktop
             "Keleman: Anna Del Tir "
         };
 
+        private readonly Version toastingMinimalOsVersion = new Version(6, 2);
+
         public InfusionConsoleLogger(ConsoleContent consoleContent, Dispatcher dispatcher)
         {
             this.consoleContent = consoleContent;
@@ -78,6 +80,15 @@ namespace Infusion.Desktop
                 return;
             }
 
+            if (Environment.OSVersion.Version < toastingMinimalOsVersion)
+                return;
+
+            ToastNotificationCore(message);
+        }
+
+        private void ToastNotificationCore(string message)
+        {
+
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
 
             var stringElements = toastXml.GetElementsByTagName("text");
@@ -97,12 +108,21 @@ namespace Infusion.Desktop
 
         private void ToastAlertNotification(string message)
         {
-            if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification || !ProfileRepositiory.SelectedProfile.Options.AlertToastNotificationEnabled ||
+            if (Environment.OSVersion.Version < toastingMinimalOsVersion)
+                return;
+
+            if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification ||
+                !ProfileRepositiory.SelectedProfile.Options.AlertToastNotificationEnabled ||
                 IsIgnoredMessage(message))
             {
                 return;
             }
 
+            ToastAlertNotificationCore(message);
+        }
+
+        private void ToastAlertNotificationCore(string message)
+        {
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
             var stringElements = toastXml.GetElementsByTagName("text");

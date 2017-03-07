@@ -18,5 +18,8 @@
         <TabItem Header="Scripts">
             <local:ScriptsControl x:Name="_scriptsControl" />
         </TabItem>
+        <TabItem Header="Parameters">
+            <local:ConfigurableParametersControl />
+        </TabItem>
     </TabControl>
 </Window>

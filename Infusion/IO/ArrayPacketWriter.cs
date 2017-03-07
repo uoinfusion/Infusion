@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Infusion.Packets;
 
 namespace Infusion.IO
@@ -61,6 +62,19 @@ namespace Infusion.IO
         {
             WriteByte((byte)
                 ((movement.Type == MovementType.Walk) ? (byte) movement.Direction : 0x80 + (byte) movement.Direction));
+        }
+
+        public void WriteString(string str)
+        {
+            WriteBytes(Encoding.ASCII.GetBytes(str));
+        }
+
+        private void WriteBytes(byte[] bytes)
+        {
+            foreach (byte b in bytes)
+            {
+                WriteByte(b);
+            }
         }
     }
 }

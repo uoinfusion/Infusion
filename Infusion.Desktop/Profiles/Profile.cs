@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Infusion.Desktop.Launcher;
@@ -23,6 +24,8 @@ namespace Infusion.Desktop.Profiles
 
         public LauncherOptions LauncherOptions { get; set; } = new LauncherOptions();
         public Options Options { get; set; } = new Options();
+
+        public ConfigurableParameters ConfigurableParameters { get; set; } = ConfigurableParameters.CreateDefault();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

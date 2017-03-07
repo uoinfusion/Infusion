@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
+using Infusion.Proxy.ConfigurableParameters;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;

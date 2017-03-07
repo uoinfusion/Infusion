@@ -346,8 +346,21 @@ namespace Infusion.Proxy.LegacyApi
         {
             DragItem(item, 1);
 
-
             var request = new WearItemRequest(item.Id, layer, Me.PlayerId);
+            Program.SendToServer(request.RawPacket);
+        }
+
+        public static void Spell(RequestableSpell spell)
+        {
+            var request = new SkillRequest(spell);
+
+            Program.SendToServer(request.RawPacket);
+        }
+
+        public static void Skill(RequestableSkill skill)
+        {
+            var request = new SkillRequest(skill);
+
             Program.SendToServer(request.RawPacket);
         }
 

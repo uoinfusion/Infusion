@@ -25,8 +25,6 @@ namespace Infusion.Desktop.Profiles
         public LauncherOptions LauncherOptions { get; set; } = new LauncherOptions();
         public Options Options { get; set; } = new Options();
 
-        public ConfigurableParameters ConfigurableParameters { get; set; } = ConfigurableParameters.CreateDefault();
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

@@ -219,9 +219,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="ConfigurableParametersControl.xaml.cs">
-      <DependentUpon>ConfigurableParametersControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ConsoleControl.xaml.cs">
       <DependentUpon>ConsoleControl.xaml</DependentUpon>
     </Compile>
@@ -236,7 +233,6 @@
     <Compile Include="Launcher\TestOuputWindow.xaml.cs">
       <DependentUpon>TestOuputWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Profiles\ConfigurableParameters.cs" />
     <Compile Include="Profiles\OptionsControl.xaml.cs">
       <DependentUpon>OptionsControl.xaml</DependentUpon>
     </Compile>
@@ -248,10 +244,6 @@
       <DependentUpon>ScriptsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UltimaConfiguration.cs" />
-    <Page Include="ConfigurableParametersControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="ConsoleControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

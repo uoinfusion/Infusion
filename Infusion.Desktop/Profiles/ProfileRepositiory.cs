@@ -99,7 +99,6 @@ namespace Infusion.Desktop.Profiles
             // the json put null, to this property
             profile.Options = profile.Options ?? new Options();
             profile.LauncherOptions = profile.LauncherOptions ?? new LauncherOptions();
-            profile.ConfigurableParameters = profile.ConfigurableParameters ?? ConfigurableParameters.CreateDefault();
         }
 
         private static void EnsureProfileDirectoryExists()

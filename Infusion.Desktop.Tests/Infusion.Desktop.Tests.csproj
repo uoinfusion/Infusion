@@ -66,7 +66,6 @@
   <ItemGroup>
     <Compile Include="Launcher\LauncherOptionsTests.cs" />
     <Compile Include="Launcher\LoginConfigurationTests.cs" />
-    <Compile Include="Profiles\ConfigurabelParametersTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

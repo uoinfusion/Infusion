@@ -8,7 +8,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Infusion.Desktop.Profiles;
-using Infusion.Proxy.ConfigurableParameters;
 using Newtonsoft.Json;
 
 namespace Infusion.Desktop.Launcher
@@ -79,8 +78,6 @@ namespace Infusion.Desktop.Launcher
                 HandleException(ex, originalTitle);
                 return;
             }
-
-            ConfigParam.DefaultRepository = ProfileRepositiory.SelectedProfile.ConfigurableParameters;
 
             var infusionWindow = new InfusionWindow();
             Application.Current.MainWindow = infusionWindow;

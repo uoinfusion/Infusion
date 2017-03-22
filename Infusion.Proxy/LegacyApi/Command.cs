@@ -29,7 +29,10 @@ namespace Infusion.Proxy.LegacyApi
 
         public void Invoke()
         {
-            Invoke(commandAction);
+            if (commandAction != null)
+                Invoke(commandAction);
+            else if (parameterizedCommandAction != null)
+                Invoke(() => parameterizedCommandAction(null));
         }
 
         public void Invoke(string parameters)

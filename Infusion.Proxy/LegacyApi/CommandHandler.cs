@@ -58,7 +58,8 @@ namespace Infusion.Proxy.LegacyApi
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
                     if (firstSpaceIndex + 1 >= commandInvocationSyntax.Length)
-                        throw new CommandInvocationException($"No parameters for command specified {commandInvocationSyntax}");
+                        throw new CommandInvocationException(
+                            $"No parameters for command specified {commandInvocationSyntax}");
 
                     var parameters = commandInvocationSyntax.Substring(firstSpaceIndex + 1,
                         commandInvocationSyntax.Length - firstSpaceIndex - 1);
@@ -70,7 +71,10 @@ namespace Infusion.Proxy.LegacyApi
             catch (CommandInvocationException ex)
             {
                 Program.Console.Error(ex.Message);
-                return;
+            }
+            catch (Exception ex)
+            {
+                Program.Console.Error(ex.ToString());
             }
         }
 

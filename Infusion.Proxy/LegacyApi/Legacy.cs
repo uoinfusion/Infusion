@@ -223,8 +223,6 @@ namespace Infusion.Proxy.LegacyApi
             Targeting.Target(item);
         }
 
-        public static void Run(Action scriptAction) => Script.Run(scriptAction);
-
         public static void Terminate()
         {
             Script.Terminate();

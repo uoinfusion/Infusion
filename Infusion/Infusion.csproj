@@ -87,6 +87,7 @@
     <Compile Include="Packets\Client\SkillRequest.cs" />
     <Compile Include="Packets\RequestableSkill.cs" />
     <Compile Include="Packets\RequestableSpell.cs" />
+    <Compile Include="Parsers\IOutputLogProcessor.cs" />
     <Compile Include="Parsers\OutputLogParser.cs" />
     <Compile Include="Parsers\PacketLogParser.cs" />
     <Compile Include="IO\ArrayPacketReader.cs" />
@@ -154,6 +155,8 @@
     <Compile Include="Packets\WeatherType.cs" />
     <Compile Include="Packets\VariablePacketLength.cs" />
     <Compile Include="Packets\StaticPacketLength.cs" />
+    <Compile Include="Parsers\Processors\LumberjackingHarvestProcessor.cs" />
+    <Compile Include="Parsers\Processors\SkillIncreasedProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="IO\StreamPacketReader.cs" />

@@ -21,17 +21,12 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void Run(Action action) => new Script(action).Run();
 
-        public static Action Create(Action action) => () =>
-        {
-            new Script(action).Run();
-        };
-
         public Script Run()
         {
             if (currentScript != null)
             {
                 if (currentScript.ThreadId != Thread.CurrentThread.ManagedThreadId)
-                    throw new InvalidOperationException("A script already running, terminate it first.");
+                    Program.Console.Error("A script already running, terminate it first.");
 
                 RunAction(scriptAction);
                 return this;

@@ -8,27 +8,32 @@ namespace Infusion.Desktop
 {
     internal sealed class FileLogger : ILogger
     {
+        private object logLock = new object();
+
         private void WriteLine(string message)
         {
             try
             {
-                if (!ProfileRepositiory.SelectedProfile.Options.LogToFileEnabled)
-                    return;
-
-                string logsPath = ProfileRepositiory.SelectedProfile.Options.LogPath;
-
-                var now = DateTime.Now;
-
-                if (Directory.Exists(logsPath))
+                lock (logLock)
                 {
-                    string fileName = Path.Combine(logsPath, $"{now:yyyy-MM-dd}.log");
+                    if (!ProfileRepositiory.SelectedProfile.Options.LogToFileEnabled)
+                        return;
 
-                    if (!File.Exists(fileName))
+                    string logsPath = ProfileRepositiory.SelectedProfile.Options.LogPath;
+
+                    var now = DateTime.Now;
+
+                    if (Directory.Exists(logsPath))
                     {
-                        File.Create(fileName).Dispose();
-                    }
+                        string fileName = Path.Combine(logsPath, $"{now:yyyy-MM-dd}.log");
 
-                    File.AppendAllText(fileName, $@"{now:T}: {message}{Environment.NewLine}");
+                        if (!File.Exists(fileName))
+                        {
+                            File.Create(fileName).Dispose();
+                        }
+
+                        File.AppendAllText(fileName, $@"{now:T}: {message}{Environment.NewLine}");
+                    }
                 }
 
             }

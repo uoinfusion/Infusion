@@ -14,10 +14,6 @@ using Infusion.Packets.Server;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
 
-// TODO: lumberjacking skill increase
-//12/3/2016 10:03:18 PM >>>> server -> proxy: RawPacket SendSkills, length = 11
-//0x3A, 0x00, 0x0B, 0xFF, 0x00, 0x2C, 0x00, 0x0A, 0x00, 0x0A, 0x00, 
-
 namespace Infusion.Proxy
 {
     public static class Program
@@ -150,6 +146,8 @@ namespace Infusion.Proxy
 
                         clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream));
                     }
+
+                    Thread.Yield();
                 }
             }
             catch (Exception ex)

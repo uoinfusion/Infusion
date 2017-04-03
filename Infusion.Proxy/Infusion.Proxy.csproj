@@ -65,7 +65,6 @@
     <Compile Include="LegacyApi\JournalEntry.cs" />
     <Compile Include="LegacyApi\JournalObservers.cs" />
     <Compile Include="LegacyApi\PlayerObservers.cs" />
-    <Compile Include="LegacyApi\Script.cs" />
     <Compile Include="LegacyApi\CommandHandler.cs" />
     <Compile Include="LegacyApi\Targeting.cs" />
     <Compile Include="LegacyApi\WalkRequest.cs" />

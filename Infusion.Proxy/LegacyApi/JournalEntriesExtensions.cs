@@ -13,6 +13,6 @@ namespace Infusion.Proxy.LegacyApi
             => entries.Where(e => names.Contains(e.Name.ToLower()));
 
         public static IEnumerable<JournalEntry> ContainsAnyWord(this IEnumerable<JournalEntry> entries, params string[] words)
-            => entries.Where(e => words.Any(w => e.Message.ToLower().Contains(w)));
+            => entries.Where(e => words.Any(w => e.Message.ToLower().Contains(w.ToLower())));
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Infusion.Proxy.LegacyApi
@@ -8,9 +9,10 @@ namespace Infusion.Proxy.LegacyApi
         private readonly Action commandAction;
         private readonly CommandExecutionMode executionMode;
         private readonly Action<string> parameterizedCommandAction;
+        private static readonly ThreadLocal<int> NestingLevel = new ThreadLocal<int>();
 
         public Command(string name, Action commandAction,
-            CommandExecutionMode executionMode = CommandExecutionMode.Script)
+            CommandExecutionMode executionMode = CommandExecutionMode.Normal)
         {
             this.commandAction = commandAction;
             Name = name;
@@ -18,7 +20,7 @@ namespace Infusion.Proxy.LegacyApi
         }
 
         public Command(string name, Action<string> commandAction,
-            CommandExecutionMode executionMode = CommandExecutionMode.Script)
+            CommandExecutionMode executionMode = CommandExecutionMode.Normal)
         {
             Name = name;
             parameterizedCommandAction = commandAction;
@@ -27,7 +29,15 @@ namespace Infusion.Proxy.LegacyApi
 
         public string Name { get; }
 
-        public void Invoke()
+        internal void Terminate()
+        {
+            cancellationTokenSource?.Cancel();
+        }
+
+        public event EventHandler Started;
+        public event EventHandler Stopped;
+
+        internal void Invoke()
         {
             if (commandAction != null)
                 Invoke(commandAction);
@@ -35,7 +45,7 @@ namespace Infusion.Proxy.LegacyApi
                 Invoke(() => parameterizedCommandAction(null));
         }
 
-        public void Invoke(string parameters)
+        internal void Invoke(string parameters)
         {
             Invoke(() => parameterizedCommandAction(parameters));
         }
@@ -44,14 +54,52 @@ namespace Infusion.Proxy.LegacyApi
         {
             switch (executionMode)
             {
-                case CommandExecutionMode.OwnThread:
-                    Task.Run(action);
+                case CommandExecutionMode.Direct:
+                    action();
                     break;
-                case CommandExecutionMode.Script:
-                    Script.Run(action);
+                case CommandExecutionMode.Normal:
+                    if (NestingLevel.Value > 0)
+                        action();
+                    else
+                        Task.Run(() => NonNestedAction(action));
+                    Started?.Invoke(this, EventArgs.Empty);
+                    break;
+                case CommandExecutionMode.AlwaysParallel:
+                    Task.Run(() => NonNestedAction(action));
+                    Started?.Invoke(this, EventArgs.Empty);
                     break;
                 default:
                     throw new InvalidOperationException();
+            }
+        }
+
+        private CancellationTokenSource cancellationTokenSource;
+
+        private void NonNestedAction(Action action)
+        {
+            try
+            {
+                cancellationTokenSource = new CancellationTokenSource();
+                Legacy.CancellationToken = cancellationTokenSource.Token;
+                NestingLevel.Value += 1;
+                action();
+            }
+            catch (OperationCanceledException)
+            {
+                Program.Console.Info($"Command {Name} cancelled.");
+            }
+            catch (Exception ex)
+            {
+                Program.Console.Error(ex.ToString());
+            }
+            finally
+            {
+                var source = cancellationTokenSource;
+                cancellationTokenSource = null;
+                source.Dispose();
+
+                NestingLevel.Value -= 1;
+                Stopped?.Invoke(this, EventArgs.Empty);
             }
         }
     }

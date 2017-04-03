@@ -42,8 +42,17 @@ namespace Infusion.Proxy.LegacyApi
 
         private static void RegisterDefaultScripts()
         {
-            CommandHandler.RegisterCommand(new Command("terminate", () => Terminate(), CommandExecutionMode.OwnThread));
+            CommandHandler.RegisterCommand(new Command("terminate", Terminate, CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("list-running", ListRunningCommands, CommandExecutionMode.AlwaysParallel));
             CommandHandler.RegisterCommand(new Command("walkto", (parameters) => WalkTo(parameters)));
+        }
+
+        private static void ListRunningCommands()
+        {
+            foreach (var command in CommandHandler.RunningCommands)
+            {
+                Log(command.Name);
+            }
         }
 
         public static Gump CurrentGump => GumpObservers.CurrentGump;
@@ -223,9 +232,21 @@ namespace Infusion.Proxy.LegacyApi
             Targeting.Target(item);
         }
 
-        public static void Terminate()
+        public static void Terminate(string parameters)
         {
-            Script.Terminate();
+            try
+            {
+                Log("Terminate attempt");
+                if (string.IsNullOrEmpty(parameters))
+                    CommandHandler.Terminate();
+                else
+                    CommandHandler.Terminate(parameters);
+
+            }
+            finally
+            {
+                Log("Terminate attempt finished");
+            }
         }
 
         public static string Info() => Targeting.Info();

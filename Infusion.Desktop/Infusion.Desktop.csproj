@@ -223,12 +223,14 @@
       <DependentUpon>ConsoleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConsoleContent.cs" />
+    <Compile Include="CSharpScriptEngine.cs" />
     <Compile Include="FileLogger.cs" />
     <Compile Include="InfusionConsoleLogger.cs" />
     <Compile Include="InfusionWindow.xaml.cs">
       <DependentUpon>InfusionWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="InterProcessCommunication.cs" />
+    <Compile Include="IScriptOutput.cs" />
     <Compile Include="Launcher\LauncherViewModel.cs" />
     <Compile Include="Launcher\TestOuputWindow.xaml.cs">
       <DependentUpon>TestOuputWindow.xaml</DependentUpon>

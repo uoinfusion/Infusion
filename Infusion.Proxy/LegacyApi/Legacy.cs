@@ -57,7 +57,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static Gump CurrentGump => GumpObservers.CurrentGump;
 
-        internal static CancellationToken? CancellationToken
+        public static CancellationToken? CancellationToken
         {
             get { return cancellationToken.Value; }
             set { cancellationToken.Value = value; }

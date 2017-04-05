@@ -143,7 +143,6 @@ namespace Infusion.Proxy.Tests.LegacyApi
 
             var command = new TestCommand(commandHandler, "cmd", () =>
             {
-                Legacy.Wait(TimeSpan.FromMilliseconds(1));
                 executionCount++;
                 counterDone.Set();
                 Legacy.Wait(TimeSpan.FromHours(1));
@@ -192,7 +191,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
             var command2 = new TestCommand(commandHandler, "cmd2", () => Legacy.Wait(TimeSpan.FromHours(1)));
             commandHandler.RegisterCommand(command2.Command);
 
-            for (var i = 0; i < 50; i++)
+            for (var i = 0; i < 10; i++)
             {
                 command1.Reset();
                 command2.Reset();
@@ -200,6 +199,8 @@ namespace Infusion.Proxy.Tests.LegacyApi
                 command1.WaitForInitialization();
                 commandHandler.Invoke(",cmd2");
                 command2.WaitForInitialization();
+
+                commandHandler.RunningCommands.Should().NotBeEmpty();
 
                 commandHandler.Terminate();
 
@@ -213,24 +214,83 @@ namespace Infusion.Proxy.Tests.LegacyApi
         }
 
         [TestMethod]
-        public void Can_execute_nested_command_When_Normal()
+        public void Can_terminate_parent_command_executing_Normal_nested_command()
         {
-            var nestedCommandExecuted = false;
-            var nestedCommand = new TestCommand(commandHandler, "nested", () => nestedCommandExecuted = true);
+            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () => Legacy.Wait(TimeSpan.FromHours(1)));
             commandHandler.RegisterCommand(nestedCommand.Command);
-            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.Invoke(",nested"));
-            commandHandler.RegisterCommand(command.Command);
+
+            var parentCommand = new TestCommand(commandHandler, "parent", () => commandHandler.Invoke(",nested"));
+            commandHandler.RegisterCommand(parentCommand.Command);
+
+            commandHandler.Invoke(",parent");
+            parentCommand.WaitForInitialization();
+
+            commandHandler.Terminate("parent");
+
+            nestedCommand.Finish();
+            parentCommand.Finish();
+
+            parentCommand.WaitForFinished().Should().BeTrue();
+
+            commandHandler.RunningCommands.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void Can_execute_nested_Normal_command_from_Normal_parent_on_same_thread()
+        {
+            int nestedCommandThreadId = -1;
+            int parentCommandThreadId = -1;
+
+            var nestedCommandExecuted = false;
+            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () =>
+            {
+                nestedCommandThreadId = Thread.CurrentThread.ManagedThreadId;
+                nestedCommandExecuted = true;
+            });
+            commandHandler.RegisterCommand(nestedCommand.Command);
+            var parentCommand = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Normal, () =>
+            {
+                parentCommandThreadId = Thread.CurrentThread.ManagedThreadId;
+                commandHandler.Invoke(",nested");
+            });
+            commandHandler.RegisterCommand(parentCommand.Command);
 
             commandHandler.Invoke(",cmd1");
-            command.WaitForInitialization();
+            parentCommand.WaitForInitialization();
             nestedCommand.WaitForAdditionalAction();
 
             nestedCommandExecuted.Should().BeTrue();
             commandHandler.RunningCommands.Select(c => c.Name).Should().Contain("cmd1");
             commandHandler.RunningCommands.Select(c => c.Name).Should().NotContain("nested");
+            nestedCommandThreadId.Should().NotBe(-1);
+            parentCommandThreadId.Should().NotBe(-1);
+            nestedCommandThreadId.Should().Be(parentCommandThreadId);
 
             nestedCommand.Finish();
-            command.Finish();
+            parentCommand.Finish();
+        }
+
+        [TestMethod]
+        public void Can_execute_nested_Normal_command_from_Direct_parent()
+        {
+            var nestedCommandExecuted = false;
+            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal,
+                () =>
+                {
+                    nestedCommandExecuted = true;
+                    commandHandler.RunningCommands.Select(c => c.Name).Should().Contain("parent");
+                    commandHandler.RunningCommands.Select(c => c.Name).Should().NotContain("nested");
+                });
+            commandHandler.RegisterCommand(nestedCommand.Command);
+            var parentCommand = new TestCommand(commandHandler, "parent", CommandExecutionMode.Direct,
+                () => commandHandler.Invoke(",nested"));
+            commandHandler.RegisterCommand(parentCommand.Command);
+
+            nestedCommand.Finish();
+            parentCommand.Finish();
+            commandHandler.Invoke(",parent");
+
+            nestedCommandExecuted.Should().BeTrue();
         }
 
         [TestMethod]
@@ -242,8 +302,11 @@ namespace Infusion.Proxy.Tests.LegacyApi
             var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.Invoke(",nested"));
             commandHandler.RegisterCommand(command.Command);
 
+            nestedCommand.Reset();
+            command.Reset();
             commandHandler.Invoke(",cmd1");
             command.WaitForInitialization();
+            nestedCommand.WaitForInitialization();
             nestedCommand.WaitForAdditionalAction();
 
             nestedCommandExecuted.Should().BeTrue();
@@ -252,6 +315,35 @@ namespace Infusion.Proxy.Tests.LegacyApi
 
             nestedCommand.Finish();
             command.Finish();
+            nestedCommand.WaitForFinished();
+            command.WaitForFinished();
+        }
+
+        [TestMethod]
+        public void Can_list_Normal_commands_executing_Normal_nested_command_multipletimes()
+        {
+            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () => { });
+            commandHandler.RegisterCommand(nestedCommand.Command);
+            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.Invoke(",nested"));
+            commandHandler.RegisterCommand(command.Command);
+
+            for (int i = 0; i < 100; i++)
+            {
+                nestedCommand.Reset();
+                command.Reset();
+
+                commandHandler.Invoke(",cmd1");
+                nestedCommand.WaitForAdditionalAction();
+
+                commandHandler.RunningCommands.Select(x => x.Name).Should().Contain("cmd1");
+                commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("nested");
+
+                nestedCommand.Finish();
+                command.Finish();
+                command.WaitForFinished();
+
+                commandHandler.RunningCommands.Should().BeEmpty();
+            }
         }
 
         [TestMethod]
@@ -271,8 +363,10 @@ namespace Infusion.Proxy.Tests.LegacyApi
         }
 
         [TestMethod]
-        public void Can_execute_Direct_command_on_caller_thread_without_listing_in_RunningCommands()
+        public void Can_execute_Direct_command_on_caller_thread()
         {
+            commandHandler = new CommandHandler();
+
             int commandThread = -1;
             var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Direct, () => commandThread = Thread.CurrentThread.ManagedThreadId);
             commandHandler.RegisterCommand(command.Command);
@@ -280,7 +374,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
             commandHandler.Invoke(",cmd1");
             command.WaitForAdditionalAction();
 
-            commandHandler.RunningCommands.Length.Should().Be(0);
+            commandHandler.RunningCommands.Length.Should().Be(1);
 
             commandThread.Should().Be(Thread.CurrentThread.ManagedThreadId);
         }
@@ -311,9 +405,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
                 this.additionalAction = additionalAction;
 
                 if (handler != null)
-                    handler.CommandStopped += HandlerOnCommandStopped;
-                else
-                    Command.Stopped += CommandOnStopped;
+                    handler.RunningCommandRemoved += HandlerOnRunnigCommandRemoved;
             }
 
             public TestCommand(string name) : this(null, name, CommandExecutionMode.Normal, () => { })
@@ -322,16 +414,16 @@ namespace Infusion.Proxy.Tests.LegacyApi
 
             public Command Command { get; }
 
-            private void CommandOnStopped(object sender, EventArgs eventArgs)
+            private void CommandOnStopped(object sender, CommandInvocation eventArgs)
             {
                 trace.AppendLine("CommandOnStopped: OnEntry");
                 finishedEvent.Set();
                 trace.AppendLine("CommandOnStopped: OnExit");
             }
 
-            private void HandlerOnCommandStopped(object sender, Command command)
+            private void HandlerOnRunnigCommandRemoved(object sender, CommandInvocation invocation)
             {
-                if (command.Name.Equals(Command.Name, StringComparison.Ordinal))
+                if (invocation.CommandName.Equals(Command.Name, StringComparison.Ordinal))
                 {
                     trace.AppendLine("HandlerOnCommandStopped: OnEntry");
                     finishedEvent.Set();
@@ -349,7 +441,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
             public void WaitForInitialization()
             {
                 trace.AppendLine("WaitForInitialiation: OnEntry");
-                initializeEvent.WaitOne(TimeSpan.FromSeconds(10));
+                initializeEvent.WaitOne(TimeSpan.FromSeconds(1));
                 trace.AppendLine("WaitForInitialiation: OnExit");
             }
 
@@ -373,7 +465,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
                 additionalAction?.Invoke();
                 additionalActionFinished.Set();
 
-                finishEvent.WaitOne(TimeSpan.FromSeconds(10));
+                finishEvent.WaitOne(TimeSpan.FromSeconds(1));
 
                 trace.AppendLine("CommandAction: OnExit");
             }
@@ -391,7 +483,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
 
             public void WaitForAdditionalAction()
             {
-                additionalActionFinished.WaitOne(TimeSpan.FromSeconds(10));
+                additionalActionFinished.WaitOne(TimeSpan.FromSeconds(1));
             }
         }
     }

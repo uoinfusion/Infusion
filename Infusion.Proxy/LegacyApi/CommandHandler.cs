@@ -5,11 +5,51 @@ using System.Linq;
 
 namespace Infusion.Proxy.LegacyApi
 {
-    public sealed class CommandHandler
+    public sealed partial class CommandHandler
     {
+        private readonly CommandInvocator invocator;
+
+        private readonly Dictionary<string, CommandInvocation> runningCommands =
+            new Dictionary<string, CommandInvocation>();
+
         private readonly object runningCommandsLock = new object();
         private ImmutableDictionary<string, Command> commands = ImmutableDictionary<string, Command>.Empty;
-        private readonly Dictionary<string, Command> runningCommands = new Dictionary<string, Command>();
+
+        public event EventHandler<CommandInvocation> RunningCommandAdded;
+        public event EventHandler<CommandInvocation> RunningCommandRemoved;
+
+        private void RemoveCommandInvocation(CommandInvocation invocation)
+        {
+            bool removed = false;
+
+            lock (runningCommandsLock)
+            {
+                if (runningCommands.ContainsKey(invocation.Command.Name))
+                {
+                    runningCommands.Remove(invocation.Command.Name);
+                    removed = true;
+                }
+            }
+
+            if (removed)
+                RunningCommandRemoved?.Invoke(this, invocation);
+        }
+
+        private void AddCommandInvocation(CommandInvocation invocation)
+        {
+            lock (runningCommandsLock)
+            {
+                runningCommands.Add(invocation.Command.Name, invocation);
+            }
+
+            RunningCommandAdded?.Invoke(this, invocation);
+        }
+
+
+        public CommandHandler()
+        {
+            invocator = new CommandInvocator(this);
+        }
 
         public IEnumerable<string> CommandNames => commands.Keys;
 
@@ -21,14 +61,12 @@ namespace Infusion.Proxy.LegacyApi
 
                 lock (runningCommands)
                 {
-                    result = runningCommands.Values.ToArray();
+                    result = runningCommands.Values.Select(x => x.Command).ToArray();
                 }
 
                 return result;
             }
         }
-
-        public event EventHandler<Command> CommandStopped;
 
         public Command RegisterCommand(string name, Action commandAction)
         {
@@ -41,29 +79,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public void RegisterCommand(Command command)
         {
-            command.Started += CommandOnStarted;
-            command.Stopped += CommandOnStopped;
             commands = commands.SetItem(command.Name, command);
-        }
-
-        private void CommandOnStopped(object sender, EventArgs eventArgs)
-        {
-            var command = (Command) sender;
-            lock (runningCommandsLock)
-            {
-                runningCommands.Remove(command.Name);
-            }
-
-            CommandStopped?.Invoke(this, command);
-        }
-
-        private void CommandOnStarted(object sender, EventArgs eventArgs)
-        {
-            var command = (Command) sender;
-            lock (runningCommandsLock)
-            {
-                runningCommands.Add(command.Name, command);
-            }
         }
 
         public Command RegisterCommand(string name, Action<string> commandAction)
@@ -88,8 +104,7 @@ namespace Infusion.Proxy.LegacyApi
                     if (!commands.TryGetValue(commandName, out command))
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
-                    CheckIfAlreadyRunning(command);
-                    command.Invoke();
+                    invocator.Invoke(command);
                 }
                 else
                 {
@@ -109,8 +124,7 @@ namespace Infusion.Proxy.LegacyApi
                     var parameters = commandInvocationSyntax.Substring(firstSpaceIndex + 1,
                         commandInvocationSyntax.Length - firstSpaceIndex - 1);
 
-                    CheckIfAlreadyRunning(command);
-                    command.Invoke(parameters);
+                    invocator.Invoke(command, parameters);
                 }
             }
             catch (CommandInvocationException ex)
@@ -137,12 +151,7 @@ namespace Infusion.Proxy.LegacyApi
         public void Unregister(string commandName)
         {
             if (commands.TryGetValue(commandName, out Command command))
-            {
-                command.Started -= CommandOnStarted;
-                command.Stopped -= CommandOnStopped;
-
                 commands = commands.Remove(commandName);
-            }
         }
 
         public void Unregister(Command command)
@@ -152,21 +161,24 @@ namespace Infusion.Proxy.LegacyApi
 
         public void Terminate(string commandName)
         {
-            if (commands.TryGetValue(commandName, out Command command))
-                command.Terminate();
+            lock (runningCommandsLock)
+            {
+                if (runningCommands.TryGetValue(commandName, out CommandInvocation invocation))
+                    invocation.CancellationTokenSource.Cancel();
+            }
         }
 
         public void Terminate()
         {
-            IEnumerable<Command> commands;
+            IEnumerable<CommandInvocation> invocations;
 
             lock (runningCommandsLock)
             {
-                commands = runningCommands.Values;
+                invocations = runningCommands.Values;
             }
 
-            foreach (var command in commands)
-                command.Terminate();
+            foreach (var invocation in invocations)
+                invocation.CancellationTokenSource.Cancel();
         }
     }
 }

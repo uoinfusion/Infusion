@@ -75,43 +75,60 @@ namespace Infusion.Desktop
             await Execute(scriptText, false);
         }
 
+        private static int submissionNumber = 0;
+
         public Task<object> Execute(string code, bool echo = true, CancellationToken cancellationToken = default(CancellationToken))
         {
+            submissionNumber++;
+            string commandName = $"submission{submissionNumber}";
+
             return Task.Run(() =>
             {
-                Legacy.CancellationToken = cancellationToken;
-                if (echo)
-                    scriptOutput.Echo(code);
+                object result = null;
 
-                try
+                var command = new Command(commandName, () =>
                 {
-                    scriptState = scriptState == null
-                        ? CSharpScript.RunAsync(code, scriptOptions, cancellationToken: cancellationToken)
-                            .Result
-                        : scriptState.ContinueWithAsync(code, scriptOptions, cancellationToken)
-                            .Result;
+                    if (echo)
+                        scriptOutput.Echo(code);
 
-                    var resultText = scriptState?.ReturnValue?.ToString();
-                    if (!string.IsNullOrEmpty(resultText))
+                    Legacy.CancellationToken = cancellationToken;
+                    try
                     {
-                        scriptOutput.Result(resultText);
-                        return scriptState.ReturnValue;
+                        scriptState = scriptState == null
+                            ? CSharpScript.RunAsync(code, scriptOptions, cancellationToken: cancellationToken)
+                                .Result
+                            : scriptState.ContinueWithAsync(code, scriptOptions, cancellationToken)
+                                .Result;
+
+                        var resultText = scriptState?.ReturnValue?.ToString();
+                        if (!string.IsNullOrEmpty(resultText))
+                        {
+                            scriptOutput.Result(resultText);
+                            result = scriptState.ReturnValue;
+                            return;
+                        }
+
+                        scriptOutput.Info("OK");
+                    }
+                    catch (AggregateException ex)
+                    {
+                        scriptOutput.Error(ex.InnerExceptions
+                            .Select(inner => inner.Message)
+                            .Aggregate((l, r) => l + Environment.NewLine + r));
+                    }
+                    catch (Exception ex)
+                    {
+                        scriptOutput.Error(ex.Message);
                     }
 
-                    scriptOutput.Info("OK");
-                }
-                catch (AggregateException ex)
-                {
-                    scriptOutput.Error(ex.InnerExceptions
-                        .Select(inner => inner.Message)
-                        .Aggregate((l, r) => l + Environment.NewLine + r));
-                }
-                catch (Exception ex)
-                {
-                    scriptOutput.Error(ex.Message);
-                }
+                    result = null;
+                }, CommandExecutionMode.Direct);
 
-                return null;
+                Legacy.CommandHandler.RegisterCommand(command);
+                Legacy.CommandHandler.Invoke("," + commandName);
+                Legacy.CommandHandler.Unregister(command);
+
+                return result;
             }, cancellationToken);
         }
     }

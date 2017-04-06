@@ -14,6 +14,11 @@ namespace Infusion.Gumps
             this.sendPacket = sendPacket;
         }
 
+        public GumpResponse Trigger(uint triggerId)
+        {
+            return new TriggerGumpResponse(gump, triggerId, sendPacket);
+        }
+
         public GumpResponse PushButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
             var processor = new SelectButtonByLabelGumpParserProcessor(buttonLabel, labelPosition);

@@ -73,6 +73,16 @@ namespace Infusion.Proxy.LegacyApi
             }
         }
 
+        internal void TriggerGump(uint triggerId)
+        {
+            if (CurrentGump != null)
+            {
+                new GumpResponseBuilder(CurrentGump, Program.SendToServer).Trigger(triggerId)
+                    .Execute();
+                CurrentGump = null;
+            }
+        }
+
         internal void CloseGump()
         {
             if (CurrentGump != null)

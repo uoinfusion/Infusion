@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Infusion.Proxy.LegacyApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -365,8 +366,6 @@ namespace Infusion.Proxy.Tests.LegacyApi
         [TestMethod]
         public void Can_execute_Direct_command_on_caller_thread()
         {
-            commandHandler = new CommandHandler();
-
             int commandThread = -1;
             var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Direct, () => commandThread = Thread.CurrentThread.ManagedThreadId);
             commandHandler.RegisterCommand(command.Command);
@@ -374,9 +373,58 @@ namespace Infusion.Proxy.Tests.LegacyApi
             commandHandler.Invoke(",cmd1");
             command.WaitForAdditionalAction();
 
-            commandHandler.RunningCommands.Length.Should().Be(1);
-
             commandThread.Should().Be(Thread.CurrentThread.ManagedThreadId);
+        }
+
+        [TestMethod]
+        public void Can_terminate_Normal_command_with_custom_CancellationTokenSource()
+        {
+            var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Normal, () => { Legacy.Wait(TimeSpan.FromHours(1)); });
+            commandHandler.RegisterCommand(command.Command);
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+            commandHandler.Invoke(",cmd1", cancellationTokenSource);
+            cancellationTokenSource.Cancel();
+
+            command.Finish();
+
+            command.WaitForFinished().Should().BeTrue();
+            commandHandler.RunningCommands.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void Can_terminate_Direct_command_with_custom_CancellationTokenSource()
+        {
+            var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Direct, () => { Legacy.Wait(TimeSpan.FromHours(1)); });
+            commandHandler.RegisterCommand(command.Command);
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+
+            // ReSharper disable once MethodSupportsCancellation
+            Task.Run(() => commandHandler.Invoke(",cmd1", cancellationTokenSource));
+            command.WaitForAdditionalAction();
+
+            cancellationTokenSource.Cancel();
+            command.Finish();
+
+            command.WaitForFinished().Should().BeTrue();
+            commandHandler.RunningCommands.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void Can_call_Terminate_for_Direct_command_without_custom_CancellationTokenSource()
+        {
+            var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Direct, () => { });
+            commandHandler.RegisterCommand(command.Command);
+
+            // ReSharper disable once MethodSupportsCancellation
+            Task.Run(() => commandHandler.Invoke(",cmd1"));
+            command.WaitForAdditionalAction();
+
+            commandHandler.Terminate();
+
+            commandHandler.CommandNames.Should().Contain("cmd1", "Direct command without custom cancellation token cannot be terminated, to support special commands like ,terminate.");
+
+            command.Finish();
         }
 
         private sealed class TestCommand

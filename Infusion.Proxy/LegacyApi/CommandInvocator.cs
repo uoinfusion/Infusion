@@ -16,57 +16,68 @@ namespace Infusion.Proxy.LegacyApi
                 this.commandHandler = commandHandler;
             }
 
-            public void Invoke(Command command)
+            public void Invoke(Command command, CancellationTokenSource cancellationTokenSource)
             {
                 commandHandler.CheckIfAlreadyRunning(command);
-                InvokeCore(command.Invoke, command);
+                InvokeCore(command.Invoke, command, cancellationTokenSource);
             }
 
-            internal void Invoke(Command command, string parameters)
+            internal void Invoke(Command command, string parameters, CancellationTokenSource cancellationTokenSource)
             {
                 commandHandler.CheckIfAlreadyRunning(command);
-                InvokeCore(() => command.Invoke(parameters), command);
+                InvokeCore(() => command.Invoke(parameters), command, cancellationTokenSource);
             }
 
-            private void InvokeCore(Action action, Command command)
+            private void InvokeCore(Action action, Command command, CancellationTokenSource cancellationTokenSource)
             {
                 switch (command.ExecutionMode)
                 {
                     case CommandExecutionMode.Direct:
-                        NestedAction(action, command);
+                        NestedAction(action, command, cancellationTokenSource);
                         break;
                     case CommandExecutionMode.Normal:
                         if (nestingLevel.Value > 0)
-                            NestedAction(action, command);
+                            NestedAction(action, command, cancellationTokenSource);
                         else
-                            Task.Run(() => NonNestedAction(action, command));
+                            Task.Run(() => NonNestedAction(action, command, cancellationTokenSource));
                         break;
                     case CommandExecutionMode.AlwaysParallel:
-                        Task.Run(() => NonNestedAction(action, command));
+                        Task.Run(() => NonNestedAction(action, command, cancellationTokenSource));
                         break;
                     default:
                         throw new InvalidOperationException();
                 }
             }
 
-            private void NestedAction(Action action, Command command)
+            private void NestedAction(Action action, Command command, CancellationTokenSource cancellationTokenSource)
             {
-                AddCommandInvocation(command,
-                    new CommandInvocation(command, command.ExecutionMode, nestingLevel.Value, null));
+                var invocation = new CommandInvocation(command, command.ExecutionMode, nestingLevel.Value,
+                    cancellationTokenSource);
+                var commandAdded = AddCommandInvocation(command, invocation);
+
+                if (cancellationTokenSource != null)
+                    Legacy.CancellationToken = cancellationTokenSource.Token;
+
                 nestingLevel.Value += 1;
                 try
                 {
                     action();
                 }
+                catch (OperationCanceledException)
+                {
+                    Program.Console.Info($"Command {command.Name} cancelled.");
+                }
                 finally
                 {
                     nestingLevel.Value -= 1;
+                    if (commandAdded)
+                        commandHandler.RemoveCommandInvocation(invocation);
                 }
             }
 
-            private void NonNestedAction(Action action, Command command)
+            private void NonNestedAction(Action action, Command command, CancellationTokenSource cancellationTokenSource)
             {
-                var cancellationTokenSource = new CancellationTokenSource();
+                cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
                 Legacy.CancellationToken = cancellationTokenSource.Token;
                 var commandInvocation = new CommandInvocation(command, command.ExecutionMode, nestingLevel.Value,
                     cancellationTokenSource);
@@ -89,18 +100,21 @@ namespace Infusion.Proxy.LegacyApi
                 finally
                 {
                     commandHandler.RemoveCommandInvocation(commandInvocation);
-                    var source = cancellationTokenSource;
-                    cancellationTokenSource = null;
-                    source.Dispose();
+                    cancellationTokenSource.Dispose();
 
                     nestingLevel.Value -= 1;
                 }
             }
 
-            private void AddCommandInvocation(Command command, CommandInvocation commandInvocation)
+            private bool AddCommandInvocation(Command command, CommandInvocation commandInvocation)
             {
                 if (command.ExecutionMode == CommandExecutionMode.AlwaysParallel || nestingLevel.Value == 0)
+                {
                     commandHandler.AddCommandInvocation(commandInvocation);
+                    return true;
+                }
+
+                return false;
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 
 namespace Infusion.Proxy.LegacyApi
 {
@@ -91,28 +92,26 @@ namespace Infusion.Proxy.LegacyApi
             return command;
         }
 
-        public void Invoke(string commandInvocationSyntax)
+        public void Invoke(string commandInvocationSyntax, CancellationTokenSource cancellationTokenSource = null)
         {
             try
             {
                 var firstSpaceIndex = commandInvocationSyntax.IndexOf(' ');
                 if (firstSpaceIndex < 0)
                 {
-                    Command command;
                     var commandName = commandInvocationSyntax.Substring(1, commandInvocationSyntax.Length - 1);
 
-                    if (!commands.TryGetValue(commandName, out command))
+                    if (!commands.TryGetValue(commandName, out Command command))
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
-                    invocator.Invoke(command);
+                    invocator.Invoke(command, cancellationTokenSource);
                 }
                 else
                 {
-                    Command command;
 
                     var commandName = commandInvocationSyntax.Substring(1, firstSpaceIndex - 1);
 
-                    if (!commands.TryGetValue(commandName, out command))
+                    if (!commands.TryGetValue(commandName, out Command command))
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
                     if (firstSpaceIndex + 1 >= commandInvocationSyntax.Length)
@@ -124,7 +123,7 @@ namespace Infusion.Proxy.LegacyApi
                     var parameters = commandInvocationSyntax.Substring(firstSpaceIndex + 1,
                         commandInvocationSyntax.Length - firstSpaceIndex - 1);
 
-                    invocator.Invoke(command, parameters);
+                    invocator.Invoke(command, parameters, cancellationTokenSource);
                 }
             }
             catch (CommandInvocationException ex)
@@ -164,7 +163,7 @@ namespace Infusion.Proxy.LegacyApi
             lock (runningCommandsLock)
             {
                 if (runningCommands.TryGetValue(commandName, out CommandInvocation invocation))
-                    invocation.CancellationTokenSource.Cancel();
+                    invocation.CancellationTokenSource?.Cancel();
             }
         }
 
@@ -178,7 +177,7 @@ namespace Infusion.Proxy.LegacyApi
             }
 
             foreach (var invocation in invocations)
-                invocation.CancellationTokenSource.Cancel();
+                invocation.CancellationTokenSource?.Cancel();
         }
     }
 }

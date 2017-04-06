@@ -77,7 +77,7 @@ namespace Infusion.Desktop
 
         private static int submissionNumber = 0;
 
-        public Task<object> Execute(string code, bool echo = true, CancellationToken cancellationToken = default(CancellationToken))
+        public Task<object> Execute(string code, bool echo = true, CancellationTokenSource cancellationTokenSource = null)
         {
             submissionNumber++;
             string commandName = $"submission{submissionNumber}";
@@ -91,13 +91,12 @@ namespace Infusion.Desktop
                     if (echo)
                         scriptOutput.Echo(code);
 
-                    Legacy.CancellationToken = cancellationToken;
                     try
                     {
                         scriptState = scriptState == null
-                            ? CSharpScript.RunAsync(code, scriptOptions, cancellationToken: cancellationToken)
+                            ? CSharpScript.RunAsync(code, scriptOptions, cancellationToken: cancellationTokenSource?.Token ?? default(CancellationToken))
                                 .Result
-                            : scriptState.ContinueWithAsync(code, scriptOptions, cancellationToken)
+                            : scriptState.ContinueWithAsync(code, scriptOptions, cancellationTokenSource?.Token ?? default(CancellationToken))
                                 .Result;
 
                         var resultText = scriptState?.ReturnValue?.ToString();
@@ -125,11 +124,11 @@ namespace Infusion.Desktop
                 }, CommandExecutionMode.Direct);
 
                 Legacy.CommandHandler.RegisterCommand(command);
-                Legacy.CommandHandler.Invoke("," + commandName);
+                Legacy.CommandHandler.Invoke("," + commandName, cancellationTokenSource);
                 Legacy.CommandHandler.Unregister(command);
 
                 return result;
-            }, cancellationToken);
+            }, cancellationTokenSource?.Token ?? default(CancellationToken));
         }
     }
 }

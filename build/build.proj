@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <Target Name="Build">
+    <Target Name="Build" DependsOnTargets="Clean">
         <MSBuild Projects="..\Infusion.sln" Properties="Configuration=Release;Platform=Any CPU" />
 
         <ItemGroup>
             <BinFiles Include="..\Infusion.Desktop\bin\release\**\*.*" /> 
-        </ItemGroup>
-        <ItemGroup>
             <ExampleFiles Include="..\Infusion.ExampleScripts\*.csx" />
         </ItemGroup>
+        <PropertyGroup>
+            <MSTestPath>$(VS150COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
+        </PropertyGroup>
 
-        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts;\release\examples" />
+        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts;\release\examples;.\testresults" />
+
+        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Tests\bin\release\Infusion.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Tests.log&quot;" />
+        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Proxy.Tests\bin\release\Infusion.Proxy.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Proxy.Tests.log&quot;" />
+        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Desktop.Tests\bin\release\Infusion.Desktop.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Desktop.Tests.log&quot;" />
+
         <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
         <Copy SourceFiles=".\Run.cmd" DestinationFolder=".\release" />
         <Copy SourceFiles="@(ExampleFiles)" DestinationFolder=".\release\examples" />
     </Target>
 
     <Target Name="Clean">
-       <ItemGroup>
-          <DirsToClean Include=".\release" />
+        <ItemGroup>
+          <DirsToClean Include=".\release;.\testresults" />
         </ItemGroup>
         <RemoveDir Directories="@(DirsToClean)" />
     </Target>

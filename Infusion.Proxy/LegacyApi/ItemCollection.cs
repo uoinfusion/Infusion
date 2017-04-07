@@ -18,7 +18,16 @@ namespace Infusion.Proxy.LegacyApi
             Player = player;
         }
 
-        public Item this[uint id] => items[id];
+        public Item this[uint id]
+        {
+            get
+            {
+                if (items.TryGetValue(id, out Item item))
+                    return item;
+
+                return null;
+            }
+        }
 
         public IEnumerator<Item> GetEnumerator()
         {
@@ -55,7 +64,7 @@ namespace Infusion.Proxy.LegacyApi
             return null;
         }
 
-        internal void UpdateItem(Item item)
+        public void UpdateItem(Item item)
         {
             AddItem(item);
         }

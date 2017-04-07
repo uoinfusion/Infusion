@@ -69,6 +69,20 @@ namespace Infusion.IO
             WriteBytes(Encoding.ASCII.GetBytes(str));
         }
 
+        public void WriteString(int length, string str)
+        {
+            WriteBytes(Encoding.ASCII.GetBytes(str.ToCharArray(), 0, str.Length));
+
+            if (str.Length < length)
+            {
+                while (str.Length < length)
+                {
+                    WriteByte(0x00);
+                    length--;
+                }
+            }
+        }
+
         private void WriteBytes(byte[] bytes)
         {
             foreach (byte b in bytes)

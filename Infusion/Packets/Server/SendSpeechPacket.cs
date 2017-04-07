@@ -6,19 +6,19 @@ namespace Infusion.Packets.Server
     {
         private Packet rawPacket;
 
-        public uint Id { get; private set; }
+        public uint Id { get; set; }
 
-        public ModelId Model { get; private set; }
+        public ModelId Model { get; set; }
 
-        public SpeechType Type { get; private set; }
+        public SpeechType Type { get; set; }
 
-        public Color Color { get; private set; }
+        public Color Color { get; set; }
 
-        public ushort Font { get; private set; }
+        public ushort Font { get; set; }
 
-        public string Name { get; private set; }
+        public string Name { get; set; }
 
-        public string Message { get; private set; }
+        public string Message { get; set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -33,6 +33,27 @@ namespace Infusion.Packets.Server
             Font = reader.ReadUShort();
             Name = reader.ReadString(30);
             Message = reader.ReadNullTerminatedString();
+        }
+
+        public void Serialize()
+        {
+            ushort size = (ushort)(45 + Message.Length);
+
+            byte[] payload = new byte[size];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.SendSpeech.Id);
+            writer.WriteUShort(size);
+            writer.WriteUInt(Id);
+            writer.WriteModelId(Model);
+            writer.WriteByte((byte)Type);
+            writer.WriteUShort(Color.Id);
+            writer.WriteUShort(Font);
+            writer.WriteString(30, Name);
+            writer.WriteString(Message);
+            writer.WriteByte(0x00);
+
+            rawPacket = new Packet(PacketDefinitions.SendSpeech.Id, payload);
         }
 
         public override Packet RawPacket => rawPacket;

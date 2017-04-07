@@ -63,12 +63,17 @@
   <ItemGroup>
     <Compile Include="InjectionApi\CommandHandlerTests.cs" />
     <Compile Include="InjectionApi\CommandParameterParserTests.cs" />
+    <Compile Include="InjectionApi\ItemCollectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj">
       <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
       <Name>Infusion.Proxy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Infusion\Infusion.csproj">
+      <Project>{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}</Project>
+      <Name>Infusion</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

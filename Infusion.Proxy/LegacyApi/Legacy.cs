@@ -5,6 +5,7 @@ using Infusion.Gumps;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
+using Infusion.Packets.Server;
 
 namespace Infusion.Proxy.LegacyApi
 {
@@ -82,6 +83,36 @@ namespace Infusion.Proxy.LegacyApi
 
             Program.SendToServer(packet.RawPacket);
         }
+
+        public static void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type, Color color)
+        {
+            var packet = new SendSpeechPacket()
+            {
+                Id = itemId,
+                Model = itemModel,
+                Type = type,
+                Color = color,
+                Font = 0x0003,
+                Name = name,
+                Message = message
+            };
+
+            packet.Serialize();
+
+            Log(message);
+            Program.SendToClient(packet.RawPacket);
+        }
+
+        public static void ClientPrint(string message)
+        {
+            ClientPrint(message, "System", 0, (ModelId)0, SpeechType.Normal, (Color)0x03B2);
+        }
+
+        public static void ClientPrint(string message, string name, Item onBehalfItem)
+        {
+            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color)0x0026);
+        }
+
 
         public static Gump WaitForGump() => GumpObservers.WaitForGump();
 

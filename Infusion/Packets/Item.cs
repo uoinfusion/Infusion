@@ -103,5 +103,24 @@
         }
 
         public bool Ignored { get; private set; }
+
+        public Item UpdateLocation(Location3D location)
+        {
+            var updatedItem = Duplicate();
+            updatedItem.Location = location;
+
+            return updatedItem;
+        }
+
+        public Item Update(ushort amount, Location3D location, Color color, uint? containerId)
+        {
+            var updatedItem = Duplicate();
+            updatedItem.Amount = amount;
+            updatedItem.Location = location;
+            updatedItem.Color = color;
+            updatedItem.ContainerId = containerId;
+
+            return updatedItem;
+        }
     }
 }

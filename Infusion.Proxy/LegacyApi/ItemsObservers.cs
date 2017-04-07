@@ -33,14 +33,32 @@ namespace Infusion.Proxy.LegacyApi
             Item item;
             if (items.TryGet(packet.PlayerId, out item))
             {
+                int delta = packet.CurrentHealth - item.CurrentHealth;
+                if (delta != 0)
+                {
+                    string deltaText = item.CurrentHealth == 0 ? "??" : delta.ToString();
+                    var color = delta > 0 ? (Color) 0x0006 : (Color) 0x3b2;
+                    Legacy.ClientPrint($"{deltaText} - [{packet.CurrentHealth}/{packet.MaxHealth}]", "update", item.Id,
+                        item.Type, SpeechType.Speech, color);
+                }
+
                 items.UpdateItem(item.UpdateHealth(packet.CurrentHealth, packet.MaxHealth));
             }
         }
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
         {
-            items.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
-                orientation: packet.Direction));
+
+            Item existingItem;
+            if (items.TryGet(packet.PlayerId, out existingItem))
+            {
+                items.UpdateItem(existingItem.Update(1, packet.Location, packet.Color, null));
+            }
+            else
+            {
+                items.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
+                    orientation: packet.Direction));
+            }
         }
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
@@ -48,11 +66,13 @@ namespace Infusion.Proxy.LegacyApi
             Item existingItem;
             if (items.TryGet(packet.ItemId, out existingItem))
             {
-                items.RemoveItem(existingItem.Id);
+                items.UpdateItem(existingItem.Update(packet.Amount, (Location3D)packet.Location, packet.Color, packet.ContainerId));
             }
-
-            items.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
-                packet.Color, packet.ContainerId));
+            else
+            {
+                items.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D)packet.Location,
+                    packet.Color, packet.ContainerId));
+            }
         }
 
         private void HandleAddMultipleItemsInContainer(AddMultipleItemsInContainerPacket packet)
@@ -75,8 +95,16 @@ namespace Infusion.Proxy.LegacyApi
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
         {
             items.AddItemRange(packet.Items);
-            items.AddItem(new Item(packet.Id, packet.Type, 1,
-                packet.Location, packet.Color));
+
+            var item = items[packet.Id];
+            if (item != null)
+            {
+                items.UpdateItem(item.UpdateLocation(packet.Location));
+            }
+            else
+            {
+                items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color));
+            }
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

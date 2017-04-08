@@ -41,21 +41,6 @@ namespace Infusion.Proxy.LegacyApi
             BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 
-        private static void RegisterDefaultScripts()
-        {
-            CommandHandler.RegisterCommand(new Command("terminate", Terminate, CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("list-running", ListRunningCommands, CommandExecutionMode.AlwaysParallel));
-            CommandHandler.RegisterCommand(new Command("walkto", (parameters) => WalkTo(parameters)));
-        }
-
-        private static void ListRunningCommands()
-        {
-            foreach (var command in CommandHandler.RunningCommands)
-            {
-                Log(command.Name);
-            }
-        }
-
         public static Gump CurrentGump => GumpObservers.CurrentGump;
 
         public static CancellationToken? CancellationToken
@@ -69,6 +54,29 @@ namespace Infusion.Proxy.LegacyApi
         public static ItemCollection Items { get; }
 
         public static Player Me { get; } = new Player();
+
+        public static bool HitPointNotificationEnabled
+        {
+            get { return ItemsObserver.HitPointNotificationEnabled; }
+
+            set { ItemsObserver.HitPointNotificationEnabled = value; }
+        }
+
+        public static JournalEntries Journal { get; }
+
+        private static void RegisterDefaultScripts()
+        {
+            CommandHandler.RegisterCommand(new Command("terminate", Terminate, CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("list-running", ListRunningCommands,
+                CommandExecutionMode.AlwaysParallel));
+            CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters)));
+        }
+
+        private static void ListRunningCommands()
+        {
+            foreach (var command in CommandHandler.RunningCommands)
+                Log(command.Name);
+        }
 
         public static void Say(string message)
         {
@@ -84,9 +92,10 @@ namespace Infusion.Proxy.LegacyApi
             Program.SendToServer(packet.RawPacket);
         }
 
-        public static void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type, Color color)
+        public static void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type,
+            Color color)
         {
-            var packet = new SendSpeechPacket()
+            var packet = new SendSpeechPacket
             {
                 Id = itemId,
                 Model = itemModel,
@@ -99,20 +108,24 @@ namespace Infusion.Proxy.LegacyApi
 
             packet.Serialize();
 
-            Log(message);
             Program.SendToClient(packet.RawPacket);
+        }
+
+        public static void ClientPrintAndLog(string message)
+        {
+            ClientPrint(message);
+            Log(message);
         }
 
         public static void ClientPrint(string message)
         {
-            ClientPrint(message, "System", 0, (ModelId)0, SpeechType.Normal, (Color)0x03B2);
+            ClientPrint(message, "System", 0, (ModelId) 0, SpeechType.Normal, (Color) 0x03B2);
         }
 
         public static void ClientPrint(string message, string name, Item onBehalfItem)
         {
-            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color)0x0026);
+            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026);
         }
-
 
         public static Gump WaitForGump() => GumpObservers.WaitForGump();
 
@@ -131,6 +144,18 @@ namespace Infusion.Proxy.LegacyApi
         internal static void CheckCancellation()
         {
             cancellationToken.Value?.ThrowIfCancellationRequested();
+        }
+
+        public static void RequestClientStatus(uint id)
+        {
+            var packet = new GetClientStatusRequest(id);
+            
+            Program.SendToServer(packet.RawPacket);
+        }
+
+        public static void RequestClientStatus(Item item)
+        {
+            RequestClientStatus(item.Id);
         }
 
         public static void Use(Item item)
@@ -159,8 +184,6 @@ namespace Infusion.Proxy.LegacyApi
             UseType(types.ToModelIds());
         }
 
-        public static JournalEntries Journal { get; }
-
         public static void UseType(params ModelId[] types)
         {
             CheckCancellation();
@@ -182,7 +205,9 @@ namespace Infusion.Proxy.LegacyApi
         }
 
         public static bool InJournal(params string[] words) => Journal.InJournal(words);
-        public static bool InJournal(DateTime createdAfter, params string[] words) => Journal.InJournal(createdAfter,words);
+
+        public static bool InJournal(DateTime createdAfter, params string[] words)
+            => Journal.InJournal(createdAfter, words);
 
         public static void DeleteJournal()
         {
@@ -210,7 +235,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void Wait(TimeSpan span)
         {
-            Wait((int)span.TotalMilliseconds);
+            Wait((int) span.TotalMilliseconds);
         }
 
         public static void WaitToAvoidFastWalk(MovementType movementType)
@@ -272,7 +297,6 @@ namespace Infusion.Proxy.LegacyApi
                     CommandHandler.Terminate();
                 else
                     CommandHandler.Terminate(parameters);
-
             }
             finally
             {
@@ -368,17 +392,17 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void StepToward(Item item)
         {
-            StepToward((Location2D)item.Location);
+            StepToward((Location2D) item.Location);
         }
 
         public static void StepToward(Location2D targetLocation)
         {
-            StepToward((Location2D)Me.Location, targetLocation);
+            StepToward((Location2D) Me.Location, targetLocation);
         }
 
         public static void WalkTo(Location2D targetLocation)
         {
-            while ((Location2D)Me.Location != targetLocation)
+            while ((Location2D) Me.Location != targetLocation)
             {
                 Program.Diagnostic.Debug($"WalkTo: {Me.Location} != {targetLocation}");
 
@@ -394,7 +418,7 @@ namespace Infusion.Proxy.LegacyApi
         internal static void WalkTo(string parameters)
         {
             var parser = new CommandParameterParser(parameters);
-            WalkTo((ushort)parser.ParseInt(), (ushort)parser.ParseInt());
+            WalkTo((ushort) parser.ParseInt(), (ushort) parser.ParseInt());
         }
 
         public static void Wear(Item item, Layer layer)

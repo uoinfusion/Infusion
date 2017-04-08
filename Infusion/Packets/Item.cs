@@ -65,7 +65,7 @@
 
         private Item()
         {
-            
+
         }
 
         internal Item Duplicate()
@@ -82,6 +82,7 @@
                 Amount = this.Amount,
                 ContainerId = this.ContainerId,
                 Layer = this.Layer,
+                Ignored = this.Ignored,
             };
         }
 

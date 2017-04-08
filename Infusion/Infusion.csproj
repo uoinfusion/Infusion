@@ -84,7 +84,9 @@
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
+    <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
     <Compile Include="Packets\Client\SkillRequest.cs" />
+    <Compile Include="Packets\Colors.cs" />
     <Compile Include="Packets\RequestableSkill.cs" />
     <Compile Include="Packets\RequestableSpell.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />

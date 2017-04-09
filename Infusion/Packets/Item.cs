@@ -13,7 +13,7 @@
         }
 
         public Item(uint id, ModelId type, ushort amount, Location3D location, Color? color = null,
-            uint? containerId = null, Layer? layer = null, Movement? orientation = null)
+            uint? containerId = null, Layer? layer = null, Movement? orientation = null, Notoriety? notoriety = null)
         {
             Id = id;
             Type = type;
@@ -23,6 +23,7 @@
             ContainerId = containerId;
             Layer = layer;
             Orientation = orientation;
+            Notoriety = notoriety;
         }
 
         public ushort GetDistance(Item item)
@@ -56,6 +57,8 @@
 
         public ushort MaxHealth { get; private set; }
 
+        public Notoriety? Notoriety { get; set; }
+
         public override string ToString()
         {
             return (ContainerId.HasValue)
@@ -72,6 +75,7 @@
         {
             return new Item()
             {
+                Notoriety = this.Notoriety,
                 Color = this.Color,
                 CurrentHealth = this.CurrentHealth,
                 Location = this.Location,
@@ -113,13 +117,16 @@
             return updatedItem;
         }
 
-        public Item Update(ushort amount, Location3D location, Color color, uint? containerId)
+        public Item Update(ushort amount, Location3D location, Color color, uint? containerId, Notoriety? notoriety = null)
         {
             var updatedItem = Duplicate();
             updatedItem.Amount = amount;
             updatedItem.Location = location;
             updatedItem.Color = color;
             updatedItem.ContainerId = containerId;
+
+            if (notoriety.HasValue)
+                updatedItem.Notoriety = notoriety;
 
             return updatedItem;
         }

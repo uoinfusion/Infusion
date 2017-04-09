@@ -107,9 +107,9 @@ namespace Infusion.Proxy.LegacyApi
 
             var item = items[packet.Id];
             if (item != null)
-                items.UpdateItem(item.UpdateLocation(packet.Location));
+                items.UpdateItem(item.Update(1, packet.Location, packet.Color, null, packet.Notoriety));
             else
-                items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color));
+                items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color, notoriety: packet.Notoriety));
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

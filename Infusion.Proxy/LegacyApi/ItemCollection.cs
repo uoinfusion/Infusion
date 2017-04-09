@@ -31,12 +31,12 @@ namespace Infusion.Proxy.LegacyApi
 
         public IEnumerator<Item> GetEnumerator()
         {
-            return items.Values.Where(i => !i.Ignored).GetEnumerator();
+            return items.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return items.Values.Where(i => !i.Ignored).GetEnumerator();
+            return items.Values.GetEnumerator();
         }
 
         public bool TryGet(uint id, out Item item)

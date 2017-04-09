@@ -44,5 +44,9 @@ namespace Infusion.Proxy.LegacyApi
 
         public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, Location2D referenceLocation,
             ushort minDistance) => items.Where(i => i.GetDistance(referenceLocation) >= minDistance);
+
+        public static IEnumerable<Item> NotIgnored(this IEnumerable<Item> items) => items.Where(x => !x.Ignored);
+
+        public static IEnumerable<Item> Ignored(this IEnumerable<Item> items) => items.Where(x => x.Ignored);
     }
 }

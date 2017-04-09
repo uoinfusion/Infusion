@@ -15,6 +15,7 @@ namespace Infusion.Proxy.LegacyApi
 
         private string lastTargetInfo;
         private ModelId lastTypeInfo;
+        private uint lastCursorId = 0x00000025;
 
         public Targeting(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
@@ -26,6 +27,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             Program.Diagnostic.Debug("TargetCursorPacket received from server");
             targetFromServerReceivedEvent.Set();
+            lastCursorId = packet.CursorId;
         }
 
         private Packet? FilterClientTargetCursorPacket(Packet rawPacket)
@@ -147,13 +149,13 @@ namespace Infusion.Proxy.LegacyApi
         public void Target(Item item)
         {
             Program.Diagnostic.Debug("Target");
-            var targetRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Harmful, item.Location,
+            var targetRequest = new TargetLocationRequest(lastCursorId, item.Id, CursorType.Harmful, item.Location,
                 item.Type);
             Program.SendToServer(targetRequest.RawPacket);
 
             Program.Diagnostic.Debug(
                 "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
-            var cancelRequest = new TargetLocationRequest(0x00000025, item.Id, CursorType.Cancel, item.Location,
+            var cancelRequest = new TargetLocationRequest(lastCursorId, item.Id, CursorType.Cancel, item.Location,
                 item.Type);
             discardNextTargetLocationRequestIfEmpty = true;
             Program.SendToClient(cancelRequest.RawPacket);

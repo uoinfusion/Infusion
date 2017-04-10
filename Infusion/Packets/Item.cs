@@ -117,9 +117,10 @@
             return updatedItem;
         }
 
-        public Item Update(ushort amount, Location3D location, Color color, uint? containerId, Notoriety? notoriety = null)
+        public Item Update(ModelId type, ushort amount, Location3D location, Color color, uint? containerId, Notoriety? notoriety = null)
         {
             var updatedItem = Duplicate();
+            updatedItem.Type = type;
             updatedItem.Amount = amount;
             updatedItem.Location = location;
             updatedItem.Color = color;

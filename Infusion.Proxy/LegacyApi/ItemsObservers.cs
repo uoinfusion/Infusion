@@ -56,7 +56,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             Item existingItem;
             if (items.TryGet(packet.PlayerId, out existingItem))
-                items.UpdateItem(existingItem.Update(1, packet.Location, packet.Color, null));
+                items.UpdateItem(existingItem.Update(packet.Type, 1, packet.Location, packet.Color, null));
             else
             {
                 items.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
@@ -69,7 +69,7 @@ namespace Infusion.Proxy.LegacyApi
             Item existingItem;
             if (items.TryGet(packet.ItemId, out existingItem))
             {
-                items.UpdateItem(existingItem.Update(packet.Amount, (Location3D) packet.Location, packet.Color,
+                items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, (Location3D) packet.Location, packet.Color,
                     packet.ContainerId));
             }
             else
@@ -92,7 +92,7 @@ namespace Infusion.Proxy.LegacyApi
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
         {
             if (items.TryGet(packet.Id, out Item existingItem))
-                items.UpdateItem(existingItem.Update(packet.Amount, packet.Location, existingItem.Color,
+                items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, packet.Location, existingItem.Color,
                     existingItem.ContainerId));
             else
             {
@@ -107,7 +107,7 @@ namespace Infusion.Proxy.LegacyApi
 
             var item = items[packet.Id];
             if (item != null)
-                items.UpdateItem(item.Update(1, packet.Location, packet.Color, null, packet.Notoriety));
+                items.UpdateItem(item.Update(packet.Type, 1, packet.Location, packet.Color, null, packet.Notoriety));
             else
                 items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color, notoriety: packet.Notoriety));
         }

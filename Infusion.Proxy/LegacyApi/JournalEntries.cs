@@ -47,10 +47,19 @@ namespace Infusion.Proxy.LegacyApi
             OnNewMessageReceived(entry);
         }
 
+        public JournalAwaiter When(string awaitedWord, Action<JournalEntry> whenAction) =>
+            new JournalAwaiter(() => Legacy.CancellationToken, this)
+                .When(awaitedWord, whenAction);
+
+        public JournalAwaiter When(string[] awaitedWords, Action<JournalEntry> whenAction) =>
+            new JournalAwaiter(() => Legacy.CancellationToken, this)
+                .When(awaitedWords, whenAction);
+
         public event EventHandler<JournalEntry> NewMessageReceived;
 
         protected virtual void OnNewMessageReceived(JournalEntry newEntry)
         {
+
             NewMessageReceived?.Invoke(this, newEntry);
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading;
 using Infusion.Gumps;
 using Infusion.Packets;
@@ -47,7 +48,7 @@ namespace Infusion.Proxy.LegacyApi
             return rawPacket;
         }
 
-        internal Gump WaitForGump(bool showGump = false)
+        internal Gump WaitForGump(TimeSpan? timeout = null, bool showGump = false)
         {
             if (CurrentGump != null)
                 return CurrentGump;
@@ -56,8 +57,13 @@ namespace Infusion.Proxy.LegacyApi
 
             gumpReceivedEvent.Reset();
 
-            while (!gumpReceivedEvent.WaitOne(1000))
+            int totalMilliseconds = 0;
+            while (!gumpReceivedEvent.WaitOne(100))
             {
+                totalMilliseconds += 100;
+                if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
+                    return null;
+
                 Legacy.CheckCancellation();
             }
             return CurrentGump;

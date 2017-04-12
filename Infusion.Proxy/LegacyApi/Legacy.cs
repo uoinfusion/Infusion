@@ -127,7 +127,7 @@ namespace Infusion.Proxy.LegacyApi
             ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026);
         }
 
-        public static Gump WaitForGump() => GumpObservers.WaitForGump();
+        public static Gump WaitForGump(TimeSpan? timeout = null) => GumpObservers.WaitForGump(timeout);
 
         public static void Initialize()
         {

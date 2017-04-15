@@ -39,7 +39,7 @@ namespace Infusion.Desktop
             _scriptTextBox.Text = options.InitialScriptFileName;
         }
 
-        private void EditButton_OnClick(object sender, RoutedEventArgs e)
+        public void Edit()
         {
             string scriptFileName = _scriptTextBox.Text;
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
@@ -51,9 +51,18 @@ namespace Infusion.Desktop
             }
         }
 
-        private async void ReloadButton_OnClick(object sender, RoutedEventArgs e)
+        public void Reload()
         {
-            string scriptFileName = _scriptTextBox.Text;
+            string scriptFileName = null;
+
+            Dispatcher.Invoke(() => scriptFileName = _scriptTextBox.Text);
+#pragma warning disable 4014
+            Reload(scriptFileName);
+#pragma warning restore 4014
+        }
+
+        private async Task Reload(string scriptFileName)
+        {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
             {
                 await scriptEngine.ExecuteScript(_scriptTextBox.Text);
@@ -62,6 +71,16 @@ namespace Infusion.Desktop
             {
                 // TODO: handle error
             }
+        }
+
+        private void EditButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            Edit();
+        }
+
+        private async void ReloadButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            await Reload(_scriptTextBox.Text);
         }
 
         private void PickButton_OnClick(object sender, RoutedEventArgs e)

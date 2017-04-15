@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
+using Infusion.Proxy.LegacyApi;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
@@ -29,6 +30,9 @@ namespace Infusion.Desktop
                 Show();
                 WindowState = WindowState.Normal;
             };
+
+            Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => _scriptsControl.Reload())));
+            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => _scriptsControl.Edit())));
         }
 
         public void Initialize(LauncherOptions options)

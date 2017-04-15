@@ -71,6 +71,7 @@
     <Compile Include="Packets\Both\SendSkillsPacketTests.cs" />
     <Compile Include="Packets\Both\TargetCursorPacketTests.cs" />
     <Compile Include="Packets\Client\SkillRequestTests.cs" />
+    <Compile Include="Packets\Location2DTests.cs" />
     <Compile Include="Packets\MoveRequestTests.cs" />
     <Compile Include="Packets\PacketDefinitionRegistryTests.cs" />
     <Compile Include="Packets\Parsers\PacketLogParserTests.cs" />

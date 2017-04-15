@@ -80,5 +80,19 @@ namespace Infusion.Packets
 
         public static Vector operator -(Location2D location1, Location2D location2) =>
             new Vector((short) (location1.X - location2.X), (short) (location1.Y - location2.Y), 0);
+
+        public static Location2D Parse(string positionString)
+        {
+            int separatorIndex = positionString.IndexOf(", ", StringComparison.Ordinal);
+
+            string xstring = positionString.Substring(0, separatorIndex);
+            string ystring = positionString.Substring(separatorIndex + ", ".Length,
+                positionString.Length - separatorIndex - ", ".Length);
+
+            ushort x = ushort.Parse(xstring);
+            ushort y = ushort.Parse(ystring);
+
+            return new Location2D(x, y);
+        }
     }
 }

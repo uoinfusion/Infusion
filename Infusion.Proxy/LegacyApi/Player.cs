@@ -72,7 +72,6 @@ namespace Infusion.Proxy.LegacyApi
             switch (movementType)
             {
                 case MovementType.Walk:
-                    // TODO: time for stepping
                     timeBetweenSteps = TimeBetweenWalkingSteps;
                     break;
                 case MovementType.Run:

@@ -16,10 +16,20 @@ namespace Infusion.Parsers
         public void Parse()
         {
             var lines = log.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
+            int lineNumber = 0;
 
             foreach (var line in lines)
             {
-                ParseLine(line.Trim());
+                try
+                {
+                    ParseLine(line.Trim());
+                    lineNumber++;
+
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Error when processing line {lineNumber}: {line}", e);
+                }
             }
         }
 

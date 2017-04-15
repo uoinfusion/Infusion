@@ -41,6 +41,11 @@ namespace Infusion.Proxy.LegacyApi
             BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 
+        public static void Alert(string message)
+        {
+            Program.Console.Critical(message);
+        }
+
         public static Gump CurrentGump => GumpObservers.CurrentGump;
 
         public static CancellationToken? CancellationToken
@@ -382,8 +387,13 @@ namespace Infusion.Proxy.LegacyApi
                 Program.Diagnostic.Debug($"StepToward: walkVector = {walkVector}");
                 var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
 
-                WaitToAvoidFastWalk(movementType);
-                Walk(walkVector.ToDirection(), movementType);
+                var direction = walkVector.ToDirection();
+                if (Me.Movement.Direction == direction)
+                {
+                    WaitToAvoidFastWalk(movementType);
+                }
+
+                Walk(direction, movementType);
                 WaitWalkAcknowledged();
             }
             else

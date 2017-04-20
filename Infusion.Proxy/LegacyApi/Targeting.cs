@@ -146,19 +146,29 @@ namespace Infusion.Proxy.LegacyApi
             TargetTile(new Location3D(xloc, yloc, zloc), tileType);
         }
 
-        public void Target(Item item)
+        public void Target(Player player)
+        {
+            Target(player.PlayerId, player.BodyType, player.Location);
+        }
+
+        private void Target(uint itemId, ModelId type, Location3D location)
         {
             Program.Diagnostic.Debug("Target");
-            var targetRequest = new TargetLocationRequest(lastCursorId, item.Id, CursorType.Harmful, item.Location,
-                item.Type);
+            var targetRequest = new TargetLocationRequest(lastCursorId, itemId, CursorType.Harmful, location,
+                type);
             Program.SendToServer(targetRequest.RawPacket);
 
             Program.Diagnostic.Debug(
                 "Cancelling cursor on client, next TargetLocation request will be cancelled if it is empty");
-            var cancelRequest = new TargetLocationRequest(lastCursorId, item.Id, CursorType.Cancel, item.Location,
-                item.Type);
+            var cancelRequest = new TargetLocationRequest(lastCursorId, itemId, CursorType.Cancel, location,
+                type);
             discardNextTargetLocationRequestIfEmpty = true;
             Program.SendToClient(cancelRequest.RawPacket);
+        }
+
+        public void Target(Item item)
+        {
+            Target(item.Id, item.Type, item.Location);
         }
 
         public ModelId TypeInfo()

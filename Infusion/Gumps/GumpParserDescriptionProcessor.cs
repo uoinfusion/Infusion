@@ -18,5 +18,15 @@ namespace Infusion.Gumps
         }
 
         public string GetDescription() => builder.ToString();
+        public void OnCheckBox(int x, int y, uint id)
+        {
+            builder.AppendLine($"CheckBox: x = {x}, y = {y}, id = {id}");
+        }
+
+        public void OnTextEntry(int x, int y, int width, int maxLength, string text, uint id)
+        {
+            builder.AppendLine(
+                $"TextEntry: x = {x}, y = {y}, width = {width}, maxLength = {maxLength}, text = {text}, id = {id}");
+        }
     }
 }

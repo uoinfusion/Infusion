@@ -17,7 +17,7 @@ namespace Infusion.Gumps
 
         public override void Execute()
         {
-            sendPacket(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, 0).RawPacket);
+            sendPacket(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, 0, new uint[] { }, new Tuple<ushort, string>[] { }).RawPacket);
         }
     }
 }

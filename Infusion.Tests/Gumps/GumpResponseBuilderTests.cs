@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using FluentAssertions.Common;
 using Infusion.Gumps;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -56,6 +57,70 @@ namespace Infusion.Tests.Gumps
 
             resultPacket.HasValue.Should().BeTrue();
             resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+        }
+
+        [TestMethod]
+        public void Can_create_response_with_selected_checkboxes()
+        {
+            byte[] expectedResponsePayload =
+            {
+                0xB1, // packet
+                0x00, 0x1F, // packet length
+                0x40, 0x00, 0x0D, 0xA7, // Id
+                0x96, 0x00, 0x04, 0x95, // GumpId
+                0x00, 0x00, 0x00, 0x09, // selected trigger Id
+                0x00, 0x00, 0x00, 0x02, // checkbox count
+                0x00, 0x00, 0x00, 0x64, // checkbox1 id
+                0x00, 0x00, 0x00, 0x67, // checkbox2 id
+                0x00, 0x00, 0x00, 0x00
+            };
+
+            Packet? resultPacket = null;
+            var gump = new Gump(0x40000DA7, 0x96000495,
+                "{Text 50 215 955 0}{CheckBox 13 57 9904 9903 0 100}{Text 50 215 955 1}{CheckBox 13 57 9904 9903 0 103}",
+                new[] { "test label", "test label2" });
+
+            new GumpResponseBuilder(gump, packet => { resultPacket = packet; })
+                .SelectCheckBox("test label", GumpLabelPosition.Before)
+                .SelectCheckBox("test label2", GumpLabelPosition.Before)
+                .Trigger(0x09).Execute();
+
+            resultPacket.HasValue.Should().BeTrue();
+            resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+        }
+
+        [TestMethod]
+        public void Can_create_response_with_textentry_content()
+        {
+            byte[] expectedResponsePayload =
+            {
+                0xB1, // packet
+                0x00, 0x1D, // packet length
+                0x40, 0x00, 0x0D, 0xA7, // Id
+                0x96, 0x00, 0x04, 0x95, // GumpId
+                0x00, 0x00, 0x00, 0x09, // selected trigger Id
+                0x00, 0x00, 0x00, 0x00, // checkbox count
+                0x00, 0x00, 0x00, 0x01, // text entry count
+                0x00, 0x05, // text entry id
+                0x00, 0x01, // text entry content length
+                0x00, 0x32, // unicode text entry content
+            };
+
+            Packet? resultPacket = null;
+            var gump = new Gump(0x40000DA7, 0x96000495,
+                "{Text 50 215 955 0}{TextEntry 41 130 40 20 2301 5 10}",
+                new[] { "test label" });
+
+            new GumpResponseBuilder(gump, packet => { resultPacket = packet; })
+                .SetTextEntry("test label", "2", GumpLabelPosition.Before)
+                .Trigger(0x09).Execute();
+
+            resultPacket.HasValue.Should().BeTrue();
+            resultPacket?.Payload.Should().IsSameOrEqualTo(expectedResponsePayload);
+
+            // it seems that there is a bug in IsSameOrEqualTo
+            for (int i = 0; i < resultPacket?.Payload.Length; i++)
+                resultPacket?.Payload[i].Should().Be(expectedResponsePayload[i]);
         }
 
         [TestMethod]

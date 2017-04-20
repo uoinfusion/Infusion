@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="Gumps\CancelGumpResponse.cs" />
     <Compile Include="Gumps\Gump.cs" />
+    <Compile Include="Gumps\GumpControls.cs" />
     <Compile Include="Gumps\GumpFailureResponse.cs" />
     <Compile Include="Gumps\GumpLabelPosition.cs" />
     <Compile Include="Gumps\GumpParser.cs" />
@@ -60,7 +61,7 @@
     <Compile Include="Gumps\GumpResponse.cs" />
     <Compile Include="Gumps\GumpResponseBuilder.cs" />
     <Compile Include="Gumps\IGumpParserProcessor.cs" />
-    <Compile Include="Gumps\SelectButtonByLabelGumpParserProcessor.cs" />
+    <Compile Include="Gumps\SelectControlByLabelGumpParserProcessor.cs" />
     <Compile Include="Gumps\TriggerGumpResponse.cs" />
     <Compile Include="IO\DiagnosticPacketFormatter.cs" />
     <Compile Include="IO\DiagnosticPushStream.cs" />

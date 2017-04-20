@@ -69,6 +69,12 @@ namespace Infusion.IO
             WriteBytes(Encoding.ASCII.GetBytes(str));
         }
 
+        public void WriteUnicodeString(string str)
+        {
+            foreach (char ch in str)
+                WriteUShort(ch);
+        }
+
         public void WriteString(int length, string str)
         {
             WriteBytes(Encoding.ASCII.GetBytes(str.ToCharArray(), 0, str.Length));

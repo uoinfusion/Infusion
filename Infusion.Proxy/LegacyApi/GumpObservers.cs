@@ -113,5 +113,13 @@ namespace Infusion.Proxy.LegacyApi
 
             return builder.ToString();
         }
+
+        public GumpResponseBuilder GumpResponse()
+        {
+            if (CurrentGump != null)
+                return new GumpResponseBuilder(CurrentGump, Program.SendToServer);
+
+            return null;
+        }
     }
 }

@@ -362,6 +362,8 @@ namespace Infusion.Proxy.LegacyApi
             GumpObservers.TriggerGump(triggerId);
         }
 
+        public static GumpResponseBuilder GumpResponse() => GumpObservers.GumpResponse();
+
         public static void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
             GumpObservers.SelectGumpButton(buttonLabel, labelPosition);

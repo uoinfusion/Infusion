@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using FluentAssertions;
 using Infusion.Gumps;
 using Infusion.Packets.Server;
@@ -28,6 +29,26 @@ namespace Infusion.Tests.Gumps
             string description = processor.GetDescription();
 
             description.Should().Be($"Button: x = 13, y = 158, isTrigger, pageId = 0, triggerId = 2{Environment.NewLine}");
+        }
+
+        [TestMethod]
+        public void Can_parse_checkbox()
+        {
+            var gump = new Gump(0, 1, "{CheckBox 13 57 9904 9903 0 100}", new string[] { });
+            parser.Parse(gump);
+            string description = processor.GetDescription().Trim();
+
+            description.Should().Be("CheckBox: x = 13, y = 57, id = 100");
+        }
+
+        [TestMethod]
+        public void Can_parse_textentry()
+        {
+            var gump = new Gump(0, 1, "{TextEntry 41 130 40 20 2301 1 1000}", new string[] { });
+            parser.Parse(gump);
+            string description = processor.GetDescription().Trim();
+
+            description.Should().Be("TextEntry: x = 41, y = 130, width = 40, maxLength = 20, text = 1000, id = 1");
         }
 
         [TestMethod]

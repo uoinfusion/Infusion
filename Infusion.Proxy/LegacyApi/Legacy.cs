@@ -293,6 +293,13 @@ namespace Infusion.Proxy.LegacyApi
             Targeting.Target(item);
         }
 
+        public static void Target(Player player)
+        {
+            CheckCancellation();
+
+            Targeting.Target(player);
+        }
+
         public static void Terminate(string parameters)
         {
             try

@@ -95,6 +95,11 @@
     <Compile Include="ServerConnectionTests.cs" />
     <Compile Include="TestMemoryStream.cs" />
     <Compile Include="TestPullStream.cs" />
+    <Compile Include="TextFilters\ContainsFilterTests.cs" />
+    <Compile Include="TextFilters\EndsWithFilterTests.cs" />
+    <Compile Include="TextFilters\NameFilterTests.cs" />
+    <Compile Include="TextFilters\StartsWithFilterTests.cs" />
+    <Compile Include="TextFilters\TextFilterSpecificationParserTests.cs" />
     <Compile Include="UltimaClientConnectionTests.cs" />
   </ItemGroup>
   <ItemGroup>

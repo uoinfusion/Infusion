@@ -27,14 +27,17 @@ namespace Infusion.Proxy
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
 
-        private static readonly object ServerConnectionLock = new object();
+        private static readonly Configuration configuration = new Configuration();
+        private static readonly SpeechFilter speechFilter = new SpeechFilter(configuration);
 
-        private static readonly object ServerStreamLock = new object();
+        private static readonly object serverConnectionLock = new object();
+
+        private static readonly object serverStreamLock = new object();
 
         public static ILogger Console { get; set; } = new ConsoleLogger();
         public static ILogger Diagnostic = NullLogger.Instance;
 
-        private static readonly RingBufferLogger PacketRingBufferLogger = new RingBufferLogger(1000);
+        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(1000);
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
@@ -52,12 +55,14 @@ namespace Infusion.Proxy
 
         public static void Main()
         {
+            Legacy.Configuration = configuration;
             Legacy.Initialize();
             Main(33333, new ConsoleLogger());
         }
 
         public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {
+            Legacy.Configuration = configuration;
             Legacy.Initialize();
 
             ServerPacketHandler.RegisterFilter(RedirectConnectToGameServer);
@@ -65,29 +70,39 @@ namespace Infusion.Proxy
             ServerPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
 
             serverEndpoint = serverAddress;
-            return Main(localProxyPort, PacketRingBufferLogger);
+            return Main(localProxyPort, packetRingBufferLogger);
         }
 
         private static void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
-            Console.Speech(new SpeechMessage()
+            var message = new SpeechMessage()
             {
                 Type = packet.Type,
                 Message = packet.Message,
                 Name = packet.Name,
                 SpeakerId = packet.Id,
-            });
+            };
+
+            if (speechFilter.IsPassing(message.Text))
+                Console.Important(message.Text);
+            else
+                Console.Info(message.Text);
         }
 
         private static void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            Console.Speech(new SpeechMessage()
+            var message = new SpeechMessage()
             {
                 Type = packet.Type,
                 Message = packet.Message,
                 Name = packet.Name,
                 SpeakerId = packet.Id,
-            });
+            };
+
+            if (speechFilter.IsPassing(message.Text))
+                Console.Important(message.Text);
+            else
+                Console.Info(message.Text);
         }
 
         private static ushort proxyLocalPort;
@@ -103,15 +118,15 @@ namespace Infusion.Proxy
 
         public static void DumpPacketLog()
         {
-            PacketRingBufferLogger.Dump(Console);
+            packetRingBufferLogger.Dump(Console);
         }
 
         public static IEnumerable<PacketLogEntry> ParsePacketLogDump()
-            => new PacketLogParser().Parse(PacketRingBufferLogger.DumpToString());
+            => new PacketLogParser().Parse(packetRingBufferLogger.DumpToString());
 
         public static void ClearPacketLog()
         {
-            PacketRingBufferLogger.Clear();
+            packetRingBufferLogger.Clear();
         }
 
         private static void ClientLoop(ILogger packetLogger)
@@ -171,7 +186,7 @@ namespace Infusion.Proxy
 
         public static void SendToClient(Packet rawPacket)
         {
-            lock (ServerConnectionLock)
+            lock (serverConnectionLock)
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {
@@ -315,7 +330,7 @@ namespace Infusion.Proxy
                 {
                     if (needServerReconnect)
                     {
-                        lock (ServerStreamLock)
+                        lock (serverStreamLock)
                         {
                             DisconnectFromServer();
                             needServerReconnect = false;
@@ -376,7 +391,7 @@ namespace Infusion.Proxy
 
         public static void SendToServer(Packet rawPacket)
         {
-            lock (ServerStreamLock)
+            lock (serverStreamLock)
             {
                 using (var memoryStream = new MemoryStream(1024))
                 {

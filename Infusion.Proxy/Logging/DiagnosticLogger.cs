@@ -20,9 +20,9 @@ namespace Infusion.Proxy.Logging
             baseLogger.Info(Format(message));
         }
 
-        public void Speech(SpeechMessage message)
+        public void Important(string message)
         {
-            baseLogger.Speech(message);
+            baseLogger.Important(message);
         }
 
         public void Debug(string message)

@@ -24,9 +24,9 @@ namespace Infusion.Proxy.Logging
             ForeachLogger(logger => logger.Info(message));
         }
 
-        public void Speech(SpeechMessage message)
+        public void Important(string message)
         {
-            ForeachLogger(logger => logger.Speech(message));
+            ForeachLogger(logger => logger.Important(message));
         }
 
         public void Debug(string message)

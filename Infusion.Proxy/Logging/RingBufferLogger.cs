@@ -69,9 +69,9 @@ namespace Infusion.Proxy.Logging
             WriteLine(message);
         }
 
-        public void Speech(SpeechMessage message)
+        public void Important(string message)
         {
-            WriteLine(message.Text);
+            WriteLine(message);
         }
 
         public void Debug(string message)

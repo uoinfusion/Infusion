@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configuration.cs" />
     <Compile Include="Gumps\CancelGumpResponse.cs" />
     <Compile Include="Gumps\Gump.cs" />
     <Compile Include="Gumps\GumpControls.cs" />
@@ -164,6 +165,12 @@
     <Compile Include="ServerConnection.cs" />
     <Compile Include="IO\StreamPacketReader.cs" />
     <Compile Include="ServerConnectionStatus.cs" />
+    <Compile Include="TextFilters\ContainsFilter.cs" />
+    <Compile Include="TextFilters\EndsWithFilter.cs" />
+    <Compile Include="TextFilters\ITextFilter.cs" />
+    <Compile Include="TextFilters\NameFilter.cs" />
+    <Compile Include="TextFilters\StartsWithFilter.cs" />
+    <Compile Include="TextFilters\TextFilterSpecificationParser.cs" />
     <Compile Include="UltimaClientConnection.cs" />
     <Compile Include="UltimaClientConnectionStatus.cs" />
   </ItemGroup>

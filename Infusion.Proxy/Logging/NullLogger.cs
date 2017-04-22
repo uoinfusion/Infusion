@@ -8,7 +8,7 @@
         {
         }
 
-        public void Speech(SpeechMessage message)
+        public void Important(string message)
         {
         }
 

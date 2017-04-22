@@ -15,14 +15,14 @@ namespace Infusion.Desktop
         private readonly ConsoleContent consoleContent;
         private readonly Dispatcher dispatcher;
 
-        private readonly HashSet<string> ignoredMessages = new HashSet<string>
-        {
-            "Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
-            "Brinley: Nice speaking to you Pipka",
-            "Brinley: Well it was nice speaking to you Pipka but i must go about my business",
-            "Cullin: Anna Del Tir ",
-            "Keleman: Anna Del Tir "
-        };
+        //private readonly HashSet<string> ignoredMessages = new HashSet<string>
+        //{
+        //    "Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
+        //    "Brinley: Nice speaking to you Pipka",
+        //    "Brinley: Well it was nice speaking to you Pipka but i must go about my business",
+        //    "Cullin: Anna Del Tir ",
+        //    "Keleman: Anna Del Tir "
+        //};
 
         private readonly Version toastingMinimalOsVersion = new Version(6, 2);
 
@@ -37,17 +37,10 @@ namespace Infusion.Desktop
             WriteLine(message, Brushes.Gray);
         }
 
-        public void Speech(SpeechMessage message)
+        public void Important(string message)
         {
-            if (message.SpeakerId == 0 || message.SpeakerId == Legacy.Me.PlayerId || message.IsName)
-            {
-                WriteLine(message.Text, Brushes.DarkGray);
-            }
-            else
-            {
-                WriteLine(message.Text, Brushes.White);
-                ToastNotification(message.Text);
-            }
+            WriteLine(message, Brushes.White);
+            ToastNotification(message);
         }
 
         public void Debug(string message)
@@ -74,8 +67,7 @@ namespace Infusion.Desktop
         private void ToastNotification(string message)
         {
             if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification ||
-                !ProfileRepositiory.SelectedProfile.Options.ConversationToastNotificationEnabled ||
-                IsIgnoredMessage(message))
+                !ProfileRepositiory.SelectedProfile.Options.ConversationToastNotificationEnabled)
             {
                 return;
             }
@@ -112,8 +104,7 @@ namespace Infusion.Desktop
                 return;
 
             if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification ||
-                !ProfileRepositiory.SelectedProfile.Options.AlertToastNotificationEnabled ||
-                IsIgnoredMessage(message))
+                !ProfileRepositiory.SelectedProfile.Options.AlertToastNotificationEnabled)
             {
                 return;
             }
@@ -136,7 +127,5 @@ namespace Infusion.Desktop
             var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
             notifier.Show(toast);
         }
-
-        private bool IsIgnoredMessage(string message) => ignoredMessages.Contains(message);
     }
 }

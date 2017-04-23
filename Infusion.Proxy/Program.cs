@@ -37,7 +37,7 @@ namespace Infusion.Proxy
         public static ILogger Console { get; set; } = new ConsoleLogger();
         public static ILogger Diagnostic = NullLogger.Instance;
 
-        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(1000);
+        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(100);
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 

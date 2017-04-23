@@ -30,7 +30,7 @@ namespace Infusion
 
         public void SetIgnoredWords(IEnumerable<string> ignoredWords)
         {
-            this.ignoredWords = ignoredWords.ToArray();
+            IgnoredWords = ignoredWords.ToArray();
         }
 
         public bool LogToFileEnabled

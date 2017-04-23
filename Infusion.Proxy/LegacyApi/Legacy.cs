@@ -18,7 +18,7 @@ namespace Infusion.Proxy.LegacyApi
         private static readonly CommandHandlerObservers LegacyCommandHandler;
         private static readonly GumpObservers GumpObservers;
 
-        public static Configuration Configuration { get; set; } = new Configuration();
+        public static Configuration Configuration { get; private set; } = new Configuration();
 
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);

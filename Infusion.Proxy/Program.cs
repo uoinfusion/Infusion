@@ -27,7 +27,7 @@ namespace Infusion.Proxy
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
 
-        public static Configuration Configuration { get; }= new Configuration();
+        public static Configuration Configuration { get; } = new Configuration();
         private static readonly SpeechFilter speechFilter = new SpeechFilter(Configuration);
 
         private static readonly object serverConnectionLock = new object();

@@ -64,6 +64,28 @@ namespace Infusion.Packets
             return value.GetHashCode();
         }
 
+        public Direction Opposite()
+        {
+            if (this == East)
+                return West;
+            if (this == West)
+                return East;
+            if (this == South)
+                return North;
+            if (this == North)
+                return South;
+            if (this == Northwest)
+                return Southeast;
+            if (this == Southeast)
+                return Northwest;
+            if (this == Northeast)
+                return Southwest;
+            if (this == Southwest)
+                return Northeast;
+
+            throw new InvalidOperationException($"Unknown Direction ({value})");
+        }
+
         public override string ToString()
         {
             if (this == North)

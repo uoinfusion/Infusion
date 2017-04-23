@@ -17,6 +17,7 @@ namespace Infusion.Packets
         public short X { get; }
         public short Y { get; }
         public byte Z { get; }
+        public ushort Length => (ushort)Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public Vector RemoveZ()
         {

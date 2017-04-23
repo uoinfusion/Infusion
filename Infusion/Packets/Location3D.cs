@@ -50,6 +50,8 @@ namespace Infusion.Packets
         public ushort Y { get; }
         public byte Z { get; }
 
+        public Location3D WithZ(byte z) => new Location3D(X, Y, z);
+
         public override string ToString() => $"{X}, {Y}, {Z}";
 
         public Location3D LocationInDirection(Direction direction)

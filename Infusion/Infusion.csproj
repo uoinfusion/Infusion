@@ -161,6 +161,8 @@
     <Compile Include="Packets\StaticPacketLength.cs" />
     <Compile Include="Parsers\Processors\LumberjackingHarvestProcessor.cs" />
     <Compile Include="Parsers\Processors\SkillIncreasedProcessor.cs" />
+    <Compile Include="Strategies\KnownPathRetreatStrategy.cs" />
+    <Compile Include="Strategies\PathFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnection.cs" />
     <Compile Include="IO\StreamPacketReader.cs" />

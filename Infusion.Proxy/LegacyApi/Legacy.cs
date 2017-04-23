@@ -136,8 +136,9 @@ namespace Infusion.Proxy.LegacyApi
 
         public static Gump WaitForGump(TimeSpan? timeout = null) => GumpObservers.WaitForGump(timeout);
 
-        public static void Initialize()
+        public static void Initialize(Configuration configuration)
         {
+            Configuration = configuration;
         }
 
         public static void Use(uint objectId)

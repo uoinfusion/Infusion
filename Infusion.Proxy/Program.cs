@@ -27,8 +27,8 @@ namespace Infusion.Proxy
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
 
-        private static readonly Configuration configuration = new Configuration();
-        private static readonly SpeechFilter speechFilter = new SpeechFilter(configuration);
+        public static Configuration Configuration { get; }= new Configuration();
+        private static readonly SpeechFilter speechFilter = new SpeechFilter(Configuration);
 
         private static readonly object serverConnectionLock = new object();
 
@@ -55,15 +55,13 @@ namespace Infusion.Proxy
 
         public static void Main()
         {
-            Legacy.Configuration = configuration;
-            Legacy.Initialize();
+            Legacy.Initialize(Configuration);
             Main(33333, new ConsoleLogger());
         }
 
         public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {
-            Legacy.Configuration = configuration;
-            Legacy.Initialize();
+            Legacy.Initialize(Configuration);
 
             ServerPacketHandler.RegisterFilter(RedirectConnectToGameServer);
             ServerPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);

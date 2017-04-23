@@ -8,18 +8,24 @@ namespace Infusion.Desktop
 {
     internal sealed class FileLogger : ILogger
     {
+        private readonly Configuration configuration;
         private object logLock = new object();
+
+        public FileLogger(Configuration configuration)
+        {
+            this.configuration = configuration;
+        }
 
         private void WriteLine(string message)
         {
+            if (!configuration.LogToFileEnabled)
+                return;
+
             try
             {
                 lock (logLock)
                 {
-                    if (!ProfileRepositiory.SelectedProfile.Options.LogToFileEnabled)
-                        return;
-
-                    string logsPath = ProfileRepositiory.SelectedProfile.Options.LogPath;
+                    string logsPath = configuration.LogPath;
 
                     var now = DateTime.Now;
 

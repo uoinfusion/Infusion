@@ -12,7 +12,7 @@ namespace Infusion.Desktop.Profiles
 
         public string Name
         {
-            get { return name; }
+            get => name;
             set
             {
                 name = value; 
@@ -23,7 +23,6 @@ namespace Infusion.Desktop.Profiles
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public LauncherOptions LauncherOptions { get; set; } = new LauncherOptions();
-        public Options Options { get; set; } = new Options();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

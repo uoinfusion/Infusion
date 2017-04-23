@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
+using Infusion.Proxy;
 using Infusion.Proxy.LegacyApi;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
@@ -56,7 +57,7 @@ namespace Infusion.Desktop
 
         protected override void OnStateChanged(EventArgs e)
         {
-            if (WindowState == WindowState.Minimized && ProfileRepositiory.SelectedProfile.Options.HideWhenMinimized)
+            if (WindowState == WindowState.Minimized && Program.Configuration.HideWhenMinimized)
                 Hide();
 
             base.OnStateChanged(e);

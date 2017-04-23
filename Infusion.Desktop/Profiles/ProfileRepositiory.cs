@@ -97,7 +97,6 @@ namespace Infusion.Desktop.Profiles
         {
             // if a property doesn't exist in version 1.0 and the property is added in version 2.0
             // the json put null, to this property
-            profile.Options = profile.Options ?? new Options();
             profile.LauncherOptions = profile.LauncherOptions ?? new LauncherOptions();
         }
 

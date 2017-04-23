@@ -14,22 +14,15 @@ namespace Infusion.Desktop
     {
         private readonly ConsoleContent consoleContent;
         private readonly Dispatcher dispatcher;
-
-        //private readonly HashSet<string> ignoredMessages = new HashSet<string>
-        //{
-        //    "Marden: Hej! Ty tam. Ano tebe myslim, Pipka. Chces lamu zadarmo? Ano?",
-        //    "Brinley: Nice speaking to you Pipka",
-        //    "Brinley: Well it was nice speaking to you Pipka but i must go about my business",
-        //    "Cullin: Anna Del Tir ",
-        //    "Keleman: Anna Del Tir "
-        //};
+        private readonly Configuration configuration;
 
         private readonly Version toastingMinimalOsVersion = new Version(6, 2);
 
-        public InfusionConsoleLogger(ConsoleContent consoleContent, Dispatcher dispatcher)
+        public InfusionConsoleLogger(ConsoleContent consoleContent, Dispatcher dispatcher, Configuration configuration)
         {
             this.consoleContent = consoleContent;
             this.dispatcher = dispatcher;
+            this.configuration = configuration;
         }
 
         public void Info(string message)
@@ -66,8 +59,8 @@ namespace Infusion.Desktop
 
         private void ToastNotification(string message)
         {
-            if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification ||
-                !ProfileRepositiory.SelectedProfile.Options.ConversationToastNotificationEnabled)
+            if (!configuration.ShowImportantToastNotification ||
+                !configuration.ToastNotificationEnabled)
             {
                 return;
             }
@@ -103,8 +96,7 @@ namespace Infusion.Desktop
             if (Environment.OSVersion.Version < toastingMinimalOsVersion)
                 return;
 
-            if (!ProfileRepositiory.SelectedProfile.Options.CanShowToastNotification ||
-                !ProfileRepositiory.SelectedProfile.Options.AlertToastNotificationEnabled)
+            if (!configuration.ToastNotificationEnabled)
             {
                 return;
             }

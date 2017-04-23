@@ -32,7 +32,7 @@ namespace Infusion.Desktop
             _consoleModeComboBox.SelectedItem = _sayConsoleMode;
             ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
             Program.Console = new MultiplexLogger(Program.Console,
-                new InfusionConsoleLogger(consoleContent, Dispatcher), new FileLogger());
+                new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration), new FileLogger(Program.Configuration));
             DataContext = consoleContent;
         }
 

@@ -11,14 +11,74 @@ namespace Infusion
 {
     public sealed class Configuration : INotifyPropertyChanged
     {
-        private ImmutableArray<string> ignoredWords = ImmutableArray<string>.Empty;
+        private string[] ignoredWords = Array.Empty<string>();
+        private bool logToFileEnabled;
+        private string logPath;
+        private bool showImportantToastNotification;
+        private bool toastNotificationEnabled;
+        private bool hideWhenMinimized;
 
-        public ImmutableArray<string> IgnoredWords
+        public string[] IgnoredWords
         {
             get => ignoredWords;
-            set
+            private set
             {
                 ignoredWords = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public void SetIgnoredWords(IEnumerable<string> ignoredWords)
+        {
+            this.ignoredWords = ignoredWords.ToArray();
+        }
+
+        public bool LogToFileEnabled
+        {
+            get => logToFileEnabled;
+            set
+            {
+                logToFileEnabled = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public string LogPath
+        {
+            get => logPath;
+            set
+            {
+                logPath = value; 
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ShowImportantToastNotification
+        {
+            get => showImportantToastNotification;
+            set
+            {
+                showImportantToastNotification = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool ToastNotificationEnabled
+        {
+            get => toastNotificationEnabled;
+            set
+            {
+                toastNotificationEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool HideWhenMinimized
+        {
+            get => hideWhenMinimized;
+            set
+            {
+                hideWhenMinimized = value;
                 OnPropertyChanged();
             }
         }

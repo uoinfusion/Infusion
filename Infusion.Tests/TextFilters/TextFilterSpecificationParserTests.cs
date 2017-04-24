@@ -54,5 +54,12 @@ namespace Infusion.Tests.TextFilters
                 .ProhibitedText.Should()
                 .Be("any text");
         }
+
+        [TestMethod]
+        public void Can_parse_JustNumber_filter()
+        {
+            TextFilterSpecificationParser.Parse("{number}")
+                .Should().BeOfType<JustNumberFilter>();
+        }
     }
 }

@@ -13,6 +13,9 @@ namespace Infusion.TextFilters
             if (specification.Equals("{name}", StringComparison.OrdinalIgnoreCase))
                 return new NameFilter();
 
+            if (specification.Equals("{number}", StringComparison.OrdinalIgnoreCase))
+                return new JustNumberFilter();
+
             if (specification.StartsWith("*"))
             {
                 if (specification.EndsWith("*"))

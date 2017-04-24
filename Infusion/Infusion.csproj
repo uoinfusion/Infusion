@@ -169,6 +169,7 @@
     <Compile Include="TextFilters\EndsWithFilter.cs" />
     <Compile Include="TextFilters\ITextFilter.cs" />
     <Compile Include="TextFilters\NameFilter.cs" />
+    <Compile Include="TextFilters\JustNumberFilter.cs" />
     <Compile Include="TextFilters\StartsWithFilter.cs" />
     <Compile Include="TextFilters\TextFilterSpecificationParser.cs" />
     <Compile Include="UltimaClientConnection.cs" />

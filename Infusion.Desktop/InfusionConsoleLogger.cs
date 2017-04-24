@@ -74,10 +74,11 @@ namespace Infusion.Desktop
         private void ToastNotificationCore(string message)
         {
 
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText01);
+            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
             var stringElements = toastXml.GetElementsByTagName("text");
-            stringElements[0].AppendChild(toastXml.CreateTextNode(message));
+            stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
+            stringElements[1].AppendChild(toastXml.CreateTextNode(message));
 
             var audioElement = toastXml.CreateElement("audio");
             audioElement.SetAttribute("silent", "true");
@@ -109,7 +110,7 @@ namespace Infusion.Desktop
             var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
             var stringElements = toastXml.GetElementsByTagName("text");
-            stringElements[0].AppendChild(toastXml.CreateTextNode("Infusion Alert"));
+            stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
             stringElements[1].AppendChild(toastXml.CreateTextNode(message));
 
             var toast = new ToastNotification(toastXml);

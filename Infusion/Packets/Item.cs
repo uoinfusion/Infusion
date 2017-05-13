@@ -62,8 +62,8 @@
         public override string ToString()
         {
             return (ContainerId.HasValue)
-                ? $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Container {ContainerId.Value:X8}"
-                : $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}";
+                ? $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId.Value:X8}"
+                : $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}";
         }
 
         private Item()

@@ -60,8 +60,15 @@ namespace Infusion.Proxy.LegacyApi
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        lastTargetInfo =
-                            $"{packet.ClickedOnType} {packet.ClickedOnId:X8}";
+                        var lastItem = Legacy.Items[lastItemIdInfo];
+                        if (lastItem != null)
+                        {
+                            lastTargetInfo =
+                                $"{packet.ClickedOnId:X8} {packet.ClickedOnType} Color: {lastItem.Color}";
+                        }
+                        else
+                            lastTargetInfo =
+                                $"{packet.ClickedOnId:X8} {packet.ClickedOnType}";
                         break;
                 }
 

@@ -10,6 +10,7 @@ namespace Infusion.Proxy.LegacyApi
 {
     internal sealed class GumpObservers
     {
+        private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private bool showNextAwaitedGump = true;
 
@@ -23,10 +24,11 @@ namespace Infusion.Proxy.LegacyApi
 
         private void GumpMenuSelectionRequest(GumpMenuSelectionRequest packet)
         {
-            if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpId == CurrentGump.GumpId &&
-                packet.TriggerId == 0)
+            lock (gumpLock)
             {
-                CurrentGump = null;
+                if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpId == CurrentGump.GumpId &&
+                    packet.TriggerId == 0)
+                    CurrentGump = null;
             }
         }
 
@@ -34,15 +36,24 @@ namespace Infusion.Proxy.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
-                CurrentGump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+                var nextGumpNotVisible = false;
+
+                lock (gumpLock)
+                {
+                    var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
+                    CurrentGump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+
+                    if (!showNextAwaitedGump)
+                    {
+                        nextGumpNotVisible = true;
+                        showNextAwaitedGump = true;
+                    }
+                }
+
                 gumpReceivedEvent.Set();
 
-                if (!showNextAwaitedGump)
-                {
-                    showNextAwaitedGump = true;
+                if (nextGumpNotVisible)
                     return null;
-                }
             }
 
             return rawPacket;
@@ -57,7 +68,7 @@ namespace Infusion.Proxy.LegacyApi
 
             gumpReceivedEvent.Reset();
 
-            int totalMilliseconds = 0;
+            var totalMilliseconds = 0;
             while (!gumpReceivedEvent.WaitOne(100))
             {
                 totalMilliseconds += 100;
@@ -71,47 +82,59 @@ namespace Infusion.Proxy.LegacyApi
 
         internal void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
-            if (CurrentGump != null)
+            lock (gumpLock)
             {
-                new GumpResponseBuilder(CurrentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition)
-                    .Execute();
-                CurrentGump = null;
+                if (CurrentGump != null)
+                {
+                    new GumpResponseBuilder(CurrentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition)
+                        .Execute();
+                    CurrentGump = null;
+                }
             }
         }
 
         internal void TriggerGump(uint triggerId)
         {
-            if (CurrentGump != null)
+            lock (gumpLock)
             {
-                new GumpResponseBuilder(CurrentGump, Program.SendToServer).Trigger(triggerId)
-                    .Execute();
-                CurrentGump = null;
+                if (CurrentGump != null)
+                {
+                    new GumpResponseBuilder(CurrentGump, Program.SendToServer).Trigger(triggerId)
+                        .Execute();
+                    CurrentGump = null;
+                }
             }
         }
 
         internal void CloseGump()
         {
-            if (CurrentGump != null)
-                new GumpResponseBuilder(CurrentGump, Program.SendToServer).Cancel().Execute();
-            CurrentGump = null;
+            lock (gumpLock)
+            {
+                if (CurrentGump != null)
+                    new GumpResponseBuilder(CurrentGump, Program.SendToServer).Cancel().Execute();
+                CurrentGump = null;
+            }
         }
 
         public string GumpInfo()
         {
-            if (CurrentGump == null)
-                return "no gump";
+            lock (gumpLock)
+            {
+                if (CurrentGump == null)
+                    return "no gump";
 
-            var processor = new GumpParserDescriptionProcessor();
-            var parser = new GumpParser(processor);
-            parser.Parse(CurrentGump);
+                var processor = new GumpParserDescriptionProcessor();
+                var parser = new GumpParser(processor);
+                parser.Parse(CurrentGump);
 
-            var builder = new StringBuilder();
-            builder.AppendLine($"Id {CurrentGump.Id:X8}, GumpId {CurrentGump.GumpId:X8}");
-            builder.AppendLine(CurrentGump.Commands);
-            builder.AppendLine("-----------------");
-            builder.AppendLine(processor.GetDescription());
+                var builder = new StringBuilder();
+                builder.AppendLine($"Id {CurrentGump.Id:X8}, GumpId {CurrentGump.GumpId:X8}");
+                builder.AppendLine(CurrentGump.Commands);
+                builder.AppendLine("-----------------");
+                builder.AppendLine(processor.GetDescription());
 
-            return builder.ToString();
+                return builder.ToString();
+            }
         }
 
         public GumpResponseBuilder GumpResponse()

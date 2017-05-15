@@ -70,6 +70,7 @@
     <Compile Include="LegacyApi\PlayerObservers.cs" />
     <Compile Include="LegacyApi\CommandHandler.cs" />
     <Compile Include="LegacyApi\Targeting.cs" />
+    <Compile Include="LegacyApi\UltimaMap.cs" />
     <Compile Include="LegacyApi\WalkRequest.cs" />
     <Compile Include="LegacyApi\WalkRequestQueue.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
@@ -96,6 +97,10 @@
     <ProjectReference Include="..\Infusion\Infusion.csproj">
       <Project>{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}</Project>
       <Name>Infusion</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\UltimaSdk\Ultima.csproj">
+      <Project>{5d66ace6-b2a4-400f-b5a5-24525959ac5c}</Project>
+      <Name>Ultima</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

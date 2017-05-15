@@ -18,44 +18,303 @@ namespace Infusion.Tests.Strategies
         {
             var map = new TestMap(new[]
             {
-                "..T..",
-                ".....",
-                "..x..",
+                ".T.",
+                ".S.",
+                "...",
             });
 
-            var expectedPathMap = new TestMap(map.StartLocation.Value, new[]
-            {
-                ".....",
-                "..↑..",
-                "..↑..",
-            });
-
-            var pathFinder = new PathFinder();
+            var pathFinder = new PathFinder(map);
 
             var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
-            actualPath.ShouldBeEquivalentTo(expectedPathMap.Path);
+            AssertPath(actualPath, 1, map);
         }
+
+        [TestMethod]
+        public void Can_find_direct_northwest_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "T..",
+                ".S.",
+                "...",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
+        }
+
+        [TestMethod]
+        public void Can_find_direct_west()
+        {
+            var map = new TestMap(new[]
+            {
+                "...",
+                "TS.",
+                "...",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
+        }
+
+        [TestMethod]
+        public void Can_find_direct_southwest_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "...",
+                ".S.",
+                "T..",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
+        }
+
 
         [TestMethod]
         public void Can_find_direct_south_path()
         {
-            Assert.Inconclusive();
+            var map = new TestMap(new[]
+            {
+                "...",
+                ".S.",
+                ".T.",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
         }
 
         [TestMethod]
-        public void Can_find_direct_west_path()
+        public void Can_find_direct_southeast_path()
         {
-            Assert.Inconclusive();
+            var map = new TestMap(new[]
+            {
+                "...",
+                ".S.",
+                "..T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
         }
 
         [TestMethod]
         public void Can_find_direct_east_path()
         {
-            Assert.Inconclusive();
+            var map = new TestMap(new[]
+            {
+                "...",
+                ".ST",
+                "...",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
+        }
+
+        [TestMethod]
+        public void Can_find_direct_northeast_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "..T",
+                ".S.",
+                "...",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 1, map);
+        }
+
+        [TestMethod]
+        public void Can_find_direct_diagonal_multistep_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "S.......",
+                "........",
+                ".......T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 7, map);
+        }
+
+        [TestMethod]
+        public void Can_find_path_constrained_by_vertical_wall()
+        {
+            var map = new TestMap(new[]
+            {
+                "S#....",
+                ".#....",
+                ".#....",
+                ".....T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 8, map);
+        }
+
+        [TestMethod]
+        public void Can_find_path_constrained_by_horizontal_wall()
+        {
+            var map = new TestMap(new[]
+            {
+                "S.....",
+                "#####.",
+                "......",
+                ".....T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 8, map);
+        }
+
+        [TestMethod]
+        public void Can_return_null_when_cannot_find_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "S#....",
+                "##....",
+                "......",
+                ".....T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            actualPath.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void Can_find_constrained_diagonal_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "S#.",
+                "#..",
+                "..T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 2, map);
+        }
+
+        [TestMethod]
+        public void Can_find_vertical_tricky_path()
+        {
+            var map = new TestMap(new[]
+            {
+                "S....",
+                "...#.",
+                "...#.",
+                "...#T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 7, map);
+        }
+
+        [TestMethod]
+        public void Can_find_path_through_maze()
+        {
+            var map = new TestMap(new[]
+            {
+                "S.......",
+                ".######.",
+                ".#......",
+                "##.#####",
+                "........",
+                ".#.####.",
+                ".#.#....",
+                ".#######",
+                ".......T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            AssertPath(actualPath, 23, map);
+        }
+
+        [TestMethod]
+        public void Can_find_long_direct_path()
+        {
+            var map = new InfiniteEmptyMap();
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(new Location2D(1000, 1000), new Location2D(0, 0));
+
+            actualPath.Should().NotBeNull();
+            actualPath.Length.Should().Be(1000);
+        }
+
+        [TestMethod]
+        public void Can_find_path_to_a_place_in_specific_distance_from_target()
+        {
+            var map = new TestMap(new[]
+            {
+                "S..",
+                "...",
+                "..T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value, 1);
+            actualPath.Should().NotBeNull();
+            actualPath.Length.Should().Be(1);
+        }
+
+        private void AssertPath(Direction[] actualPath, int maxSteps, TestMap map)
+        {
+            actualPath.Should().NotBeNull();
+            map.StartLocation.Should().NotBeNull();
+            map.TargetLocation.Should().NotBeNull();
+            actualPath.Length.Should().BeLessOrEqualTo(maxSteps);
+
+            var location = map.StartLocation.Value;
+            foreach (var direction in actualPath)
+                location = location.LocationInDirection(direction);
+
+            map.TargetLocation.ShouldBeEquivalentTo(location);
         }
     }
 
-    public class TestMap
+    public class InfiniteEmptyMap : IWorldMap
+    {
+        public bool IsPassable(Location2D location) => true;
+    }
+
+    public class TestMap : IWorldMap
     {
         public List<Direction> Path { get; } = new List<Direction>();
         private readonly char[,] map;
@@ -81,13 +340,15 @@ namespace Infusion.Tests.Strategies
                     {
                         case 'T':
                             if (TargetLocation.HasValue)
-                                throw new InvalidOperationException($"TargetLocation already specified, x char already at {TargetLocation.Value}");
+                                throw new InvalidOperationException($"TargetLocation already specified, T char already at {TargetLocation.Value}");
                             TargetLocation = new Location2D(x, y);
+                            map[x, y] = '.';
                             break;
-                        case 'x':
+                        case 'S':
                             if (StartLocation.HasValue)
-                                throw new InvalidOperationException($"StartLocation already specified, x char already at {StartLocation.Value}");
+                                throw new InvalidOperationException($"StartLocation already specified, S char already at {StartLocation.Value}");
                             StartLocation = new Location2D(x, y);
+                            map[x, y] = '.';
                             break;
                         default:
                             map[x, y] = ch;
@@ -155,9 +416,11 @@ namespace Infusion.Tests.Strategies
 
         private bool IsPath(char ch) => "←→↑↓↖↗↘↙".Contains(ch);
 
-        private char At(Location2D location) => map[location.X, location.Y];
+        private char At(Location2D location) => location.X < map.GetLength(0) && location.Y < map.GetLength(1) ? map[location.X, location.Y] : '#';
 
         public Location2D? StartLocation { get; }
         public Location2D? TargetLocation { get;}
+
+        public bool IsPassable(Location2D location) => At(location) == '.' || At(location) == 'S' || At(location) == 'T';
     }
 }

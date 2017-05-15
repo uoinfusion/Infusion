@@ -52,11 +52,13 @@ namespace Infusion.Proxy.LegacyApi
 
         public static CancellationToken? CancellationToken
         {
-            get { return cancellationToken.Value; }
-            set { cancellationToken.Value = value; }
+            get => cancellationToken.Value;
+            set => cancellationToken.Value = value;
         }
 
         public static CommandHandler CommandHandler { get; } = new CommandHandler();
+
+        public static UltimaMap Map { get; } = new UltimaMap();
 
         public static ItemCollection Items { get; }
 
@@ -64,9 +66,9 @@ namespace Infusion.Proxy.LegacyApi
 
         public static bool HitPointNotificationEnabled
         {
-            get { return ItemsObserver.HitPointNotificationEnabled; }
+            get => ItemsObserver.HitPointNotificationEnabled;
 
-            set { ItemsObserver.HitPointNotificationEnabled = value; }
+            set => ItemsObserver.HitPointNotificationEnabled = value;
         }
 
         public static JournalEntries Journal { get; }

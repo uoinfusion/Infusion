@@ -311,7 +311,7 @@ namespace Infusion.Tests.Strategies
 
     public class InfiniteEmptyMap : IWorldMap
     {
-        public bool IsPassable(Location2D location) => true;
+        public bool IsPassable(Location2D start, Direction direction) => true;
     }
 
     public class TestMap : IWorldMap
@@ -421,6 +421,6 @@ namespace Infusion.Tests.Strategies
         public Location2D? StartLocation { get; }
         public Location2D? TargetLocation { get;}
 
-        public bool IsPassable(Location2D location) => At(location) == '.' || At(location) == 'S' || At(location) == 'T';
+        public bool IsPassable(Location2D start, Direction direction) => At(start) == '.' || At(start) == 'S' || At(start) == 'T';
     }
 }

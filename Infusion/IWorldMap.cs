@@ -4,6 +4,6 @@ namespace Infusion
 {
     public interface IWorldMap
     {
-        bool IsPassable(Location2D location);
+        bool IsPassable(Location2D start, Direction direction);
     }
 }

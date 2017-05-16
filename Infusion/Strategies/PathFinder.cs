@@ -105,7 +105,7 @@ namespace Infusion.Strategies
             return neighbors.Where(n => n.Item1 >= ushort.MinValue && n.Item2 >= ushort.MinValue &&
                                         n.Item1 <= ushort.MaxValue && n.Item2 <= ushort.MaxValue)
                 .Select(n => new Location2D((ushort) n.Item1, (ushort) n.Item2))
-                .Where(l => map.IsPassable(l))
+                .Where(l => map.IsPassable(current, (l - current).ToDirection()))
                 .ToArray();
         }
 

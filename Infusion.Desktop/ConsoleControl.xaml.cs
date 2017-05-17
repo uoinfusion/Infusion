@@ -29,11 +29,12 @@ namespace Infusion.Desktop
         {
             InitializeComponent();
 
-            _consoleModeComboBox.SelectedItem = _sayConsoleMode;
             ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
             Program.Console = new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration), new FileLogger(Program.Configuration));
             DataContext = consoleContent;
+
+            _inputBlock.Focus();
         }
 
         public void Initialize(LauncherOptions options)
@@ -47,6 +48,8 @@ namespace Infusion.Desktop
                     ScriptEngine.ExecuteScript(scriptFileName).Wait();
                 }
             });
+
+            _inputBlock.Focus();
         }
 
         protected override void OnGotFocus(RoutedEventArgs e)
@@ -80,34 +83,10 @@ namespace Infusion.Desktop
 
         protected virtual void OnCommandEntered(string command)
         {
-            if (ReferenceEquals(_consoleModeComboBox.SelectedItem, _sayConsoleMode))
-            {
-                if (Legacy.CommandHandler.IsInvocationSyntax(command))
-                    Legacy.CommandHandler.Invoke(command);
-                else
-                    Legacy.Say(command);
-            }
+            if (Legacy.CommandHandler.IsInvocationSyntax(command))
+                Legacy.CommandHandler.Invoke(command);
             else
-            {
-                Task.Run(() =>
-                {
-                    ScriptEngine.Execute(command).Wait();
-                });
-            }
-        }
-
-        private void OnConsoleModeSelected(object sender, RoutedEventArgs e)
-        {
-            _inputBlock.Focus();
-        }
-
-        private void Console_OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.F2 && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
-            {
-                _consoleModeComboBox.Focus();
-                _consoleModeComboBox.IsDropDownOpen = true;
-            }
+                Legacy.Say(command);
         }
     }
 }

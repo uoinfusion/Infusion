@@ -50,10 +50,10 @@ namespace Infusion.Desktop
             {
                 string scriptPath = System.IO.Path.GetDirectoryName(scriptFileName);
                 _console.ScriptEngine.ScriptRootPath = scriptPath;
-            }
 
-            var roslynPadWindow = new RoslynPad.MainWindow(_console.ScriptEngine);
-            roslynPadWindow.Show();
+                var roslynPadWindow = new RoslynPad.MainWindow(_console.ScriptEngine, scriptPath);
+                roslynPadWindow.Show();
+            }
         }
 
         private void Reload()

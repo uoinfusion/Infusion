@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" KeyDown="Console_OnKeyDown">
+             d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -27,11 +27,8 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <ComboBox x:Name="_consoleModeComboBox" Grid.Column="0" SelectionChanged="OnConsoleModeSelected" TabIndex="1">
-                    <ComboBoxItem x:Name="_sayConsoleMode"  Content="Say" />
-                    <ComboBoxItem x:Name="_csharpConsoleMode" Content="C#"/>
-                </ComboBox>
-                <TextBox x:Name="_inputBlock" Grid.Column="1" Focusable="True" TabIndex="0"
+                <TextBlock Grid.Column="0" Padding="0 5 0 0" Background="Black" Foreground="White">&gt;&gt;</TextBlock>
+                <TextBox x:Name="_inputBlock" Grid.Column="1" Focusable="True" TabIndex="0" BorderThickness="0"
                          Padding="0 5 0 0"
                          KeyDown="_inputBlock_OnKeyDown"
                          Background="Black" Foreground="White" FontFamily="Consolas" BorderBrush="{x:Null}"

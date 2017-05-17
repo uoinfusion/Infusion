@@ -193,7 +193,7 @@ namespace Infusion.Tests.Strategies
         }
 
         [TestMethod]
-        public void Can_return_null_when_cannot_find_path()
+        public void Can_return_null_when_start_on_island()
         {
             var map = new TestMap(new[]
             {
@@ -201,6 +201,25 @@ namespace Infusion.Tests.Strategies
                 "##....",
                 "......",
                 ".....T",
+            });
+
+            var pathFinder = new PathFinder(map);
+
+            var actualPath = pathFinder.FindPath(map.StartLocation.Value, map.TargetLocation.Value);
+            actualPath.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void Can_return_null_when_target_on_island_in_the_middle_of_infinite_map()
+        {
+            var map = new TestMap(true, new[]
+            {
+                "S......",
+                ".......",
+                "..###..",
+                "..#T#..",
+                "..###..",
+                "......."
             });
 
             var pathFinder = new PathFinder(map);
@@ -271,10 +290,10 @@ namespace Infusion.Tests.Strategies
 
             var pathFinder = new PathFinder(map);
 
-            var actualPath = pathFinder.FindPath(new Location2D(1000, 1000), new Location2D(0, 0));
+            var actualPath = pathFinder.FindPath(new Location2D(100, 100), new Location2D(0, 0));
 
             actualPath.Should().NotBeNull();
-            actualPath.Length.Should().Be(1000);
+            actualPath.Length.Should().Be(100);
         }
 
         [TestMethod]
@@ -316,11 +335,13 @@ namespace Infusion.Tests.Strategies
 
     public class TestMap : IWorldMap
     {
+        private char outOfRangeChar;
         public List<Direction> Path { get; } = new List<Direction>();
         private readonly char[,] map;
 
-        public TestMap(Location2D? startLocation, string[] mapString)
+        public TestMap(bool infinite, Location2D? startLocation, string[] mapString)
         {
+            outOfRangeChar = infinite ? '.' : '#';
             StartLocation = startLocation;
 
             ushort y = 0;
@@ -364,7 +385,11 @@ namespace Infusion.Tests.Strategies
             BuildPath();
         }
 
-        public TestMap(string[] mapString) : this(null, mapString)
+        public TestMap(bool infinite, string[] mapString) : this(infinite, null, mapString)
+        {
+        }
+
+        public TestMap(string[] mapString) : this(false, null, mapString)
         {
         }
 
@@ -416,7 +441,7 @@ namespace Infusion.Tests.Strategies
 
         private bool IsPath(char ch) => "←→↑↓↖↗↘↙".Contains(ch);
 
-        private char At(Location2D location) => location.X < map.GetLength(0) && location.Y < map.GetLength(1) ? map[location.X, location.Y] : '#';
+        private char At(Location2D location) => location.X < map.GetLength(0) && location.Y < map.GetLength(1) ? map[location.X, location.Y] : outOfRangeChar;
 
         public Location2D? StartLocation { get; }
         public Location2D? TargetLocation { get;}

@@ -39,7 +39,7 @@ namespace Infusion.Tests.Strategies
         public void Can_make_steps_back_according_known_approach_path_When_target_is_closer_than_safe_distance()
         {
             var startLocation = new Location2D(0, 4);
-            var approachPath = new TestMap(startLocation, new[]
+            var approachPath = new TestMap(true, startLocation, new[]
             {
                 "....t",
                 "...c.",

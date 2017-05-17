@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace Infusion.Desktop
     public partial class InfusionWindow
     {
         private NotifyIcon notifyIcon;
+        private string scriptFileName;
 
         public InfusionWindow()
         {
@@ -32,14 +34,45 @@ namespace Infusion.Desktop
                 WindowState = WindowState.Normal;
             };
 
-            Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => _scriptsControl.Reload())));
-            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => _scriptsControl.Edit())));
+            Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload())));
+            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => Edit())));
         }
 
         public void Initialize(LauncherOptions options)
         {
             _console.Initialize(options);
-            _scriptsControl.Initialize(_console.ScriptEngine, options);
+            this.scriptFileName = options.InitialScriptFileName;
+        }
+
+        public void Edit()
+        {
+            if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
+            {
+                string scriptPath = System.IO.Path.GetDirectoryName(scriptFileName);
+                _console.ScriptEngine.ScriptRootPath = scriptPath;
+            }
+
+            var roslynPadWindow = new RoslynPad.MainWindow(_console.ScriptEngine);
+            roslynPadWindow.Show();
+        }
+
+        private void Reload()
+        {
+#pragma warning disable 4014
+            Reload(scriptFileName);
+#pragma warning restore 4014
+        }
+
+        private async Task Reload(string scriptFileName)
+        {
+            if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
+            {
+                await _console.ScriptEngine.ExecuteScript(scriptFileName);
+            }
+            else
+            {
+                // TODO: handle error
+            }
         }
 
         protected override void OnClosed(EventArgs e)

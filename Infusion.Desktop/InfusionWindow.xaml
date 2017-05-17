@@ -1,19 +1,11 @@
-﻿    <Window x:Class="Infusion.Desktop.InfusionWindow"
+﻿<Window x:Class="Infusion.Desktop.InfusionWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Infusion.Desktop"
-        xmlns:Profiles="clr-namespace:Infusion.Desktop.Profiles"
         mc:Ignorable="d"
         Icon="pack://application:,,,/infusion.png"
         Title="Infusion" Height="550" Width="685.061">
-    <TabControl>
-        <TabItem Header="Console">
-            <local:ConsoleControl x:Name="_console" />
-        </TabItem>
-        <TabItem Header="Scripts">
-            <local:ScriptsControl x:Name="_scriptsControl" />
-        </TabItem>
-    </TabControl>
+    <local:ConsoleControl x:Name="_console" />
 </Window>

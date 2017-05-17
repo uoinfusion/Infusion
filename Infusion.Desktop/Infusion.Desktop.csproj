@@ -238,9 +238,6 @@
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Profiles\ProfileRepositiory.cs" />
     <Compile Include="ScriptOutput.cs" />
-    <Compile Include="ScriptsControl.xaml.cs">
-      <DependentUpon>ScriptsControl.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UltimaConfiguration.cs" />
     <Page Include="ConsoleControl.xaml">
       <SubType>Designer</SubType>
@@ -266,10 +263,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Launcher\TestOuputWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="ScriptsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

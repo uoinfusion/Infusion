@@ -1,31 +1,37 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Infusion.Proxy.LegacyApi
 {
     public sealed class Command
     {
-        private readonly Action commandAction;
-        public CommandExecutionMode ExecutionMode { get; }
-        private readonly Action<string> parameterizedCommandAction;
         private static readonly ThreadLocal<int> nestingLevel = new ThreadLocal<int>();
+        private readonly Action commandAction;
+        private readonly Action<string> parameterizedCommandAction;
 
-        public Command(string name, Action commandAction,
+        public Command(string name, Action commandAction, string summary = null, string description = null,
             CommandExecutionMode executionMode = CommandExecutionMode.Normal)
         {
             this.commandAction = commandAction;
+            Summary = summary;
+            Description = description;
             Name = name;
-            this.ExecutionMode = executionMode;
+            ExecutionMode = executionMode;
         }
 
-        public Command(string name, Action<string> commandAction,
+        public Command(string name, Action<string> commandAction, string summary = null, string description = null,
             CommandExecutionMode executionMode = CommandExecutionMode.Normal)
         {
             Name = name;
             parameterizedCommandAction = commandAction;
-            this.ExecutionMode = executionMode;
+            Summary = summary;
+            Description = description;
+            ExecutionMode = executionMode;
         }
+
+        public string Summary { get; }
+        public string Description { get; }
+        public CommandExecutionMode ExecutionMode { get; }
 
         public string Name { get; }
 

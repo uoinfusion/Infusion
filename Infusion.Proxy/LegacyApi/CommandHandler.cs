@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace Infusion.Proxy.LegacyApi
@@ -178,6 +179,57 @@ namespace Infusion.Proxy.LegacyApi
 
             foreach (var invocation in invocations)
                 invocation.CancellationTokenSource?.Cancel();
+        }
+
+        public string Help()
+        {
+            var help = new StringBuilder();
+
+            help.AppendLine("Available commands:");
+            foreach (var command in commands.Values.OrderBy(c => c.Name))
+            {
+                help.Append(",");
+                help.Append(command.Name.PadRight(16));
+                if (!string.IsNullOrEmpty(command.Summary))
+                {
+                    help.Append("\t");
+                    help.Append(command.Summary);
+                }
+                help.AppendLine();
+            }
+
+            return help.ToString();
+        }
+
+        public string Help(string commandName)
+        {
+            if (string.IsNullOrEmpty(commandName))
+                return Help();
+
+            if (commands.TryGetValue(commandName, out Command command))
+            {
+                var help = new StringBuilder();
+                help.AppendLine();
+                help.Append(",");
+                help.Append(commandName);
+                help.AppendLine();
+                help.AppendLine();
+                if (string.IsNullOrEmpty(command.Summary))
+                    help.AppendLine("No command description");
+                else
+                    help.AppendLine(command.Summary);
+                if (!string.IsNullOrEmpty(command.Description))
+                {
+                    if (!command.Summary.EndsWith("\n") && !command.Summary.EndsWith(Environment.NewLine))
+                        help.AppendLine();
+                    help.AppendLine();
+                    help.AppendLine(command.Description);
+                }
+
+                return help.ToString();
+            }
+            else
+                return $"Unknown command 'commandName'";
         }
     }
 }

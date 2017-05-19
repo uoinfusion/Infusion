@@ -448,7 +448,7 @@ namespace Infusion.Proxy.Tests.LegacyApi
             public TestCommand(CommandHandler handler, string name, CommandExecutionMode executionMode,
                 Action additionalAction)
             {
-                Command = new Command(name, CommandAction, executionMode);
+                Command = new Command(name, CommandAction, executionMode: executionMode);
 
                 this.additionalAction = additionalAction;
 

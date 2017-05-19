@@ -121,7 +121,7 @@ namespace Infusion.Desktop
                     }
 
                     result = null;
-                }, CommandExecutionMode.Direct);
+                }, executionMode: CommandExecutionMode.Direct);
 
                 Legacy.CommandHandler.RegisterCommand(command);
                 Legacy.CommandHandler.Invoke("," + commandName, cancellationTokenSource);

@@ -35,10 +35,10 @@ namespace Infusion.Desktop
                 WindowState = WindowState.Normal;
             };
 
-            Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload())));
-            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => Edit())));
-            Legacy.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path))));
-            Legacy.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls)));
+            Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));
+            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => Edit()), "Opens the script editor."));
+            Legacy.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)), "Loads a script file."));
+            Legacy.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls), "Clears console content."));
         }
 
         private void Cls()

@@ -75,10 +75,15 @@ namespace Infusion.Proxy.LegacyApi
 
         private static void RegisterDefaultScripts()
         {
-            CommandHandler.RegisterCommand(new Command("terminate", Terminate, CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("list-running", ListRunningCommands,
-                CommandExecutionMode.AlwaysParallel));
-            CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters)));
+            CommandHandler.RegisterCommand(new Command("terminate", Terminate, "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters), "Walks to the specified location.", "Example: ,walkto 1234 432"));
+            CommandHandler.RegisterCommand(new Command("info", InfoCommand, "Shows information about selected item or tile."));
+            CommandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
+        }
+
+        private static void HelpCommand(string parameters)
+        {
+            Log(CommandHandler.Help(parameters));
         }
 
         private static void ListRunningCommands()
@@ -322,6 +327,12 @@ namespace Infusion.Proxy.LegacyApi
         }
 
         public static string Info() => Targeting.Info();
+
+        private static void InfoCommand()
+        {
+            string info = Info();
+            ClientPrintAndLog(!string.IsNullOrEmpty(info) ? info : "Targeting cancelled.");
+        }
 
         public static ModelId TypeInfo() => Targeting.TypeInfo();
 

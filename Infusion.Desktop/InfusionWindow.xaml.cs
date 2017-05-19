@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
 using Infusion.Proxy;
@@ -36,12 +37,27 @@ namespace Infusion.Desktop
 
             Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload())));
             Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => Edit())));
+            Legacy.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path))));
+            Legacy.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls)));
         }
 
-        public void Initialize(LauncherOptions options)
+        private void Cls()
         {
-            _console.Initialize(options);
-            this.scriptFileName = options.InitialScriptFileName;
+            _console.Clear();
+        }
+
+        private void Load(string scriptFileName)
+        {
+            this.scriptFileName = scriptFileName;
+            Reload();
+        }
+
+        internal void Initialize(Profile profile)
+        {
+            Title = $"{profile.Name}";
+
+            if (!string.IsNullOrEmpty(profile.LauncherOptions.InitialScriptFileName))
+                Load(profile.LauncherOptions.InitialScriptFileName);
         }
 
         public void Edit()
@@ -54,6 +70,8 @@ namespace Infusion.Desktop
                 var roslynPadWindow = new RoslynPad.MainWindow(_console.ScriptEngine, scriptPath);
                 roslynPadWindow.Show();
             }
+            else
+                Program.Console.Error("Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
         }
 
         private void Reload()
@@ -66,13 +84,9 @@ namespace Infusion.Desktop
         private async Task Reload(string scriptFileName)
         {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
-            {
                 await _console.ScriptEngine.ExecuteScript(scriptFileName);
-            }
             else
-            {
-                // TODO: handle error
-            }
+                Program.Console.Error("Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
         }
 
         protected override void OnClosed(EventArgs e)
@@ -94,6 +108,18 @@ namespace Infusion.Desktop
                 Hide();
 
             base.OnStateChanged(e);
+        }
+
+        private void InfusionWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action)(() =>
+            {
+                _console.Initialize();
+
+                var launcherWindow = new LauncherWindow(Initialize);
+                launcherWindow.Show();
+                launcherWindow.Activate();
+            }));
         }
     }
 }

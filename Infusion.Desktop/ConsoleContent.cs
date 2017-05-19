@@ -35,6 +35,11 @@ namespace Infusion.Desktop
             if (ConsoleOutput.Count > 256)
                 ConsoleOutput.RemoveAt(0);
         }
+
+        public void Clear()
+        {
+            consoleOutput.Clear();
+        }
     }
 
     public struct ConsoleLine

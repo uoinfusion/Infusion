@@ -37,16 +37,11 @@ namespace Infusion.Desktop
             _inputBlock.Focus();
         }
 
-        public void Initialize(LauncherOptions options)
+        public void Initialize()
         {
             Task.Run(() =>
             {
                 ScriptEngine.AddDefaultImports().Wait();
-                var scriptFileName = options.InitialScriptFileName?.Trim();
-                if (!string.IsNullOrEmpty(scriptFileName))
-                {
-                    ScriptEngine.ExecuteScript(scriptFileName).Wait();
-                }
             });
 
             _inputBlock.Focus();
@@ -87,6 +82,17 @@ namespace Infusion.Desktop
                 Legacy.CommandHandler.Invoke(command);
             else
                 Legacy.Say(command);
+        }
+
+        private void ConsoleControl_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!_inputBlock.IsFocused)
+                _inputBlock.Focus();
+        }
+
+        public void Clear()
+        {
+            consoleContent.Clear();
         }
     }
 }

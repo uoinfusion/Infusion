@@ -1,9 +1,10 @@
-﻿<Window x:Class="Infusion.Desktop.Launcher.MainWindow"
+﻿<Window x:Class="Infusion.Desktop.Launcher.LauncherWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        x:ClassModifier="internal"
         Icon="pack://application:,,,/infusion.png"
         Title="Infusion launcher" Height="346.146" Width="405.049">
     <Window.Resources>
@@ -72,10 +73,5 @@
                         Click="OnLaunchButtonClicked" Padding="0 5 0 5" Margin="20,10,20,10" VerticalAlignment="Bottom" />
             </Grid>
         </Grid>
-        <TextBox x:Name="_errorTextBlock" DockPanel.Dock="Top"
-                   Text="This is an error message, a very long, long, long, long, messega, it needs to be even longer, and longer and longer"
-                   TextWrapping="Wrap" Visibility="Collapsed"
-                   Background="Red" Foreground="White" Padding="5 5 5 5" Margin="0" Opacity="100"
-                   PreviewMouseDown="_errorTextBlock_OnPreviewMouseDown" VerticalAlignment="Top" />
     </Grid>
 </Window>

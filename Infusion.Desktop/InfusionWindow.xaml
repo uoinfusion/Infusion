@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Infusion.Desktop"
         mc:Ignorable="d"
         Icon="pack://application:,,,/infusion.png"
-        Title="Infusion" Height="550" Width="685.061">
+        Title="Infusion" Height="550" Width="685.061"
+        Loaded="InfusionWindow_OnLoaded">
     <local:ConsoleControl x:Name="_console" />
 </Window>

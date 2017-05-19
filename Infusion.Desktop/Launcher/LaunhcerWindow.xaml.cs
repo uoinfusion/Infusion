@@ -8,27 +8,25 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Infusion.Desktop.Profiles;
+using Infusion.Proxy;
 using Newtonsoft.Json;
 
 namespace Infusion.Desktop.Launcher
 {
-    public partial class MainWindow : Window
+    internal partial class LauncherWindow : Window
     {
+        private readonly Action<Profile> launchCallback;
         private readonly LauncherViewModel launcherViewModel = new LauncherViewModel();
-        private readonly DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
 
 
         private void ShowError(string errorMessage)
         {
-            _errorTextBlock.Visibility = Visibility.Visible;
-            _errorTextBlock.Text = errorMessage;
-            
-            dispatcherTimer.Interval = TimeSpan.FromSeconds(5);
-            dispatcherTimer.Start();
+            Program.Console.Error(errorMessage);
         }
 
-        public MainWindow()
+        internal LauncherWindow(Action<Profile> launchCallback)
         {
+            this.launchCallback = launchCallback;
             InitializeComponent();
 
             var profiles = ProfileRepositiory.LoadProfiles();
@@ -41,8 +39,6 @@ namespace Infusion.Desktop.Launcher
                 launcherViewModel.SelectedProfile = launcherViewModel.Profiles.FirstOrDefault(p => p.Id == selectedProfileId) ?? launcherViewModel.Profiles.FirstOrDefault();
             }
             DataContext = launcherViewModel;
-
-            dispatcherTimer.Tick += (sender, args) => HideError();
         }
 
         private async void OnLaunchButtonClicked(object sender, RoutedEventArgs e)
@@ -62,7 +58,9 @@ namespace Infusion.Desktop.Launcher
             IsEnabled = false;
             string originalTitle = Title;
 
-            Title = $"Connecting to {launcherOptions.ServerEndpoint}";
+            string message = $"Connecting to {launcherOptions.ServerEndpoint}";;
+            Title = message;
+            Program.Console.Info(message);
 
             try
             {
@@ -79,11 +77,7 @@ namespace Infusion.Desktop.Launcher
                 return;
             }
 
-            var infusionWindow = new InfusionWindow();
-            Application.Current.MainWindow = infusionWindow;
-            infusionWindow.Title = $"{launcherViewModel.SelectedProfile.Name}";
-            infusionWindow.Show();
-            infusionWindow.Initialize(launcherViewModel.SelectedProfile.LauncherOptions);
+            launchCallback(launcherViewModel.SelectedProfile);
 
             Close();
         }
@@ -117,17 +111,6 @@ namespace Infusion.Desktop.Launcher
         private void OnDeleteProfileButtonClick(object sender, RoutedEventArgs e)
         {
             launcherViewModel.DeleteSelectedProfile();
-        }
-
-        private void _errorTextBlock_OnPreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            HideError();
-        }
-
-        private void HideError()
-        {
-            _errorTextBlock.Text = string.Empty;
-            _errorTextBlock.Visibility = Visibility.Collapsed;
         }
     }
 }

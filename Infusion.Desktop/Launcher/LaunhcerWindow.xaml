@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         x:ClassModifier="internal"
         Icon="pack://application:,,,/infusion.png"
-        Title="Infusion launcher" Height="346.146" Width="405.049">
+        Title="Infusion launcher" Height="245.737" Width="405.049">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="{x:Type TextBox}">
@@ -20,7 +20,6 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Row="0" Margin="10 10 10 0">
@@ -29,7 +28,6 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
@@ -53,22 +51,8 @@
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Path=SelectedProfile.LauncherOptions.Password}" />
                 <TextBlock Grid.Column="0" Grid.Row="5">Initial Script:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Path=SelectedProfile.LauncherOptions.InitialScriptFileName}" />
-                <TextBlock Grid.Column="0" Grid.Row="6">Advanced options:</TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="6" Margin="0,3,0,0" x:Name="_advancedOptionsCheckBox" />
             </Grid>
-            <Grid Row="1" Margin="10 10 10 0" Visibility="{Binding IsChecked, ElementName=_advancedOptionsCheckBox, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="110"/>
-                    <ColumnDefinition Width="4*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <TextBlock Grid.Column="0" Grid.Row="0">Local proxy port:</TextBlock>
-                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Path=SelectedProfile.LauncherOptions.ProxyPort}" />
-            </Grid>
-            <Grid Grid.Row="2">
+            <Grid Grid.Row="1">
                 <Button Content="Launch" IsDefault="True"
                         Click="OnLaunchButtonClicked" Padding="0 5 0 5" Margin="20,10,20,10" VerticalAlignment="Bottom" />
             </Grid>

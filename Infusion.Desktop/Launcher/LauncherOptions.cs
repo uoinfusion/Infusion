@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -9,11 +10,45 @@ namespace Infusion.Desktop.Launcher
 {
     public class LauncherOptions
     {
+        private bool defaultInitialScriptTestPerformed;
+        private string defaultInitialScriptFileName;
+        private string initialScriptFileName;
+
         public string ServerEndpoint { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
         public ushort ProxyPort { get; set; } = 0;
-        public string InitialScriptFileName { get; set; }
+
+        public string InitialScriptFileName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(initialScriptFileName))
+                {
+                    if (!defaultInitialScriptTestPerformed)
+                    {
+                        string assemblyFileName = typeof(LauncherOptions).Assembly.Location;
+                        if (!string.IsNullOrEmpty(assemblyFileName))
+                        {
+                            string assemblyPath = Path.GetDirectoryName(assemblyFileName);;
+                            if (!string.IsNullOrEmpty(assemblyPath))
+                            {
+                                string scriptFileName = Path.Combine(assemblyPath, @"..\scripts\startup.csx");
+                                if (File.Exists(scriptFileName))
+                                    defaultInitialScriptFileName = scriptFileName;
+                            }
+                        }
+
+                        defaultInitialScriptTestPerformed = true;
+                    }
+
+                    return defaultInitialScriptFileName;
+                }
+
+                return initialScriptFileName;
+            }
+            set => initialScriptFileName = value;
+        }
 
         public string EncryptPassword()
         { 

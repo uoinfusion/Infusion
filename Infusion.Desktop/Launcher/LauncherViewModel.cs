@@ -17,7 +17,7 @@ namespace Infusion.Desktop.Launcher
 
         public ObservableCollection<Profile> Profiles
         {
-            get { return profiles; }
+            get => profiles;
             set
             {
                 profiles = value;
@@ -35,7 +35,7 @@ namespace Infusion.Desktop.Launcher
 
         public Profile SelectedProfile
         {
-            get { return selectedProfile; }
+            get => selectedProfile;
             set
             {
                 selectedProfile = value; 
@@ -45,11 +45,8 @@ namespace Infusion.Desktop.Launcher
 
         public string SelectedProfileName
         {
-            get { return SelectedProfile.Name; }
-            set
-            {
-                SelectedProfile.Name = value;
-            }
+            get => SelectedProfile.Name;
+            set => SelectedProfile.Name = value;
         }
 
         public void NewProfile()

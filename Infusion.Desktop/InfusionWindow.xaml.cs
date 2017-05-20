@@ -91,7 +91,8 @@ namespace Infusion.Desktop
 
         protected override void OnClosed(EventArgs e)
         {
-            ProfileRepositiory.SaveProfile(ProfileRepositiory.SelectedProfile);
+            if (ProfileRepositiory.SelectedProfile != null)
+                ProfileRepositiory.SaveProfile(ProfileRepositiory.SelectedProfile);
 
             if (notifyIcon != null)
             {

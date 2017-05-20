@@ -5,7 +5,7 @@
 
         <ItemGroup>
             <BinFiles Include="..\Infusion.Desktop\bin\release\**\*.*" /> 
-            <ExampleFiles Include="..\Infusion.ExampleScripts\*.csx" />
+            <ScriptFiles Include="..\Infusion.ExampleScripts\*.csx" />
         </ItemGroup>
         <PropertyGroup>
             <MSTestPath>$(VS150COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
@@ -19,7 +19,7 @@
 
         <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
         <Copy SourceFiles=".\Run.cmd" DestinationFolder=".\release" />
-        <Copy SourceFiles="@(ExampleFiles)" DestinationFolder=".\release\examples" />
+        <Copy SourceFiles="@(ScriptFiles)" DestinationFolder=".\release\scripts" />
     </Target>
 
     <Target Name="Clean">

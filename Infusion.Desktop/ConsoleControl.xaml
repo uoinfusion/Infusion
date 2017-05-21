@@ -27,12 +27,12 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Padding="0 5 0 0" Background="Black" Foreground="White">&gt;&gt;</TextBlock>
+                <TextBlock Grid.Column="0" Padding="0 5 0 0" Background="Black" Foreground="White" Margin="0,-1,0,1">&gt;&gt;</TextBlock>
                 <TextBox x:Name="_inputBlock" Grid.Column="1" Focusable="True" TabIndex="0" BorderThickness="0"
                          Padding="0 5 0 0"
                          KeyDown="_inputBlock_OnKeyDown"
                          Background="Black" Foreground="White" FontFamily="Consolas" BorderBrush="{x:Null}"
-                         SelectionBrush="{x:Null}" />
+                         SelectionBrush="White" />
             </Grid>
         </Grid>
 

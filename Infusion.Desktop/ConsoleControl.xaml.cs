@@ -1,28 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Infusion.Desktop.Launcher;
 using Infusion.Proxy;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
-using RoslynPad;
-using RoslynPad.UI;
 
 namespace Infusion.Desktop
 {
     public partial class ConsoleControl : UserControl
     {
-        public CSharpScriptEngine ScriptEngine { get; private set; }
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
         public ConsoleControl()
@@ -31,28 +18,22 @@ namespace Infusion.Desktop
 
             ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
             Program.Console = new MultiplexLogger(Program.Console,
-                new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration), new FileLogger(Program.Configuration));
+                new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration),
+                new FileLogger(Program.Configuration));
             DataContext = consoleContent;
 
             _inputBlock.Focus();
+
+            Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
         }
+
+        public CSharpScriptEngine ScriptEngine { get; }
 
         public void Initialize()
         {
-            Task.Run(() =>
-            {
-                ScriptEngine.AddDefaultImports().Wait();
-            });
+            Task.Run(() => { ScriptEngine.AddDefaultImports().Wait(); });
 
             _inputBlock.Focus();
-        }
-
-        protected override void OnGotFocus(RoutedEventArgs e)
-        {
-            base.OnGotFocus(e);
-
-            if (!_inputBlock.IsFocused)
-                _inputBlock.Focus();
         }
 
         private void _inputBlock_OnKeyDown(object sender, KeyEventArgs e)
@@ -67,7 +48,7 @@ namespace Infusion.Desktop
 
         private void RunCommand()
         {
-            string text = _inputBlock.Text;
+            var text = _inputBlock.Text;
 
             OnCommandEntered(text);
 
@@ -84,7 +65,7 @@ namespace Infusion.Desktop
                 Legacy.Say(command);
         }
 
-        private void ConsoleControl_OnKeyDown(object sender, KeyEventArgs e)
+        private void FocusInputLine()
         {
             if (!_inputBlock.IsFocused)
                 _inputBlock.Focus();
@@ -94,5 +75,13 @@ namespace Infusion.Desktop
         {
             consoleContent.Clear();
         }
+
+        private void ConsoleControl_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (!_inputBlock.IsFocused && !IsKeyAcceptableByConsoleOutput(e))
+                _inputBlock.Focus();
+        }
+
+        private static bool IsKeyAcceptableByConsoleOutput(KeyEventArgs e) =>  Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
     }
 }

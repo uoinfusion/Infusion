@@ -54,6 +54,7 @@
     <None Include="ItemTypes.csx" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <None Include="Scripts.csx" />
+    <None Include="startup.csx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="common.csx" />

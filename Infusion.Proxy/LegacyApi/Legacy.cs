@@ -25,6 +25,9 @@ namespace Infusion.Proxy.LegacyApi
 
         private static readonly Targeting Targeting;
 
+        public static void RegisterCommand(string name, Action commandAction) => CommandHandler.RegisterCommand(name,
+            commandAction);
+
         static Legacy()
         {
             GumpObservers = new GumpObservers(Program.ServerPacketHandler, Program.ClientPacketHandler);

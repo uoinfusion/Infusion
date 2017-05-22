@@ -243,8 +243,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition KickPlayer = new PacketDefinition(0x26,
             new StaticPacketLength(5), "KickPlayer");
 
-        public static readonly PacketDefinition RejectMoveItemRequest = new PacketDefinition(0x27,
-            new StaticPacketLength(2), "RejectMoveItemRequest");
+        public static readonly PacketDefinition<RejectMoveItemRequestPacket> RejectMoveItemRequest = new PacketDefinition<RejectMoveItemRequestPacket>(0x27,
+            new StaticPacketLength(2), "RejectMoveItemRequest", packet => new RejectMoveItemRequestPacket());
 
         public static readonly PacketDefinition DropItemFailed = new PacketDefinition(0x28,
             new StaticPacketLength(5), "DropItemFailed");

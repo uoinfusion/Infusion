@@ -316,6 +316,10 @@ namespace Infusion.Proxy
             {
                 ServerPacketHandler.Publish<SendSkillsPacket>(rawPacket);
             }
+            else if (rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
+            {
+                ServerPacketHandler.Publish<RejectMoveItemRequestPacket>(rawPacket);
+            }
 
             return rawPacket;
         }

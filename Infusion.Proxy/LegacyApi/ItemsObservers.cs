@@ -1,10 +1,15 @@
-﻿using Infusion.Packets;
+﻿using System;
+using System.Threading;
+using Infusion.Packets;
 using Infusion.Packets.Server;
 
 namespace Infusion.Proxy.LegacyApi
 {
     internal class ItemsObservers
     {
+        private readonly AutoResetEvent itemDragResultReceived = new AutoResetEvent(false);
+        private uint? draggedItemId;
+        private bool dragSuccessful = false;
         private readonly ItemCollection items;
         private Location2D? lastItemPurgeLocation;
 
@@ -20,14 +25,27 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.WornItem, HandleWornItemPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.RejectMoveItemRequest, HandleRejectMoveItemRequestPacket);
         }
 
         public bool HitPointNotificationEnabled { get; set; }
+        public uint? DraggedItemId
+        {
+            get => draggedItemId;
+            set => draggedItemId = value;
+        }
 
         private void HandleWornItemPacket(WornItemPacket packet)
         {
             items.UpdateItem(new Item(packet.ItemId, packet.Type, 1, new Location3D(0, 0, 0), packet.Color,
                 packet.PlayerId, packet.Layer));
+        }
+
+        private void HandleRejectMoveItemRequestPacket(RejectMoveItemRequestPacket packet)
+        {
+            draggedItemId = null;
+            dragSuccessful = false;
+            itemDragResultReceived.Set();
         }
 
         private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
@@ -86,6 +104,15 @@ namespace Infusion.Proxy.LegacyApi
 
         private void HandleDeleteObjectPacket(DeleteObjectPacket packet)
         {
+            uint? itemId = draggedItemId;
+
+            if (itemId.HasValue && packet.Id == itemId.Value)
+            {
+                draggedItemId = null;
+                dragSuccessful = true;
+                itemDragResultReceived.Set();
+            }
+
             items.RemoveItem(packet.Id);
         }
 
@@ -131,6 +158,18 @@ namespace Infusion.Proxy.LegacyApi
         public void Ignore(Item item)
         {
             items.UpdateItem(item.Ignore());
+        }
+
+        public bool WaitForItemDragged()
+        {
+            dragSuccessful = false;
+ 
+            while (!itemDragResultReceived.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                Legacy.CheckCancellation();
+            }
+
+            return dragSuccessful;
         }
     }
 }

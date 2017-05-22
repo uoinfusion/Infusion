@@ -375,8 +375,11 @@ namespace Infusion.Proxy.LegacyApi
             CheckCancellation();
 
             var pickupPacket = new PickupItemRequest(item.Id, amount);
+            ItemsObserver.DraggedItemId = item.Id;
             Program.SendToServer(pickupPacket.RawPacket);
         }
+
+        public static bool WaitForItemDragged() => ItemsObserver.WaitForItemDragged();
 
         public static void Log(string message)
         {

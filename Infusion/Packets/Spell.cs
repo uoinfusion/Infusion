@@ -1,6 +1,6 @@
 ﻿namespace Infusion.Packets
 {
-    public enum RequestableSpell
+    public enum Spell
     {
         CreateFood,
         Feeblemind,

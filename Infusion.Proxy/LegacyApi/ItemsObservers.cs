@@ -7,9 +7,9 @@ namespace Infusion.Proxy.LegacyApi
 {
     internal class ItemsObservers
     {
-        private readonly AutoResetEvent itemDragResultReceived = new AutoResetEvent(false);
+        private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private uint? draggedItemId;
-        private bool dragSuccessful = false;
+        private DragResult dragResult = DragResult.None;
         private readonly ItemCollection items;
         private Location2D? lastItemPurgeLocation;
 
@@ -44,7 +44,7 @@ namespace Infusion.Proxy.LegacyApi
         private void HandleRejectMoveItemRequestPacket(RejectMoveItemRequestPacket packet)
         {
             draggedItemId = null;
-            dragSuccessful = false;
+            dragResult = (DragResult)packet.Reason;
             itemDragResultReceived.Set();
         }
 
@@ -109,7 +109,7 @@ namespace Infusion.Proxy.LegacyApi
             if (itemId.HasValue && packet.Id == itemId.Value)
             {
                 draggedItemId = null;
-                dragSuccessful = true;
+                dragResult = DragResult.Success;
                 itemDragResultReceived.Set();
             }
 
@@ -160,16 +160,27 @@ namespace Infusion.Proxy.LegacyApi
             items.UpdateItem(item.Ignore());
         }
 
-        public bool WaitForItemDragged()
+        public DragResult WaitForItemDragged(TimeSpan? timeout)
         {
-            dragSuccessful = false;
- 
-            while (!itemDragResultReceived.WaitOne(TimeSpan.FromSeconds(1)))
+            dragResult = DragResult.None;
+            itemDragResultReceived.Reset();
+
+            TimeSpan timeSpentWaiting = new TimeSpan();
+            TimeSpan sleepSpan = TimeSpan.FromMilliseconds(100);
+
+            while (!itemDragResultReceived.WaitOne(sleepSpan))
             {
                 Legacy.CheckCancellation();
+
+                if (timeout.HasValue)
+                {
+                    timeSpentWaiting += sleepSpan;
+                    if (timeSpentWaiting > timeout.Value)
+                        return DragResult.Timeout;
+                }
             }
 
-            return dragSuccessful;
+            return dragResult;
         }
     }
 }

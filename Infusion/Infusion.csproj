@@ -92,9 +92,10 @@
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
     <Compile Include="Packets\Client\SkillRequest.cs" />
     <Compile Include="Packets\Colors.cs" />
-    <Compile Include="Packets\RequestableSkill.cs" />
-    <Compile Include="Packets\RequestableSpell.cs" />
+    <Compile Include="Packets\DragResult.cs" />
+    <Compile Include="Packets\Spell.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
+    <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />
     <Compile Include="Parsers\OutputLogParser.cs" />
     <Compile Include="Parsers\PacketLogParser.cs" />

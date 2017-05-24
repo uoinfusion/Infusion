@@ -18,15 +18,10 @@ namespace Infusion.Proxy.LegacyApi
         private static readonly CommandHandlerObservers LegacyCommandHandler;
         private static readonly GumpObservers GumpObservers;
 
-        public static Configuration Configuration { get; private set; } = new Configuration();
-
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
 
         private static readonly Targeting Targeting;
-
-        public static void RegisterCommand(string name, Action commandAction) => CommandHandler.RegisterCommand(name,
-            commandAction);
 
         static Legacy()
         {
@@ -46,10 +41,7 @@ namespace Infusion.Proxy.LegacyApi
             BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 
-        public static void Alert(string message)
-        {
-            Program.Console.Critical(message);
-        }
+        public static Configuration Configuration { get; private set; } = new Configuration();
 
         public static Gump CurrentGump => GumpObservers.CurrentGump;
 
@@ -76,12 +68,34 @@ namespace Infusion.Proxy.LegacyApi
 
         public static JournalEntries Journal { get; }
 
+        public static void RegisterCommand(string name, Action commandAction)
+        {
+            CommandHandler.RegisterCommand(name,
+                commandAction);
+        }
+
+        public static void RegisterCommand(string name, Action<string> commandAction)
+        {
+            CommandHandler.RegisterCommand(name,
+                commandAction);
+        }
+
+        public static void Alert(string message)
+        {
+            Program.Console.Critical(message);
+        }
+
         private static void RegisterDefaultScripts()
         {
-            CommandHandler.RegisterCommand(new Command("terminate", Terminate, "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters), "Walks to the specified location.", "Example: ,walkto 1234 432"));
-            CommandHandler.RegisterCommand(new Command("info", InfoCommand, "Shows information about selected item or tile."));
+            CommandHandler.RegisterCommand(new Command("terminate", Terminate,
+                "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters),
+                "Walks to the specified location.", "Example: ,walkto 1234 432"));
+            CommandHandler.RegisterCommand(new Command("info", InfoCommand,
+                "Shows information about selected item or tile."));
             CommandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
+            CommandHandler.RegisterCommand(new Command("lastgumpinfo", LastGumpInfo,
+                "Shows information about the last gump dispalyed in Ultima Online client."));
         }
 
         private static void HelpCommand(string parameters)
@@ -144,7 +158,10 @@ namespace Infusion.Proxy.LegacyApi
             ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026);
         }
 
-        public static Gump WaitForGump(TimeSpan? timeout = null) => GumpObservers.WaitForGump(timeout);
+        public static Gump WaitForGump(TimeSpan? timeout = null)
+        {
+            return GumpObservers.WaitForGump(timeout);
+        }
 
         public static void Initialize(Configuration configuration)
         {
@@ -167,7 +184,7 @@ namespace Infusion.Proxy.LegacyApi
         public static void RequestClientStatus(uint id)
         {
             var packet = new GetClientStatusRequest(id);
-            
+
             Program.SendToServer(packet.RawPacket);
         }
 
@@ -181,28 +198,34 @@ namespace Infusion.Proxy.LegacyApi
             Use(item.Id);
         }
 
-        public static void UseType(ushort type)
+        public static bool UseType(ushort type)
         {
-            UseType((ModelId) type);
+            return UseType((ModelId) type);
         }
 
-        public static void UseType(ModelId type)
+        public static bool UseType(ModelId type)
         {
             CheckCancellation();
 
-            var item = Items.OfType(type).First();
+            var item = Items.OfType(type).InContainer(Me.BackPack).First()
+                       ?? Items.OfType(type).OnLayer(Layer.OneHandedWeapon).First()
+                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).First()
+                       ?? Items.OfType(type).OnLayer(Layer.Backpack).First()
+                       ?? Items.OfType(type).First();
             if (item != null)
                 Use(item);
             else
-                Log($"Item of type {type} not found.");
+                return false;
+
+            return true;
         }
 
-        public static void UseType(params ushort[] types)
+        public static bool UseType(params ushort[] types)
         {
-            UseType(types.ToModelIds());
+            return UseType(types.ToModelIds());
         }
 
-        public static void UseType(params ModelId[] types)
+        public static bool UseType(params ModelId[] types)
         {
             CheckCancellation();
 
@@ -213,19 +236,26 @@ namespace Infusion.Proxy.LegacyApi
                        ?? Items.OfType(types).First();
 
             if (item != null)
-                Use(item);
-            else
             {
-                var typesString = types.Select(u => u.ToString()).Aggregate((l, r) => l + ", " + r);
-
-                Log($"Item of any type {typesString} not found.");
+                Use(item);
+                return true;
             }
+
+            var typesString = types.Select(u => u.ToString()).Aggregate(string.Empty, (l, r) => l + ", " + r);
+            Log($"Item of any type {typesString} not found.");
+
+            return false;
         }
 
-        public static bool InJournal(params string[] words) => Journal.InJournal(words);
+        public static bool InJournal(params string[] words)
+        {
+            return Journal.InJournal(words);
+        }
 
         public static bool InJournal(DateTime createdAfter, params string[] words)
-            => Journal.InJournal(createdAfter, words);
+        {
+            return Journal.InJournal(createdAfter, words);
+        }
 
         public static void DeleteJournal()
         {
@@ -329,15 +359,21 @@ namespace Infusion.Proxy.LegacyApi
             }
         }
 
-        public static string Info() => Targeting.Info();
+        public static string Info()
+        {
+            return Targeting.Info();
+        }
 
         private static void InfoCommand()
         {
-            string info = Info();
+            var info = Info();
             ClientPrintAndLog(!string.IsNullOrEmpty(info) ? info : "Targeting cancelled.");
         }
 
-        public static ModelId TypeInfo() => Targeting.TypeInfo();
+        public static ModelId TypeInfo()
+        {
+            return Targeting.TypeInfo();
+        }
 
         public static Item ItemInfo()
         {
@@ -379,7 +415,31 @@ namespace Infusion.Proxy.LegacyApi
             Program.SendToServer(pickupPacket.RawPacket);
         }
 
-        public static bool WaitForItemDragged() => ItemsObserver.WaitForItemDragged();
+        public static bool MoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
+            TimeSpan? dropDelay = null)
+        {
+            return MoveItem(item, item.Amount, targetContainer, timeout, dropDelay);
+        }
+
+        public static bool MoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+            TimeSpan? dropDelay = null)
+        {
+            DragItem(item, amount);
+            if (WaitForItemDragged(timeout) != DragResult.Success)
+                return false;
+
+            if (dropDelay.HasValue)
+                Wait(dropDelay.Value);
+
+            DropItem(item, targetContainer);
+
+            return true;
+        }
+
+        public static DragResult WaitForItemDragged(TimeSpan? timeout = null)
+        {
+            return ItemsObserver.WaitForItemDragged(timeout);
+        }
 
         public static void Log(string message)
         {
@@ -391,16 +451,19 @@ namespace Infusion.Proxy.LegacyApi
             GumpObservers.TriggerGump(triggerId);
         }
 
-        public static GumpResponseBuilder GumpResponse() => GumpObservers.GumpResponse();
+        public static GumpResponseBuilder GumpResponse()
+        {
+            return GumpObservers.GumpResponse();
+        }
 
         public static void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
             GumpObservers.SelectGumpButton(buttonLabel, labelPosition);
         }
 
-        public static void GumpInfo()
+        public static void LastGumpInfo()
         {
-            var gumpInfo = GumpObservers.GumpInfo();
+            var gumpInfo = GumpObservers.LastGumpInfo();
             Log(gumpInfo);
         }
 
@@ -420,9 +483,7 @@ namespace Infusion.Proxy.LegacyApi
 
                 var direction = walkVector.ToDirection();
                 if (Me.Movement.Direction == direction)
-                {
                     WaitToAvoidFastWalk(movementType);
-                }
 
                 Walk(direction, movementType);
                 WaitWalkAcknowledged();
@@ -462,22 +523,26 @@ namespace Infusion.Proxy.LegacyApi
             WalkTo((ushort) parser.ParseInt(), (ushort) parser.ParseInt());
         }
 
-        public static void Wear(Item item, Layer layer)
+        public static bool Wear(Item item, Layer layer, TimeSpan? timeout = null)
         {
             DragItem(item, 1);
+            if (WaitForItemDragged(timeout) != DragResult.Success)
+                return false;
 
             var request = new WearItemRequest(item.Id, layer, Me.PlayerId);
             Program.SendToServer(request.RawPacket);
+
+            return true;
         }
 
-        public static void Spell(RequestableSpell spell)
+        public static void CastSpell(Spell spell)
         {
             var request = new SkillRequest(spell);
 
             Program.SendToServer(request.RawPacket);
         }
 
-        public static void Skill(RequestableSkill skill)
+        public static void UseSkill(Skill skill)
         {
             var request = new SkillRequest(skill);
 

@@ -1,104 +1,107 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
     public class SkillRequest
     {
-        private static readonly Dictionary<RequestableSkill, string> Skills = new Dictionary<RequestableSkill, string>
+        private static readonly Dictionary<Skill, string> skills = new Dictionary<Skill, string>
         {
-            {RequestableSkill.Anatomy, "1 0"},
-            {RequestableSkill.AnimalLore, "2 0"},
-            {RequestableSkill.ItemIdentification, "3 0"},
-            {RequestableSkill.ArmsLore, "4 0"},
-            {RequestableSkill.Begging, "6 0"},
-            {RequestableSkill.Peacemaking, "9 0"},
-            {RequestableSkill.Cartography, "12 0"},
-            {RequestableSkill.DetectingHidden, "14 0"},
-            {RequestableSkill.DiscordanceEnticement, "15 0"},
-            {RequestableSkill.EvaluateIntelligence, "16 0"},
-            {RequestableSkill.ForensicEvaluation, "19 0"},
-            {RequestableSkill.Hiding, "21 0"},
-            {RequestableSkill.Provocation, "22 0"},
-            {RequestableSkill.Inscription, "23 0"},
-            {RequestableSkill.Poisoning, "30 0"},
-            {RequestableSkill.SpiritSpeak, "32 0"},
-            {RequestableSkill.Stealing, "33 0"},
-            {RequestableSkill.AnimalTaming, "35 0"},
-            {RequestableSkill.TasteIdentification, "36 0"},
-            {RequestableSkill.Tracking, "38 0"}
+            {Skill.Anatomy, "1 0"},
+            {Skill.AnimalLore, "2 0"},
+            {Skill.ItemIdentification, "3 0"},
+            {Skill.ArmsLore, "4 0"},
+            {Skill.Begging, "6 0"},
+            {Skill.Peacemaking, "9 0"},
+            {Skill.Cartography, "12 0"},
+            {Skill.DetectingHidden, "14 0"},
+            {Skill.DiscordanceEnticement, "15 0"},
+            {Skill.EvaluateIntelligence, "16 0"},
+            {Skill.ForensicEvaluation, "19 0"},
+            {Skill.Hiding, "21 0"},
+            {Skill.Provocation, "22 0"},
+            {Skill.Inscription, "23 0"},
+            {Skill.Poisoning, "30 0"},
+            {Skill.SpiritSpeak, "32 0"},
+            {Skill.Stealing, "33 0"},
+            {Skill.AnimalTaming, "35 0"},
+            {Skill.TasteIdentification, "36 0"},
+            {Skill.Tracking, "38 0"},
+            {Skill.Meditation, "46 0"}
         };
 
-        private static readonly Dictionary<RequestableSpell, string> Spells = new Dictionary<RequestableSpell, string>
+        private static readonly Dictionary<Spell, string> spells = new Dictionary<Spell, string>
         {
-            {RequestableSpell.CreateFood, "2"},
-            {RequestableSpell.Feeblemind, "3"},
-            {RequestableSpell.Heal, "4"},
-            {RequestableSpell.MagicArrow, "5"},
-            {RequestableSpell.NightSight, "6"},
-            {RequestableSpell.ReactiveArmor, "7"},
-            {RequestableSpell.Weaken, "8"},
-            {RequestableSpell.Agility, "9"},
-            {RequestableSpell.Cunning, "10"},
-            {RequestableSpell.Cure, "11"},
-            {RequestableSpell.Harm, "12"},
-            {RequestableSpell.MagicTrap, "13"},
-            {RequestableSpell.MagicUntrap, "14"},
-            {RequestableSpell.Protection, "15"},
-            {RequestableSpell.Strength, "16"},
-            {RequestableSpell.Bless, "17"},
-            {RequestableSpell.Fireball, "18"},
-            {RequestableSpell.MagicLock, "19"},
-            {RequestableSpell.Poison, "20"},
-            {RequestableSpell.Telekenisis, "21"},
-            {RequestableSpell.Teleport, "22"},
-            {RequestableSpell.Unlock, "23"},
-            {RequestableSpell.WallOfStone, "24"},
-            {RequestableSpell.ArchCure, "25"},
-            {RequestableSpell.ArchProtection, "26"},
-            {RequestableSpell.Curse, "27"},
-            {RequestableSpell.FireField, "28"},
-            {RequestableSpell.GreaterHeal, "29"},
-            {RequestableSpell.Lightning, "30"},
-            {RequestableSpell.ManaDrain, "31"},
-            {RequestableSpell.Recall, "32"},
-            {RequestableSpell.BladeSpirit, "33"},
-            {RequestableSpell.DispelField, "34"},
-            {RequestableSpell.Incognito, "35"},
-            {RequestableSpell.Reflection, "36"},
-            {RequestableSpell.MindBlast, "37"},
-            {RequestableSpell.Paralyze, "38"},
-            {RequestableSpell.PoisonField, "39"},
-            {RequestableSpell.SummonCreature, "40"},
-            {RequestableSpell.Dispel, "41"},
-            {RequestableSpell.EnergyBolt, "42"},
-            {RequestableSpell.Explosion, "43"},
-            {RequestableSpell.Invisibility, "44"},
-            {RequestableSpell.Mark, "45"},
-            {RequestableSpell.MassCurse, "46"},
-            {RequestableSpell.ParalyzeField, "47"},
-            {RequestableSpell.Reveal, "48"},
-            {RequestableSpell.ChainLightning, "49"},
-            {RequestableSpell.EnergyField, "50"},
-            {RequestableSpell.FlameStrike, "51"},
-            {RequestableSpell.Gate, "52"},
-            {RequestableSpell.ManaVampire, "53"},
-            {RequestableSpell.MassDispel, "54"},
-            {RequestableSpell.MeteorShower, "55"},
-            {RequestableSpell.Polymorph, "56"},
-            {RequestableSpell.Earthquake, "57"},
-            {RequestableSpell.EnergyVortex, "58"},
-            {RequestableSpell.Ressurection, "59"},
-            {RequestableSpell.SummonAirElemental, "60"},
-            {RequestableSpell.SummonDaemon, "61"},
-            {RequestableSpell.SummonEarthElemental, "62"},
-            {RequestableSpell.SummonFireElemental, "63"},
-            {RequestableSpell.SummonWaterElemental, "64"}
+            {Spell.CreateFood, "2"},
+            {Spell.Feeblemind, "3"},
+            {Spell.Heal, "4"},
+            {Spell.MagicArrow, "5"},
+            {Spell.NightSight, "6"},
+            {Spell.ReactiveArmor, "7"},
+            {Spell.Weaken, "8"},
+            {Spell.Agility, "9"},
+            {Spell.Cunning, "10"},
+            {Spell.Cure, "11"},
+            {Spell.Harm, "12"},
+            {Spell.MagicTrap, "13"},
+            {Spell.MagicUntrap, "14"},
+            {Spell.Protection, "15"},
+            {Spell.Strength, "16"},
+            {Spell.Bless, "17"},
+            {Spell.Fireball, "18"},
+            {Spell.MagicLock, "19"},
+            {Spell.Poison, "20"},
+            {Spell.Telekenisis, "21"},
+            {Spell.Teleport, "22"},
+            {Spell.Unlock, "23"},
+            {Spell.WallOfStone, "24"},
+            {Spell.ArchCure, "25"},
+            {Spell.ArchProtection, "26"},
+            {Spell.Curse, "27"},
+            {Spell.FireField, "28"},
+            {Spell.GreaterHeal, "29"},
+            {Spell.Lightning, "30"},
+            {Spell.ManaDrain, "31"},
+            {Spell.Recall, "32"},
+            {Spell.BladeSpirit, "33"},
+            {Spell.DispelField, "34"},
+            {Spell.Incognito, "35"},
+            {Spell.Reflection, "36"},
+            {Spell.MindBlast, "37"},
+            {Spell.Paralyze, "38"},
+            {Spell.PoisonField, "39"},
+            {Spell.SummonCreature, "40"},
+            {Spell.Dispel, "41"},
+            {Spell.EnergyBolt, "42"},
+            {Spell.Explosion, "43"},
+            {Spell.Invisibility, "44"},
+            {Spell.Mark, "45"},
+            {Spell.MassCurse, "46"},
+            {Spell.ParalyzeField, "47"},
+            {Spell.Reveal, "48"},
+            {Spell.ChainLightning, "49"},
+            {Spell.EnergyField, "50"},
+            {Spell.FlameStrike, "51"},
+            {Spell.Gate, "52"},
+            {Spell.ManaVampire, "53"},
+            {Spell.MassDispel, "54"},
+            {Spell.MeteorShower, "55"},
+            {Spell.Polymorph, "56"},
+            {Spell.Earthquake, "57"},
+            {Spell.EnergyVortex, "58"},
+            {Spell.Ressurection, "59"},
+            {Spell.SummonAirElemental, "60"},
+            {Spell.SummonDaemon, "61"},
+            {Spell.SummonEarthElemental, "62"},
+            {Spell.SummonFireElemental, "63"},
+            {Spell.SummonWaterElemental, "64"}
         };
 
-        public SkillRequest(RequestableSkill skill)
+        public SkillRequest(Skill skill)
         {
-            var skillString = Skills[skill];
+            if (!skills.TryGetValue(skill, out string skillString))
+                throw new InvalidOperationException($"Cannot request {skill}");
 
             var packetLength = (ushort) (5 + skillString.Length);
             var payload = new byte[packetLength];
@@ -113,15 +116,15 @@ namespace Infusion.Packets.Client
             RawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
         }
 
-        public SkillRequest(RequestableSpell spell)
+        public SkillRequest(Spell spell)
         {
-            var spellString = Spells[spell];
+            var spellString = spells[spell];
 
-            var packetLength = (ushort)(5 + spellString.Length);
+            var packetLength = (ushort) (5 + spellString.Length);
             var payload = new byte[packetLength];
 
             var writer = new ArrayPacketWriter(payload);
-            writer.WriteByte((byte)PacketDefinitions.RequestSkills.Id);
+            writer.WriteByte((byte) PacketDefinitions.RequestSkills.Id);
             writer.WriteUShort(packetLength);
             writer.WriteByte(0x56);
             writer.WriteString(spellString);

@@ -61,14 +61,7 @@ namespace Infusion.Proxy.LegacyApi
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
                         var lastItem = Legacy.Items[lastItemIdInfo];
-                        if (lastItem != null)
-                        {
-                            lastTargetInfo =
-                                $"{packet.ClickedOnId:X8} {packet.ClickedOnType} Color: {lastItem.Color}";
-                        }
-                        else
-                            lastTargetInfo =
-                                $"{packet.ClickedOnId:X8} {packet.ClickedOnType}";
+                        lastTargetInfo = lastItem?.ToString() ?? $"{packet.ClickedOnId:X8} {packet.ClickedOnType} {packet.ClickedOnType}";
                         break;
                 }
 

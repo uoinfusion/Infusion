@@ -25,6 +25,7 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.CharMoveRejection, HandleCharMoveRejectionPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentStamina, HandleUpdateCurrentStaminaPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentMana, HandleUpdateCurrentManaPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.SendSkills, HandleSendSkillsPacket);
         }
@@ -56,6 +57,8 @@ namespace Infusion.Proxy.LegacyApi
                 player.MaxStamina = packet.MaxStamina;
                 player.CurrentHealth = packet.CurrentHealth;
                 player.MaxHealth = packet.MaxHealth;
+                player.CurrentMana = packet.CurrentMana;
+                player.MaxMana = packet.MaxMana;
                 player.Weight = packet.Weight;
                 player.Intelligence = packet.Intelligence;
                 player.Dexterity = packet.Dexterity;
@@ -97,6 +100,15 @@ namespace Infusion.Proxy.LegacyApi
             {
                 player.CurrentStamina = packet.CurrentStamina;
                 player.MaxStamina = packet.MaxStamina;
+            }
+        }
+
+        private void HandleUpdateCurrentManaPacket(UpdateCurrentManaPacket packet)
+        {
+            if (player.PlayerId == packet.PlayerId)
+            {
+                player.CurrentMana = packet.CurrentMana;
+                player.MaxMana = packet.MaxMana;
             }
         }
 

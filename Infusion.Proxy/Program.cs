@@ -296,6 +296,10 @@ namespace Infusion.Proxy
             {
                 ServerPacketHandler.Publish<UpdateCurrentHealthPacket>(rawPacket);
             }
+            else if (rawPacket.Id == PacketDefinitions.UpdateCurrentMana.Id)
+            {
+                ServerPacketHandler.Publish<UpdateCurrentManaPacket>(rawPacket);
+            }
             else if (rawPacket.Id == PacketDefinitions.UpdateCurrentStamina.Id)
             {
                 ServerPacketHandler.Publish<UpdateCurrentStaminaPacket>(rawPacket);

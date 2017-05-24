@@ -116,7 +116,7 @@ namespace Infusion.Proxy.LegacyApi
             }
         }
 
-        public string GumpInfo()
+        public string LastGumpInfo()
         {
             lock (gumpLock)
             {

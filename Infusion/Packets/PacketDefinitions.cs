@@ -355,8 +355,8 @@ namespace Infusion.Packets
             new PacketDefinition<UpdateCurrentHealthPacket>(0xA1,
                 new StaticPacketLength(9), "UpdateCurrentHealth", packet => new UpdateCurrentHealthPacket());
 
-        public static readonly PacketDefinition UpdateCurrentMana = new PacketDefinition(0xA2,
-            new StaticPacketLength(9), "UpdateCurrentMana");
+        public static readonly PacketDefinition<UpdateCurrentManaPacket> UpdateCurrentMana = new PacketDefinition<UpdateCurrentManaPacket>(0xA2,
+            new StaticPacketLength(9), "UpdateCurrentMana", packet => new UpdateCurrentManaPacket());
 
         public static readonly PacketDefinition<UpdateCurrentStaminaPacket> UpdateCurrentStamina =
             new PacketDefinition<UpdateCurrentStaminaPacket>(0xA3,

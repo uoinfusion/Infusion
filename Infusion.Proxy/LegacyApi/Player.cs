@@ -54,6 +54,8 @@ namespace Infusion.Proxy.LegacyApi
         public ushort MaxHealth { get; set; }
         public ushort CurrentStamina { get; set; }
         public ushort MaxStamina { get; set; }
+        public ushort CurrentMana { get; set; }
+        public ushort MaxMana { get; set; }
         public ushort Weight { get; set; }
         public ushort Dexterity { get; set; }
         public ushort Strength { get; set; }

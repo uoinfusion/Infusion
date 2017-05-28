@@ -210,8 +210,7 @@ namespace Infusion.Proxy.LegacyApi
             var item = Items.OfType(type).InContainer(Me.BackPack).First()
                        ?? Items.OfType(type).OnLayer(Layer.OneHandedWeapon).First()
                        ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).First()
-                       ?? Items.OfType(type).OnLayer(Layer.Backpack).First()
-                       ?? Items.OfType(type).First();
+                       ?? Items.OfType(type).OnLayer(Layer.Backpack).First();
             if (item != null)
                 Use(item);
             else
@@ -232,8 +231,7 @@ namespace Infusion.Proxy.LegacyApi
             var item = Items.OfType(types).InContainer(Me.BackPack).First()
                        ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).First()
                        ?? Items.OfType(types).OnLayer(Layer.TwoHandedWeapon).First()
-                       ?? Items.OfType(types).OnLayer(Layer.Backpack).First()
-                       ?? Items.OfType(types).First();
+                       ?? Items.OfType(types).OnLayer(Layer.Backpack).First();
 
             if (item != null)
             {

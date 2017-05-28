@@ -17,7 +17,7 @@ namespace Infusion.Strategies
 
         public Direction[] FindPath(Location2D start, Location2D goal, ushort distance = 0)
         {
-            var frontier = new GenericPriorityQueue<QueueNode, int>(8192);
+            var frontier = new GenericPriorityQueue<QueueNode, int>(16384);
             frontier.Enqueue(new QueueNode(start), 0);
 
             var cameFrom = new Dictionary<Location2D, Location2D?>();
@@ -32,7 +32,7 @@ namespace Infusion.Strategies
 
             while (frontier.Count > 0)
             {
-                if (iteration > 1024)
+                if (iteration > 8192)
                     return null;
                 iteration++;
 

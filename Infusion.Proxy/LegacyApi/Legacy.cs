@@ -153,6 +153,11 @@ namespace Infusion.Proxy.LegacyApi
             ClientPrint(message, "System", 0, (ModelId) 0, SpeechType.Normal, (Color) 0x03B2);
         }
 
+        public static void ClientPrint(string message, string name, Player onBehalfPlayer)
+        {
+            ClientPrint(message, name, onBehalfPlayer.PlayerId, onBehalfPlayer.BodyType, SpeechType.Speech, (Color)0x0026);
+        }
+
         public static void ClientPrint(string message, string name, Item onBehalfItem)
         {
             ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026);

@@ -31,8 +31,6 @@ namespace Infusion.Desktop
 
         public void Initialize()
         {
-            Task.Run(() => { ScriptEngine.AddDefaultImports().Wait(); });
-
             _inputBlock.Focus();
         }
 

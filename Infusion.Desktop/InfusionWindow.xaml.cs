@@ -84,9 +84,14 @@ namespace Infusion.Desktop
         private async Task Reload(string scriptFileName)
         {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
+            {
+                Legacy.CommandHandler.Terminate();
+                _console.ScriptEngine.Reset();
                 await _console.ScriptEngine.ExecuteScript(scriptFileName);
+            }
             else
-                Program.Console.Error("Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
+                Program.Console.Error(
+                    "Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
         }
 
         protected override void OnClosed(EventArgs e)

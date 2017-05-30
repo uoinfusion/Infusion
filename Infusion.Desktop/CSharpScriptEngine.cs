@@ -17,18 +17,6 @@ namespace Infusion.Desktop
     {
         private static ScriptState<object> scriptState;
 
-        private static readonly string[] Imports =
-        {
-            "using System;",
-            "using System.Threading;",
-            "using Infusion.Proxy;",
-            "using Infusion.Packets;",
-            "using Infusion.Proxy.LegacyApi;",
-            "using Infusion.Packets.Parsers;",
-            "using Infusion.Gumps;",
-            "using static Infusion.Proxy.LegacyApi.Legacy;"
-        };
-
         private readonly IScriptOutput scriptOutput;
 
         private ScriptOptions scriptOptions;
@@ -54,13 +42,6 @@ namespace Infusion.Desktop
                 Assembly.Load("Infusion.Proxy"));
         }
 
-        public async Task AddDefaultImports()
-        {
-            scriptOutput.Info("Initializing C# scripting...");
-            string importsScript = string.Join("\n", Imports);
-            await Execute(importsScript);
-        }
-
         public async Task ExecuteScript(string scriptPath)
         {
             scriptOutput.Info($"Loading script: {scriptPath}");
@@ -76,6 +57,11 @@ namespace Infusion.Desktop
         }
 
         private static int submissionNumber = 0;
+
+        public void Reset()
+        {
+            scriptState = null;
+        }
 
         public Task<object> Execute(string code, bool echo = true, CancellationTokenSource cancellationTokenSource = null)
         {
@@ -93,10 +79,11 @@ namespace Infusion.Desktop
 
                     try
                     {
-                        scriptState = scriptState == null
+                        var previousState = scriptState;
+                        scriptState = previousState == null
                             ? CSharpScript.RunAsync(code, scriptOptions, cancellationToken: cancellationTokenSource?.Token ?? default(CancellationToken))
                                 .Result
-                            : scriptState.ContinueWithAsync(code, scriptOptions, cancellationTokenSource?.Token ?? default(CancellationToken))
+                            : previousState.ContinueWithAsync(code, scriptOptions, cancellationTokenSource?.Token ?? default(CancellationToken))
                                 .Result;
 
                         var resultText = scriptState?.ReturnValue?.ToString();

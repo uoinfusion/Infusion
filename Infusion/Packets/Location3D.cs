@@ -11,7 +11,7 @@ namespace Infusion.Packets
             Z = z;
         }
 
-        public static explicit operator Location2D(Location3D location) =>
+        public static implicit operator Location2D(Location3D location) =>
             new Location2D(location.X, location.Y);
 
         public static Vector operator -(Location3D location1, Location3D location2) =>
@@ -34,6 +34,15 @@ namespace Infusion.Packets
         public static bool operator ==(Location3D location1, Location3D location2) => location1.Equals(location2);
 
         public static bool operator !=(Location3D location1, Location3D location2) => !location1.Equals(location2);
+
+        public ushort GetDistance(Location3D secondLocation)
+        {
+            var vector = this - secondLocation;
+
+            var distance = Math.Sqrt(Math.Pow(vector.X, 2) + Math.Pow(vector.Y, 2) + Math.Pow(vector.Z, 2));
+
+            return (ushort)distance;
+        }
 
         public override int GetHashCode()
         {

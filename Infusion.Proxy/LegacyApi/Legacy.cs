@@ -203,11 +203,6 @@ namespace Infusion.Proxy.LegacyApi
             Use(item.Id);
         }
 
-        public static bool UseType(ushort type)
-        {
-            return UseType((ModelId) type);
-        }
-
         public static bool UseType(ModelId type)
         {
             CheckCancellation();
@@ -222,11 +217,6 @@ namespace Infusion.Proxy.LegacyApi
                 return false;
 
             return true;
-        }
-
-        public static bool UseType(params ushort[] types)
-        {
-            return UseType(types.ToModelIds());
         }
 
         public static bool UseType(params ModelId[] types)

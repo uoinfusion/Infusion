@@ -9,12 +9,12 @@
             Value = value;
         }
 
-        public static explicit operator ModelId(ushort value)
+        public static implicit operator ModelId(ushort value)
         {
             return new ModelId(value);
         }
 
-        public static explicit operator ushort(ModelId model)
+        public static implicit operator ushort(ModelId model)
         {
             return model.Value;
         }

@@ -19,6 +19,12 @@ namespace Infusion.Tests.TextFilters
         }
 
         [TestMethod]
+        public void Can_pass_empty_text()
+        {
+            new NameFilter().IsPassing("Pipka: ").Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_filter_out_name_with_amount()
         {
             new NameFilter().IsPassing("copper wire: 41 copper wire").Should().BeFalse();

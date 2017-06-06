@@ -17,6 +17,8 @@ namespace Infusion.TextFilters
                 return true;
 
             int speechIndex = colonIndex + NameSeparator.Length;
+            if (speechIndex >= text.Length)
+                return true;
 
             if (char.IsNumber(text[speechIndex]))
             {

@@ -6,6 +6,9 @@ namespace Infusion.Proxy.LegacyApi
 {
     public static class ItemCollectionExtensions
     {
+        public static IEnumerable<Item> Refresh(this IEnumerable<Item> items)
+            => items.Select(i => Legacy.Items[i.Id]).Where(i => i != null);
+
         public static IEnumerable<Item> OfLayer(this IEnumerable<Item> items, Layer layer)
             => items.Where(i => i.Layer == layer);
 
@@ -31,10 +34,16 @@ namespace Infusion.Proxy.LegacyApi
         public static IEnumerable<Item> OnGround(this IEnumerable<Item> items)
             => items.Where(i => i.IsOnGround);
 
+        public static IEnumerable<Item> OrderByDistance(this IEnumerable<Item> items)
+            => items.OrderBy(i => i.GetDistance(Legacy.Me.Location));
+
         public static IEnumerable<Item> OrderByDistance(this IEnumerable<Item> items, Location3D referenceLocation)
             => items.OrderBy(i => i.GetDistance(referenceLocation));
 
         public static ModelId[] ToModelIds(this ushort[] ids) => ids.Select(i => (ModelId) i).ToArray();
+
+        public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, ushort maxDistance) 
+            => items.Where(i => i.GetDistance(Legacy.Me.Location) <= maxDistance);
 
         public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, Location2D referenceLocation,
             ushort maxDistance) => items.Where(i => i.GetDistance(referenceLocation) <= maxDistance);
@@ -44,6 +53,9 @@ namespace Infusion.Proxy.LegacyApi
 
         public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, Location2D referenceLocation,
             ushort minDistance) => items.Where(i => i.GetDistance(referenceLocation) >= minDistance);
+
+        public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, ushort minDistance)
+            => items.Where(i => i.GetDistance(Legacy.Me.Location) >= minDistance);
 
         public static IEnumerable<Item> NotIgnored(this IEnumerable<Item> items) => items.Where(x => !x.Ignored);
 

@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using Infusion.Gumps;
 using Infusion.Packets;
+using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 
@@ -13,10 +14,12 @@ namespace Infusion.Proxy.LegacyApi
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private bool showNextAwaitedGump = true;
+        private bool blockNextGumpMenuSelectionRequest = false;
 
         public GumpObservers(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
             serverPacketHandler.RegisterFilter(FilterSendGumpMenuDialog);
+            clientPacketHandler.RegisterFilter(FilterGumpMenuSelection);
             clientPacketHandler.Subscribe(PacketDefinitions.GumpMenuSelection, GumpMenuSelectionRequest);
         }
 
@@ -32,10 +35,22 @@ namespace Infusion.Proxy.LegacyApi
             }
         }
 
+        private Packet? FilterGumpMenuSelection(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id && blockNextGumpMenuSelectionRequest)
+            {
+                blockNextGumpMenuSelectionRequest = false;
+                return null;
+            }
+
+            return rawPacket;
+        }
+
         private Packet? FilterSendGumpMenuDialog(Packet rawPacket)
         {
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
+                blockNextGumpMenuSelectionRequest = false;
                 var nextGumpNotVisible = false;
 
                 lock (gumpLock)
@@ -59,7 +74,7 @@ namespace Infusion.Proxy.LegacyApi
             return rawPacket;
         }
 
-        internal Gump WaitForGump(TimeSpan? timeout = null, bool showGump = false)
+        internal Gump WaitForGump(TimeSpan? timeout = null, bool showGump = true)
         {
             if (CurrentGump != null)
                 return CurrentGump;
@@ -88,6 +103,9 @@ namespace Infusion.Proxy.LegacyApi
                 {
                     new GumpResponseBuilder(CurrentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition)
                         .Execute();
+
+                    blockNextGumpMenuSelectionRequest = true;
+                    Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
                     CurrentGump = null;
                 }
             }
@@ -101,6 +119,9 @@ namespace Infusion.Proxy.LegacyApi
                 {
                     new GumpResponseBuilder(CurrentGump, Program.SendToServer).Trigger(triggerId)
                         .Execute();
+
+                    blockNextGumpMenuSelectionRequest = true;
+                    Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
                     CurrentGump = null;
                 }
             }
@@ -111,8 +132,13 @@ namespace Infusion.Proxy.LegacyApi
             lock (gumpLock)
             {
                 if (CurrentGump != null)
+                {
                     new GumpResponseBuilder(CurrentGump, Program.SendToServer).Cancel().Execute();
-                CurrentGump = null;
+
+                    blockNextGumpMenuSelectionRequest = true;
+                    Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
+                    CurrentGump = null;
+                }
             }
         }
 

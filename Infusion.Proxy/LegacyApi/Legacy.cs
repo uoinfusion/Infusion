@@ -203,6 +203,23 @@ namespace Infusion.Proxy.LegacyApi
             Use(item.Id);
         }
 
+        public static bool Use(ItemSpec spec)
+        {
+            CheckCancellation();
+
+            var item = Items.Matching(spec).InContainer(Me.BackPack).First()
+                       ?? Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).First()
+                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).First()
+                       ?? Items.Matching(spec).OnLayer(Layer.Backpack).First();
+
+            if (item != null)
+                Use(item);
+            else
+                return false;
+
+            return true;
+        }
+
         public static bool UseType(ModelId type)
         {
             CheckCancellation();

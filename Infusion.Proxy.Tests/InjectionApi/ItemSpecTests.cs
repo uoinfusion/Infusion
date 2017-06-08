@@ -18,6 +18,27 @@ namespace Infusion.Proxy.Tests.InjectionApi
         }
 
         [TestMethod]
+        public void Spec_with_ModelId_matches_same_ModelId()
+        {
+            var spec = new ItemSpec(0x4444);
+            spec.Matches(0x4444).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec_with_ModelId_doesnt_match_different_ModelId()
+        {
+            var spec = new ItemSpec(0x4444);
+            spec.Matches(0x1111).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Spec_with_ModelId_and_Color_doesnt_match_same_ModelId()
+        {
+            var spec = new ItemSpec(0x4444, (Color)0x5555);
+            spec.Matches(0x4444).Should().BeFalse();
+        }
+
+        [TestMethod]
         public void Spec_with_ModelId_not_matching_Item_with_other_ModelId()
         {
             var spec = new ItemSpec(0x4444);
@@ -62,6 +83,16 @@ namespace Infusion.Proxy.Tests.InjectionApi
             var item = new Item(0x000000, 0x9999, 1, new Location3D(0, 0, 0), (Color) 0x99);
 
             spec.Matches(item).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Matching_when_any_subspecs_has_same_ModelId()
+        {
+            var spec = new ItemSpec(new ItemSpec(0x1111), new ItemSpec(0x2222));
+
+            spec.Matches(0x1111).Should().BeTrue();
+            spec.Matches(0x2222).Should().BeTrue();
+            spec.Matches(0x3333).Should().BeFalse();
         }
 
         [TestMethod]

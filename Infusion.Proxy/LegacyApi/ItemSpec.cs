@@ -27,11 +27,18 @@ namespace Infusion.Proxy.LegacyApi
             if (Type.HasValue)
                 return item.Type == Type && (!Color.HasValue || Color == item.Color);
             if (childSpecs != null && childSpecs.Length > 0)
-            {
                 return childSpecs.Any(s => s.Matches(item));
-            }
+
             throw new NotImplementedException();
         }
+
+        public bool Matches(ModelId type)
+        {
+            if (Type.HasValue)
+                return type == Type && !Color.HasValue;
+
+            return childSpecs.Any(s => s.Matches(type));
+        } 
 
         public ItemSpec Including(params ItemSpec[] childSpecs) =>
             new ItemSpec(childSpecs.Concat(new[] {this}).ToArray());

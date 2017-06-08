@@ -24,6 +24,9 @@ namespace Infusion.Proxy.LegacyApi
         public static IEnumerable<Item> Matching(this IEnumerable<Item> items, ItemSpec spec)
             => items.Where(i => spec.Matches(i));
 
+        public static IEnumerable<Item> NotMatching(this IEnumerable<Item> items, ItemSpec spec)
+            => items.Where(i => !spec.Matches(i));
+
         public static IEnumerable<Item> OnLayer(this IEnumerable<Item> items, Layer layer) =>
             items.Where(i =>
                 i.Layer.HasValue && i.Layer.Value == layer &&

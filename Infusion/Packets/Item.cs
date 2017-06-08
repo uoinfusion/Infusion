@@ -1,4 +1,6 @@
-﻿namespace Infusion.Packets
+﻿using System.Collections.Generic;
+
+namespace Infusion.Packets
 {
     public sealed class Item
     {
@@ -59,12 +61,8 @@
 
         public Notoriety? Notoriety { get; set; }
 
-        public override string ToString()
-        {
-            return (ContainerId.HasValue)
-                ? $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId.Value:X8}"
-                : $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}";
-        }
+        public override string ToString() =>
+            $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId:X8}; Notoriety: {Notoriety}; Orientation: {Orientation};";
 
         private Item()
         {

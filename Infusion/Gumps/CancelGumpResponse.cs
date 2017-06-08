@@ -7,17 +7,17 @@ namespace Infusion.Gumps
     internal sealed class CancelGumpResponse : GumpResponse
     {
         private readonly Gump gump;
-        private readonly Action<Packet> sendPacket;
+        private readonly Action<GumpMenuSelectionRequest> triggerGump;
 
-        public CancelGumpResponse(Gump gump, Action<Packet> sendPacket) : base(gump)
+        public CancelGumpResponse(Gump gump, Action<GumpMenuSelectionRequest> triggerGump) : base(gump)
         {
             this.gump = gump;
-            this.sendPacket = sendPacket;
+            this.triggerGump = triggerGump;
         }
 
         public override void Execute()
         {
-            sendPacket(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, 0, new uint[] { }, new Tuple<ushort, string>[] { }).RawPacket);
+            triggerGump(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, 0, new uint[] { }, new Tuple<ushort, string>[] { }));
         }
     }
 }

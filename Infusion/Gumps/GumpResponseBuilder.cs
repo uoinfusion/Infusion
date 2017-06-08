@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using Infusion.Packets;
+using Infusion.Packets.Client;
 
 namespace Infusion.Gumps
 {
     public class GumpResponseBuilder
     {
         private readonly Gump gump;
-        private readonly Action<Packet> sendPacket;
+        private readonly Action<GumpMenuSelectionRequest> triggerGump;
         private readonly List<uint> selectedCheckBoxes = new List<uint>();
         private readonly List<Tuple<ushort, string>> textEntries = new List<Tuple<ushort, string>>();
 
-        public GumpResponseBuilder(Gump gump, Action<Packet> sendPacket)
+        public GumpResponseBuilder(Gump gump, Action<GumpMenuSelectionRequest> triggerGump)
         {
             this.gump = gump;
-            this.sendPacket = sendPacket;
+            this.triggerGump = triggerGump;
         }
 
         public GumpResponse Trigger(uint triggerId)
         {
-            return new TriggerGumpResponse(gump, triggerId, sendPacket, selectedCheckBoxes.ToArray(), textEntries.ToArray());
+            return new TriggerGumpResponse(gump, triggerId, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray());
         }
 
         public GumpResponse PushButton(string buttonLabel, GumpLabelPosition labelPosition)
@@ -30,7 +31,7 @@ namespace Infusion.Gumps
 
             if (processor.SelectedControldId.HasValue)
             {
-                return new TriggerGumpResponse(gump, processor.SelectedControldId.Value, sendPacket, selectedCheckBoxes.ToArray(), textEntries.ToArray());
+                return new TriggerGumpResponse(gump, processor.SelectedControldId.Value, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray());
             }
 
             return new GumpFailureResponse(gump, $"Cannot find button '{buttonLabel}'.");
@@ -38,7 +39,7 @@ namespace Infusion.Gumps
 
         public GumpResponse Cancel()
         {
-            return new CancelGumpResponse(gump, sendPacket);
+            return new CancelGumpResponse(gump, triggerGump);
         }
 
         public GumpResponseBuilder SelectCheckBox(string checkBoxLabel, GumpLabelPosition labelPosition)

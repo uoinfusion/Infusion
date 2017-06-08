@@ -3,6 +3,7 @@ using FluentAssertions;
 using FluentAssertions.Common;
 using Infusion.Gumps;
 using Infusion.Packets;
+using Infusion.Packets.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Infusion.Tests.Gumps
@@ -24,14 +25,14 @@ namespace Infusion.Tests.Gumps
                 0x00, 0x00, 0x00, 0x00
             };
 
-            Packet? resultPacket = null;
+            GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(0x40000DA7, 0x96000495, "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
                 GumpLabelPosition.Before).Execute();
 
-            resultPacket.HasValue.Should().BeTrue();
-            resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+            resultPacket.Should().NotBeNull();
+            resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
         }
 
         [TestMethod]
@@ -48,15 +49,15 @@ namespace Infusion.Tests.Gumps
                 0x00, 0x00, 0x00, 0x00
             };
 
-            Packet? resultPacket = null;
+            GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(0x40000DA7, 0x96000495,
                 "{Text 50 215 955 0}{Text 50 215 955 1}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label", "test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
                 GumpLabelPosition.Before).Execute();
 
-            resultPacket.HasValue.Should().BeTrue();
-            resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+            resultPacket.Should().NotBeNull();
+            resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
         }
 
         [TestMethod]
@@ -75,7 +76,7 @@ namespace Infusion.Tests.Gumps
                 0x00, 0x00, 0x00, 0x00
             };
 
-            Packet? resultPacket = null;
+            GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(0x40000DA7, 0x96000495,
                 "{Text 50 215 955 0}{CheckBox 13 57 9904 9903 0 100}{Text 50 215 955 1}{CheckBox 13 57 9904 9903 0 103}",
                 new[] { "test label", "test label2" });
@@ -85,8 +86,8 @@ namespace Infusion.Tests.Gumps
                 .SelectCheckBox("test label2", GumpLabelPosition.Before)
                 .Trigger(0x09).Execute();
 
-            resultPacket.HasValue.Should().BeTrue();
-            resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+            resultPacket.Should().Should().NotBeNull();
+            resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
         }
 
         [TestMethod]
@@ -106,7 +107,7 @@ namespace Infusion.Tests.Gumps
                 0x00, 0x32, // unicode text entry content
             };
 
-            Packet? resultPacket = null;
+            GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(0x40000DA7, 0x96000495,
                 "{Text 50 215 955 0}{TextEntry 41 130 40 20 2301 5 10}",
                 new[] { "test label" });
@@ -115,12 +116,12 @@ namespace Infusion.Tests.Gumps
                 .SetTextEntry("test label", "2", GumpLabelPosition.Before)
                 .Trigger(0x09).Execute();
 
-            resultPacket.HasValue.Should().BeTrue();
-            resultPacket?.Payload.Should().IsSameOrEqualTo(expectedResponsePayload);
+            resultPacket.Should().NotBeNull();
+            resultPacket.RawPacket.Payload.Should().IsSameOrEqualTo(expectedResponsePayload);
 
             // it seems that there is a bug in IsSameOrEqualTo
-            for (int i = 0; i < resultPacket?.Payload.Length; i++)
-                resultPacket?.Payload[i].Should().Be(expectedResponsePayload[i]);
+            for (int i = 0; i < resultPacket.RawPacket.Payload.Length; i++)
+                resultPacket.RawPacket.Payload[i].Should().Be(expectedResponsePayload[i]);
         }
 
         [TestMethod]
@@ -137,14 +138,14 @@ namespace Infusion.Tests.Gumps
                 0x00, 0x00, 0x00, 0x00
             };
 
-            Packet? resultPacket = null;
+            GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(0x40000DA7, 0x96000495, "{Button 13 215 4005 4007 1 0 9}{Text 50 215 955 0}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
                 GumpLabelPosition.After).Execute();
 
-            resultPacket.HasValue.Should().BeTrue();
-            resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+            resultPacket.Should().NotBeNull();
+            resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
         }
 
         [TestMethod]
@@ -182,13 +183,13 @@ namespace Infusion.Tests.Gumps
                 0x00, 0x00, 0x00, 0x00
             };
 
-            Packet? resultPacket = null;
+            GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(0x40000DA7, 0x96000495, "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).Cancel().Execute();
 
-            resultPacket.HasValue.Should().BeTrue();
-            resultPacket?.Payload.Should().BeEquivalentTo(expectedResponsePayload);
+            resultPacket.Should().NotBeNull();
+            resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
         }
     }
 }

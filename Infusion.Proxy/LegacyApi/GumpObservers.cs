@@ -101,14 +101,19 @@ namespace Infusion.Proxy.LegacyApi
             {
                 if (CurrentGump != null)
                 {
-                    new GumpResponseBuilder(CurrentGump, Program.SendToServer).PushButton(buttonLabel, labelPosition)
+                    new GumpResponseBuilder(CurrentGump, TriggerGump).PushButton(buttonLabel, labelPosition)
                         .Execute();
-
-                    blockNextGumpMenuSelectionRequest = true;
-                    Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
-                    CurrentGump = null;
                 }
             }
+        }
+
+        internal void TriggerGump(GumpMenuSelectionRequest packet)
+        {
+            Program.SendToServer(packet.RawPacket);
+
+            blockNextGumpMenuSelectionRequest = true;
+            Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
+            CurrentGump = null;
         }
 
         internal void TriggerGump(uint triggerId)
@@ -117,12 +122,8 @@ namespace Infusion.Proxy.LegacyApi
             {
                 if (CurrentGump != null)
                 {
-                    new GumpResponseBuilder(CurrentGump, Program.SendToServer).Trigger(triggerId)
+                    new GumpResponseBuilder(CurrentGump, TriggerGump).Trigger(triggerId)
                         .Execute();
-
-                    blockNextGumpMenuSelectionRequest = true;
-                    Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
-                    CurrentGump = null;
                 }
             }
         }
@@ -133,11 +134,7 @@ namespace Infusion.Proxy.LegacyApi
             {
                 if (CurrentGump != null)
                 {
-                    new GumpResponseBuilder(CurrentGump, Program.SendToServer).Cancel().Execute();
-
-                    blockNextGumpMenuSelectionRequest = true;
-                    Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
-                    CurrentGump = null;
+                    new GumpResponseBuilder(CurrentGump, TriggerGump).Cancel().Execute();
                 }
             }
         }
@@ -166,7 +163,7 @@ namespace Infusion.Proxy.LegacyApi
         public GumpResponseBuilder GumpResponse()
         {
             if (CurrentGump != null)
-                return new GumpResponseBuilder(CurrentGump, Program.SendToServer);
+                return new GumpResponseBuilder(CurrentGump, TriggerGump);
 
             return null;
         }

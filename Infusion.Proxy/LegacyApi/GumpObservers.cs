@@ -162,10 +162,13 @@ namespace Infusion.Proxy.LegacyApi
 
         public GumpResponseBuilder GumpResponse()
         {
-            if (CurrentGump != null)
-                return new GumpResponseBuilder(CurrentGump, TriggerGump);
+            lock (gumpLock)
+            {
+                if (CurrentGump != null)
+                    return new GumpResponseBuilder(CurrentGump, TriggerGump);
 
-            return null;
+                throw new InvalidOperationException("No gump available");
+            }
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Infusion.Desktop
             };
 
             Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));
-            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.Invoke(() => Edit()), "Opens the script editor."));
+            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Edit())), "Opens the script editor."));
             Legacy.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)), "Loads a script file."));
             Legacy.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls), "Clears console content."));
         }

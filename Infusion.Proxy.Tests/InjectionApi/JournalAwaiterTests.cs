@@ -32,7 +32,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
             {
                 awaiter.When("test word", entry => executed = true);
                 initializedEvent.Set();
-                awaiter.Wait();
+                awaiter.WaitAny();
             });
 
             initializedEvent.WaitOne(100);
@@ -56,7 +56,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
                     .When("word1", entry => firstConditionExecuted = true)
                     .When("word2", entry => secondConditionExecuted = true);
                 initializedEvent.Set();
-                awaiter.Wait();
+                awaiter.WaitAny();
             });
 
             initializedEvent.WaitOne(100);
@@ -81,7 +81,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
                 awaiter
                     .When(new[] {"word1", "test word", "word2"}, entry => executed = true);
                 initializedEvent.Set();
-                awaiter.Wait();
+                awaiter.WaitAny();
             });
 
             initializedEvent.WaitOne(100);
@@ -102,7 +102,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
                 Action action = () =>
                 {
                     initializedEvent.Set();
-                    awaiter.Wait();
+                    awaiter.WaitAny();
                 };
                 action.ShouldThrow<OperationCanceledException>();
             });
@@ -119,7 +119,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
             var awaiter = new JournalAwaiter(() => cancellationTokenSource.Token);
 
             awaiter.WhenTimeout(() => executed = true)
-                .Wait(TimeSpan.FromMilliseconds(100));
+                .WaitAny(TimeSpan.FromMilliseconds(100));
 
             executed.Should().BeTrue();
         }

@@ -11,7 +11,6 @@ namespace Infusion.Proxy.LegacyApi
         private uint? draggedItemId;
         private DragResult dragResult = DragResult.None;
         private readonly ItemCollection items;
-        private Location2D? lastItemPurgeLocation;
 
         public ItemsObservers(ItemCollection items, ServerPacketHandler serverPacketHandler)
         {
@@ -143,16 +142,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             var newPosition = (Location2D) e;
 
-            if (lastItemPurgeLocation.HasValue)
-            {
-                if (lastItemPurgeLocation.Value.GetDistance(newPosition) > 200)
-                {
-                    items.PurgeUnreachableItems(newPosition, 200);
-                    lastItemPurgeLocation = newPosition;
-                }
-            }
-            else
-                lastItemPurgeLocation = newPosition;
+            items.PurgeUnreachableItems(newPosition, 25);
         }
 
         public void Ignore(Item item)

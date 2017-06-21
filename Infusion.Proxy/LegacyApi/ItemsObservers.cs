@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Infusion.Packets;
 using Infusion.Packets.Server;
@@ -143,11 +144,6 @@ namespace Infusion.Proxy.LegacyApi
             var newPosition = (Location2D) e;
 
             items.PurgeUnreachableItems(newPosition, 25);
-        }
-
-        public void Ignore(Item item)
-        {
-            items.UpdateItem(item.Ignore());
         }
 
         public DragResult WaitForItemDragged(TimeSpan? timeout)

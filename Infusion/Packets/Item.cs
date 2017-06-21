@@ -84,7 +84,6 @@ namespace Infusion.Packets
                 Amount = this.Amount,
                 ContainerId = this.ContainerId,
                 Layer = this.Layer,
-                Ignored = this.Ignored,
             };
         }
 
@@ -96,16 +95,6 @@ namespace Infusion.Packets
 
             return updatedItem;
         }
-
-        public Item Ignore()
-        {
-            var ignoredItem = Duplicate();
-            ignoredItem.Ignored = true;
-
-            return ignoredItem;
-        }
-
-        public bool Ignored { get; private set; }
 
         public Item UpdateLocation(Location3D location)
         {

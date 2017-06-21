@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Infusion.Gumps;
@@ -213,7 +214,10 @@ namespace Infusion.Proxy.LegacyApi
                        ?? Items.Matching(spec).OnLayer(Layer.Backpack).First();
 
             if (item != null)
+            {
+                Log($"Using item: {item}");
                 Use(item);
+            }
             else
                 return false;
 
@@ -229,7 +233,10 @@ namespace Infusion.Proxy.LegacyApi
                        ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).First()
                        ?? Items.OfType(type).OnLayer(Layer.Backpack).First();
             if (item != null)
+            {
+                Log($"Using item: {item}");
                 Use(item);
+            }
             else
                 return false;
 
@@ -247,6 +254,7 @@ namespace Infusion.Proxy.LegacyApi
 
             if (item != null)
             {
+                Log($"Using item: {item}");
                 Use(item);
                 return true;
             }
@@ -559,9 +567,11 @@ namespace Infusion.Proxy.LegacyApi
             Program.SendToServer(request.RawPacket);
         }
 
+        internal static HashSet<uint> IgnoredItems { get; } = new HashSet<uint>();
+
         public static void Ignore(Item item)
         {
-            ItemsObserver.Ignore(item);
+            IgnoredItems.Add(item.Id);
         }
     }
 }

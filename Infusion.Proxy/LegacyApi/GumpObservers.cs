@@ -50,7 +50,6 @@ namespace Infusion.Proxy.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
-                blockNextGumpMenuSelectionRequest = false;
                 var nextGumpNotVisible = false;
 
                 lock (gumpLock)

@@ -47,54 +47,6 @@ namespace Infusion.Proxy.LegacyApi
             OnNewMessageReceived(entry);
         }
 
-        public JournalAwaiter<T> When<T>(string[] awaitedWords, Func<JournalEntry, T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWords, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, Func<JournalEntry, T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, Func<JournalEntry, T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, string awaitedWord3, Func<JournalEntry, T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4, Func<JournalEntry, T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4, string awaitedWord5, Func<JournalEntry, T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
-
-        public JournalAwaiter<T> When<T>(string[] awaitedWords, Func<T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWords, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, Func<T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, Func<T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, string awaitedWord3, Func<T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4, Func<T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
-
-        public JournalAwaiter<T> When<T>(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4, string awaitedWord5, Func<T> whenAction) =>
-            new JournalAwaiter<T>(() => Legacy.CancellationToken, this)
-                .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
-
         public JournalAwaiter When(string awaitedWord1, Action whenAction) =>
             new JournalAwaiter(() => Legacy.CancellationToken, this)
                 .When(awaitedWord1, whenAction);

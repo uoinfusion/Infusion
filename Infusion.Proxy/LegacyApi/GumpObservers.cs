@@ -13,8 +13,8 @@ namespace Infusion.Proxy.LegacyApi
     {
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
+        private bool blockNextGumpMenuSelectionRequest;
         private bool showNextAwaitedGump = true;
-        private bool blockNextGumpMenuSelectionRequest = false;
 
         public GumpObservers(ServerPacketHandler serverPacketHandler, ClientPacketHandler clientPacketHandler)
         {
@@ -29,8 +29,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             lock (gumpLock)
             {
-                if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpId == CurrentGump.GumpId &&
-                    packet.TriggerId == 0)
+                if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpId == CurrentGump.GumpId)
                     CurrentGump = null;
             }
         }
@@ -108,11 +107,14 @@ namespace Infusion.Proxy.LegacyApi
 
         internal void TriggerGump(GumpMenuSelectionRequest packet)
         {
-            Program.SendToServer(packet.RawPacket);
+            lock (gumpLock)
+            {
+                Program.SendToServer(packet.RawPacket);
 
-            blockNextGumpMenuSelectionRequest = true;
-            Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
-            CurrentGump = null;
+                blockNextGumpMenuSelectionRequest = true;
+                Program.SendToClient(new CloseGenericGumpPacket(CurrentGump.GumpId).RawPacket);
+                CurrentGump = null;
+            }
         }
 
         internal void TriggerGump(uint triggerId)
@@ -132,9 +134,7 @@ namespace Infusion.Proxy.LegacyApi
             lock (gumpLock)
             {
                 if (CurrentGump != null)
-                {
                     new GumpResponseBuilder(CurrentGump, TriggerGump).Cancel().Execute();
-                }
             }
         }
 

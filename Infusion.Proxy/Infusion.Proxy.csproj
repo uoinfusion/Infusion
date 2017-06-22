@@ -59,12 +59,13 @@
     <Compile Include="LegacyApi\GumpObservers.cs" />
     <Compile Include="LegacyApi\ItemSpec.cs" />
     <Compile Include="LegacyApi\JournalAwaiter.cs" />
+    <Compile Include="LegacyApi\JournalSource.cs" />
     <Compile Include="LegacyApi\Legacy.cs" />
     <Compile Include="LegacyApi\CommandHandlerObservers.cs" />
     <Compile Include="LegacyApi\ItemCollectionExtensions.cs" />
     <Compile Include="LegacyApi\ItemsObservers.cs" />
     <Compile Include="LegacyApi\ItemCollection.cs" />
-    <Compile Include="LegacyApi\JournalEntries.cs" />
+    <Compile Include="LegacyApi\GameJournal.cs" />
     <Compile Include="LegacyApi\JournalEntriesExtensions.cs" />
     <Compile Include="LegacyApi\JournalEntry.cs" />
     <Compile Include="LegacyApi\JournalObservers.cs" />

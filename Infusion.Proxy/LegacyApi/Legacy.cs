@@ -12,39 +12,41 @@ namespace Infusion.Proxy.LegacyApi
 {
     public static class Legacy
     {
-        private static readonly ItemsObservers ItemsObserver;
-        private static readonly JournalObservers JournalObservers;
-        private static readonly PlayerObservers PlayerObservers;
-        private static readonly BlockedPacketsFilters BlockedPacketsFilters;
-        private static readonly CommandHandlerObservers LegacyCommandHandler;
-        private static readonly GumpObservers GumpObservers;
+        private static readonly ItemsObservers itemsObserver;
+        private static readonly JournalObservers journalObservers;
+        private static readonly BlockedPacketsFilters blockedPacketsFilters;
+        private static readonly CommandHandlerObservers legacyCommandHandler;
+        private static readonly GumpObservers gumpObservers;
 
         private static readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
 
-        private static readonly Targeting Targeting;
+        private static readonly Targeting targeting;
+
+        private static readonly JournalSource journalSource;
 
         static Legacy()
         {
-            GumpObservers = new GumpObservers(Program.ServerPacketHandler, Program.ClientPacketHandler);
+            gumpObservers = new GumpObservers(Program.ServerPacketHandler, Program.ClientPacketHandler);
             Items = new ItemCollection(Me);
-            ItemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
-            Me.LocationChanged += ItemsObserver.OnPlayerPositionChanged;
-            Journal = new JournalEntries();
-            JournalObservers = new JournalObservers(Journal, Program.ServerPacketHandler);
-            PlayerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
-            PlayerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
-            Targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
+            itemsObserver = new ItemsObservers(Items, Program.ServerPacketHandler);
+            Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
+            journalSource = new JournalSource();
+            Journal = new GameJournal(journalSource);
+            journalObservers = new JournalObservers(journalSource, Program.ServerPacketHandler);
+            var playerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
+            playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
+            targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
 
             RegisterDefaultScripts();
 
-            LegacyCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
-            BlockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
+            legacyCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
+            blockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
         }
 
         public static Configuration Configuration { get; private set; } = new Configuration();
 
-        public static Gump CurrentGump => GumpObservers.CurrentGump;
+        public static Gump CurrentGump => gumpObservers.CurrentGump;
 
         public static CancellationToken? CancellationToken
         {
@@ -62,12 +64,12 @@ namespace Infusion.Proxy.LegacyApi
 
         public static bool HitPointNotificationEnabled
         {
-            get => ItemsObserver.HitPointNotificationEnabled;
+            get => itemsObserver.HitPointNotificationEnabled;
 
-            set => ItemsObserver.HitPointNotificationEnabled = value;
+            set => itemsObserver.HitPointNotificationEnabled = value;
         }
 
-        public static JournalEntries Journal { get; }
+        public static GameJournal Journal { get; }
 
         public static void RegisterCommand(string name, Action commandAction)
         {
@@ -98,6 +100,8 @@ namespace Infusion.Proxy.LegacyApi
             CommandHandler.RegisterCommand(new Command("lastgumpinfo", LastGumpInfo,
                 "Shows information about the last gump dispalyed in Ultima Online client."));
         }
+
+        public static GameJournal CreateJournal() => new GameJournal(journalSource);
 
         private static void HelpCommand(string parameters)
         {
@@ -166,7 +170,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static Gump WaitForGump(TimeSpan? timeout = null)
         {
-            return GumpObservers.WaitForGump(timeout);
+            return gumpObservers.WaitForGump(timeout);
         }
 
         public static void Initialize(Configuration configuration)
@@ -265,30 +269,6 @@ namespace Infusion.Proxy.LegacyApi
             return false;
         }
 
-        public static bool InJournal(params string[] words)
-        {
-            return Journal.InJournal(words);
-        }
-
-        public static bool InJournal(DateTime createdAfter, params string[] words)
-        {
-            return Journal.InJournal(createdAfter, words);
-        }
-
-        public static void DeleteJournal()
-        {
-            CheckCancellation();
-
-            Journal.DeleteJournal();
-        }
-
-        public static void WaitForJournal(params string[] words)
-        {
-            CheckCancellation();
-
-            Journal.WaitForJournal(words);
-        }
-
         public static void Wait(int milliseconds)
         {
             while (milliseconds > 0)
@@ -344,21 +324,21 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
-            Targeting.TargetTile(tileInfo);
+            targeting.TargetTile(tileInfo);
         }
 
         public static void Target(Item item)
         {
             CheckCancellation();
 
-            Targeting.Target(item);
+            targeting.Target(item);
         }
 
         public static void Target(Player player)
         {
             CheckCancellation();
 
-            Targeting.Target(player);
+            targeting.Target(player);
         }
 
         public static void Terminate(string parameters)
@@ -379,7 +359,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static string Info()
         {
-            return Targeting.Info();
+            return targeting.Info();
         }
 
         private static void InfoCommand()
@@ -390,12 +370,12 @@ namespace Infusion.Proxy.LegacyApi
 
         public static ModelId TypeInfo()
         {
-            return Targeting.TypeInfo();
+            return targeting.TypeInfo();
         }
 
         public static Item ItemInfo()
         {
-            var itemId = Targeting.ItemIdInfo();
+            var itemId = targeting.ItemIdInfo();
 
             Item item;
             if (!Items.TryGet(itemId, out item))
@@ -408,7 +388,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
-            Targeting.WaitForTarget();
+            targeting.WaitForTarget();
         }
 
         public static void DropItem(Item item, Item targetContainer)
@@ -429,7 +409,7 @@ namespace Infusion.Proxy.LegacyApi
             CheckCancellation();
 
             var pickupPacket = new PickupItemRequest(item.Id, amount);
-            ItemsObserver.DraggedItemId = item.Id;
+            itemsObserver.DraggedItemId = item.Id;
             Program.SendToServer(pickupPacket.RawPacket);
         }
 
@@ -456,7 +436,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static DragResult WaitForItemDragged(TimeSpan? timeout = null)
         {
-            return ItemsObserver.WaitForItemDragged(timeout);
+            return itemsObserver.WaitForItemDragged(timeout);
         }
 
         public static void Log(string message)
@@ -466,28 +446,28 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void TriggerGump(uint triggerId)
         {
-            GumpObservers.TriggerGump(triggerId);
+            gumpObservers.TriggerGump(triggerId);
         }
 
         public static GumpResponseBuilder GumpResponse()
         {
-            return GumpObservers.GumpResponse();
+            return gumpObservers.GumpResponse();
         }
 
         public static void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
-            GumpObservers.SelectGumpButton(buttonLabel, labelPosition);
+            gumpObservers.SelectGumpButton(buttonLabel, labelPosition);
         }
 
         public static void LastGumpInfo()
         {
-            var gumpInfo = GumpObservers.LastGumpInfo();
+            var gumpInfo = gumpObservers.LastGumpInfo();
             Log(gumpInfo);
         }
 
         public static void CloseGump()
         {
-            GumpObservers.CloseGump();
+            gumpObservers.CloseGump();
         }
 
         public static void StepToward(Location2D currentLocation, Location2D targetLocation)

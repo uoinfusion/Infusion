@@ -8,7 +8,7 @@ namespace Infusion.Proxy.LegacyApi
     public class JournalAwaiter
     {
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-        private readonly JournalEntries journalEntries;
+        private readonly GameJournal journalEntries;
         private readonly Func<CancellationToken?> tokenProvider;
 
         private readonly Dictionary<string[], Action<JournalEntry>> whenActions =
@@ -19,7 +19,7 @@ namespace Infusion.Proxy.LegacyApi
 
         private Action timeoutAction;
 
-        public JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalEntries journalEntries = null)
+        public JournalAwaiter(Func<CancellationToken?> tokenProvider, GameJournal journalEntries = null)
         {
             this.tokenProvider = tokenProvider;
             this.journalEntries = journalEntries;

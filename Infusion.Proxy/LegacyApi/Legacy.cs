@@ -38,7 +38,7 @@ namespace Infusion.Proxy.LegacyApi
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
             targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
 
-            RegisterDefaultScripts();
+            RegisterDefaultCommands();
 
             legacyCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
             blockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
@@ -88,10 +88,12 @@ namespace Infusion.Proxy.LegacyApi
             Program.Console.Critical(message);
         }
 
-        private static void RegisterDefaultScripts()
+        private static void RegisterDefaultCommands()
         {
             CommandHandler.RegisterCommand(new Command("terminate", Terminate,
                 "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("dump", Program.DumpPacketLog,
+                "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.", executionMode: CommandExecutionMode.Direct));
             CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters),
                 "Walks to the specified location.", "Example: ,walkto 1234 432"));
             CommandHandler.RegisterCommand(new Command("info", InfoCommand,
@@ -99,6 +101,8 @@ namespace Infusion.Proxy.LegacyApi
             CommandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
             CommandHandler.RegisterCommand(new Command("lastgumpinfo", LastGumpInfo,
                 "Shows information about the last gump dispalyed in Ultima Online client."));
+            CommandHandler.RegisterCommand(new Command("list", ListRunningCommands,
+                "Lists running commands"));
         }
 
         public static GameJournal CreateJournal() => new GameJournal(journalSource);
@@ -116,6 +120,8 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void Say(string message)
         {
+            journalSource.NotifyLastAction();
+
             var packet = new SpeechRequest
             {
                 Type = SpeechType.Normal,
@@ -182,6 +188,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
+            journalSource.NotifyLastAction();
             var packet = new DoubleClickRequest(objectId);
             Program.SendToServer(packet.RawPacket);
         }
@@ -205,6 +212,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void Use(Item item)
         {
+            Log($"Using item: {item}");
             Use(item.Id);
         }
 
@@ -219,7 +227,6 @@ namespace Infusion.Proxy.LegacyApi
 
             if (item != null)
             {
-                Log($"Using item: {item}");
                 Use(item);
             }
             else
@@ -324,6 +331,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
+            journalSource.NotifyLastAction();
             targeting.TargetTile(tileInfo);
         }
 
@@ -331,6 +339,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
+            journalSource.NotifyLastAction();
             targeting.Target(item);
         }
 
@@ -338,6 +347,7 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
+            journalSource.NotifyLastAction();
             targeting.Target(player);
         }
 
@@ -535,15 +545,17 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void CastSpell(Spell spell)
         {
-            var request = new SkillRequest(spell);
+            journalSource.NotifyLastAction();
 
+            var request = new SkillRequest(spell);
             Program.SendToServer(request.RawPacket);
         }
 
         public static void UseSkill(Skill skill)
         {
-            var request = new SkillRequest(skill);
+            journalSource.NotifyLastAction();
 
+            var request = new SkillRequest(skill);
             Program.SendToServer(request.RawPacket);
         }
 

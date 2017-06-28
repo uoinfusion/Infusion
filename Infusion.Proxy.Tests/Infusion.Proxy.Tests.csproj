@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="InjectionApi\CommandHandlerTests.cs" />
     <Compile Include="InjectionApi\CommandParameterParserTests.cs" />
+    <Compile Include="InjectionApi\GameJournalTests.cs" />
     <Compile Include="InjectionApi\ItemCollectionTests.cs" />
     <Compile Include="InjectionApi\ItemSpecTests.cs" />
     <Compile Include="InjectionApi\JournalAwaiterTests.cs" />

@@ -36,7 +36,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry("test", "test word", 1234, (ModelId) 4321));
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", 1234, (ModelId) 4321));
             task.Wait();
 
             executed.Should().Be(true);
@@ -60,7 +60,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry("TestName", "somethingsomething word2 somethingsomething", 1234,
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "TestName", "somethingsomething word2 somethingsomething", 1234,
                 (ModelId) 4321));
 
             task.Wait(100);
@@ -85,7 +85,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry("test", "test word", 1234, (ModelId) 4321));
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", 1234, (ModelId) 4321));
             task.Wait(100);
 
             executed.Should().Be(true);

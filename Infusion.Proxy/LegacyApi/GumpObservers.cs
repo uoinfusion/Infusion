@@ -166,7 +166,7 @@ namespace Infusion.Proxy.LegacyApi
                 if (CurrentGump != null)
                     return new GumpResponseBuilder(CurrentGump, TriggerGump);
 
-                throw new InvalidOperationException("No gump available");
+                throw new GumpException("No gump is currently available. If you see an active gump in game client it is most likely a bug. Please, type ,dump on Infusion command line and report the dump output on the Infusion project site.");
             }
         }
     }

@@ -5,10 +5,11 @@ using System.Threading;
 
 namespace Infusion.Proxy.LegacyApi
 {
-    public class JournalAwaiter
+    public sealed class JournalAwaiter
     {
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-        private readonly GameJournal journalEntries;
+        private readonly JournalSource journalSource;
+        private readonly GameJournal journal;
         private readonly Func<CancellationToken?> tokenProvider;
 
         private readonly Dictionary<string[], Action<JournalEntry>> whenActions =
@@ -19,13 +20,14 @@ namespace Infusion.Proxy.LegacyApi
 
         private Action timeoutAction;
 
-        public JournalAwaiter(Func<CancellationToken?> tokenProvider, GameJournal journalEntries = null)
+        internal JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalSource journalSource = null, GameJournal journal = null)
         {
             this.tokenProvider = tokenProvider;
-            this.journalEntries = journalEntries;
+            this.journalSource = journalSource;
+            this.journal = journal;
         }
 
-        public void ReceiveJournalEntry(JournalEntry entry)
+        internal void ReceiveJournalEntry(JournalEntry entry)
         {
             var keyValuePair =
                 whenActions.FirstOrDefault(pair => pair.Key.Any(awaitedWord => entry.Text.Contains(awaitedWord)));
@@ -34,6 +36,7 @@ namespace Infusion.Proxy.LegacyApi
                 receivedAction = keyValuePair.Value;
                 receivedJournalEntry = entry;
 
+                journal?.NotifyWait();
                 entryReceivedEvent.Set();
             }
         }
@@ -128,15 +131,24 @@ namespace Infusion.Proxy.LegacyApi
             return this;
         }
 
-        public void WaitAny()
+        public void WaitAny(TimeSpan? timeout = null)
         {
-            WaitAny(null);
-        }
+            if (journal != null)
+            {
+                foreach (var entry in journal.AfterLastAction())
+                {
+                    KeyValuePair<string[], Action<JournalEntry>> pair =
+                        whenActions.FirstOrDefault(x => x.Key.Any(k => entry.Message.Contains(k)));
+                    if (pair.Value != null)
+                    {
+                        journal.NotifyWait();
+                        pair.Value(entry);
+                        return;
+                    }
+                }
 
-        public void WaitAny(TimeSpan? timeout)
-        {
-            if (journalEntries != null)
-                journalEntries.NewMessageReceived += JournalEntriesOnNewMessageReceived;
+                journalSource.NewMessageReceived += JournalEntriesOnNewMessageReceived;
+            }
 
             try
             {
@@ -166,8 +178,8 @@ namespace Infusion.Proxy.LegacyApi
             }
             finally
             {
-                if (journalEntries != null)
-                    journalEntries.NewMessageReceived -= JournalEntriesOnNewMessageReceived;
+                if (journalSource != null)
+                    journalSource.NewMessageReceived -= JournalEntriesOnNewMessageReceived;
             }
         }
 

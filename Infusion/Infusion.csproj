@@ -58,6 +58,7 @@
     <Compile Include="Gumps\CancelGumpResponse.cs" />
     <Compile Include="Gumps\Gump.cs" />
     <Compile Include="Gumps\GumpControls.cs" />
+    <Compile Include="Gumps\GumpException.cs" />
     <Compile Include="Gumps\GumpFailureResponse.cs" />
     <Compile Include="Gumps\GumpLabelPosition.cs" />
     <Compile Include="Gumps\GumpParser.cs" />

@@ -7,14 +7,17 @@ namespace Infusion.Proxy.LegacyApi
     {
         private string text;
 
-        public JournalEntry(string name, string message, uint speakerId, ModelId type)
+        public JournalEntry(long id, string name, string message, uint speakerId, ModelId type)
         {
+            Id = id;
             Name = name;
             Message = message;
             SpeakerId = speakerId;
             Type = type;
             Created = DateTime.UtcNow;
         }
+
+        public long Id { get; }
 
         public string Message { get; }
         public string Name { get; }

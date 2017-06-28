@@ -9,6 +9,9 @@ namespace Infusion.Proxy.LegacyApi
         public static IEnumerable<JournalEntry> After(this IEnumerable<JournalEntry> entries, DateTime createdAfter)
             => entries.Where(e => e.Created > createdAfter);
 
+        public static IEnumerable<JournalEntry> After(this IEnumerable<JournalEntry> entries, long entryId)
+            => entries.Where(e => e.Id > entryId);
+
         public static IEnumerable<JournalEntry> ByAnyName(this IEnumerable<JournalEntry> entries, params string[] names)
             => entries.Where(e => names.Contains(e.Name.ToLower()));
 

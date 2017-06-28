@@ -16,12 +16,12 @@ namespace Infusion.Proxy.LegacyApi
 
         private void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            journalSource.AddMessage(new JournalEntry(packet.Name, packet.Message, packet.Id, packet.Model));
+            journalSource.AddMessage(packet.Name, packet.Message, packet.Id, packet.Model);
         }
 
         private void HanldeSendSpeechPacket(SendSpeechPacket packet)
         {
-            journalSource.AddMessage(new JournalEntry(packet.Name, packet.Message, packet.Id, packet.Model));
+            journalSource.AddMessage(packet.Name, packet.Message, packet.Id, packet.Model);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Infusion.Gumps
 
         public override void Execute()
         {
-            throw new InvalidOperationException(FailureMessage);
+            throw new GumpException(FailureMessage);
         }
     }
 }

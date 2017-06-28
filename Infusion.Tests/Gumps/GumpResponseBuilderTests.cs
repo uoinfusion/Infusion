@@ -155,7 +155,7 @@ namespace Infusion.Tests.Gumps
             var response = new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
                 GumpLabelPosition.Before);
 
-            ((Action) response.Execute).ShouldThrow<InvalidOperationException>();
+            ((Action) response.Execute).ShouldThrow<GumpException>();
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace Infusion.Tests.Gumps
             var response = new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
                 GumpLabelPosition.Before);
 
-            ((Action) response.Execute).ShouldThrow<InvalidOperationException>();
+            ((Action) response.Execute).ShouldThrow<GumpException>();
         }
 
         [TestMethod]

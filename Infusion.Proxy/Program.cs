@@ -13,11 +13,14 @@ using Infusion.Packets.Parsers;
 using Infusion.Packets.Server;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
+using Ultima;
 
 namespace Infusion.Proxy
 {
     public static class Program
     {
+        public static Configuration Configuration { get; } = new Configuration();
+
         private static TcpListener listener;
         private static ServerConnection serverConnection;
         private static UltimaClientConnection clientConnection;
@@ -26,15 +29,11 @@ namespace Infusion.Proxy
         private static bool needServerReconnect;
         private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
-
-        public static Configuration Configuration { get; } = new Configuration();
         private static readonly SpeechFilter speechFilter = new SpeechFilter(Configuration);
 
         private static readonly object serverConnectionLock = new object();
 
         private static readonly object serverStreamLock = new object();
-
-        public static ILogger Console { get; set; } = new ConsoleLogger();
         public static ILogger Diagnostic = NullLogger.Instance;
 
         private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(100);
@@ -43,6 +42,12 @@ namespace Infusion.Proxy
 
         public static readonly ServerPacketHandler ServerPacketHandler = new ServerPacketHandler();
         public static readonly ClientPacketHandler ClientPacketHandler = new ClientPacketHandler();
+
+        private static readonly StringList clilocDictionary = new StringList("ENU");
+
+        private static ushort proxyLocalPort;
+
+        public static ILogger Console { get; set; } = new ConsoleLogger();
 
         public static NetworkStream ClientStream { get; set; }
 
@@ -66,44 +71,72 @@ namespace Infusion.Proxy
             ServerPacketHandler.RegisterFilter(RedirectConnectToGameServer);
             ServerPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
             ServerPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
+            ServerPacketHandler.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
+            ServerPacketHandler.Subscribe(PacketDefinitions.ClilocMessageAffix, HandleClilocMessageAffix);
 
             serverEndpoint = serverAddress;
             return Main(localProxyPort, packetRingBufferLogger);
         }
 
-        private static void HandleSendSpeechPacket(SendSpeechPacket packet)
+        private static void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
         {
-            var message = new SpeechMessage()
+            var message = new SpeechMessage
             {
-                Type = packet.Type,
-                Message = packet.Message,
+                Type = SpeechType.Speech,
+                Message = clilocDictionary.GetString(packet.MessageId) + packet.Affix,
                 Name = packet.Name,
-                SpeakerId = packet.Id,
+                SpeakerId = packet.SpeakerId
             };
 
+            AddConsoleMessage(message);
+        }
+
+        private static void HandleClilocMessage(ClilocMessagePacket packet)
+        {
+            var message = new SpeechMessage
+            {
+                Type = SpeechType.Speech,
+                Message = clilocDictionary.GetString(packet.MessageId),
+                Name = packet.Name,
+                SpeakerId = packet.SpeakerId
+            };
+
+            AddConsoleMessage(message);
+        }
+
+        private static void AddConsoleMessage(SpeechMessage message)
+        {
             if (speechFilter.IsPassing(message.Text))
                 Console.Important(message.Text);
             else
                 Console.Info(message.Text);
+        }
+
+        private static void HandleSendSpeechPacket(SendSpeechPacket packet)
+        {
+            var message = new SpeechMessage
+            {
+                Type = packet.Type,
+                Message = packet.Message,
+                Name = packet.Name,
+                SpeakerId = packet.Id
+            };
+
+            AddConsoleMessage(message);
         }
 
         private static void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            var message = new SpeechMessage()
+            var message = new SpeechMessage
             {
                 Type = packet.Type,
                 Message = packet.Message,
                 Name = packet.Name,
-                SpeakerId = packet.Id,
+                SpeakerId = packet.Id
             };
 
-            if (speechFilter.IsPassing(message.Text))
-                Console.Important(message.Text);
-            else
-                Console.Info(message.Text);
+            AddConsoleMessage(message);
         }
-
-        private static ushort proxyLocalPort;
 
         private static Task Main(ushort port, ILogger logger)
         {
@@ -120,7 +153,9 @@ namespace Infusion.Proxy
         }
 
         public static IEnumerable<PacketLogEntry> ParsePacketLogDump()
-            => new PacketLogParser().Parse(packetRingBufferLogger.DumpToString());
+        {
+            return new PacketLogParser().Parse(packetRingBufferLogger.DumpToString());
+        }
 
         public static void ClearPacketLog()
         {
@@ -241,89 +276,53 @@ namespace Infusion.Proxy
             rawPacket = filteredPacket.Value;
 
             if (rawPacket.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
-            {
                 ServerPacketHandler.Publish<AddMultipleItemsInContainerPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.AddItemToContainer.Id)
-            {
                 ServerPacketHandler.Publish<AddItemToContainerPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.DeleteObject.Id)
-            {
                 ServerPacketHandler.Publish<DeleteObjectPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.ObjectInfo.Id)
-            {
                 ServerPacketHandler.Publish<ObjectInfoPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.DrawObject.Id)
-            {
                 ServerPacketHandler.Publish<DrawObjectPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
-            {
                 ServerPacketHandler.Publish<TargetCursorPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.CharacterMoveAck.Id)
-            {
                 ServerPacketHandler.Publish<CharacterMoveAckPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.CharMoveRejection.Id)
-            {
                 ServerPacketHandler.Publish<CharMoveRejectionPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.DrawGamePlayer.Id)
-            {
                 ServerPacketHandler.Publish<DrawGamePlayerPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.SpeechMessage.Id)
-            {
                 ServerPacketHandler.Publish<SpeechMessagePacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.SendSpeech.Id)
-            {
                 ServerPacketHandler.Publish<SendSpeechPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.CharacterLocaleAndBody.Id)
-            {
                 ServerPacketHandler.Publish<CharLocaleAndBodyPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.UpdatePlayer.Id)
-            {
                 ServerPacketHandler.Publish<UpdatePlayerPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.UpdateCurrentHealth.Id)
-            {
                 ServerPacketHandler.Publish<UpdateCurrentHealthPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.UpdateCurrentMana.Id)
-            {
                 ServerPacketHandler.Publish<UpdateCurrentManaPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.UpdateCurrentStamina.Id)
-            {
                 ServerPacketHandler.Publish<UpdateCurrentStaminaPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
-            {
                 ServerPacketHandler.Publish<SendGumpMenuDialogPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.WornItem.Id)
-            {
                 ServerPacketHandler.Publish<WornItemPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.StatusBarInfo.Id)
-            {
                 ServerPacketHandler.Publish<StatusBarInfoPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.SendSkills.Id)
-            {
                 ServerPacketHandler.Publish<SendSkillsPacket>(rawPacket);
-            }
             else if (rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
-            {
                 ServerPacketHandler.Publish<RejectMoveItemRequestPacket>(rawPacket);
-            }
+            else if (rawPacket.Id == PacketDefinitions.ClilocMessage.Id)
+                ServerPacketHandler.Publish<ClilocMessagePacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.ClilocMessageAffix.Id)
+                ServerPacketHandler.Publish<ClilocMessageAffixPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.AllowRefuseAttack.Id)
+                ServerPacketHandler.Publish<AllowRefuseAttackPacket>(rawPacket);
 
             return rawPacket;
         }
@@ -345,16 +344,13 @@ namespace Infusion.Proxy
                     }
 
                     if (ServerStream == null)
-                    {
                         ServerStream = ConnectToServer();
-                    }
 
                     if (ServerStream.DataAvailable)
                     {
                         try
                         {
                             serverConnection.Receive(new NetworkStreamToPullStreamAdapter(ServerStream));
-
                         }
                         catch (EndOfStreamException ex)
                         {
@@ -417,26 +413,15 @@ namespace Infusion.Proxy
                 rawPacket = filteredPacket.Value;
 
                 if (rawPacket.Id == PacketDefinitions.MoveRequest.Id)
-                {
                     ClientPacketHandler.Publish<MoveRequest>(rawPacket);
-                }
                 else if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
-                {
                     ClientPacketHandler.Publish<SpeechRequest>(rawPacket);
-                }
                 else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
-                {
                     ClientPacketHandler.Publish<TargetCursorPacket>(rawPacket);
-                }
                 else if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id)
-                {
                     ClientPacketHandler.Publish<GumpMenuSelectionRequest>(rawPacket);
-                }
                 else if (rawPacket.Id == PacketDefinitions.DoubleClick.Id)
-                {
                     ClientPacketHandler.Publish<DoubleClickRequest>(rawPacket);
-                }
-
             }
             catch (PacketMaterializationException ex)
             {

@@ -19,7 +19,25 @@ namespace Infusion.Tests.TextFilters
         }
 
         [TestMethod]
+        public void Can_pass_text_without_name()
+        {
+            new NameFilter().IsPassing("without name").Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_pass_empty_text()
+        {
+            new NameFilter().IsPassing(string.Empty).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Can_pass_empty_message_empty_name()
+        {
+            new NameFilter().IsPassing(": ").Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Can_pass_empty_message_with_just_name()
         {
             new NameFilter().IsPassing("Pipka: ").Should().BeTrue();
         }

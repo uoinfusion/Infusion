@@ -98,6 +98,23 @@ namespace Infusion.Packets.Client
             {Spell.SummonWaterElemental, "64"}
         };
 
+        public SkillRequest(byte type, string action)
+        {
+            var packetLength = (ushort) 5;
+            var payload = new byte[packetLength];
+
+            var writer = new ArrayPacketWriter(payload);
+            writer.WriteByte((byte)PacketDefinitions.RequestSkills.Id);
+            writer.WriteUShort(packetLength);
+            writer.WriteByte(type);
+            if (string.IsNullOrEmpty(action))
+                writer.WriteByte(0);
+            else
+                writer.WriteString(action);
+
+            RawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
+        }
+
         public SkillRequest(Skill skill)
         {
             if (!skills.TryGetValue(skill, out string skillString))

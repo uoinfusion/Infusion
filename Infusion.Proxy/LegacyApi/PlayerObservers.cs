@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
@@ -28,6 +29,39 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentMana, HandleUpdateCurrentManaPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.SendSkills, HandleSendSkillsPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
+        }
+
+        private uint acceptedAttackTargedId;
+        private readonly AutoResetEvent attackResponseReceivedEvent = new AutoResetEvent(false);
+
+        public AttackResult Attack(uint targetId, TimeSpan? timeout = null)
+        {
+            acceptedAttackTargedId = 0;
+
+            var packet = new AttackRequest(targetId);
+            Program.SendToServer(packet.RawPacket);
+
+            var totalMilliseconds = 0;
+            while (!attackResponseReceivedEvent.WaitOne(100))
+            {
+                totalMilliseconds += 100;
+                if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
+                    return AttackResult.Timeout;
+
+                Legacy.CheckCancellation();
+            }
+
+            if (acceptedAttackTargedId == 0)
+                return AttackResult.Refused;
+
+            return AttackResult.Accepted;
+        }
+
+        private void HandleAllowRefuseAttack(AllowRefuseAttackPacket packet)
+        {
+            acceptedAttackTargedId = packet.AttackTargetId;
+            attackResponseReceivedEvent.Set();
         }
 
         private void HandleSendSkillsPacket(SendSkillsPacket packet)

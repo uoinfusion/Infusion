@@ -78,6 +78,8 @@
     <Compile Include="Packets\Both\CharacterMoveAckPacketTests.cs" />
     <Compile Include="Packets\Server\CharLocaleAndBodyPacketTests.cs" />
     <Compile Include="Packets\Server\CharMoveRejectionPacketTests.cs" />
+    <Compile Include="Packets\Server\ClilocMessageAffixPacketTests.cs" />
+    <Compile Include="Packets\Server\ClilocMessagePacketTests.cs" />
     <Compile Include="Packets\Server\ConnectToGameServerPacketTests.cs" />
     <Compile Include="Packets\Server\DrawGamePlayerPacketTests.cs" />
     <Compile Include="Packets\Server\DrawObjectPacketTests.cs" />

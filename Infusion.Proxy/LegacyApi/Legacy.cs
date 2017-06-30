@@ -24,6 +24,7 @@ namespace Infusion.Proxy.LegacyApi
         private static readonly Targeting targeting;
 
         private static readonly JournalSource journalSource;
+        private static readonly PlayerObservers playerObservers;
 
         static Legacy()
         {
@@ -34,7 +35,7 @@ namespace Infusion.Proxy.LegacyApi
             journalSource = new JournalSource();
             Journal = new GameJournal(journalSource);
             journalObservers = new JournalObservers(journalSource, Program.ServerPacketHandler);
-            var playerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
+            playerObservers = new PlayerObservers(Me, Program.ClientPacketHandler, Program.ServerPacketHandler);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
             targeting = new Targeting(Program.ServerPacketHandler, Program.ClientPacketHandler);
 
@@ -103,6 +104,8 @@ namespace Infusion.Proxy.LegacyApi
                 "Shows information about the last gump dispalyed in Ultima Online client."));
             CommandHandler.RegisterCommand(new Command("list", ListRunningCommands,
                 "Lists running commands"));
+            CommandHandler.RegisterCommand(new Command("opendoor", OpenDoor,
+                "Opens neares closed doors. This is analogue to UO client's 'opendoor' macro."));
         }
 
         public static GameJournal CreateJournal() => new GameJournal(journalSource);
@@ -321,11 +324,8 @@ namespace Infusion.Proxy.LegacyApi
             Program.SendToServer(packet.RawPacket);
         }
 
-        public static void Attack(Item target)
-        {
-            var packet = new AttackRequest(target.Id);
-            Program.SendToServer(packet.RawPacket);
-        }
+        public static AttackResult Attack(Item target, TimeSpan? timeout = null) =>
+            playerObservers.Attack(target.Id, timeout);
 
         public static void TargetTile(string tileInfo)
         {
@@ -556,6 +556,12 @@ namespace Infusion.Proxy.LegacyApi
             journalSource.NotifyLastAction();
 
             var request = new SkillRequest(skill);
+            Program.SendToServer(request.RawPacket);
+        }
+
+        public static void OpenDoor()
+        {
+            var request = new SkillRequest(0x58, null);
             Program.SendToServer(request.RawPacket);
         }
 

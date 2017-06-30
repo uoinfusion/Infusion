@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="LegacyApi\AttackResult.cs" />
     <Compile Include="LegacyApi\CommandInvocation.cs" />
     <Compile Include="LegacyApi\BlockedPacketsFilters.cs" />
     <Compile Include="LegacyApi\Command.cs" />

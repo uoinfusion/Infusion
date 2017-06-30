@@ -374,8 +374,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition CharactersStartingLocations = new PacketDefinition(0xA9,
             new VariablePacketLength(), "CharactersStartingLocations");
 
-        public static readonly PacketDefinition AllowRefuseAttack = new PacketDefinition(0xAA,
-            new StaticPacketLength(5), "AllowRefuseAttack");
+        public static readonly PacketDefinition<AllowRefuseAttackPacket> AllowRefuseAttack = new PacketDefinition<AllowRefuseAttackPacket>(0xAA,
+            new StaticPacketLength(5), "AllowRefuseAttack", packet => new AllowRefuseAttackPacket());
 
         public static readonly PacketDefinition GumpTextEntryDialog = new PacketDefinition(0xAB,
             new VariablePacketLength(), "GumpTextEntryDialog");
@@ -407,8 +407,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition GraphicalEffect2 = new PacketDefinition(0xC0,
             new StaticPacketLength(36), "GraphicalEffect2");
 
-        public static readonly PacketDefinition ClilocMessage = new PacketDefinition(0xC1,
-            new VariablePacketLength(), "ClilocMessage");
+        public static readonly PacketDefinition<ClilocMessagePacket> ClilocMessage = new PacketDefinition<ClilocMessagePacket>(0xC1,
+            new VariablePacketLength(), "ClilocMessage", packet => new ClilocMessagePacket());
 
         public static readonly PacketDefinition Semivisible = new PacketDefinition(0xC4,
             new StaticPacketLength(6), "Semivisible");
@@ -419,8 +419,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition GlobalQueueCount = new PacketDefinition(0xCB,
             new StaticPacketLength(7), "GlobalQueueCount");
 
-        public static readonly PacketDefinition ClilocMessageAffix = new PacketDefinition(0xCC,
-            new VariablePacketLength(), "ClilocMessageAffix");
+        public static readonly PacketDefinition<ClilocMessageAffixPacket> ClilocMessageAffix = new PacketDefinition<ClilocMessageAffixPacket>(0xCC,
+            new VariablePacketLength(), "ClilocMessageAffix", packet => new ClilocMessageAffixPacket());
 
         public static readonly PacketDefinition ExtendedDrawGamePlayer = new PacketDefinition(0xD2,
             new StaticPacketLength(25), "ExtendedDrawGamePlayer");

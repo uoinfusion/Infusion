@@ -95,6 +95,9 @@
     <Compile Include="Packets\Client\SkillRequest.cs" />
     <Compile Include="Packets\Colors.cs" />
     <Compile Include="Packets\DragResult.cs" />
+    <Compile Include="Packets\Server\AllowRefuseAttackPacket.cs" />
+    <Compile Include="Packets\Server\ClilocMessageAffixPacket.cs" />
+    <Compile Include="Packets\Server\ClilocMessagePacket.cs" />
     <Compile Include="Packets\Spell.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />

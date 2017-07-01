@@ -62,7 +62,7 @@ namespace Infusion.Packets
         public Notoriety? Notoriety { get; set; }
 
         public override string ToString() =>
-            $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId:X8}; Notoriety: {Notoriety}; Orientation: {Orientation};";
+            $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId:X8}; Notoriety: {Notoriety}; Orientation: {Orientation}; Layer: {Layer}";
 
         private Item()
         {

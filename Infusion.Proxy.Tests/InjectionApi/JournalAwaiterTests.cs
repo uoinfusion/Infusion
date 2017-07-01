@@ -22,6 +22,43 @@ namespace Infusion.Proxy.Tests.InjectionApi
         }
 
         [TestMethod]
+        public void When_is_case_insensitive_by_default_when_waiting_and_already_in_journal()
+        {
+            var source = new JournalSource();
+            var journal = new GameJournal(source);
+
+            source.AddMessage("name", "cas InSeNsItIvE", 0, 0);
+
+            bool executed = false;
+
+            journal.When("insensitive", () => executed = true)
+                .WaitAny(TimeSpan.FromMilliseconds(100));
+
+            executed.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void When_is_case_insensitive_by_default_when_waiting()
+        {
+            var source = new JournalSource();
+            var journal = new GameJournal(source);
+
+            bool executed = false;
+
+            var task = Task.Run(() =>
+            {
+                journal.When("insensitive", () => executed = true)
+                    .WaitAny(TimeSpan.FromMilliseconds(250));
+            });
+            Thread.Sleep(25);
+            source.AddMessage("name", "InSeNsItIvE", 0, 0);
+
+            task.Wait();
+
+            executed.Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_await_one_condition()
         {
             var executed = false;

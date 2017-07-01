@@ -30,13 +30,7 @@ namespace Infusion.Proxy.LegacyApi
         public bool Contains(params string[] words)
         {
             return source.Where(line => line.Id >= journalEntryStartId)
-                .Any(line => words.Any(w => line.Message.Contains(w)));
-        }
-
-        public bool Contains(DateTime createdAfter, params string[] words)
-        {
-            return source.Any(line => line.Created > createdAfter && line.Id > journalEntryStartId &&
-                                      words.Any(w => line.Message.Contains(w)));
+                .Any(line => words.Any(w => line.Message.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
         public void Delete()

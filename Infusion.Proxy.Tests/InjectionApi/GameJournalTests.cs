@@ -14,6 +14,28 @@ namespace Infusion.Proxy.Tests.InjectionApi
     public class GameJournalTests
     {
         [TestMethod]
+        public void Contains_is_case_insensitive_by_default()
+        {
+            var source = new JournalSource();
+            var journal = new GameJournal(source);
+
+            source.AddMessage("name", "this is an AfK check", 0, 0);
+
+            journal.Contains("afk").Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Contains_returns_false_if_journal_doesnt_contains_string()
+        {
+            var source = new JournalSource();
+            var journal = new GameJournal(source);
+
+            source.AddMessage("name", "this is an AfK check", 0, 0);
+
+            journal.Contains("and now for completely something else").Should().BeFalse();
+        }
+
+        [TestMethod]
         public void Can_await_entries_received_between_lastaction_and_WaitAny()
         {
             bool executed = false;

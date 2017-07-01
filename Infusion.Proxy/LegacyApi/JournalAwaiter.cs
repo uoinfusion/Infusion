@@ -30,7 +30,7 @@ namespace Infusion.Proxy.LegacyApi
         internal void ReceiveJournalEntry(JournalEntry entry)
         {
             var keyValuePair =
-                whenActions.FirstOrDefault(pair => pair.Key.Any(awaitedWord => entry.Text.Contains(awaitedWord)));
+                whenActions.FirstOrDefault(pair => pair.Key.Any(awaitedWord => entry.Text.IndexOf(awaitedWord, StringComparison.OrdinalIgnoreCase) >= 0));
             if (keyValuePair.Key != null && keyValuePair.Value != null)
             {
                 receivedAction = keyValuePair.Value;
@@ -138,7 +138,7 @@ namespace Infusion.Proxy.LegacyApi
                 foreach (var entry in journal.AfterLastAction())
                 {
                     KeyValuePair<string[], Action<JournalEntry>> pair =
-                        whenActions.FirstOrDefault(x => x.Key.Any(k => entry.Message.Contains(k)));
+                        whenActions.FirstOrDefault(x => x.Key.Any(k => entry.Message.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0));
                     if (pair.Value != null)
                     {
                         journal.NotifyWait();

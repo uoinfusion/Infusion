@@ -31,8 +31,16 @@ namespace Infusion.Desktop
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += (sender, args) =>
             {
-                Show();
-                WindowState = WindowState.Normal;
+                if (IsVisible)
+                    Show();
+
+                if (WindowState != WindowState.Normal)
+                    WindowState = WindowState.Normal;
+
+                Activate();
+                Topmost = true;
+                Topmost = false;
+                Focus();
             };
 
             Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));

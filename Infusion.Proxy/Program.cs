@@ -323,6 +323,10 @@ namespace Infusion.Proxy
                 ServerPacketHandler.Publish<ClilocMessageAffixPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.AllowRefuseAttack.Id)
                 ServerPacketHandler.Publish<AllowRefuseAttackPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.DrawContainer.Id)
+                ServerPacketHandler.Publish<DrawContainerPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.PauseClient.Id)
+                ServerPacketHandler.Publish<PauseClientPacket>(rawPacket);
 
             return rawPacket;
         }

@@ -26,6 +26,23 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.WornItem, HandleWornItemPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.RejectMoveItemRequest, HandleRejectMoveItemRequestPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.DrawContainer, HandleDrawContainer);
+            serverPacketHandler.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
+        }
+
+        private readonly AutoResetEvent resumeClientReceivedEvent = new AutoResetEvent(false);
+        private readonly AutoResetEvent drawContainerReceivedEvent = new AutoResetEvent(false);
+
+        private void HandlePauseClient(PauseClientPacket packet)
+        {
+            if (packet.Choice == PauseClientChoice.Resume)
+                resumeClientReceivedEvent.Set();
+        }
+
+        private void HandleDrawContainer(DrawContainerPacket packet)
+        {
+            // ignoring possibility that there might be many container being openned at the same time
+            drawContainerReceivedEvent.Set();
         }
 
         public bool HitPointNotificationEnabled { get; set; }
@@ -167,6 +184,36 @@ namespace Infusion.Proxy.LegacyApi
             }
 
             return dragResult;
+        }
+
+        public void WaitForContainerOpened(TimeSpan? timeout)
+        {
+            TimeSpan timeSpentWaiting = new TimeSpan();
+            TimeSpan sleepSpan = TimeSpan.FromMilliseconds(100);
+
+            while (!drawContainerReceivedEvent.WaitOne(sleepSpan))
+            {
+                Legacy.CheckCancellation();
+
+                if (timeout.HasValue)
+                {
+                    timeSpentWaiting += sleepSpan;
+                    if (timeSpentWaiting > timeout.Value)
+                        throw new TimeoutException();
+                }
+            }
+
+            while (!resumeClientReceivedEvent.WaitOne(sleepSpan))
+            {
+                Legacy.CheckCancellation();
+
+                if (timeout.HasValue)
+                {
+                    timeSpentWaiting += sleepSpan;
+                    if (timeSpentWaiting > timeout.Value)
+                        throw new TimeoutException();
+                }
+            }
         }
     }
 }

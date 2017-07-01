@@ -234,8 +234,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition DraggingOfItem = new PacketDefinition(0x23,
             new StaticPacketLength(26), "DraggingOfItem");
 
-        public static readonly PacketDefinition DrawContainer = new PacketDefinition(0x24,
-            new StaticPacketLength(7), "DrawContainer");
+        public static readonly PacketDefinition<DrawContainerPacket> DrawContainer = new PacketDefinition<DrawContainerPacket>(0x24,
+            new StaticPacketLength(7), "DrawContainer", packet => new DrawContainerPacket());
 
         public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer = new PacketDefinition<AddItemToContainerPacket>(0x25,
             new StaticPacketLength(20), "AddItemToContainer", packet => new AddItemToContainerPacket());
@@ -274,8 +274,8 @@ namespace Infusion.Packets
             = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C, new VariablePacketLength(),
                 "AddMultipleItemsInContainer", (packet) => new AddMultipleItemsInContainerPacket());
 
-        public static readonly PacketDefinition PauseClient = new PacketDefinition(0x33,
-            new StaticPacketLength(2), "PauseClient");
+        public static readonly PacketDefinition<PauseClientPacket> PauseClient = new PacketDefinition<PauseClientPacket>(0x33,
+            new StaticPacketLength(2), "PauseClient", packet => new PauseClientPacket());
 
         public static readonly PacketDefinition PersonalLightLevel = new PacketDefinition(0x4E,
             new StaticPacketLength(6), "PersonalLightLevel");

@@ -70,6 +70,22 @@ namespace Infusion.Proxy.LegacyApi
             set => itemsObserver.HitPointNotificationEnabled = value;
         }
 
+        public static void OpenContainer(Item container, TimeSpan? timeout = null) => OpenContainer(container.Id);
+
+        public static void OpenContainer(uint containerId, TimeSpan? timeout = null)
+        {
+            Use(containerId);
+
+            itemsObserver.WaitForContainerOpened(timeout);
+        }
+
+        public static void CloseContainer(Item container) => CloseContainer(container.Id);
+
+        public static void CloseContainer(uint containerId)
+        {
+            Program.SendToClient(new CloseContainerPacket(containerId).RawPacket);
+        }
+
         public static GameJournal Journal { get; }
 
         public static void RegisterCommand(string name, Action commandAction)

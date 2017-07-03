@@ -59,6 +59,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="InjectionApi\CommandAutocompleterTests.cs" />
     <Compile Include="InjectionApi\CommandHandlerTests.cs" />
     <Compile Include="InjectionApi\CommandParameterParserTests.cs" />
     <Compile Include="InjectionApi\GameJournalTests.cs" />

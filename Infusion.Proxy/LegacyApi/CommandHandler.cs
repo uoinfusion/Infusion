@@ -97,34 +97,26 @@ namespace Infusion.Proxy.LegacyApi
         {
             try
             {
-                var firstSpaceIndex = commandInvocationSyntax.IndexOf(' ');
-                if (firstSpaceIndex < 0)
+                var syntax = CommandParser.Parse(commandInvocationSyntax);
+                if (!syntax.HasParameters)
                 {
-                    var commandName = commandInvocationSyntax.Substring(1, commandInvocationSyntax.Length - 1);
-
-                    if (!commands.TryGetValue(commandName, out Command command))
+                    if (!commands.TryGetValue(syntax.Name, out Command command))
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
                     invocator.Invoke(command, cancellationTokenSource);
                 }
                 else
                 {
-
-                    var commandName = commandInvocationSyntax.Substring(1, firstSpaceIndex - 1);
-
-                    if (!commands.TryGetValue(commandName, out Command command))
+                    if (!commands.TryGetValue(syntax.Name, out Command command))
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
-                    if (firstSpaceIndex + 1 >= commandInvocationSyntax.Length)
+                    if (!syntax.HasParameters)
                     {
                         throw new CommandInvocationException(
                             $"No parameters for command specified {commandInvocationSyntax}");
                     }
 
-                    var parameters = commandInvocationSyntax.Substring(firstSpaceIndex + 1,
-                        commandInvocationSyntax.Length - firstSpaceIndex - 1);
-
-                    invocator.Invoke(command, parameters, cancellationTokenSource);
+                    invocator.Invoke(command, syntax.Parameters, cancellationTokenSource);
                 }
             }
             catch (CommandInvocationException ex)

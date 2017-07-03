@@ -32,6 +32,7 @@
                          Padding="0 5 0 0"
                          Margin="0 0 0 1"
                          KeyDown="_inputBlock_OnKeyDown"
+                         PreviewKeyDown="_inputBlock_OnPreviewKeyDown"
                          Background="Black" Foreground="White" FontFamily="Consolas" BorderBrush="{x:Null}"
                          SelectionBrush="White" />
             </Grid>

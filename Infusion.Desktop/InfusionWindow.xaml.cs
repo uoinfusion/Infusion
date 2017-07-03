@@ -31,7 +31,7 @@ namespace Infusion.Desktop
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += (sender, args) =>
             {
-                if (IsVisible)
+                if (!IsVisible)
                     Show();
 
                 if (WindowState != WindowState.Normal)

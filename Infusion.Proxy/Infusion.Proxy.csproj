@@ -50,6 +50,8 @@
   <ItemGroup>
     <Compile Include="ClientPacketHandler.cs" />
     <Compile Include="LegacyApi\AttackResult.cs" />
+    <Compile Include="LegacyApi\CommandAutocompleter.cs" />
+    <Compile Include="LegacyApi\CommandAutocompletion.cs" />
     <Compile Include="LegacyApi\CommandInvocation.cs" />
     <Compile Include="LegacyApi\BlockedPacketsFilters.cs" />
     <Compile Include="LegacyApi\Command.cs" />
@@ -57,6 +59,8 @@
     <Compile Include="LegacyApi\CommandInvocationException.cs" />
     <Compile Include="LegacyApi\CommandInvocator.cs" />
     <Compile Include="LegacyApi\CommandParameterParser.cs" />
+    <Compile Include="LegacyApi\CommandParser.cs" />
+    <Compile Include="LegacyApi\CommandSyntax.cs" />
     <Compile Include="LegacyApi\GumpObservers.cs" />
     <Compile Include="LegacyApi\ItemSpec.cs" />
     <Compile Include="LegacyApi\JournalAwaiter.cs" />

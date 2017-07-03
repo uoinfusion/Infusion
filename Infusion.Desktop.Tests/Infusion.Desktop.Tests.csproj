@@ -63,6 +63,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="CommandHistoryTests.cs" />
     <Compile Include="Launcher\LauncherOptionsTests.cs" />
     <Compile Include="Launcher\LoginConfigurationTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

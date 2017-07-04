@@ -1,8 +1,11 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Specialized;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using Infusion.Proxy;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
@@ -11,16 +14,11 @@ namespace Infusion.Desktop
 {
     public partial class ConsoleControl : UserControl
     {
-        private static readonly Key[] acceptableKeys =
-        {
-            Key.LeftCtrl,
-            Key.RightCtrl
-        };
-
         private readonly CommandAutocompleter completer;
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
         private readonly CommandHistory history = new CommandHistory();
+        private readonly FlowDocument outputDocument;
 
         public ConsoleControl()
         {
@@ -28,11 +26,22 @@ namespace Infusion.Desktop
 
             InitializeComponent();
 
+            outputDocument = new FlowDocument();
+            _outputViewer.Document = outputDocument;
+            outputDocument.PagePadding = new Thickness(0);
+            outputDocument.Background = Brushes.Black;
+            outputDocument.FontFamily = _inputBlock.FontFamily;
+            outputDocument.FontSize = _inputBlock.FontSize;
+            outputDocument.FontStretch = _inputBlock.FontStretch;
+            outputDocument.FontStyle = _inputBlock.FontStyle;
+
+
             ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
             Program.Console = new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration),
                 new FileLogger(Program.Configuration));
             DataContext = consoleContent;
+            consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
 
             _inputBlock.Focus();
 
@@ -40,6 +49,51 @@ namespace Infusion.Desktop
         }
 
         public CSharpScriptEngine ScriptEngine { get; }
+
+        private static ScrollViewer FindScrollViewer(FlowDocumentScrollViewer flowDocumentScrollViewer)
+        {
+            if (VisualTreeHelper.GetChildrenCount(flowDocumentScrollViewer) == 0)
+                return null;
+
+            // Border is the first child of first child of a ScrolldocumentViewer
+            var firstChild = VisualTreeHelper.GetChild(flowDocumentScrollViewer, 0);
+            if (firstChild == null)
+                return null;
+
+            var border = VisualTreeHelper.GetChild(firstChild, 0) as Decorator;
+
+            return border?.Child as ScrollViewer;
+        }
+
+        private void ConsoleOutputOnCollectionChanged(object o,
+            NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        {
+            switch (notifyCollectionChangedEventArgs.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (ConsoleLine line in notifyCollectionChangedEventArgs.NewItems)
+                    {
+                        var newline = new Paragraph();
+                        newline.Margin = new Thickness(0);
+                        newline.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
+                        newline.Inlines.Add(new Run(line.Message) {Foreground = line.TextBrush});
+                        outputDocument.Blocks.Add(newline);
+                    }
+
+                    var scrollViewer = FindScrollViewer(_outputViewer);
+                    if (scrollViewer != null && Math.Abs(scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset) <
+                        0.1)
+                        scrollViewer.ScrollToBottom();
+
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    outputDocument.Blocks.Remove(outputDocument.Blocks.FirstBlock);
+                    break;
+                default:
+                    throw new NotSupportedException(
+                        $"Action {notifyCollectionChangedEventArgs.Action} is not supported, Add and Remove actions are supported.");
+            }
+        }
 
         public void Initialize()
         {
@@ -60,10 +114,9 @@ namespace Infusion.Desktop
 
             _inputBlock.Text = string.Empty;
             _inputBlock.Focus();
-            _scroller.ScrollToBottom();
         }
 
-        protected virtual void OnCommandEntered(string command)
+        private void OnCommandEntered(string command)
         {
             if (Legacy.CommandHandler.IsInvocationSyntax(command))
                 Legacy.CommandHandler.Invoke(command);
@@ -98,7 +151,6 @@ namespace Infusion.Desktop
                 case Key.Enter:
                     RunCommand();
                     _inputBlock.Focus();
-                    _scroller.ScrollToBottom();
                     break;
 
                 case Key.Escape:
@@ -159,7 +211,7 @@ namespace Infusion.Desktop
 
         private static bool IsKeyAcceptableByConsoleOutput(KeyEventArgs e)
         {
-            return acceptableKeys.Any(k => Keyboard.IsKeyDown(k));
+            return Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
         }
 
         private void _inputBlock_OnPreviewKeyDown(object sender, KeyEventArgs e)

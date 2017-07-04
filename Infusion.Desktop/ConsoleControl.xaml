@@ -11,17 +11,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ScrollViewer Name="_scroller" Margin="0" Background="Black" VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Path=ConsoleOutput, Mode=OneWay}" IsTabStop="False" BorderThickness="0">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <TextBox Text="{Binding Path=Message, Mode=OneWay}" Background="Transparent" Foreground="{Binding Path=TextBrush}"
-                                       FontFamily="Consolas" IsReadOnly="True" BorderThickness="0" 
-                                       TextWrapping="WrapWithOverflow" IsTabStop="False" />
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </ScrollViewer>
+            <FlowDocumentScrollViewer x:Name="_outputViewer" Background="Black" VerticalScrollBarVisibility="Auto" Margin="0" Padding="0" IsTabStop="False" />
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

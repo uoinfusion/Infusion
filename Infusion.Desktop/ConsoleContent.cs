@@ -31,9 +31,9 @@ namespace Infusion.Desktop
 
         public void Add(string message, Brush brush)
         {
-            ConsoleOutput.Add(new ConsoleLine(message, brush));
-            if (ConsoleOutput.Count > 256)
+            if (ConsoleOutput.Count > 1024)
                 ConsoleOutput.RemoveAt(0);
+            ConsoleOutput.Add(new ConsoleLine(message, brush));
         }
 
         public void Clear()

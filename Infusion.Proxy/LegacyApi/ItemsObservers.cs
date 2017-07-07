@@ -191,6 +191,7 @@ namespace Infusion.Proxy.LegacyApi
             TimeSpan timeSpentWaiting = new TimeSpan();
             TimeSpan sleepSpan = TimeSpan.FromMilliseconds(100);
 
+            resumeClientReceivedEvent.Reset();
             while (!drawContainerReceivedEvent.WaitOne(sleepSpan))
             {
                 Legacy.CheckCancellation();

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Infusion.Packets;
 using Infusion.Packets.Server;
@@ -8,10 +7,12 @@ namespace Infusion.Proxy.LegacyApi
 {
     internal class ItemsObservers
     {
+        private readonly AutoResetEvent drawContainerReceivedEvent = new AutoResetEvent(false);
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
-        private uint? draggedItemId;
-        private DragResult dragResult = DragResult.None;
         private readonly ItemCollection items;
+
+        private readonly AutoResetEvent resumeClientReceivedEvent = new AutoResetEvent(false);
+        private DragResult dragResult = DragResult.None;
 
         public ItemsObservers(ItemCollection items, ServerPacketHandler serverPacketHandler)
         {
@@ -28,10 +29,20 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.RejectMoveItemRequest, HandleRejectMoveItemRequestPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.DrawContainer, HandleDrawContainer);
             serverPacketHandler.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
+            serverPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
         }
 
-        private readonly AutoResetEvent resumeClientReceivedEvent = new AutoResetEvent(false);
-        private readonly AutoResetEvent drawContainerReceivedEvent = new AutoResetEvent(false);
+        public bool HitPointNotificationEnabled { get; set; }
+
+        public uint? DraggedItemId { get; set; }
+
+        private void HandleSendSpeechPacket(SendSpeechPacket packet)
+        {
+            var item = items[packet.Id];
+
+            if (item != null && packet.Name != null && !packet.Name.Equals(item.Name, StringComparison.Ordinal))
+                items.UpdateItem(item.UpdateName(packet.Name));
+        }
 
         private void HandlePauseClient(PauseClientPacket packet)
         {
@@ -45,13 +56,6 @@ namespace Infusion.Proxy.LegacyApi
             drawContainerReceivedEvent.Set();
         }
 
-        public bool HitPointNotificationEnabled { get; set; }
-        public uint? DraggedItemId
-        {
-            get => draggedItemId;
-            set => draggedItemId = value;
-        }
-
         private void HandleWornItemPacket(WornItemPacket packet)
         {
             items.UpdateItem(new Item(packet.ItemId, packet.Type, 1, new Location3D(0, 0, 0), packet.Color,
@@ -60,8 +64,8 @@ namespace Infusion.Proxy.LegacyApi
 
         private void HandleRejectMoveItemRequestPacket(RejectMoveItemRequestPacket packet)
         {
-            draggedItemId = null;
-            dragResult = (DragResult)packet.Reason;
+            DraggedItemId = null;
+            dragResult = (DragResult) packet.Reason;
             itemDragResultReceived.Set();
         }
 
@@ -104,7 +108,8 @@ namespace Infusion.Proxy.LegacyApi
             Item existingItem;
             if (items.TryGet(packet.ItemId, out existingItem))
             {
-                items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, (Location3D) packet.Location, packet.Color,
+                items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, (Location3D) packet.Location,
+                    packet.Color,
                     packet.ContainerId));
             }
             else
@@ -121,11 +126,11 @@ namespace Infusion.Proxy.LegacyApi
 
         private void HandleDeleteObjectPacket(DeleteObjectPacket packet)
         {
-            uint? itemId = draggedItemId;
+            var itemId = DraggedItemId;
 
             if (itemId.HasValue && packet.Id == itemId.Value)
             {
-                draggedItemId = null;
+                DraggedItemId = null;
                 dragResult = DragResult.Success;
                 itemDragResultReceived.Set();
             }
@@ -136,8 +141,10 @@ namespace Infusion.Proxy.LegacyApi
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
         {
             if (items.TryGet(packet.Id, out Item existingItem))
+            {
                 items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, packet.Location, existingItem.Color,
                     existingItem.ContainerId));
+            }
             else
             {
                 items.AddItem(new Item(packet.Id, packet.Type, packet.Amount,
@@ -153,7 +160,8 @@ namespace Infusion.Proxy.LegacyApi
             if (item != null)
                 items.UpdateItem(item.Update(packet.Type, 1, packet.Location, packet.Color, null, packet.Notoriety));
             else
-                items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color, notoriety: packet.Notoriety));
+                items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color,
+                    notoriety: packet.Notoriety));
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)
@@ -168,8 +176,8 @@ namespace Infusion.Proxy.LegacyApi
             dragResult = DragResult.None;
             itemDragResultReceived.Reset();
 
-            TimeSpan timeSpentWaiting = new TimeSpan();
-            TimeSpan sleepSpan = TimeSpan.FromMilliseconds(100);
+            var timeSpentWaiting = new TimeSpan();
+            var sleepSpan = TimeSpan.FromMilliseconds(100);
 
             while (!itemDragResultReceived.WaitOne(sleepSpan))
             {
@@ -188,8 +196,8 @@ namespace Infusion.Proxy.LegacyApi
 
         public void WaitForContainerOpened(TimeSpan? timeout)
         {
-            TimeSpan timeSpentWaiting = new TimeSpan();
-            TimeSpan sleepSpan = TimeSpan.FromMilliseconds(100);
+            var timeSpentWaiting = new TimeSpan();
+            var sleepSpan = TimeSpan.FromMilliseconds(100);
 
             resumeClientReceivedEvent.Reset();
             while (!drawContainerReceivedEvent.WaitOne(sleepSpan))

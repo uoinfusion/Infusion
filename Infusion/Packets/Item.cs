@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Infusion.Packets
+﻿namespace Infusion.Packets
 {
     public sealed class Item
     {
@@ -15,7 +13,7 @@ namespace Infusion.Packets
         }
 
         public Item(uint id, ModelId type, ushort amount, Location3D location, Color? color = null,
-            uint? containerId = null, Layer? layer = null, Movement? orientation = null, Notoriety? notoriety = null)
+            uint? containerId = null, Layer? layer = null, Movement? orientation = null, Notoriety? notoriety = null, string name = null)
         {
             Id = id;
             Type = type;
@@ -26,16 +24,12 @@ namespace Infusion.Packets
             Layer = layer;
             Orientation = orientation;
             Notoriety = notoriety;
+            Name = name;
         }
 
-        public ushort GetDistance(Item item)
+        private Item()
         {
-            return GetDistance(item.Location);
         }
-
-        public ushort GetDistance(Location3D secondLocation) => GetDistance((Location2D) secondLocation);
-
-        public ushort GetDistance(Location2D secondLocation) => secondLocation.GetDistance((Location2D) Location);
 
         public bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;
 
@@ -61,29 +55,45 @@ namespace Infusion.Packets
 
         public Notoriety? Notoriety { get; set; }
 
-        public override string ToString() =>
-            $"Id: {Id:X8}, Type: {Type}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId:X8}; Notoriety: {Notoriety}; Orientation: {Orientation}; Layer: {Layer}";
+        public string Name { get; private set; }
 
-        private Item()
+        public ushort GetDistance(Item item)
         {
+            return GetDistance(item.Location);
+        }
 
+        public ushort GetDistance(Location3D secondLocation)
+        {
+            return GetDistance((Location2D) secondLocation);
+        }
+
+        public ushort GetDistance(Location2D secondLocation)
+        {
+            return secondLocation.GetDistance(Location);
+        }
+
+        public override string ToString()
+        {
+            return
+                $"Id: {Id:X8}; Type: {Type}; Name: {Name}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId:X8}; Notoriety: {Notoriety}; Orientation: {Orientation}; Layer: {Layer}";
         }
 
         internal Item Duplicate()
         {
-            return new Item()
+            return new Item
             {
-                Notoriety = this.Notoriety,
-                Color = this.Color,
-                CurrentHealth = this.CurrentHealth,
-                Location = this.Location,
-                Id = this.Id,
-                MaxHealth = this.MaxHealth,
-                Type = this.Type,
-                Orientation = this.Orientation,
-                Amount = this.Amount,
-                ContainerId = this.ContainerId,
-                Layer = this.Layer,
+                Notoriety = Notoriety,
+                Color = Color,
+                CurrentHealth = CurrentHealth,
+                Location = Location,
+                Id = Id,
+                MaxHealth = MaxHealth,
+                Type = Type,
+                Orientation = Orientation,
+                Amount = Amount,
+                ContainerId = ContainerId,
+                Layer = Layer,
+                Name = Name
             };
         }
 
@@ -96,6 +106,15 @@ namespace Infusion.Packets
             return updatedItem;
         }
 
+        public Item UpdateName(string name)
+        {
+            var updatedItem = Duplicate();
+
+            updatedItem.Name = name;
+
+            return updatedItem;
+        }
+
         public Item UpdateLocation(Location3D location)
         {
             var updatedItem = Duplicate();
@@ -104,7 +123,8 @@ namespace Infusion.Packets
             return updatedItem;
         }
 
-        public Item Update(ModelId type, ushort amount, Location3D location, Color color, uint? containerId, Notoriety? notoriety = null)
+        public Item Update(ModelId type, ushort amount, Location3D location, Color color, uint? containerId,
+            Notoriety? notoriety = null)
         {
             var updatedItem = Duplicate();
             updatedItem.Type = type;

@@ -239,9 +239,9 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.Matching(spec).InContainer(Me.BackPack).First()
-                       ?? Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).First()
+            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).First()
                        ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).First()
+                       ?? Items.Matching(spec).InContainer(Me.BackPack).First()
                        ?? Items.Matching(spec).OnLayer(Layer.Backpack).First();
 
             if (item != null)
@@ -258,9 +258,9 @@ namespace Infusion.Proxy.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(type).InContainer(Me.BackPack).First()
-                       ?? Items.OfType(type).OnLayer(Layer.OneHandedWeapon).First()
+            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon).First()
                        ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).First()
+                       ?? Items.OfType(type).InContainer(Me.BackPack).First()
                        ?? Items.OfType(type).OnLayer(Layer.Backpack).First();
             if (item != null)
             {

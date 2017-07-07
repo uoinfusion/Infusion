@@ -104,5 +104,27 @@ namespace Infusion.Proxy.Tests.InjectionApi
             spec.Matches(new Item(0x000000, 0x2222, 1, new Location3D(0, 0, 0), (Color) 0x99)).Should().BeTrue();
             spec.Matches(new Item(0x000000, 0x3333, 1, new Location3D(0, 0, 0), (Color) 0x99)).Should().BeTrue();
         }
+
+        [TestMethod]
+        public void Spec_with_subspecs_is_least_specific()
+        {
+            var withSubspecs = new ItemSpec(0x1111).Including(new ItemSpec(0x2222), new ItemSpec(0x3333));
+            var withType = new ItemSpec(0x2222);
+            var withTypeAndColor = new ItemSpec(0x3333, (Color)0x0010);
+
+            withSubspecs.Specificity.Should().BeLessThan(withType.Specificity);
+            withSubspecs.Specificity.Should().BeLessThan(withTypeAndColor.Specificity);
+        }
+
+        [TestMethod]
+        public void Spec_with_type_and_color_is_most_specific()
+        {
+            var withSubspecs = new ItemSpec(0x1111).Including(new ItemSpec(0x2222), new ItemSpec(0x3333));
+            var withType = new ItemSpec(0x2222);
+            var withTypeAndColor = new ItemSpec(0x3333, (Color)0x0010);
+
+            withTypeAndColor.Specificity.Should().BeGreaterThan(withSubspecs.Specificity);
+            withTypeAndColor.Specificity.Should().BeGreaterThan(withType.Specificity);
+        }
     }
 }

@@ -89,6 +89,9 @@ namespace Infusion.Desktop
                 case NotifyCollectionChangedAction.Remove:
                     outputDocument.Blocks.Remove(outputDocument.Blocks.FirstBlock);
                     break;
+                case NotifyCollectionChangedAction.Reset:
+                    outputDocument.Blocks.Clear();
+                    break;
                 default:
                     throw new NotSupportedException(
                         $"Action {notifyCollectionChangedEventArgs.Action} is not supported, Add and Remove actions are supported.");

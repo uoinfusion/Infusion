@@ -12,20 +12,27 @@ namespace Infusion.Proxy.LegacyApi
     public class Player
     {
         private const int MaxEnqueuedWalkRequests = 0;
-        private static readonly ModelId BackPackType = (ModelId) 0x0E75;
+        private static readonly ModelId backPackType = 0x0E75;
 
-        private static readonly TimeSpan TimeBetweenRunningSteps = TimeSpan.FromMilliseconds(190);
-        private static readonly TimeSpan TimeBetweenWalkingSteps = TimeSpan.FromMilliseconds(400);
+        private static readonly TimeSpan timeBetweenRunningStepsOnMount = TimeSpan.FromMilliseconds(100);
+        private static readonly TimeSpan timeBetweenRunningSteps = TimeSpan.FromMilliseconds(190);
+        private static readonly TimeSpan timeBetweenWalkingSteps = TimeSpan.FromMilliseconds(400);
+        private readonly Func<bool> hasMount;
 
         private readonly AutoResetEvent walkRequestDequeueEvent = new AutoResetEvent(false);
 
-        public uint PlayerId { get; set; }
-
         private Location3D location;
+
+        internal Player(Func<bool> hasMount)
+        {
+            this.hasMount = hasMount;
+        }
+
+        public uint PlayerId { get; set; }
 
         public Location3D Location
         {
-            get { return location; }
+            get => location;
             set
             {
                 if (location != value)
@@ -36,8 +43,6 @@ namespace Infusion.Proxy.LegacyApi
             }
         }
 
-        public event EventHandler<Location3D> LocationChanged;
-
         public Location3D PredictedLocation { get; set; }
         public Movement PredictedMovement { get; set; }
 
@@ -45,7 +50,7 @@ namespace Infusion.Proxy.LegacyApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => Legacy.Items.FirstOrDefault(i => i.Type == BackPackType && i.ContainerId == PlayerId);
+        public Item BackPack => Legacy.Items.FirstOrDefault(i => i.Type == backPackType && i.ContainerId == PlayerId);
         public Item BankBox => Legacy.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
         public Color Color { get; set; }
@@ -61,6 +66,11 @@ namespace Infusion.Proxy.LegacyApi
         public ushort Strength { get; set; }
         public ushort Intelligence { get; set; }
 
+        public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } =
+            ImmutableDictionary<Skill, SkillValue>.Empty;
+
+        public event EventHandler<Location3D> LocationChanged;
+
         internal void ResetWalkRequestQueue()
         {
             WalkRequestQueue.Reset();
@@ -74,10 +84,13 @@ namespace Infusion.Proxy.LegacyApi
             switch (movementType)
             {
                 case MovementType.Walk:
-                    timeBetweenSteps = TimeBetweenWalkingSteps;
+                    timeBetweenSteps = timeBetweenWalkingSteps;
                     break;
                 case MovementType.Run:
-                    timeBetweenSteps = TimeBetweenRunningSteps;
+                    if (hasMount != null && hasMount())
+                        timeBetweenSteps = timeBetweenRunningStepsOnMount;
+                    else
+                        timeBetweenSteps = timeBetweenRunningSteps;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(movementType), $"Unknown MovementType {movementType}");
@@ -86,7 +99,8 @@ namespace Infusion.Proxy.LegacyApi
             if (lastEnqueueTime < timeBetweenSteps)
             {
                 var waitTime = timeBetweenSteps - lastEnqueueTime;
-                Program.Diagnostic.Debug($"WaitToAvoidFastWalk: waiting minimal time between steps {timeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
+                Program.Diagnostic.Debug(
+                    $"WaitToAvoidFastWalk: waiting minimal time between steps {timeBetweenSteps} - {lastEnqueueTime} = {waitTime}");
                 Legacy.Wait(waitTime.Milliseconds);
             }
         }
@@ -97,7 +111,8 @@ namespace Infusion.Proxy.LegacyApi
 
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
-                Program.Diagnostic.Debug($"WaitWalkAcknowledged: too many walk WalkRequestQueue.Count = {WalkRequestQueue.Count}");
+                Program.Diagnostic.Debug(
+                    $"WaitWalkAcknowledged: too many walk WalkRequestQueue.Count = {WalkRequestQueue.Count}");
                 Legacy.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(200);
             }
@@ -119,13 +134,9 @@ namespace Infusion.Proxy.LegacyApi
 
             WalkRequestQueue.Enqueue(new WalkRequest(CurrentSequenceKey, packet.Movement, true));
             if (PredictedMovement.Direction != packet.Movement.Direction)
-            {
                 PredictedMovement = packet.Movement;
-            }
             else
-            {
                 PredictedLocation = PredictedLocation.LocationInDirection(direction);
-            }
 
             CurrentSequenceKey++;
             Program.Diagnostic.Debug(
@@ -138,8 +149,6 @@ namespace Infusion.Proxy.LegacyApi
         {
             LocationChanged?.Invoke(this, e);
         }
-
-        public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } = ImmutableDictionary<Skill, SkillValue>.Empty;
 
         public void UpdateSkills(IEnumerable<SkillValue> skillValues)
         {

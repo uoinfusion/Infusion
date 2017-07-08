@@ -61,7 +61,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public static ItemCollection Items { get; }
 
-        public static Player Me { get; } = new Player();
+        public static Player Me { get; } = new Player(() => Items.OnLayer(Layer.Mount).First() != null);
 
         public static bool HitPointNotificationEnabled
         {

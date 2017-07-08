@@ -17,7 +17,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
         public void Can_update_item()
         {
             var item = new Item(0x12345678, (ModelId) 0x4321, 333, new Location3D(6, 5, 4));
-            var itemCollection = new ItemCollection(new Player());
+            var itemCollection = new ItemCollection(new Player(null));
 
             itemCollection.UpdateItem(item);
 

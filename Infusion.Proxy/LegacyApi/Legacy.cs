@@ -244,7 +244,6 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void Use(Item item)
         {
-            Log($"Using item: {item}");
             Use(item.Id);
         }
 
@@ -285,7 +284,6 @@ namespace Infusion.Proxy.LegacyApi
                        ?? Items.OfType(type).OnLayer(Layer.Backpack).First();
             if (item != null)
             {
-                Log($"Using item: {item}");
                 Use(item);
             }
             else
@@ -305,7 +303,6 @@ namespace Infusion.Proxy.LegacyApi
 
             if (item != null)
             {
-                Log($"Using item: {item}");
                 Use(item);
                 return true;
             }

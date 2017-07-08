@@ -7,11 +7,11 @@ namespace Infusion.Proxy.LegacyApi
 {
     internal class ItemsObservers
     {
-        private readonly AutoResetEvent drawContainerReceivedEvent = new AutoResetEvent(false);
+        private readonly ManualResetEvent drawContainerReceivedEvent = new ManualResetEvent(false);
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private readonly ItemCollection items;
 
-        private readonly AutoResetEvent resumeClientReceivedEvent = new AutoResetEvent(false);
+        private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
 
         public ItemsObservers(ItemCollection items, ServerPacketHandler serverPacketHandler)
@@ -47,7 +47,9 @@ namespace Infusion.Proxy.LegacyApi
         private void HandlePauseClient(PauseClientPacket packet)
         {
             if (packet.Choice == PauseClientChoice.Resume)
+            {
                 resumeClientReceivedEvent.Set();
+            }
         }
 
         private void HandleDrawContainer(DrawContainerPacket packet)
@@ -160,8 +162,10 @@ namespace Infusion.Proxy.LegacyApi
             if (item != null)
                 items.UpdateItem(item.Update(packet.Type, 1, packet.Location, packet.Color, null, packet.Notoriety));
             else
+            {
                 items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color,
                     notoriety: packet.Notoriety));
+            }
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)
@@ -200,6 +204,7 @@ namespace Infusion.Proxy.LegacyApi
             var sleepSpan = TimeSpan.FromMilliseconds(100);
 
             resumeClientReceivedEvent.Reset();
+            drawContainerReceivedEvent.Reset();
             while (!drawContainerReceivedEvent.WaitOne(sleepSpan))
             {
                 Legacy.CheckCancellation();

@@ -92,6 +92,7 @@
     <Compile Include="IO\NullDiagnosticPullStream.cs" />
     <Compile Include="Packets\Both\CloseGenericGumpPacket.cs" />
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
+    <Compile Include="Packets\Client\SingleClickRequest.cs" />
     <Compile Include="Packets\Client\SkillRequest.cs" />
     <Compile Include="Packets\Colors.cs" />
     <Compile Include="Packets\DragResult.cs" />

@@ -70,7 +70,14 @@ namespace Infusion.Proxy.LegacyApi
             set => itemsObserver.HitPointNotificationEnabled = value;
         }
 
-        public static void OpenContainer(Item container, TimeSpan? timeout = null) => OpenContainer(container.Id);
+        public static GameJournal Journal { get; }
+
+        internal static HashSet<uint> IgnoredItems { get; } = new HashSet<uint>();
+
+        public static void OpenContainer(Item container, TimeSpan? timeout = null)
+        {
+            OpenContainer(container.Id);
+        }
 
         public static void OpenContainer(uint containerId, TimeSpan? timeout = null)
         {
@@ -79,14 +86,15 @@ namespace Infusion.Proxy.LegacyApi
             itemsObserver.WaitForContainerOpened(timeout);
         }
 
-        public static void CloseContainer(Item container) => CloseContainer(container.Id);
+        public static void CloseContainer(Item container)
+        {
+            CloseContainer(container.Id);
+        }
 
         public static void CloseContainer(uint containerId)
         {
             Program.SendToClient(new CloseContainerPacket(containerId).RawPacket);
         }
-
-        public static GameJournal Journal { get; }
 
         public static void RegisterCommand(string name, Action commandAction)
         {
@@ -110,7 +118,8 @@ namespace Infusion.Proxy.LegacyApi
             CommandHandler.RegisterCommand(new Command("terminate", Terminate,
                 "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
             CommandHandler.RegisterCommand(new Command("dump", Program.DumpPacketLog,
-                "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.", executionMode: CommandExecutionMode.Direct));
+                "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
+                executionMode: CommandExecutionMode.Direct));
             CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters),
                 "Walks to the specified location.", "Example: ,walkto 1234 432"));
             CommandHandler.RegisterCommand(new Command("info", InfoCommand,
@@ -124,7 +133,10 @@ namespace Infusion.Proxy.LegacyApi
                 "Opens neares closed doors. This is analogue to UO client's 'opendoor' macro."));
         }
 
-        public static GameJournal CreateJournal() => new GameJournal(journalSource);
+        public static GameJournal CreateJournal()
+        {
+            return new GameJournal(journalSource);
+        }
 
         private static void HelpCommand(string parameters)
         {
@@ -180,12 +192,13 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void ClientPrint(string message)
         {
-            ClientPrint(message, "System", 0, (ModelId) 0, SpeechType.Normal, (Color) 0x03B2);
+            ClientPrint(message, "System", 0, 0, SpeechType.Normal, (Color) 0x03B2);
         }
 
         public static void ClientPrint(string message, string name, Player onBehalfPlayer)
         {
-            ClientPrint(message, name, onBehalfPlayer.PlayerId, onBehalfPlayer.BodyType, SpeechType.Speech, (Color)0x0026);
+            ClientPrint(message, name, onBehalfPlayer.PlayerId, onBehalfPlayer.BodyType, SpeechType.Speech,
+                (Color) 0x0026);
         }
 
         public static void ClientPrint(string message, string name, Item onBehalfItem)
@@ -235,6 +248,16 @@ namespace Infusion.Proxy.LegacyApi
             Use(item.Id);
         }
 
+        public static void Click(uint itemId)
+        {
+            Program.SendToServer(new SingleClickRequest(itemId).RawPacket);
+        }
+
+        public static void Click(Item item)
+        {
+            Click(item.Id);
+        }
+
         public static bool Use(ItemSpec spec)
         {
             CheckCancellation();
@@ -245,9 +268,7 @@ namespace Infusion.Proxy.LegacyApi
                        ?? Items.Matching(spec).OnLayer(Layer.Backpack).First();
 
             if (item != null)
-            {
                 Use(item);
-            }
             else
                 return false;
 
@@ -340,8 +361,10 @@ namespace Infusion.Proxy.LegacyApi
             Program.SendToServer(packet.RawPacket);
         }
 
-        public static AttackResult Attack(Item target, TimeSpan? timeout = null) =>
-            playerObservers.Attack(target.Id, timeout);
+        public static AttackResult Attack(Item target, TimeSpan? timeout = null)
+        {
+            return playerObservers.Attack(target.Id, timeout);
+        }
 
         public static void TargetTile(string tileInfo)
         {
@@ -518,17 +541,17 @@ namespace Infusion.Proxy.LegacyApi
 
         public static void StepToward(Item item)
         {
-            StepToward((Location2D) item.Location);
+            StepToward(item.Location);
         }
 
         public static void StepToward(Location2D targetLocation)
         {
-            StepToward((Location2D) Me.Location, targetLocation);
+            StepToward(Me.Location, targetLocation);
         }
 
         public static void WalkTo(Location2D targetLocation)
         {
-            while ((Location2D) Me.Location != targetLocation)
+            while (Me.Location != targetLocation)
             {
                 Program.Diagnostic.Debug($"WalkTo: {Me.Location} != {targetLocation}");
 
@@ -580,8 +603,6 @@ namespace Infusion.Proxy.LegacyApi
             var request = new SkillRequest(0x58, null);
             Program.SendToServer(request.RawPacket);
         }
-
-        internal static HashSet<uint> IgnoredItems { get; } = new HashSet<uint>();
 
         public static void Ignore(Item item)
         {

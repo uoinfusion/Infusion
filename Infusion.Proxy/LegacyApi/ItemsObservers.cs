@@ -30,11 +30,19 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.DrawContainer, HandleDrawContainer);
             serverPacketHandler.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
             serverPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
         }
 
         public bool HitPointNotificationEnabled { get; set; }
 
         public uint? DraggedItemId { get; set; }
+
+        private void HandleStatusBarInfo(StatusBarInfoPacket packet)
+        {
+            var item = items[packet.PlayerId];
+            if (item != null)
+                items.UpdateItem(item.UpdateHealth(packet.CurrentHealth, packet.MaxHealth));
+        }
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -47,9 +55,7 @@ namespace Infusion.Proxy.LegacyApi
         private void HandlePauseClient(PauseClientPacket packet)
         {
             if (packet.Choice == PauseClientChoice.Resume)
-            {
                 resumeClientReceivedEvent.Set();
-            }
         }
 
         private void HandleDrawContainer(DrawContainerPacket packet)
@@ -83,7 +89,7 @@ namespace Infusion.Proxy.LegacyApi
                     {
                         var deltaText = item.CurrentHealth == 0 ? "??" : delta.ToString();
                         var color = delta > 0 ? Colors.Blue : Colors.Green;
-                        Legacy.ClientPrint($"{deltaText} - [{packet.CurrentHealth}/{packet.MaxHealth}]", "update",
+                        Legacy.ClientPrint($"{deltaText} ({packet.CurrentHealth})", "update",
                             item.Id,
                             item.Type, SpeechType.Speech, color);
                     }

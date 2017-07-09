@@ -93,6 +93,7 @@ namespace Infusion.Desktop
         {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
             {
+                Legacy.Events.ResetEvents();
                 Legacy.CommandHandler.Terminate();
                 _console.ScriptEngine.Reset();
                 await _console.ScriptEngine.ExecuteScript(scriptFileName);

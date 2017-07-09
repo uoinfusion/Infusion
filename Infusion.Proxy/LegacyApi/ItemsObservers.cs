@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Infusion.Packets;
 using Infusion.Packets.Server;
 
@@ -33,16 +34,35 @@ namespace Infusion.Proxy.LegacyApi
             serverPacketHandler.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
         }
 
-        public bool HitPointNotificationEnabled { get; set; }
-
         public uint? DraggedItemId { get; set; }
 
         private void HandleStatusBarInfo(StatusBarInfoPacket packet)
         {
-            var item = items[packet.PlayerId];
-            if (item != null)
-                items.UpdateItem(item.UpdateHealth(packet.CurrentHealth, packet.MaxHealth));
+            UpdateHealth(packet.PlayerId, packet.CurrentHealth, packet.MaxHealth);
         }
+
+        private void UpdateHealth(uint id, ushort newHealth, ushort newMaxHealth)
+        {
+            var item = items[id];
+            if (item != null)
+            {
+                var oldHealth = item.CurrentHealth;
+
+                var updatedItem = item.UpdateHealth(newHealth, newMaxHealth);
+                items.UpdateItem(updatedItem);
+
+                if (oldHealth != newHealth && CurrentHealthUpdated != null)
+                {
+                    Task.Run(() =>
+                    {
+                        CurrentHealthUpdated(this,
+                            new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
+                    });
+                }
+            }
+        }
+
+        internal event EventHandler<CurrentHealthUpdatedArgs> CurrentHealthUpdated;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -79,24 +99,7 @@ namespace Infusion.Proxy.LegacyApi
 
         private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
         {
-            Item item;
-            if (items.TryGet(packet.PlayerId, out item))
-            {
-                if (HitPointNotificationEnabled)
-                {
-                    var delta = packet.CurrentHealth - item.CurrentHealth;
-                    if (delta != 0)
-                    {
-                        var deltaText = item.CurrentHealth == 0 ? "??" : delta.ToString();
-                        var color = delta > 0 ? Colors.Blue : Colors.Green;
-                        Legacy.ClientPrint($"{deltaText} ({packet.CurrentHealth})", "update",
-                            item.Id,
-                            item.Type, SpeechType.Speech, color);
-                    }
-                }
-
-                items.UpdateItem(item.UpdateHealth(packet.CurrentHealth, packet.MaxHealth));
-            }
+            UpdateHealth(packet.PlayerId, packet.CurrentHealth, packet.MaxHealth);
         }
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
@@ -109,6 +112,11 @@ namespace Infusion.Proxy.LegacyApi
                 items.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
                     orientation: packet.Direction));
             }
+        }
+
+        internal void ResetEvents()
+        {
+            CurrentHealthUpdated = null;
         }
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)

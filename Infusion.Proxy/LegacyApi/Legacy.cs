@@ -26,6 +26,8 @@ namespace Infusion.Proxy.LegacyApi
         private static readonly JournalSource journalSource;
         private static readonly PlayerObservers playerObservers;
 
+        public static LegacyEvents Events { get; }
+
         static Legacy()
         {
             gumpObservers = new GumpObservers(Program.ServerPacketHandler, Program.ClientPacketHandler);
@@ -43,6 +45,8 @@ namespace Infusion.Proxy.LegacyApi
 
             legacyCommandHandler = new CommandHandlerObservers(Program.ClientPacketHandler, CommandHandler);
             blockedPacketsFilters = new BlockedPacketsFilters(Program.ServerPacketHandler);
+
+            Events = new LegacyEvents(itemsObserver);
         }
 
         public static Configuration Configuration { get; private set; } = new Configuration();
@@ -62,13 +66,6 @@ namespace Infusion.Proxy.LegacyApi
         public static ItemCollection Items { get; }
 
         public static Player Me { get; } = new Player(() => Items.OnLayer(Layer.Mount).First() != null);
-
-        public static bool HitPointNotificationEnabled
-        {
-            get => itemsObserver.HitPointNotificationEnabled;
-
-            set => itemsObserver.HitPointNotificationEnabled = value;
-        }
 
         public static GameJournal Journal { get; }
 

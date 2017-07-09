@@ -55,7 +55,7 @@ namespace Infusion.Proxy.LegacyApi
                 {
                     Task.Run(() =>
                     {
-                        CurrentHealthUpdated(this,
+                        CurrentHealthUpdated?.Invoke(this,
                             new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
                     });
                 }
@@ -63,6 +63,7 @@ namespace Infusion.Proxy.LegacyApi
         }
 
         internal event EventHandler<CurrentHealthUpdatedArgs> CurrentHealthUpdated;
+        internal event EventHandler<ItemEnteredViewArgs> ItemEnteredView;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -117,6 +118,7 @@ namespace Infusion.Proxy.LegacyApi
         internal void ResetEvents()
         {
             CurrentHealthUpdated = null;
+            ItemEnteredView = null;
         }
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
@@ -163,9 +165,19 @@ namespace Infusion.Proxy.LegacyApi
             }
             else
             {
-                items.AddItem(new Item(packet.Id, packet.Type, packet.Amount,
-                    packet.Location));
+                var item = new Item(packet.Id, packet.Type, packet.Amount, packet.Location);
+                items.AddItem(item);
+                OnItemEnteredView(item);
             }
+        }
+
+        private void OnItemEnteredView(Item item)
+        {
+            if (ItemEnteredView != null)
+            {
+                Task.Run(() => { ItemEnteredView?.Invoke(this, new ItemEnteredViewArgs(item)); });
+            }
+            ;
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)

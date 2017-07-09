@@ -17,6 +17,12 @@ namespace Infusion.Proxy.LegacyApi
             remove => itemsObserver.CurrentHealthUpdated -= value;
         }
 
+        public event EventHandler<ItemEnteredViewArgs> ItemEnteredView
+        {
+            add => itemsObserver.ItemEnteredView += value;
+            remove => itemsObserver.ItemEnteredView -= value;
+        }
+
         internal void ResetEvents()
         {
             itemsObserver.ResetEvents();

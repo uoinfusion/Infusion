@@ -63,6 +63,7 @@
     <Compile Include="LegacyApi\CommandSyntax.cs" />
     <Compile Include="LegacyApi\CurrentHealthUpdatedArgs.cs" />
     <Compile Include="LegacyApi\GumpObservers.cs" />
+    <Compile Include="LegacyApi\ItemEnteredViewArgs.cs" />
     <Compile Include="LegacyApi\ItemSpec.cs" />
     <Compile Include="LegacyApi\JournalAwaiter.cs" />
     <Compile Include="LegacyApi\JournalSource.cs" />

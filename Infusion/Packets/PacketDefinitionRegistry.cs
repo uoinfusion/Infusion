@@ -163,6 +163,7 @@ namespace Infusion.Packets
             Register(PacketDefinitions.OpenChatWindow);
             Register(PacketDefinitions.SendHelpTipRequest);
             Register(PacketDefinitions.InvalidMapRequest);
+            Register(PacketDefinitions.ParticleEffect);
             Register(PacketDefinitions.SpyOnClient);
             Register(PacketDefinitions.Follow);
             Register(PacketDefinitions.ResurrectionMenu);

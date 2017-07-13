@@ -6,5 +6,6 @@ namespace Infusion.IO
     {
         IPullStream BaseStream { get; set; }
         void FinishPacket(Packet packet);
+        void StartPacket();
     }
 }

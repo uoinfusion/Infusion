@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Infusion.Packets.Parsers
+namespace Infusion.Diagnostic
 {
     public class PacketLogEntry
     {
-        public PacketLogEntry(TimeSpan created, string name, PacketDirection direction, byte[] payload)
+        public PacketLogEntry(DateTime created, string name, PacketDirection direction, byte[] payload)
         {
             Created = created;
             Name = name;
@@ -12,7 +12,7 @@ namespace Infusion.Packets.Parsers
             Payload = payload;
         }
 
-        public TimeSpan Created { get; }
+        public DateTime Created { get; }
         public string Name { get; }
         public PacketDirection Direction { get; }
 

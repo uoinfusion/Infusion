@@ -1,8 +1,9 @@
-﻿using Infusion.IO;
+﻿using Infusion.Diagnostic;
+using Infusion.IO;
 
 namespace Infusion.Proxy.Logging
 {
-    internal sealed class ConsoleDiagnosticPushStream : DiagnosticPushStream
+    internal sealed class ConsoleDiagnosticPushStream : TextDiagnosticPushStream
     {
         private readonly ILogger logger;
 

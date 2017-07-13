@@ -5,11 +5,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
-using Infusion.Packets.Parsers;
 using Infusion.Packets.Server;
 using Infusion.Proxy.LegacyApi;
 using Infusion.Proxy.Logging;
@@ -27,7 +27,7 @@ namespace Infusion.Proxy
         private static Socket serverSocket;
 
         private static bool needServerReconnect;
-        private static ConsoleDiagnosticPushStream serverDiagnosticPushStream;
+        private static IDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
         private static readonly SpeechFilter speechFilter = new SpeechFilter(Configuration);
 
@@ -164,7 +164,10 @@ namespace Infusion.Proxy
 
         private static void ClientLoop(ILogger packetLogger)
         {
-            serverDiagnosticPushStream = new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server");
+            var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(Configuration);
+            serverDiagnosticPushStream =
+                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server"),
+                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ClientToServer, diagnosticProvider.GetStream));
             serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy");
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
@@ -173,7 +176,8 @@ namespace Infusion.Proxy
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
                 new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy"),
-                new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client"));
+                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client"),
+                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)));
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
 
             Task.Run(() => ServerLoop());
@@ -204,6 +208,10 @@ namespace Infusion.Proxy
                 Console.Error(ex.ToString());
                 DumpPacketLog();
                 throw;
+            }
+            finally
+            {
+                diagnosticProvider.Dispose();
             }
         }
 

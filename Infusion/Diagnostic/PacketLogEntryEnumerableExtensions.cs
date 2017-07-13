@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
-namespace Infusion.Packets.Parsers
+namespace Infusion.Diagnostic
 {
     public static class PacketLogEntryEnumerableExtensions
     {
@@ -46,12 +47,16 @@ namespace Infusion.Packets.Parsers
             return payload.Select(x => "0x" + x.ToString("X2")).Aggregate((l, r) => l + ", " + r);
         }
 
-        public static void ToConsole(this IEnumerable<string> entries)
+        public static string ToLines(this IEnumerable<string> entries)
         {
+            var builder = new StringBuilder();
+
             foreach (var entry in entries)
             {
-                Console.WriteLine(entry);
+                builder.AppendLine(entry);
             }
+
+            return builder.ToString();
         }
     }
 

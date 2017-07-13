@@ -148,5 +148,18 @@ namespace Infusion.Proxy.Tests.InjectionApi
 
             journal.Contains("message after instantiation").Should().BeTrue();
         }
+
+        [TestMethod]
+        public void ContainsAnyWord_is_not_affected_by_previous_call_to_WaitAny()
+        {
+            var source = new JournalSource();
+            var journal = new GameJournal(source);
+
+            source.AddMessage("name", "message1", 0, 0);
+
+            journal.When("message1", () => { }).WaitAny(TimeSpan.FromMilliseconds(1));
+
+            journal.ContainsAnyWord("message1").Any().Should().BeTrue();
+        }
     }
 }

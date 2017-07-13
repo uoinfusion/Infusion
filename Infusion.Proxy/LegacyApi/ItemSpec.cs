@@ -10,7 +10,7 @@ namespace Infusion.Proxy.LegacyApi
 
         public ItemSpec(ModelId type, Color? color = null)
         {
-            Specificity = color.HasValue ? 2 : 1;
+            Specificity = color.HasValue ? ItemSpecSpecificity.TypeAndColor : ItemSpecSpecificity.Type;
 
             Type = type;
             Color = color;
@@ -18,13 +18,13 @@ namespace Infusion.Proxy.LegacyApi
 
         public ItemSpec(params ItemSpec[] childSpecs)
         {
-            Specificity = 0;
+            Specificity = ItemSpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;
         }
 
         private ModelId? Type { get; }
         private Color? Color { get; }
-        public int Specificity { get; }
+        public ItemSpecSpecificity Specificity { get; }
 
         public bool Matches(Item item)
         {

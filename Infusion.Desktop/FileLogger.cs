@@ -38,7 +38,7 @@ namespace Infusion.Desktop
                             File.Create(fileName).Dispose();
                         }
 
-                        File.AppendAllText(fileName, $@"{now:T}: {message}{Environment.NewLine}");
+                        File.AppendAllText(fileName, $@"{now:HH:mm:ss:fffff}: {message}{Environment.NewLine}");
                     }
                 }
 

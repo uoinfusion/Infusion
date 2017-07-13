@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -103,7 +104,7 @@ namespace Infusion.Tests
         public void Can_write_diagnostic_info_about_sent_PreGameLogin_packet()
         {
             var packet = FakePackets.Instantiate(FakePackets.ConnectToGameServer);
-            var diagnosticStream = new DiagnosticPushStream();
+            var diagnosticStream = new TextDiagnosticPushStream();
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin, NullDiagnosticPullStream.Instance, diagnosticStream);
             var outputStream = new TestMemoryStream();
 
@@ -118,7 +119,7 @@ namespace Infusion.Tests
         public void Can_write_diagnostic_info_about_send_Game_packet()
         {
             var packet = FakePackets.Instantiate(FakePackets.EnableLockedClientFeatures);
-            var diagnosticStream = new DiagnosticPushStream();
+            var diagnosticStream = new TextDiagnosticPushStream();
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Game, NullDiagnosticPullStream.Instance, diagnosticStream);
             var outputStream = new TestMemoryStream();
 

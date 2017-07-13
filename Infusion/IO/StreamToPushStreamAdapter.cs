@@ -25,5 +25,10 @@ namespace Infusion.IO
         {
             baseStream.WriteByte(value);
         }
+
+        public void Flush()
+        {
+            baseStream.Flush();
+        }
     }
 }

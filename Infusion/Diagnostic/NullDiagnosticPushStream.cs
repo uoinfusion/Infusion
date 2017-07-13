@@ -1,8 +1,9 @@
-﻿using Infusion.Packets;
+﻿using Infusion.IO;
+using Infusion.Packets;
 
-namespace Infusion.IO
+namespace Infusion.Diagnostic
 {
-    public class NullDiagnosticPushStream : IDiagnosticPushStream
+    public sealed class NullDiagnosticPushStream : IDiagnosticPushStream
     {
         public static NullDiagnosticPushStream Instance { get; } = new NullDiagnosticPushStream();
 
@@ -19,6 +20,11 @@ namespace Infusion.IO
         public void WriteByte(byte value)
         {
             BaseStream.WriteByte(value);
+        }
+
+        public void Flush()
+        {
+            BaseStream.Flush();
         }
 
         public IPushStream BaseStream { get; set; }

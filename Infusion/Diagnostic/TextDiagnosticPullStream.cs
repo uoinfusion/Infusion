@@ -1,16 +1,17 @@
-﻿using Infusion.Packets;
+﻿using Infusion.IO;
+using Infusion.Packets;
 
-namespace Infusion.IO
+namespace Infusion.Diagnostic
 {
-    public class DiagnosticPullStream : IDiagnosticPullStream
+    public class TextDiagnosticPullStream : IDiagnosticPullStream
     {
         private readonly DiagnosticPacketFormatter formatter;
 
-        public DiagnosticPullStream() : this(string.Empty)
+        public TextDiagnosticPullStream() : this(string.Empty)
         {
         }
 
-        public DiagnosticPullStream(string header)
+        public TextDiagnosticPullStream(string header)
         {
             formatter = new DiagnosticPacketFormatter(header);
         }
@@ -53,6 +54,10 @@ namespace Infusion.IO
         {
             formatter.DumpPacket(packet);
             OnPacketFinished(packet);
+        }
+
+        public void StartPacket()
+        {
         }
 
         protected virtual void OnPacketFinished(Packet packet)

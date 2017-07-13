@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
+using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +34,7 @@ namespace Infusion.Tests
             });
 
 
-            var diagnosticStream = new DiagnosticPullStream();
+            var diagnosticStream = new TextDiagnosticPullStream();
             var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream,
                 NullDiagnosticPushStream.Instance);
             connection.Receive(inputData);
@@ -104,7 +105,7 @@ namespace Infusion.Tests
         [TestMethod]
         public void Can_write_diagnostic_info_about_sent_PreLogin_packet()
         {
-            var diagnosticStream = new DiagnosticPushStream();
+            var diagnosticStream = new TextDiagnosticPushStream();
 
             var connection = new ServerConnection(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance,
                 diagnosticStream);
@@ -120,7 +121,7 @@ namespace Infusion.Tests
         [TestMethod]
         public void Can_write_diagnostic_info_about_sent_Game_packet()
         {
-            var diagnosticStream = new DiagnosticPushStream();
+            var diagnosticStream = new TextDiagnosticPushStream();
             var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
                 diagnosticStream);
             var testStream = new TestMemoryStream();

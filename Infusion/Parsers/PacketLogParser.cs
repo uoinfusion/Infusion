@@ -11,19 +11,24 @@ namespace Infusion.Parsers
         {
             while (inputStream.DataAvailable)
             {
-                byte[] buffer = new byte[65535];
-
-                var reader = new StreamPacketReader(new PullStreamToStreamAdapter(inputStream), buffer);
-
-                int packetId = reader.ReadByte();
-                int packetLength = GetPacketLength(reader, packetId);
-                reader.ReadBytes(packetLength - reader.Position);
-
-                var payload = new byte[packetLength];
-                Array.Copy(buffer, 0, payload, 0, packetLength);
-
-                yield return new Packet(packetId, payload);
+                yield return ParsePacket(inputStream);
             }
+        }
+
+        public static Packet ParsePacket(IPullStream inputStream)
+        {
+            byte[] buffer = new byte[65535];
+
+            var reader = new StreamPacketReader(new PullStreamToStreamAdapter(inputStream), buffer);
+
+            int packetId = reader.ReadByte();
+            int packetLength = GetPacketLength(reader, packetId);
+            reader.ReadBytes(packetLength - reader.Position);
+
+            var payload = new byte[packetLength];
+            Array.Copy(buffer, 0, payload, 0, packetLength);
+
+            return new Packet(packetId, payload);
         }
 
         private static int GetPacketLength(StreamPacketReader reader, int packetId)

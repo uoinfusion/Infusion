@@ -65,6 +65,7 @@
     <Compile Include="LegacyApi\GumpObservers.cs" />
     <Compile Include="LegacyApi\ItemEnteredViewArgs.cs" />
     <Compile Include="LegacyApi\ItemSpec.cs" />
+    <Compile Include="LegacyApi\ItemSpecSpecificity.cs" />
     <Compile Include="LegacyApi\JournalAwaiter.cs" />
     <Compile Include="LegacyApi\JournalSource.cs" />
     <Compile Include="LegacyApi\Legacy.cs" />

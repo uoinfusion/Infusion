@@ -13,6 +13,7 @@ namespace Infusion
     {
         private string[] ignoredWords = Array.Empty<string>();
         private bool logToFileEnabled;
+        private bool logPacketsToFileEnabled;
         private string logPath;
         private bool showImportantToastNotification;
         private bool toastNotificationEnabled;
@@ -41,6 +42,17 @@ namespace Infusion
                 logToFileEnabled = value; 
                 OnPropertyChanged();
             }
+        }
+
+        public bool LogPacketsToFileEnabled
+        {
+            get => logPacketsToFileEnabled;
+            set
+            {
+                logPacketsToFileEnabled = value;
+                OnPropertyChanged();
+            }
+
         }
 
         public string LogPath

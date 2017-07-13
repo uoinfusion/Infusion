@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace Infusion.Packets.Parsers
+namespace Infusion.Diagnostic
 {
     public class PacketLogParser
     {
@@ -240,7 +240,7 @@ namespace Infusion.Packets.Parsers
             return true;
         }
 
-        private TimeSpan? ParseTime()
+        private DateTime? ParseTime()
         {
             var startPosition = position;
             var success = ConsumeNumber(2) && ConsumeChar(':') && ConsumeNumber(2) && ConsumeChar(':') &&
@@ -254,7 +254,7 @@ namespace Infusion.Packets.Parsers
 
             var time = log.Substring(startPosition, position - startPosition);
 
-            return TimeSpan.Parse(time);
+            return new DateTime().Add(TimeSpan.Parse(time));
         }
 
         private bool ConsumeChar(char ch)

@@ -6,5 +6,6 @@ namespace Infusion.IO
     {
         void Write(byte[] buffer, int offset, int count);
         void WriteByte(byte value);
+        void Flush();
     }
 }

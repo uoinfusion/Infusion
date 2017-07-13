@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
 
@@ -51,6 +52,7 @@ namespace Infusion
                 if ((packetId < 0) || (packetId > 255))
                     throw new EndOfStreamException();
 
+                diagnosticPullStream.StartPacket();
                 var packetDefinition = PacketDefinitionRegistry.Find(packetId);
                 var packetSize = packetDefinition.GetSize(packetReader);
                 packetReader.ReadBytes(packetSize - packetReader.Position);

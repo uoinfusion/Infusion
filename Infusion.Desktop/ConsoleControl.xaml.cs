@@ -105,7 +105,7 @@ namespace Infusion.Desktop
 
         private void _inputBlock_OnKeyDown(object sender, KeyEventArgs e)
         {
-            HandleKeyDown(e);
+            HandleInputBlockKey(e.Key);
         }
 
         private void RunCommand()
@@ -141,29 +141,40 @@ namespace Infusion.Desktop
         private void ConsoleControl_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (!_inputBlock.IsFocused && !IsKeyAcceptableByConsoleOutput(e))
-            {
-                _inputBlock.Focus();
-                HandleKeyDown(e);
-            }
+                HandleInputBlockKey(e.Key);
         }
 
-        private void HandleKeyDown(KeyEventArgs e)
+        private void HandleInputBlockKey(Key key)
         {
-            switch (e.Key)
+            if (!_inputBlock.IsFocused)
+            {
+                _inputBlock.Focus();
+                switch (key)
+                {
+                    case Key.Home:
+                        _inputBlock.CaretIndex = 0;
+                        break;
+                    case Key.End:
+                        _inputBlock.CaretIndex = _inputBlock.Text.Length;
+                        break;
+                    case Key.V:
+                        if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                            _inputBlock.Paste();
+                        break;
+                }
+            }
+
+            switch (key)
             {
                 case Key.Enter:
                     RunCommand();
-                    _inputBlock.Focus();
                     break;
-
                 case Key.Escape:
                     _inputBlock.Text = string.Empty;
                     break;
-
                 case Key.Tab:
                     Autocomplete();
                     break;
-
                 case Key.Up:
                     if (Keyboard.IsKeyDown(Key.RightAlt) || Keyboard.IsKeyDown(Key.LeftAlt))
                         RestoreOlderCommand();
@@ -214,7 +225,19 @@ namespace Infusion.Desktop
 
         private static bool IsKeyAcceptableByConsoleOutput(KeyEventArgs e)
         {
-            return Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+            switch (e.Key)
+            {
+                case Key.PageUp:
+                case Key.PageDown:
+                case Key.LeftCtrl:
+                case Key.RightCtrl:
+                    return true;
+                case Key.End:
+                case Key.Home:
+                    return Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                default:
+                    return false;
+            }
         }
 
         private void _inputBlock_OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -227,6 +250,37 @@ namespace Infusion.Desktop
                 case Key.Down:
                     RestoreNewerCommand();
                     break;
+            }
+        }
+
+        private void ConsoleControl_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.RightCtrl || e.Key == Key.LeftCtrl)
+                return;
+
+            if (!_inputBlock.IsFocused && !IsKeyAcceptableByConsoleOutput(e))
+            {
+                switch (e.Key)
+                {
+                    case Key.Right:
+                    case Key.Left:
+                    case Key.Home:
+                    case Key.End:
+                        HandleInputBlockKey(e.SystemKey);
+                        break;
+                }
+            }
+            else if (!_outputViewer.IsFocused && IsKeyAcceptableByConsoleOutput(e))
+            {
+                HandleOutputViewerKey(e.SystemKey);
+            }
+        }
+
+        private void HandleOutputViewerKey(Key key)
+        {
+            if (!_outputViewer.IsFocused)
+            {
+                _outputViewer.Focus();
             }
         }
     }

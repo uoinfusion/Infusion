@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
-using Infusion.Packets.Parsers;
+using Infusion.Diagnostic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Infusion.Tests.Packets.Parsers
@@ -21,9 +21,9 @@ namespace Infusion.Tests.Packets.Parsers
             var parser = new PacketLogParser();
             var logEntry = parser.Parse(log).Single();
 
-            FluentAssertions.AssertionExtensions.Should((TimeSpan) logEntry.Created).Be(TimeSpan.Parse("12:57:12.742"));
-            FluentAssertions.AssertionExtensions.Should((object) logEntry.Direction).Be(PacketDirection.ProxyServer);
-            FluentAssertions.AssertionExtensions.Should((string) logEntry.Name).Be("MoveRequest");
+            logEntry.Created.Should().Be(new DateTime().Add(TimeSpan.Parse("12:57:12.742")));
+            logEntry.Direction.Should().Be(PacketDirection.ProxyServer);
+            logEntry.Name.Should().Be("MoveRequest");
             logEntry.Payload.Should().BeEquivalentTo(new byte[] {0x02, 0x81, 0x74, 0x00, 0x00, 0x00, 0x00});
         }
 
@@ -39,9 +39,9 @@ namespace Infusion.Tests.Packets.Parsers
             var parser = new PacketLogParser();
             var logEntry = parser.Parse(log).Single();
 
-            FluentAssertions.AssertionExtensions.Should((TimeSpan) logEntry.Created).Be(TimeSpan.Parse("12:57:12.746"));
-            FluentAssertions.AssertionExtensions.Should((object) logEntry.Direction).Be(PacketDirection.ServerProxy);
-            FluentAssertions.AssertionExtensions.Should((string) logEntry.Name).Be("CharacterMoveAck");
+            logEntry.Created.Should().Be(new DateTime().Add(TimeSpan.Parse("12:57:12.746")));
+            logEntry.Direction.Should().Be(PacketDirection.ServerProxy);
+            logEntry.Name.Should().Be("CharacterMoveAck");
             logEntry.Payload.Should().BeEquivalentTo(new byte[] {0x22, 0x74, 0x41});
         }
 
@@ -57,9 +57,9 @@ namespace Infusion.Tests.Packets.Parsers
             var parser = new PacketLogParser();
             var logEntry = parser.Parse(log).Single();
 
-            FluentAssertions.AssertionExtensions.Should((TimeSpan) logEntry.Created).Be(TimeSpan.Parse("12:57:12.746"));
-            FluentAssertions.AssertionExtensions.Should((object) logEntry.Direction).Be(PacketDirection.ProxyClient);
-            FluentAssertions.AssertionExtensions.Should((string) logEntry.Name).Be("DrawGamePlayer");
+            logEntry.Created.Should().Be(new DateTime().Add(TimeSpan.Parse("12:57:12.746")));
+            logEntry.Direction.Should().Be(PacketDirection.ProxyClient);
+            logEntry.Name.Should().Be("DrawGamePlayer");
             logEntry.Payload.Should()
                 .BeEquivalentTo(new byte[]
                     {0x20, 0x00, 0x04, 0x5B, 0x2A, 0x01, 0x90, 0x00, 0x09, 0x09, 0x00, 0x09, 0x05, 0x0C, 0xF0, 0x00});
@@ -76,9 +76,9 @@ namespace Infusion.Tests.Packets.Parsers
             var parser = new PacketLogParser();
             var logEntry = parser.Parse(log).Single();
 
-            FluentAssertions.AssertionExtensions.Should((TimeSpan) logEntry.Created).Be(TimeSpan.Parse("12:57:12.937"));
-            FluentAssertions.AssertionExtensions.Should((object) logEntry.Direction).Be(PacketDirection.ClientProxy);
-            FluentAssertions.AssertionExtensions.Should((string) logEntry.Name).Be("CharacterMoveAck");
+            logEntry.Created.Should().Be(new DateTime().Add(TimeSpan.Parse("12:57:12.937")));
+            logEntry.Direction.Should().Be(PacketDirection.ClientProxy);
+            logEntry.Name.Should().Be("CharacterMoveAck");
             logEntry.Payload.Should().BeEquivalentTo(new byte[] {0x22, 0x00, 0x00});
         }
 
@@ -94,9 +94,9 @@ namespace Infusion.Tests.Packets.Parsers
             var parser = new PacketLogParser();
             var logEntry = parser.Parse(log).Single();
 
-            FluentAssertions.AssertionExtensions.Should((TimeSpan) logEntry.Created).Be(TimeSpan.Parse("12:57:12.937"));
-            FluentAssertions.AssertionExtensions.Should((object) logEntry.Direction).Be(PacketDirection.ProxyClient);
-            FluentAssertions.AssertionExtensions.Should((string) logEntry.Name).Be("DrawGamePlayer");
+            logEntry.Created.Should().Be(new DateTime().Add(TimeSpan.Parse("12:57:12.937")));
+            logEntry.Direction.Should().Be(PacketDirection.ProxyClient);
+            logEntry.Name.Should().Be("DrawGamePlayer");
             logEntry.Payload.Should().BeEquivalentTo(new byte[]
             {
                 0x20, 0x00, 0x04, 0x5B, 0x2A, 0x01, 0x90, 0x00, 0x09, 0x09, 0x00, 0x09, 0x05, 0x0C, 0xF0, 0x00,

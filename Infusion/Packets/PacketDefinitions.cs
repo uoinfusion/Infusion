@@ -191,6 +191,9 @@ namespace Infusion.Packets
         public static readonly PacketDefinition InvalidMapRequest = new PacketDefinition(0xC5,
             new StaticPacketLength(1), "InvalidMapRequest");
 
+        public static readonly PacketDefinition ParticleEffect = new PacketDefinition(0xC7,
+            new StaticPacketLength(49), "ParticleEffect");
+
         public static readonly PacketDefinition SpyOnClient = new PacketDefinition(0xD9,
             new VariablePacketLength(), "SpyOnClient");
 

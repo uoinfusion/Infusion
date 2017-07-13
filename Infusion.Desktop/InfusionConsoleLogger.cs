@@ -27,34 +27,49 @@ namespace Infusion.Desktop
 
         public void Info(string message)
         {
-            WriteLine(message, Brushes.Gray);
+            DispatchWriteLine(message, Brushes.Gray);
         }
 
         public void Important(string message)
         {
-            WriteLine(message, Brushes.White);
+            DispatchWriteLine(message, Brushes.White);
             ToastNotification(message);
         }
 
         public void Debug(string message)
         {
-            WriteLine(message, Brushes.DimGray);
+            DispatchWriteLine(message, Brushes.DimGray);
         }
 
         public void Critical(string message)
         {
-            WriteLine(message, Brushes.Red);
+            DispatchWriteLine(message, Brushes.Red);
             ToastAlertNotification(message);
         }
 
         public void Error(string message)
         {
-            WriteLine(message, Brushes.DarkRed);
+            DispatchWriteLine(message, Brushes.DarkRed);
         }
+
+        private void DispatchWriteLine(string message, Brush textBrush)
+        {
+            dispatcher.BeginInvoke((Action) (() => { WriteLine(message, textBrush); }));
+        }
+
+        private DateTime? lastWriteLineDate;
 
         private void WriteLine(string message, Brush textBrush)
         {
-            dispatcher.BeginInvoke((Action) (() => { consoleContent.Add($"{DateTime.Now} - {message}", textBrush); }));
+            var now = DateTime.Now;
+
+            if (!lastWriteLineDate.HasValue || lastWriteLineDate.Value != now.Date)
+            {
+                consoleContent.Add($"{now.Date:d}", Brushes.White);
+                lastWriteLineDate = now.Date;
+            }
+
+            consoleContent.Add($"{now:HH:mm:ss:fff} - {message}", textBrush);
         }
 
         private void ToastNotification(string message)

@@ -2,9 +2,9 @@
 using System.Text;
 using Infusion.Packets;
 
-namespace Infusion.IO
+namespace Infusion.Diagnostic
 {
-    public class DiagnosticPacketFormatter
+    public sealed class DiagnosticPacketFormatter
     {
         private const int MaxColumns = 16;
         private readonly StringBuilder builder = new StringBuilder();

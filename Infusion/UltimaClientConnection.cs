@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
+using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
-using Infusion.Parsers;
+using PacketLogParser = Infusion.Parsers.PacketLogParser;
 
 namespace Infusion
 {

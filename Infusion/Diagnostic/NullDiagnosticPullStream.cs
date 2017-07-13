@@ -1,8 +1,9 @@
-﻿using Infusion.Packets;
+﻿using Infusion.IO;
+using Infusion.Packets;
 
-namespace Infusion.IO
+namespace Infusion.Diagnostic
 {
-    public class NullDiagnosticPullStream : IDiagnosticPullStream
+    public sealed class NullDiagnosticPullStream : IDiagnosticPullStream
     {
         public static NullDiagnosticPullStream Instance { get; } = new NullDiagnosticPullStream();
 
@@ -26,6 +27,10 @@ namespace Infusion.IO
         public IPullStream BaseStream { get; set; }
 
         public void FinishPacket(Packet packet)
+        {
+        }
+
+        public void StartPacket()
         {
         }
     }

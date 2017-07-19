@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Infusion.Parsers
 {
@@ -41,7 +42,7 @@ namespace Infusion.Parsers
 
             string timeText = line.Substring(0, colonIndex);
             DateTimeOffset time;
-            if (!DateTimeOffset.TryParse(timeText, out time))
+            if (!DateTimeOffset.TryParse(timeText, out time) && !DateTimeOffset.TryParseExact(timeText, "HH:mm:ss:fffff", CultureInfo.InvariantCulture, DateTimeStyles.None, out time))
                 return;
 
             var processableLine = line.Substring(colonIndex + 1, line.Length - colonIndex - 1).Trim();

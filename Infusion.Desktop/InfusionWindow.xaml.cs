@@ -7,10 +7,11 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Infusion.Commands;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
+using Infusion.LegacyApi;
 using Infusion.Proxy;
-using Infusion.Proxy.LegacyApi;
 using Application = System.Windows.Application;
 using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
@@ -42,6 +43,7 @@ namespace Infusion.Desktop
                 Topmost = false;
                 Focus();
             };
+
 
             Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));
             Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Edit())), "Opens the script editor."));

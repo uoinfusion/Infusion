@@ -300,6 +300,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj">
+      <Project>{28a5cece-9e74-4524-9dfd-238ed4df12ba}</Project>
+      <Name>Infusion.LegacyApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common.UI\RoslynPad.Common.UI.csproj">
       <Project>{47c8dfa4-e7e9-4e44-86c4-b906229a25e0}</Project>
       <Name>RoslynPad.Common.UI</Name>

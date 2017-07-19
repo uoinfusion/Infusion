@@ -54,6 +54,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandAutocompleter.cs" />
+    <Compile Include="Commands\CommandAutocompletion.cs" />
+    <Compile Include="Commands\CommandExecutionMode.cs" />
+    <Compile Include="Commands\CommandHandler.cs" />
+    <Compile Include="Commands\CommandInvocation.cs" />
+    <Compile Include="Commands\CommandInvocationException.cs" />
+    <Compile Include="Commands\CommandInvocator.cs" />
+    <Compile Include="Commands\CommandParameterParser.cs" />
+    <Compile Include="Commands\CommandParser.cs" />
+    <Compile Include="Commands\CommandSyntax.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Gumps\CancelGumpResponse.cs" />
     <Compile Include="Gumps\Gump.cs" />
@@ -99,6 +111,17 @@
     <Compile Include="IO\TwoFishBase.cs" />
     <Compile Include="IO\TwoFishEncryption.cs" />
     <Compile Include="Diagnostic\NullDiagnosticPullStream.cs" />
+    <Compile Include="IClientPacketSubject.cs" />
+    <Compile Include="IServerPacketSubject.cs" />
+    <Compile Include="Logging\ConsoleDiagnosticPullStream.cs" />
+    <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
+    <Compile Include="Logging\ConsoleLogger.cs" />
+    <Compile Include="Logging\DiagnosticLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\MultiplexLogger.cs" />
+    <Compile Include="Logging\NullLogger.cs" />
+    <Compile Include="Logging\RingBufferLogger.cs" />
+    <Compile Include="PacketHandler.cs" />
     <Compile Include="Packets\Both\CloseGenericGumpPacket.cs" />
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
     <Compile Include="Packets\Client\SingleClickRequest.cs" />
@@ -186,6 +209,7 @@
     <Compile Include="Parsers\Processors\LumberjackingHarvestProcessor.cs" />
     <Compile Include="Parsers\Processors\SkillIncreasedProcessor.cs" />
     <Compile Include="IWorldMap.cs" />
+    <Compile Include="ServerPacketHandler.cs" />
     <Compile Include="Strategies\KnownPathRetreatStrategy.cs" />
     <Compile Include="Strategies\PathFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -199,8 +223,10 @@
     <Compile Include="TextFilters\JustNumberFilter.cs" />
     <Compile Include="TextFilters\StartsWithFilter.cs" />
     <Compile Include="TextFilters\TextFilterSpecificationParser.cs" />
+    <Compile Include="UltimaClient.cs" />
     <Compile Include="UltimaClientConnection.cs" />
     <Compile Include="UltimaClientConnectionStatus.cs" />
+    <Compile Include="UltimaServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

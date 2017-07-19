@@ -5,14 +5,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Infusion.Commands;
 using Infusion.Diagnostic;
 using Infusion.IO;
+using Infusion.LegacyApi;
+using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
-using Infusion.Proxy.LegacyApi;
-using Infusion.Proxy.Logging;
 using Ultima;
 
 namespace Infusion.Proxy
@@ -21,6 +22,8 @@ namespace Infusion.Proxy
     {
         public static Configuration Configuration { get; } = new Configuration();
 
+        private static readonly ServerPacketHandler serverPacketHandler = new ServerPacketHandler();
+        private static readonly ClientPacketHandler clientPacketHandler = new ClientPacketHandler();
         private static TcpListener listener;
         private static ServerConnection serverConnection;
         private static UltimaClientConnection clientConnection;
@@ -40,12 +43,10 @@ namespace Infusion.Proxy
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
-        public static readonly ServerPacketHandler ServerPacketHandler = new ServerPacketHandler();
-        public static readonly ClientPacketHandler ClientPacketHandler = new ClientPacketHandler();
-
         private static readonly StringList clilocDictionary = new StringList("ENU");
 
         private static ushort proxyLocalPort;
+        private static CommandHandler commandHandler;
 
         public static ILogger Console { get; set; } = new ConsoleLogger();
 
@@ -60,19 +61,40 @@ namespace Infusion.Proxy
 
         public static void Main()
         {
-            Legacy.Initialize(Configuration);
-            Main(33333, new ConsoleLogger());
+        }
+
+        private static void HelpCommand(string parameters)
+        {
+            Console.Info(commandHandler.Help(parameters));
+        }
+
+        private static void ListRunningCommands()
+        {
+            foreach (var command in commandHandler.RunningCommands)
+                Console.Info(command.Name);
+        }
+
+        static Program()
+        {
+            commandHandler = new CommandHandler(Program.Console);
+            var commandObservers = new CommandHandlerObservers(clientPacketHandler, commandHandler);
+            commandHandler.RegisterCommand(new Command("dump", DumpPacketLog,
+                "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
+                executionMode: CommandExecutionMode.Direct));
+            commandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
+            commandHandler.RegisterCommand(new Command("list", ListRunningCommands,
+                "Lists running commands"));
+
+            Legacy.Initialize(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
         }
 
         public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {
-            Legacy.Initialize(Configuration);
-
-            ServerPacketHandler.RegisterFilter(RedirectConnectToGameServer);
-            ServerPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
-            ServerPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
-            ServerPacketHandler.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
-            ServerPacketHandler.Subscribe(PacketDefinitions.ClilocMessageAffix, HandleClilocMessageAffix);
+            serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
+            serverPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
+            serverPacketHandler.Subscribe(PacketDefinitions.ClilocMessageAffix, HandleClilocMessageAffix);
 
             serverEndpoint = serverAddress;
             return Main(localProxyPort, packetRingBufferLogger);
@@ -255,7 +277,7 @@ namespace Infusion.Proxy
         {
             try
             {
-                var handledPacket = HandleServerPacket(rawPacket);
+                var handledPacket = serverPacketHandler.HandlePacket(rawPacket);
                 if (!handledPacket.HasValue)
                     return;
 
@@ -274,69 +296,6 @@ namespace Infusion.Proxy
             }
 
             SendToClient(rawPacket);
-        }
-
-        private static Packet? HandleServerPacket(Packet rawPacket)
-        {
-            var filteredPacket = ServerPacketHandler.Filter(rawPacket);
-            if (!filteredPacket.HasValue)
-                return null;
-            rawPacket = filteredPacket.Value;
-
-            if (rawPacket.Id == PacketDefinitions.AddMultipleItemsInContainer.Id)
-                ServerPacketHandler.Publish<AddMultipleItemsInContainerPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.AddItemToContainer.Id)
-                ServerPacketHandler.Publish<AddItemToContainerPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.DeleteObject.Id)
-                ServerPacketHandler.Publish<DeleteObjectPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.ObjectInfo.Id)
-                ServerPacketHandler.Publish<ObjectInfoPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.DrawObject.Id)
-                ServerPacketHandler.Publish<DrawObjectPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
-                ServerPacketHandler.Publish<TargetCursorPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.CharacterMoveAck.Id)
-                ServerPacketHandler.Publish<CharacterMoveAckPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.CharMoveRejection.Id)
-                ServerPacketHandler.Publish<CharMoveRejectionPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.DrawGamePlayer.Id)
-                ServerPacketHandler.Publish<DrawGamePlayerPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.SpeechMessage.Id)
-                ServerPacketHandler.Publish<SpeechMessagePacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.SendSpeech.Id)
-                ServerPacketHandler.Publish<SendSpeechPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.CharacterLocaleAndBody.Id)
-                ServerPacketHandler.Publish<CharLocaleAndBodyPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.UpdatePlayer.Id)
-                ServerPacketHandler.Publish<UpdatePlayerPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.UpdateCurrentHealth.Id)
-                ServerPacketHandler.Publish<UpdateCurrentHealthPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.UpdateCurrentMana.Id)
-                ServerPacketHandler.Publish<UpdateCurrentManaPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.UpdateCurrentStamina.Id)
-                ServerPacketHandler.Publish<UpdateCurrentStaminaPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
-                ServerPacketHandler.Publish<SendGumpMenuDialogPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.WornItem.Id)
-                ServerPacketHandler.Publish<WornItemPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.StatusBarInfo.Id)
-                ServerPacketHandler.Publish<StatusBarInfoPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.SendSkills.Id)
-                ServerPacketHandler.Publish<SendSkillsPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
-                ServerPacketHandler.Publish<RejectMoveItemRequestPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.ClilocMessage.Id)
-                ServerPacketHandler.Publish<ClilocMessagePacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.ClilocMessageAffix.Id)
-                ServerPacketHandler.Publish<ClilocMessageAffixPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.AllowRefuseAttack.Id)
-                ServerPacketHandler.Publish<AllowRefuseAttackPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.DrawContainer.Id)
-                ServerPacketHandler.Publish<DrawContainerPacket>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.PauseClient.Id)
-                ServerPacketHandler.Publish<PauseClientPacket>(rawPacket);
-
-            return rawPacket;
         }
 
         private static void ServerLoop()
@@ -419,21 +378,11 @@ namespace Infusion.Proxy
         {
             try
             {
-                var filteredPacket = ClientPacketHandler.Filter(rawPacket);
-                if (!filteredPacket.HasValue)
+                var handledPacket = clientPacketHandler.HandlePacket(rawPacket);
+                if (!handledPacket.HasValue)
                     return;
-                rawPacket = filteredPacket.Value;
 
-                if (rawPacket.Id == PacketDefinitions.MoveRequest.Id)
-                    ClientPacketHandler.Publish<MoveRequest>(rawPacket);
-                else if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
-                    ClientPacketHandler.Publish<SpeechRequest>(rawPacket);
-                else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
-                    ClientPacketHandler.Publish<TargetCursorPacket>(rawPacket);
-                else if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id)
-                    ClientPacketHandler.Publish<GumpMenuSelectionRequest>(rawPacket);
-                else if (rawPacket.Id == PacketDefinitions.DoubleClick.Id)
-                    ClientPacketHandler.Publish<DoubleClickRequest>(rawPacket);
+                rawPacket = handledPacket.Value;
             }
             catch (PacketMaterializationException ex)
             {

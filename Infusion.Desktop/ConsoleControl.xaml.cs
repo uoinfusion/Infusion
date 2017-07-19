@@ -6,9 +6,10 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using Infusion.Commands;
+using Infusion.LegacyApi;
+using Infusion.Logging;
 using Infusion.Proxy;
-using Infusion.Proxy.LegacyApi;
-using Infusion.Proxy.Logging;
 
 namespace Infusion.Desktop
 {

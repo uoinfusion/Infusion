@@ -1,0 +1,314 @@
+using System;
+using System.Linq;
+using Infusion.Packets;
+using System.Collections.Generic;
+using System.Reflection;
+
+public static class ItemSpecs
+{
+    public static readonly ItemSpec Player = 0x0190;
+    public static readonly ItemSpec RippadbleBody = 0x2006;
+    public static readonly ItemSpec Corpse = 0x2006;
+    public static readonly ItemSpec HorseShoes = 0x0FB6;
+
+    public static readonly ItemSpec TravelStone = 0x1174;
+    public static readonly ItemSpec HouseMenu = 0x0BD1;
+    public static readonly ItemSpec Gold = 0x0eed;
+
+    public static readonly ItemSpec Hatchet = new[] { 0x0F44, 0x0F43 };
+    public static readonly ItemSpec CopperExecutionersAxe = new[] { 0x0F45, 0x0F46 };
+
+    public static readonly ItemSpec CopperVikingSword = 0x13B9;
+    public static readonly ItemSpec VeriteVikingSword = 0x13BA;
+    public static readonly ItemSpec Dagger = 0x0F51;
+    public static readonly ItemSpec WarMace = 0x1406;
+    public static readonly ItemSpec Club = 0x13B3;
+
+    // Amunition
+    public static readonly ItemSpec Arrow = 0x0F3F;
+    public static readonly ItemSpec Bolt = 0x1BFB;
+    public static readonly ItemSpec JaggedBolt = 0x38D8;
+
+    public static readonly ItemSpec TightBoots = 0x1711;
+
+    // Containers
+    public static readonly ItemSpec BackPack = 0xE75;
+
+    // Tools
+    public static readonly ItemSpec Knives = new[] { CopperVikingSword, VeriteVikingSword, Dagger };
+    public static readonly ItemSpec PickAxe = 0x0E86;
+    public static readonly ItemSpec FishingPole = 0x0DBF;
+    public static readonly ItemSpec Hatchets = new[] { Hatchet, CopperExecutionersAxe };
+    public static readonly ItemSpec Campfire = 0x0DE3;
+    public static readonly ItemSpec Forge = new[] { 0x0FB1, 0x198E };
+    public static readonly ItemSpec CookingPlaces = new[] { Campfire, Forge, };
+    public static readonly ItemSpec Loom = 0x1062;
+    public static readonly ItemSpec TinkeringTools = 0x1EBC;
+    public static readonly ItemSpec SmithsHammer = 0x13E3;
+    public static readonly ItemSpec Saw = 0x1034;
+    public static readonly ItemSpec Torch = 0x0F64;
+    public static readonly ItemSpec BurningTorch = 0x0A12;
+
+    // Resources
+    public static readonly ItemSpec Shaft = 0x1BD4;
+    public static readonly ItemSpec Wire = 0x1879;
+    public static readonly ItemSpec Feathers = 0x1BD1;
+    public static readonly ItemSpec PileOfHides = 0x1078;
+    public static readonly ItemSpec Furs = new[] { 0x11F6, 0x11F4 };
+    public static readonly ItemSpec BallsOfYarn = 0x0E1D;
+    public static readonly ItemSpec PilesOfWool = 0x0DF8;
+    public static readonly ItemSpec Cotton = 0x0C4F;
+    public static readonly ItemSpec BaleOfCotton = 0x0DF9;
+    public static readonly ItemSpec Wheat = 0x0C5A;
+    public static readonly ItemSpec Bandage = 0x0E21;
+    public static readonly ItemSpec BloodyBandage = 0x0E20;
+
+    public static readonly ItemSpec FoldedCloth = 0x175D;
+
+    public static readonly ItemSpec BlankScroll = 0x0E34;
+    public static readonly ItemSpec Paper = 0x14ED;
+    public static readonly ItemSpec BlankMap = 0x14EB;
+
+    public static readonly ItemSpec PlayingCards = 0x0FA2;
+
+    // Metals
+    public static readonly ItemSpec Ore = 0x19B7;
+    public static readonly ItemSpec Ingot = new[] { 0x1BE6, 0x1BF2 };
+    public static readonly ItemSpec CopperOre = new ItemSpec(0x19B7, (Color)0x099A);
+    public static readonly ItemSpec CopperIngot = new ItemSpec(0x1BE6, (Color)0x0000);
+    public static readonly ItemSpec IronOre = new ItemSpec(0x19B7, (Color)0x0763);
+    public static readonly ItemSpec IronIngot = new ItemSpec(0x1BF2, (Color)0x0000);
+    public static readonly ItemSpec KremicityPisek = new ItemSpec(0x19B7, (Color)0x0481);
+    public static readonly ItemSpec Sklovina = new ItemSpec(0x0EED, (Color)0x0481);
+    public static readonly ItemSpec VeriteOre = new ItemSpec(0x19B7, (Color)0x097F);
+    public static readonly ItemSpec VeriteIngot = new ItemSpec(0x1BF2, (Color)0x097F);
+    public static readonly ItemSpec ValoriteOre = new ItemSpec(0x19B7, (Color)0x0985);
+    public static readonly ItemSpec ValoriteIngot = new ItemSpec(0x1BF2, (Color)0x0985);
+    public static readonly ItemSpec ObsidianOre = new ItemSpec(0x19B7, (Color)0x09BD);
+    public static readonly ItemSpec ObsidianIngot = new ItemSpec(0x1BF2, (Color)0x0989);
+
+    // Logs
+    public static readonly ItemSpec Log = 0x1BDD;
+    public static readonly ItemSpec SpruceLog = new ItemSpec(0x1BDD, (Color)0x0000);
+    public static readonly ItemSpec ChestnutLog = new ItemSpec(0x1BDD, (Color)0x05E5);
+    public static readonly ItemSpec OakLog = new ItemSpec(0x1BDD, (Color)0x05F2);
+    public static readonly ItemSpec TeakLog = new ItemSpec(0x1BDD, (Color)0x01C4);
+    public static readonly ItemSpec MahagonLog = new ItemSpec(0x1BDD, (Color)0x00ED);
+    public static readonly ItemSpec EbenLog = new ItemSpec(0x1BDD, (Color)0x0774);
+
+    // Potions
+    public static readonly ItemSpec PotionKeg = 0x1AD6;
+    public static readonly ItemSpec NightsightKeg = new ItemSpec(0x1AD6, (Color)0x0980);
+
+    public static readonly ItemSpec Bottle = 0x0F0E;
+    public static readonly ItemSpec EmptyBottle = new ItemSpec(0x0F0E, (Color)0x0000);
+    public static readonly ItemSpec GreaterHealBottle = new ItemSpec(0x0F0E, (Color)0x0160);
+
+    // Reagents
+    public static readonly ItemSpec GraveDust = 0x0f8f;
+    public static readonly ItemSpec Sapphire = 0x0f19;
+    public static readonly ItemSpec Pumice = 0x0f8b;
+    public static readonly ItemSpec Ruby = 0x0f13;
+    public static readonly ItemSpec Diamond = 0x0f26;
+    public static readonly ItemSpec BatWings = 0x0f78;
+    public static readonly ItemSpec SulfurousAsh = 0x0f8c;
+    public static readonly ItemSpec BloodMoss = 0x0f7b;
+    public static readonly ItemSpec BlackPearl = 0x0f7a;
+    public static readonly ItemSpec Garlic = 0x0f84;
+    public static readonly ItemSpec Mandrake = 0x0f86;
+    public static readonly ItemSpec Nightshade = 0x0f88;
+    public static readonly ItemSpec Ginseng = 0x0f85;
+    public static readonly ItemSpec Obsidian = 0x0f89;
+    public static readonly ItemSpec FertileDirt = 0x0f81;
+    public static readonly ItemSpec WyrmsHeart = 0x0f91;
+    public static readonly ItemSpec EyeOfNewt = 0x0f87;
+    public static readonly ItemSpec SpidersSilk = 0x0f8d;
+    public static readonly ItemSpec DragonsBlood = 0x0F82;
+    public static readonly ItemSpec DaemonBlood = 0x0F7D;
+    public static readonly ItemSpec DaemonBones = 0x0F80;
+    public static readonly ItemSpec Bone = 0x0F7E;
+    public static readonly ItemSpec NoxCrystal = 0x0F8E;
+    public static readonly ItemSpec ExecutionersCap = 0x0F83;
+    public static readonly ItemSpec PieceOfAmber = 0x0F25;
+    public static readonly ItemSpec PigIron = 0x0F8A;
+
+    public static readonly ItemSpec Gem = new ItemSpec(new[] { 0x0f11, 0x0f10, 0x0f15, 0x0f0f, 0x0f25, 0x0f16, 0x0f18 })
+        .Including(Sapphire, Ruby, Diamond);
+    public static readonly ItemSpec Regs = new[]
+    {
+        BatWings, SulfurousAsh, BloodMoss, BlackPearl, Garlic, Mandrake,
+        Nightshade, Ginseng, Obsidian, FertileDirt, WyrmsHeart, EyeOfNewt, SpidersSilk, DragonsBlood,
+        Bone, NoxCrystal, ExecutionersCap, DaemonBlood, GraveDust, Pumice, PieceOfAmber, DaemonBones, PigIron
+    };
+
+    // Spell Scrolls
+    public static readonly ItemSpec ScrollReactiveArmor = 0x1f2d;
+    public static readonly ItemSpec ScrollClumsy = 0x1f2e;
+    public static readonly ItemSpec ScrollCreateFood = 0x1f2f;
+    public static readonly ItemSpec ScrollFeeblemind = 0x1f30;
+    public static readonly ItemSpec ScrollHeal = 0x1f31;
+    public static readonly ItemSpec ScrollMagicArrow = 0x1f32;
+    public static readonly ItemSpec ScrollNightSight = 0x1f33;
+    public static readonly ItemSpec ScrollWeaken = 0x1f34;
+    public static readonly ItemSpec ScrollAgility = 0x1f35;
+    public static readonly ItemSpec ScrollCunning = 0x1f36;
+    public static readonly ItemSpec ScrollCure = 0x1f37;
+    public static readonly ItemSpec ScrollHarm = 0x1f38;
+    public static readonly ItemSpec ScrollMagicTrap = 0x1f39;
+    public static readonly ItemSpec ScrollMagicUntrap = 0x1f3a;
+    public static readonly ItemSpec ScrollProtection = 0x1f3b;
+    public static readonly ItemSpec ScrollStrength = 0x1f3c;
+    public static readonly ItemSpec ScrollBless = 0x1f3d;
+    public static readonly ItemSpec ScrollFireball = 0x1f3e;
+    public static readonly ItemSpec ScrollMagicLock = 0x1f3f;
+    public static readonly ItemSpec ScrollPoison = 0x1f40;
+    public static readonly ItemSpec ScrollTelekinesis = 0x1f41;
+    public static readonly ItemSpec ScrollTeleport = 0x1f42;
+    public static readonly ItemSpec ScrollUnlock = 0x1f43;
+    public static readonly ItemSpec ScrollWallOfStone = 0x1f44;
+    public static readonly ItemSpec ScrollArchcure = 0x1f45;
+    public static readonly ItemSpec ScrollArchprotection = 0x1f46;
+    public static readonly ItemSpec ScrollCurse = 0x1f47;
+    public static readonly ItemSpec ScrollFireField = 0x1f48;
+    public static readonly ItemSpec ScrollGreaterHeal = 0x1f49;
+    public static readonly ItemSpec ScrollLightning = 0x1f4a;
+    public static readonly ItemSpec ScrollManaDrain = 0x1f4b;
+    public static readonly ItemSpec ScrollRecall = 0x1f4c;
+    public static readonly ItemSpec ScrollBladeSpirits = 0x1f4d;
+    public static readonly ItemSpec ScrollDispelField = 0x1f4e;
+    public static readonly ItemSpec ScrollIncognito = 0x1f4f;
+    public static readonly ItemSpec ScrollMagicReflection = 0x1f50;
+    public static readonly ItemSpec ScrollMindBlast = 0x1f51;
+    public static readonly ItemSpec ScrollParalyze = 0x1f52;
+    public static readonly ItemSpec ScrollPoisonField = 0x1f53;
+    public static readonly ItemSpec ScrollSummonCreature = 0x1f54;
+    public static readonly ItemSpec ScrollDispel = 0x1f55;
+    public static readonly ItemSpec ScrollEnergyBolt = 0x1f56;
+    public static readonly ItemSpec ScrollExplosion = 0x1f57;
+    public static readonly ItemSpec ScrollInvisibility = 0x1f58;
+    public static readonly ItemSpec ScrollMark = 0x1f59;
+    public static readonly ItemSpec ScrollMassCurse = 0x1f5a;
+    public static readonly ItemSpec ScrollParalyzeField = 0x1f5b;
+    public static readonly ItemSpec ScrollReveal = 0x1f5c;
+    public static readonly ItemSpec ScrollChainLightning = 0x1f5d;
+    public static readonly ItemSpec ScrollEnergyField = 0x1f5e;
+    public static readonly ItemSpec ScrollFlamestrike = 0x1f5f;
+    public static readonly ItemSpec ScrollGateTravel = 0x1f60;
+    public static readonly ItemSpec ScrollManaVampire = 0x1f61;
+    public static readonly ItemSpec ScrollMassDispel = 0x1f62;
+    public static readonly ItemSpec ScrollMeteorSwarm = 0x1f63;
+    public static readonly ItemSpec ScrollPolymorph = 0x1f64;
+    public static readonly ItemSpec ScrollEarthquake = 0x1f65;
+    public static readonly ItemSpec ScrollEnergyVortex = 0x1f66;
+    public static readonly ItemSpec ScrollResurrection = 0x1f67;
+    public static readonly ItemSpec ScrollSummonElemAir = 0x1f68;
+    public static readonly ItemSpec ScrollSummonDaemon = 0x1f69;
+    public static readonly ItemSpec ScrollSummonElemEarth = 0x1f6a;
+    public static readonly ItemSpec ScrollSummonElemFire = 0x1f6b;
+    public static readonly ItemSpec ScrollSummonElemWater = 0x1f6c;
+    public static readonly ItemSpec ScrollXGreen2 = 0x1f6d;
+    public static readonly ItemSpec ScrollXTeal2 = 0x1f6f;
+    public static readonly ItemSpec ScrollXBrown2 = 0x1f71;
+
+    public static readonly ItemSpec Scrolls = new[] { ScrollReactiveArmor, ScrollClumsy, ScrollCreateFood, ScrollFeeblemind, ScrollHeal, ScrollMagicArrow, ScrollNightSight, ScrollWeaken, ScrollAgility, ScrollCunning, ScrollCure, ScrollHarm, ScrollMagicTrap, ScrollMagicUntrap, ScrollProtection, ScrollStrength, ScrollBless, ScrollFireball, ScrollMagicLock, ScrollPoison, ScrollTelekinesis, ScrollTeleport, ScrollUnlock, ScrollWallOfStone, ScrollArchcure, ScrollArchprotection, ScrollCurse, ScrollFireField, ScrollGreaterHeal, ScrollLightning, ScrollManaDrain, ScrollRecall, ScrollBladeSpirits, ScrollDispelField, ScrollIncognito, ScrollMagicReflection, ScrollMindBlast, ScrollParalyze, ScrollPoisonField, ScrollSummonCreature, ScrollDispel, ScrollEnergyBolt, ScrollExplosion, ScrollInvisibility, ScrollMark, ScrollMassCurse, ScrollParalyzeField, ScrollReveal, ScrollChainLightning, ScrollEnergyField, ScrollFlamestrike, ScrollGateTravel, ScrollManaVampire, ScrollMassDispel, ScrollMeteorSwarm, ScrollPolymorph, ScrollEarthquake, ScrollEnergyVortex, ScrollResurrection, ScrollSummonElemAir, ScrollSummonDaemon, ScrollSummonElemEarth, ScrollSummonElemFire, ScrollSummonElemWater, ScrollXGreen2, ScrollXTeal2, ScrollXBrown2 };
+
+    // Food
+    public static readonly ItemSpec Fishes = new[] { 0x09CF, 0x09CD, 0x09CC, 0x09CE };
+    public static readonly ItemSpec RawFishSteak = 0x097A;
+    public static readonly ItemSpec RawBird = 0x09B9;
+    public static readonly ItemSpec CookedBird = 0x09B7;
+    public static readonly ItemSpec RawRibs = 0x09F1;
+    public static readonly ItemSpec Ribs = 0x09F2;
+    public static readonly ItemSpec RawFood = new[] { RawBird, RawFishSteak, RawRibs };
+    public static readonly ItemSpec Food = new[] { Ribs, CookedBird };
+    public static readonly ItemSpec BunchOfDates = new[] { 0x1727 };
+
+    // Doors
+    public static readonly ItemSpec DoorSecretStone1 = new[] { 0x00e8, 0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00cb, 0x00cc, 0x00cd, 0x00ce, 0x00cf, 0x00d0, 0x00d1, 0x00d2, 0x00d3, 0x00d4, 0x00d5, 0x00d6, 0x00d7, 0x00d8, 0x00d9, 0x00da, 0x00db, 0x00dc, 0x00dd, 0x00de, 0x00df, 0x00e0, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7 };
+    public static readonly ItemSpec DoorSecretStone2 = new[] { 0x0314, 0x02f0, 0x02f1, 0x02f2, 0x02f3, 0x02f4, 0x0372, 0x0373, 0x0374, 0x0375, 0x0376, 0x0377 };
+    public static readonly ItemSpec DoorSecretStone3 = new[] { 0x0324, 0x0317, 0x0319, 0x031b, 0x031d, 0x031f, 0x0321, 0x0323 };
+    public static readonly ItemSpec DoorSecretWood1 = new[] { 0x0334, 0x0327, 0x0329, 0x032b, 0x032d, 0x032f, 0x0331, 0x0333 };
+    public static readonly ItemSpec DoorSecretWood2 = new[] { 0x0344, 0x0337, 0x0339, 0x033b, 0x033d, 0x033f, 0x0341, 0x0343 };
+    public static readonly ItemSpec DoorSecretStone4 = new[] { 0x0354, 0x0347, 0x0349, 0x034b, 0x034d, 0x034f, 0x0351, 0x0353 };
+    public static readonly ItemSpec DoorMetal = new[] { 0x0675, 0x0600, 0x0601, 0x0602, 0x0603, 0x0604, 0x0605, 0x0606, 0x0607, 0x0608, 0x0609, 0x060a, 0x060b, 0x060c, 0x060d, 0x060e, 0x060f, 0x0610, 0x0611, 0x0612, 0x0613, 0x0614, 0x0615, 0x0616, 0x0617, 0x0618, 0x0619, 0x061a, 0x061b, 0x061c, 0x061d, 0x061e, 0x061f, 0x0620, 0x0621, 0x0622, 0x0623, 0x0624, 0x0625, 0x0626, 0x0627, 0x0628, 0x0629, 0x062a, 0x0633, 0x0634, 0x0635, 0x0636, 0x0648, 0x0649, 0x064a, 0x064b, 0x064c, 0x064d, 0x064e, 0x064f, 0x0650, 0x0651, 0x065e, 0x065f, 0x0660, 0x0661, 0x0662, 0x0663, 0x0664, 0x0665, 0x0666, 0x0667, 0x0668, 0x0669, 0x066a, 0x066b, 0x066c, 0x066d, 0x066e, 0x066f, 0x0670, 0x0671, 0x0672, 0x0673, 0x0674 };
+    public static readonly ItemSpec DoorMetalBar = new[] { 0x0685, 0x0678, 0x067a, 0x067c, 0x067e, 0x0680, 0x0682, 0x0684 };
+    public static readonly ItemSpec DoorRattan = new[] { 0x0695, 0x0688, 0x068a, 0x068c, 0x068e, 0x0690, 0x0692, 0x0694 };
+    public static readonly ItemSpec DoorWood = new[] { 0x06a5, 0x0698, 0x069a, 0x069c, 0x069e, 0x06a0, 0x06a2, 0x06a4 };
+    public static readonly ItemSpec DoorWood4 = new[] { 0x06b5, 0x06a8, 0x06aa, 0x06ac, 0x06ae, 0x06b0, 0x06b2, 0x06b4 };
+    public static readonly ItemSpec DoorMetal2 = new[] { 0x06c5, 0x06b8, 0x06ba, 0x06bc, 0x06be, 0x06c0, 0x06c2, 0x06c4 };
+    public static readonly ItemSpec DoorWood2 = new[] { 0x06d5, 0x06c8, 0x06ca, 0x06cc, 0x06ce, 0x06d0, 0x06d2, 0x06d4 };
+    public static readonly ItemSpec DoorWood3 = new[] { 0x06e5, 0x06d8, 0x06da, 0x06dc, 0x06de, 0x06e0, 0x06e2, 0x06e4 };
+    public static readonly ItemSpec ClosedDoor = new[] { DoorSecretStone1, DoorSecretStone2, DoorSecretStone3, DoorSecretWood1, DoorSecretWood2, DoorSecretStone4, DoorMetal, DoorMetalBar, DoorRattan, DoorWood, DoorWood4, DoorMetal2, DoorWood2, DoorWood3 };
+
+    public static readonly ItemSpec OpenDoor = new[]
+    {
+        0x00e9, 0x00ea, 0x00ec, 0x00ee, 0x00f0, 0x00f2, 0x00f4, 0x00f6,
+        0x0315, 0x0316, 0x0318, 0x031a, 0x031c, 0x031e, 0x0320, 0x0322,
+        0x0325, 0x0326, 0x0328, 0x032a, 0x032c, 0x032e, 0x0330, 0x0332,
+        0x0335, 0x0336, 0x0338, 0x033a, 0x033c, 0x033e, 0x0340, 0x0342,
+        0x0345, 0x0346, 0x0348, 0x034a, 0x034c, 0x034e, 0x0350, 0x0352,
+        0x0355, 0x0356, 0x0358, 0x035a, 0x035c, 0x035e, 0x0360, 0x0362,
+        0x0676, 0x0677, 0x0679, 0x067b, 0x067d, 0x067f, 0x0681, 0x0683,
+        0x0686, 0x0687, 0x0689, 0x068b, 0x068d, 0x068f, 0x0691, 0x0693,
+        0x0696, 0x0697, 0x0699, 0x069b, 0x069d, 0x069f, 0x06a1, 0x06a3,
+        0x06a6, 0x06a7, 0x06a9, 0x06ab, 0x06ad, 0x06af, 0x06b1, 0x06b3,
+        0x06b6, 0x06b7, 0x06b9, 0x06bb, 0x06bd, 0x06bf, 0x06c1, 0x06c3,
+        0x06c6, 0x06c7, 0x06c9, 0x06cb, 0x06cd, 0x06cf, 0x06d1, 0x06d3,
+        0x06d6, 0x06d7, 0x06d9, 0x06db, 0x06dd, 0x06df, 0x06e1, 0x06e3,
+        0x06e6, 0x06e7, 0x06e9, 0x06eb, 0x06ed, 0x06ef, 0x06f1, 0x06f3
+    };
+
+    public static readonly ItemSpec Door = new[] { OpenDoor, ClosedDoor };
+
+    // Animals
+    public static readonly ItemSpec Bird = 0x0006;
+    public static readonly ItemSpec Eagle = 0x0005;
+    public static readonly ItemSpec Rabbit = 0x00CD;
+    public static readonly ItemSpec Sheep = 0x00CF;
+    public static readonly ItemSpec Cow = new[] { 0x00E7, 0x00D8 };
+    public static readonly ItemSpec Bull = new[] { 0x00E8, 0x00E9 };
+    public static readonly ItemSpec Rat = 0x00EE;
+    public static readonly ItemSpec Dog = 0x00D9;
+    public static readonly ItemSpec Deer = 0x00ED;
+    public static readonly ItemSpec Hart = 0x00EA;
+    public static readonly ItemSpec Bear = 0x00D3;
+    public static readonly ItemSpec Grizzlik = 0x00D4;
+    public static readonly ItemSpec Vlcek = 0x00E1;
+    public static readonly ItemSpec Hrabos = 0x00D7;
+    public static readonly ItemSpec Had = 0x0034;
+    public static readonly ItemSpec Prase = 0x00CB;
+
+    // Monsters
+    public static readonly ItemSpec Satan = 0x0310;
+    public static readonly ItemSpec Troll = 0x0035;
+    public static readonly ItemSpec SedyVlk = new ItemSpec(0x00E1, 0x03B3);
+
+    public static readonly ItemSpec Torsos = new[]
+    {
+        0x1DAD, 0x1CEB, 0x1DB2, 0x1CE3, 0x1DA2, 0x1CEE, 0x1CEF, 0x1CE4, 0x1DA3, 0x1DA1, 0x1D9F,
+        0x1DA0, 0x1CE7, 0x1CE2, 0x1CEC, 0x1CE8, 0x1CE0, 0x1CDD, 0x1CE5, 0x1CE1, 0x1DA4, 0x1CED,
+        0x1CDF, 0x1CDE, 0x1CE6, 0x1CF0, 0x1CEA
+    };
+
+    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366 };
+
+    private static Lazy<Dictionary<string, ItemSpec>> itemSpecs = new Lazy<Dictionary<string, ItemSpec>>(GetSpecs, true);
+
+    public static string TranslateToName(Item item)
+    {
+        foreach (var spec in itemSpecs.Value)
+        {
+            if (spec.Value.Matches(item))
+                return spec.Key;
+        }
+
+        return item.Type.ToString();
+    }
+
+    private static Dictionary<string, ItemSpec> GetSpecs() =>
+        typeof(ItemSpecs)
+            .GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Select(f => new KeyValuePair<string, ItemSpec>(f.Name, (ItemSpec)f.GetValue(null)))
+            .OrderByDescending(x => x.Value.Specificity)
+            .ToDictionary(x => x.Key, x => x.Value);
+}

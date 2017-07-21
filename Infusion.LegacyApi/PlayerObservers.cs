@@ -14,14 +14,16 @@ namespace Infusion.LegacyApi
         private readonly UltimaServer server;
         private readonly Player player;
         private readonly ILogger logger;
+        private readonly Legacy legacyApi;
         private bool discardNextClientAck;
 
-        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger)
+        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi)
         {
             this.client = client;
             this.server = server;
             this.player = player;
             this.logger = logger;
+            this.legacyApi = legacyApi;
 
             client.RegisterFilter(FilterClientPackets);
             client.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
@@ -54,7 +56,7 @@ namespace Infusion.LegacyApi
                 if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
                     return AttackResult.Timeout;
 
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
             }
 
             if (acceptedAttackTargedId == 0)

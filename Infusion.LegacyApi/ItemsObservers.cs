@@ -11,13 +11,15 @@ namespace Infusion.LegacyApi
         private readonly ManualResetEvent drawContainerReceivedEvent = new ManualResetEvent(false);
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private readonly ItemCollection items;
+        private readonly Legacy legacyApi;
 
         private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
 
-        public ItemsObservers(ItemCollection items, IServerPacketSubject serverPacketSubject)
+        public ItemsObservers(ItemCollection items, IServerPacketSubject serverPacketSubject, Legacy legacyApi)
         {
             this.items = items;
+            this.legacyApi = legacyApi;
             serverPacketSubject.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
             serverPacketSubject.Subscribe(PacketDefinitions.AddItemToContainer, HandleAddItemToContainer);
@@ -211,7 +213,7 @@ namespace Infusion.LegacyApi
 
             while (!itemDragResultReceived.WaitOne(sleepSpan))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
 
                 if (timeout.HasValue)
                 {
@@ -233,7 +235,7 @@ namespace Infusion.LegacyApi
             drawContainerReceivedEvent.Reset();
             while (!drawContainerReceivedEvent.WaitOne(sleepSpan))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
 
                 if (timeout.HasValue)
                 {
@@ -245,7 +247,7 @@ namespace Infusion.LegacyApi
 
             while (!resumeClientReceivedEvent.WaitOne(sleepSpan))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
 
                 if (timeout.HasValue)
                 {

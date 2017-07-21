@@ -19,15 +19,17 @@ namespace Infusion.LegacyApi
         private static readonly TimeSpan timeBetweenWalkingSteps = TimeSpan.FromMilliseconds(400);
         private readonly Func<bool> hasMount;
         private readonly UltimaServer server;
+        private readonly Legacy legacyApi;
 
         private readonly AutoResetEvent walkRequestDequeueEvent = new AutoResetEvent(false);
 
         private Location3D location;
 
-        internal Player(Func<bool> hasMount, UltimaServer server)
+        internal Player(Func<bool> hasMount, UltimaServer server, Legacy legacyApi)
         {
             this.hasMount = hasMount;
             this.server = server;
+            this.legacyApi = legacyApi;
         }
 
         public uint PlayerId { get; set; }
@@ -52,8 +54,8 @@ namespace Infusion.LegacyApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => Legacy.Items.FirstOrDefault(i => i.Type == backPackType && i.ContainerId == PlayerId);
-        public Item BankBox => Legacy.Items.OnLayer(Layer.BankBox).FirstOrDefault();
+        public Item BackPack => legacyApi.Items.FirstOrDefault(i => i.Type == backPackType && i.ContainerId == PlayerId);
+        public Item BankBox => legacyApi.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
         public Color Color { get; set; }
         public ModelId BodyType { get; set; }
@@ -101,7 +103,7 @@ namespace Infusion.LegacyApi
             if (lastEnqueueTime < timeBetweenSteps)
             {
                 var waitTime = timeBetweenSteps - lastEnqueueTime;
-                Legacy.Wait(waitTime.Milliseconds);
+                legacyApi.Wait(waitTime.Milliseconds);
             }
         }
 
@@ -109,7 +111,7 @@ namespace Infusion.LegacyApi
         {
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(200);
             }
         }

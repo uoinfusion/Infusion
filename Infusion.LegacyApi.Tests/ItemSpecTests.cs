@@ -1,9 +1,8 @@
 ﻿using FluentAssertions;
 using Infusion.Packets;
-using Infusion.Proxy.LegacyApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infusion.Proxy.Tests.InjectionApi
+namespace Infusion.LegacyApi.Tests
 {
     [TestClass]
     public class ItemSpecTests

@@ -45,10 +45,10 @@ namespace Infusion.Desktop
             };
 
 
-            Legacy.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));
-            Legacy.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Edit())), "Opens the script editor."));
-            Legacy.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)), "Loads a script file."));
-            Legacy.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls), "Clears console content."));
+            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));
+            UO.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Edit())), "Opens the script editor."));
+            UO.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)), "Loads a script file."));
+            UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls), "Clears console content."));
         }
 
         private void Cls()
@@ -95,8 +95,8 @@ namespace Infusion.Desktop
         {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
             {
-                Legacy.Events.ResetEvents();
-                Legacy.CommandHandler.Terminate();
+                UO.Events.ResetEvents();
+                UO.CommandHandler.Terminate();
                 _console.ScriptEngine.Reset();
                 await _console.ScriptEngine.ExecuteScript(scriptFileName);
             }

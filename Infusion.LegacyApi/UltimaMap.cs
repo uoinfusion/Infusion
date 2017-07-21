@@ -11,24 +11,11 @@ namespace Infusion.LegacyApi
         {
             var target = start.LocationInDirection(direction);
 
-            if (Legacy.Items.Where(i => (Location2D) i.Location == target)
-                .Any(i => TileData.ItemTable[(ushort) i.Type].Impassable))
-                return false;
-
             var tiles = Map.Felucca.Tiles.GetStaticTiles(target.X, target.Y);
             if (tiles.Length != 0)
             {
                 if (tiles.Any(t => TileData.ItemTable[t.ID].Impassable))
                     return false;
-
-                //bool bridge = tiles.Any(t =>
-                //{
-                //    var data = TileData.ItemTable[t.ID];
-                //    return data.Bridge || data.Surface;
-                //});
-
-                //if (bridge)
-                //    return true; // just override land checking
             }
 
             var targetLand = Map.Felucca.Tiles.GetLandTile(target.X, target.Y);

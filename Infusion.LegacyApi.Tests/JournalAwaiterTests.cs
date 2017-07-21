@@ -3,10 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Infusion.Packets;
-using Infusion.Proxy.LegacyApi;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infusion.Proxy.Tests.InjectionApi
+namespace Infusion.LegacyApi.Tests
 {
     [TestClass]
     public class JournalAwaiterTests
@@ -25,7 +24,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
         public void When_is_case_insensitive_by_default_when_waiting_and_already_in_journal()
         {
             var source = new JournalSource();
-            var journal = new GameJournal(source);
+            var journal = new GameJournal(source, null);
 
             source.AddMessage("name", "cas InSeNsItIvE", 0, 0);
 
@@ -41,7 +40,7 @@ namespace Infusion.Proxy.Tests.InjectionApi
         public void When_is_case_insensitive_by_default_when_waiting()
         {
             var source = new JournalSource();
-            var journal = new GameJournal(source);
+            var journal = new GameJournal(source, null);
 
             bool executed = false;
 

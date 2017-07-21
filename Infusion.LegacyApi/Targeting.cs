@@ -9,6 +9,7 @@ namespace Infusion.LegacyApi
     internal sealed class Targeting
     {
         private readonly UltimaClient client;
+        private readonly Legacy legacyApi;
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly UltimaServer server;
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
@@ -19,10 +20,11 @@ namespace Infusion.LegacyApi
         private string lastTargetInfo;
         private ModelId lastTypeInfo;
 
-        public Targeting(UltimaServer server, UltimaClient client)
+        public Targeting(UltimaServer server, UltimaClient client, Legacy legacyApi)
         {
             this.server = server;
             this.client = client;
+            this.legacyApi = legacyApi;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
             client.RegisterFilter(FilterClientTargetCursorPacket);
         }
@@ -61,7 +63,7 @@ namespace Infusion.LegacyApi
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        var lastItem = Legacy.Items[lastItemIdInfo];
+                        var lastItem = legacyApi.Items[lastItemIdInfo];
                         lastTargetInfo = lastItem?.ToString() ??
                                          $"{packet.ClickedOnId:X8} {packet.ClickedOnType} {packet.ClickedOnType}";
                         break;
@@ -79,7 +81,7 @@ namespace Infusion.LegacyApi
             targetFromServerReceivedEvent.Reset();
             while (!targetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
             }
         }
 
@@ -91,7 +93,7 @@ namespace Infusion.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
             }
 
             return lastTargetInfo;
@@ -165,7 +167,7 @@ namespace Infusion.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
             }
 
             return lastTypeInfo;
@@ -178,7 +180,7 @@ namespace Infusion.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
-                Legacy.CheckCancellation();
+                legacyApi.CheckCancellation();
             }
 
             return lastItemIdInfo;

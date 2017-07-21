@@ -38,9 +38,10 @@ namespace Infusion.Desktop
         {
             this.scriptOutput = scriptOutput;
             scriptOptions = ScriptOptions.Default
+                .WithImports("Infusion.LegacyApi", "Infusion.Packets", "Infusion.Gumps", "Infusion.Packets")
                 .WithReferences(
                 Assembly.Load("Infusion"),
-                Assembly.Load("Infusion.Proxy"));
+                Assembly.Load("Infusion.LegacyApi"));
         }
 
         public async Task ExecuteScript(string scriptPath)
@@ -111,9 +112,9 @@ namespace Infusion.Desktop
                     result = null;
                 }, executionMode: CommandExecutionMode.Direct);
 
-                Legacy.CommandHandler.RegisterCommand(command);
-                Legacy.CommandHandler.Invoke("," + commandName, cancellationTokenSource);
-                Legacy.CommandHandler.Unregister(command);
+                UO.CommandHandler.RegisterCommand(command);
+                UO.CommandHandler.Invoke("," + commandName, cancellationTokenSource);
+                UO.CommandHandler.Unregister(command);
 
                 return result;
             }, cancellationTokenSource?.Token ?? default(CancellationToken));

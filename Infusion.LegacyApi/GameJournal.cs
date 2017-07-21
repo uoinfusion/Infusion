@@ -2,17 +2,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Infusion.LegacyApi
 {
     public sealed class GameJournal : IEnumerable<JournalEntry>
     {
         private readonly JournalSource source;
+        private readonly Legacy legacyApi;
         private long journalEntryStartId;
 
-        internal GameJournal(JournalSource source)
+        internal GameJournal(JournalSource source, Legacy legacyApi)
         {
             this.source = source;
+            this.legacyApi = legacyApi;
             journalEntryStartId = source.CurrentJournalEntryId;
         }
 
@@ -39,85 +42,85 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(params string[] words)
         {
-            new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(words, () => { })
                 .WaitAny();
         }
 
         public JournalAwaiter When(string awaitedWord1, Action whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, Action whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, Action whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 
         public JournalAwaiter When(string[] awaitedWords, Action whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWords, whenAction);
         }
 
         public JournalAwaiter When(string[] awaitedWords, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWords, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3,
             Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(() => Legacy.CancellationToken, source, this)
+            return new JournalAwaiter(() => legacyApi.CancellationToken, source, this)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 

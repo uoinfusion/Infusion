@@ -23,7 +23,7 @@ namespace Infusion.Desktop
 
         public ConsoleControl()
         {
-            completer = new CommandAutocompleter(() => Legacy.CommandHandler.CommandNames);
+            completer = new CommandAutocompleter(() => UO.CommandHandler.CommandNames);
 
             InitializeComponent();
 
@@ -122,10 +122,10 @@ namespace Infusion.Desktop
 
         private void OnCommandEntered(string command)
         {
-            if (Legacy.CommandHandler.IsInvocationSyntax(command))
-                Legacy.CommandHandler.Invoke(command);
+            if (UO.CommandHandler.IsInvocationSyntax(command))
+                UO.CommandHandler.Invoke(command);
             else
-                Legacy.Say(command);
+                UO.Say(command);
         }
 
         private void FocusInputLine()

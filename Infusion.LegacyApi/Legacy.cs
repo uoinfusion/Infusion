@@ -9,80 +9,74 @@ using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
-    public static class Legacy
+    public class Legacy
     {
-        private static ItemsObservers itemsObserver;
-        private static JournalObservers journalObservers;
-        private static BlockedPacketsFilters blockedPacketsFilters;
-        private static GumpObservers gumpObservers;
+        private readonly ItemsObservers itemsObserver;
+        private readonly JournalObservers journalObservers;
+        private readonly BlockedPacketsFilters blockedPacketsFilters;
+        private readonly GumpObservers gumpObservers;
 
-        private static readonly ThreadLocal<CancellationToken?> cancellationToken =
+        private readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
 
-        private static Targeting targeting;
+        private readonly Targeting targeting;
 
-        private static JournalSource journalSource;
-        private static PlayerObservers playerObservers;
+        private readonly JournalSource journalSource;
+        private readonly PlayerObservers playerObservers;
 
-        private static ILogger logger;
+        private readonly ILogger logger;
 
-        public static LegacyEvents Events { get; private set; }
+        public LegacyEvents Events { get; }
 
-        public static Configuration Configuration { get; private set; } = new Configuration();
+        public Configuration Configuration { get; }
 
-        public static Gump CurrentGump => gumpObservers.CurrentGump;
+        public Gump CurrentGump => gumpObservers.CurrentGump;
 
-        public static CancellationToken? CancellationToken
+        public CancellationToken? CancellationToken
         {
             get => cancellationToken.Value;
             set => cancellationToken.Value = value;
         }
 
-        public static CommandHandler CommandHandler { get; private set; }
+        public CommandHandler CommandHandler { get; }
 
-        public static UltimaMap Map { get; } = new UltimaMap();
+        public UltimaMap Map { get; } = new UltimaMap();
 
-        public static ItemCollection Items { get; set; }
+        public ItemCollection Items { get; }
 
-        public static Player Me { get; set; }
+        public Player Me { get; }
 
-        public static GameJournal Journal { get; set; }
+        public GameJournal Journal { get; }
 
-        internal static HashSet<uint> IgnoredItems { get; } = new HashSet<uint>();
+        public ISet<uint> IgnoredItems { get; } = new HashSet<uint>();
 
-        public static UltimaServer Server { get; private set; }
-        public static UltimaClient Client { get; private set; }
+        public UltimaServer Server { get; }
+        public UltimaClient Client { get; }
 
-        public static void OpenContainer(Item container, TimeSpan? timeout = null)
+        public void OpenContainer(Item container, TimeSpan? timeout = null)
         {
             OpenContainer(container.Id);
         }
 
-        public static void OpenContainer(uint containerId, TimeSpan? timeout = null)
+        public void OpenContainer(uint containerId, TimeSpan? timeout = null)
         {
             Use(containerId);
 
             itemsObserver.WaitForContainerOpened(timeout);
         }
 
-        public static void RegisterCommand(string name, Action commandAction)
-        {
-            CommandHandler.RegisterCommand(name,
-                commandAction);
-        }
+        public Command RegisterCommand(string name, Action commandAction) => CommandHandler.RegisterCommand(name,
+            commandAction);
 
-        public static void RegisterCommand(string name, Action<string> commandAction)
-        {
-            CommandHandler.RegisterCommand(name,
-                commandAction);
-        }
+        public Command RegisterCommand(string name, Action<string> commandAction) => CommandHandler.RegisterCommand(name,
+            commandAction);
 
-        public static void Alert(string message)
+        public void Alert(string message)
         {
             logger.Critical(message);
         }
 
-        private static void RegisterDefaultCommands()
+        private void RegisterDefaultCommands()
         {
             CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters),
                 "Walks to the specified location.", "Example: ,walkto 1234 432"));
@@ -92,47 +86,51 @@ namespace Infusion.LegacyApi
                 "Shows information about the last gump dispalyed in Ultima Online client."));
             CommandHandler.RegisterCommand(new Command("opendoor", OpenDoor,
                 "Opens neares closed doors. This is analogue to UO client's 'opendoor' macro."));
+            CommandHandler.RegisterCommand(new Command("waron", WarModeOn,
+                "War mode on."));
+            CommandHandler.RegisterCommand(new Command("waroff", WarModeOff,
+                "War mode off."));
             CommandHandler.RegisterCommand(new Command("terminate", Terminate,
                 "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
         }
 
-        public static GameJournal CreateJournal()
+        public GameJournal CreateJournal()
         {
-            return new GameJournal(journalSource);
+            return new GameJournal(journalSource, this);
         }
 
-        public static void Say(string message)
+        public void Say(string message)
         {
             journalSource.NotifyLastAction();
 
             Server.Say(message);
         }
 
-        public static Gump WaitForGump(TimeSpan? timeout = null)
+        public Gump WaitForGump(TimeSpan? timeout = null)
         {
             return gumpObservers.WaitForGump(timeout);
         }
 
-        public static void Initialize(Configuration configuration, CommandHandler commandHandler,
+        public Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
-            Me = new Player(() => Items.OnLayer(Layer.Mount).First() != null, Server);
-            gumpObservers = new GumpObservers(ultimaServer, ultimaClient);
+            Me = new Player(() => Items.OnLayer(Layer.Mount).First() != null, Server, this);
+            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
             Items = new ItemCollection(Me);
-            itemsObserver = new ItemsObservers(Items, ultimaServer);
+            itemsObserver = new ItemsObservers(Items, ultimaServer, this);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
-            Journal = new GameJournal(journalSource);
+            Journal = new GameJournal(journalSource, this);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
-            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger);
+            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
-            targeting = new Targeting(ultimaServer, ultimaClient);
+            targeting = new Targeting(ultimaServer, ultimaClient, this);
 
             blockedPacketsFilters = new BlockedPacketsFilters(ultimaServer);
 
             Events = new LegacyEvents(itemsObserver);
 
-            Legacy.logger = logger;
+            this.logger = logger;
             Server = ultimaServer;
             Client = ultimaClient;
 
@@ -143,7 +141,7 @@ namespace Infusion.LegacyApi
             Configuration = configuration;
         }
 
-        public static void Use(uint objectId)
+        public void Use(uint objectId)
         {
             CheckCancellation();
 
@@ -151,27 +149,27 @@ namespace Infusion.LegacyApi
             Server.DoubleClick(objectId);
         }
 
-        internal static void CheckCancellation()
+        internal void CheckCancellation()
         {
             cancellationToken.Value?.ThrowIfCancellationRequested();
         }
 
-        public static void RequestClientStatus(Item item)
+        public void RequestStatus(Item item)
         {
-            Server.RequestClientStatus(item.Id);
+            Server.RequestStatus(item.Id);
         }
 
-        public static void Use(Item item)
+        public void Use(Item item)
         {
             Use(item.Id);
         }
 
-        public static void Click(Item item)
+        public void Click(Item item)
         {
             Server.Click(item.Id);
         }
 
-        public static bool Use(ItemSpec spec)
+        public bool Use(ItemSpec spec)
         {
             CheckCancellation();
 
@@ -188,7 +186,7 @@ namespace Infusion.LegacyApi
             return true;
         }
 
-        public static bool UseType(ModelId type)
+        public bool UseType(ModelId type)
         {
             CheckCancellation();
 
@@ -206,7 +204,7 @@ namespace Infusion.LegacyApi
             return true;
         }
 
-        public static bool UseType(params ModelId[] types)
+        public bool UseType(params ModelId[] types)
         {
             CheckCancellation();
 
@@ -227,7 +225,7 @@ namespace Infusion.LegacyApi
             return false;
         }
 
-        public static void Wait(int milliseconds)
+        public void Wait(int milliseconds)
         {
             while (milliseconds > 0)
             {
@@ -237,45 +235,45 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public static void Wait(TimeSpan span)
+        public void Wait(TimeSpan span)
         {
             Wait((int) span.TotalMilliseconds);
         }
 
-        public static void WaitToAvoidFastWalk(MovementType movementType)
+        public void WaitToAvoidFastWalk(MovementType movementType)
         {
             Me.WaitToAvoidFastWalk(movementType);
         }
 
-        public static void WaitWalkAcknowledged()
+        public void WaitWalkAcknowledged()
         {
             CheckCancellation();
             Me.WaitWalkAcknowledged();
         }
 
-        public static void Walk(Direction direction, MovementType movementType = MovementType.Walk)
+        public void Walk(Direction direction, MovementType movementType = MovementType.Walk)
         {
             CheckCancellation();
 
             Me.Walk(direction, movementType);
         }
 
-        public static void WarModeOn()
+        public void WarModeOn()
         {
             Server.RequestWarMode(WarMode.Fighting);
         }
 
-        public static void WarModeOff()
+        public void WarModeOff()
         {
             Server.RequestWarMode(WarMode.Normal);
         }
 
-        public static AttackResult Attack(Item target, TimeSpan? timeout = null)
+        public AttackResult Attack(Item target, TimeSpan? timeout = null)
         {
             return playerObservers.Attack(target.Id, timeout);
         }
 
-        public static void TargetTile(string tileInfo)
+        public void TargetTile(string tileInfo)
         {
             CheckCancellation();
 
@@ -283,7 +281,7 @@ namespace Infusion.LegacyApi
             targeting.TargetTile(tileInfo);
         }
 
-        public static void Target(Item item)
+        public void Target(Item item)
         {
             CheckCancellation();
 
@@ -291,7 +289,7 @@ namespace Infusion.LegacyApi
             targeting.Target(item);
         }
 
-        public static void Target(Player player)
+        public void Target(Player player)
         {
             CheckCancellation();
 
@@ -299,7 +297,7 @@ namespace Infusion.LegacyApi
             targeting.Target(player);
         }
 
-        public static void Terminate(string parameters)
+        public void Terminate(string parameters)
         {
             try
             {
@@ -315,23 +313,18 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public static string Info()
+        public string Info()
         {
             return targeting.Info();
         }
 
-        private static void InfoCommand()
+        private void InfoCommand()
         {
             var info = Info();
-            ClientPrintAndLog(!string.IsNullOrEmpty(info) ? info : "Targeting cancelled.");
+            ClientPrint(!string.IsNullOrEmpty(info) ? info : "Targeting cancelled.");
         }
 
-        public static ModelId TypeInfo()
-        {
-            return targeting.TypeInfo();
-        }
-
-        public static Item ItemInfo()
+        public Item ItemInfo()
         {
             var itemId = targeting.ItemIdInfo();
 
@@ -342,26 +335,26 @@ namespace Infusion.LegacyApi
             return item;
         }
 
-        public static void WaitForTarget()
+        public void WaitForTarget()
         {
             CheckCancellation();
 
             targeting.WaitForTarget();
         }
 
-        public static void DropItem(Item item, Item targetContainer)
+        public void DropItem(Item item, Item targetContainer)
         {
             CheckCancellation();
 
             Server.DropItem(item.Id, targetContainer.Id);
         }
 
-        public static void DragItem(Item item)
+        public void DragItem(Item item)
         {
             DragItem(item, item.Amount);
         }
 
-        public static void DragItem(Item item, ushort amount)
+        public void DragItem(Item item, ushort amount)
         {
             CheckCancellation();
             itemsObserver.DraggedItemId = item.Id;
@@ -369,13 +362,13 @@ namespace Infusion.LegacyApi
             Server.DragItem(item.Id, amount);
         }
 
-        public static bool MoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
+        public bool MoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
         {
             return MoveItem(item, item.Amount, targetContainer, timeout, dropDelay);
         }
 
-        public static bool MoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+        public bool MoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
         {
             DragItem(item, amount);
@@ -390,43 +383,43 @@ namespace Infusion.LegacyApi
             return true;
         }
 
-        public static DragResult WaitForItemDragged(TimeSpan? timeout = null)
+        public DragResult WaitForItemDragged(TimeSpan? timeout = null)
         {
             return itemsObserver.WaitForItemDragged(timeout);
         }
 
-        public static void Log(string message)
+        public void Log(string message)
         {
             logger.Info(message);
         }
 
-        public static void TriggerGump(uint triggerId)
+        public void TriggerGump(uint triggerId)
         {
             gumpObservers.TriggerGump(triggerId);
         }
 
-        public static GumpResponseBuilder GumpResponse()
+        public GumpResponseBuilder GumpResponse()
         {
             return gumpObservers.GumpResponse();
         }
 
-        public static void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
+        public void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
             gumpObservers.SelectGumpButton(buttonLabel, labelPosition);
         }
 
-        public static void LastGumpInfo()
+        public void LastGumpInfo()
         {
             var gumpInfo = gumpObservers.LastGumpInfo();
             Log(gumpInfo);
         }
 
-        public static void CloseGump()
+        public void CloseGump()
         {
             gumpObservers.CloseGump();
         }
 
-        public static void StepToward(Location2D currentLocation, Location2D targetLocation)
+        public void StepToward(Location2D currentLocation, Location2D targetLocation)
         {
             var walkVector = (targetLocation - currentLocation).Normalize();
             if (walkVector != Vector.NullVector)
@@ -442,17 +435,17 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public static void StepToward(Item item)
+        public void StepToward(Item item)
         {
             StepToward(item.Location);
         }
 
-        public static void StepToward(Location2D targetLocation)
+        public void StepToward(Location2D targetLocation)
         {
             StepToward(Me.Location, targetLocation);
         }
 
-        public static void WalkTo(Location2D targetLocation)
+        public void WalkTo(Location2D targetLocation)
         {
             while (Me.Location != targetLocation)
             {
@@ -460,18 +453,18 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public static void WalkTo(ushort xloc, ushort yloc)
+        public void WalkTo(ushort xloc, ushort yloc)
         {
             WalkTo(new Location2D(xloc, yloc));
         }
 
-        internal static void WalkTo(string parameters)
+        internal void WalkTo(string parameters)
         {
             var parser = new CommandParameterParser(parameters);
             WalkTo((ushort) parser.ParseInt(), (ushort) parser.ParseInt());
         }
 
-        public static bool Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        public bool Wear(Item item, Layer layer, TimeSpan? timeout = null)
         {
             DragItem(item, 1);
             if (WaitForItemDragged(timeout) != DragResult.Success)
@@ -482,59 +475,55 @@ namespace Infusion.LegacyApi
             return true;
         }
 
-        public static void CastSpell(Spell spell)
+        public void CastSpell(Spell spell)
         {
             journalSource.NotifyLastAction();
 
             Server.CastSpell(spell);
         }
 
-        public static void UseSkill(Skill skill)
+        public void UseSkill(Skill skill)
         {
             journalSource.NotifyLastAction();
 
             Server.UseSkill(skill);
         }
 
-        public static void OpenDoor()
+        public void OpenDoor()
         {
             Server.OpenDoor();
         }
 
-        public static void Ignore(Item item)
+        public void Ignore(Item item)
         {
             IgnoredItems.Add(item.Id);
         }
 
-        public static void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type,
-            Color color)
+        public void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type,
+            Color color,  bool log = true)
         {
             Client.SendSpeech(message, name, itemId, itemModel, type, color);
+            if (log)
+                Log(message);
         }
 
-        public static void ClientPrintAndLog(string message)
+        public void ClientPrint(string message, bool log = true)
         {
-            ClientPrint(message);
-            logger.Info(message);
+            ClientPrint(message, "System", 0, 0, SpeechType.Normal, (Color) 0x03B2, log);
         }
 
-        public static void ClientPrint(string message)
-        {
-            ClientPrint(message, "System", 0, 0, SpeechType.Normal, (Color) 0x03B2);
-        }
-
-        public static void ClientPrint(string message, string name, Player onBehalfPlayer)
+        public void ClientPrint(string message, string name, Player onBehalfPlayer, bool log = true)
         {
             ClientPrint(message, name, onBehalfPlayer.PlayerId, onBehalfPlayer.BodyType, SpeechType.Speech,
-                (Color) 0x0026);
+                (Color) 0x0026, log);
         }
 
-        public static void ClientPrint(string message, string name, Item onBehalfItem)
+        public void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)
         {
-            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026);
+            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026, log);
         }
 
-        public static void CloseContainer(Item container)
+        public void CloseContainer(Item container)
         {
             Client.CloseContainer(container.Id);
         }

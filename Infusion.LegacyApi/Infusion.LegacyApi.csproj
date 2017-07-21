@@ -60,6 +60,7 @@
     <Compile Include="JournalEntry.cs" />
     <Compile Include="JournalObservers.cs" />
     <Compile Include="JournalSource.cs" />
+    <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />
     <Compile Include="LegacyEvents.cs" />
     <Compile Include="Player.cs" />

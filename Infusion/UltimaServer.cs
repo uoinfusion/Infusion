@@ -61,7 +61,7 @@ namespace Infusion
             Send(new SingleClickRequest(itemId).RawPacket);
         }
 
-        public void RequestClientStatus(uint id)
+        public void RequestStatus(uint id)
         {
             var packet = new GetClientStatusRequest(id);
 

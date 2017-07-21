@@ -12,15 +12,17 @@ namespace Infusion.LegacyApi
     {
         private readonly UltimaServer server;
         private readonly UltimaClient client;
+        private readonly Legacy legacy;
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private bool blockNextGumpMenuSelectionRequest;
         private bool showNextAwaitedGump = true;
 
-        public GumpObservers(UltimaServer server, UltimaClient client)
+        public GumpObservers(UltimaServer server, UltimaClient client, Legacy legacy)
         {
             this.server = server;
             this.client = client;
+            this.legacy = legacy;
             server.RegisterFilter(FilterSendGumpMenuDialog);
             client.RegisterFilter(FilterGumpMenuSelection);
             client.Subscribe(PacketDefinitions.GumpMenuSelection, GumpMenuSelectionRequest);
@@ -91,7 +93,7 @@ namespace Infusion.LegacyApi
                 if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
                     return null;
 
-                Legacy.CheckCancellation();
+                legacy.CheckCancellation();
             }
             return CurrentGump;
         }

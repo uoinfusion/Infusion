@@ -114,7 +114,7 @@ namespace Infusion.LegacyApi
         public Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
-            Me = new Player(() => Items.OnLayer(Layer.Mount).First() != null, Server, this);
+            Me = new Player(() => Items.OnLayer(Layer.Mount).First() != null, ultimaServer, this);
             gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
             Items = new ItemCollection(Me);
             itemsObserver = new ItemsObservers(Items, ultimaServer, this);

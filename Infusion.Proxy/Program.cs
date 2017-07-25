@@ -74,7 +74,7 @@ namespace Infusion.Proxy
                 Console.Info(command.Name);
         }
 
-        static Program()
+        public static void Initialize()
         {
             commandHandler = new CommandHandler(Program.Console);
             var commandObservers = new CommandHandlerObservers(clientPacketHandler, commandHandler);
@@ -88,6 +88,7 @@ namespace Infusion.Proxy
             var legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
             UO.Initialize(legacyApi);
         }
+
 
         public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {

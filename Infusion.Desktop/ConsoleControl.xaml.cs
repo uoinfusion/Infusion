@@ -41,6 +41,7 @@ namespace Infusion.Desktop
             Program.Console = new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration),
                 new FileLogger(Program.Configuration));
+            Program.Initialize();
             DataContext = consoleContent;
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
 

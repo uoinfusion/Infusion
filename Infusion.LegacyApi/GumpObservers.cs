@@ -117,7 +117,7 @@ namespace Infusion.LegacyApi
                 server.RequestGumpSelection(packet);
 
                 blockNextGumpMenuSelectionRequest = true;
-                client.CloseGump(CurrentGump.Id);
+                client.CloseGump(CurrentGump.GumpId);
                 CurrentGump = null;
             }
         }

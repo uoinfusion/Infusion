@@ -38,7 +38,7 @@ namespace Infusion.Desktop
         {
             this.scriptOutput = scriptOutput;
             scriptOptions = ScriptOptions.Default
-                .WithImports("Infusion.LegacyApi", "Infusion.Packets", "Infusion.Gumps", "Infusion.Packets")
+                .WithImports("System.Linq", "Infusion.LegacyApi", "Infusion.Packets", "Infusion.Gumps", "Infusion.Packets")
                 .WithReferences(
                 Assembly.Load("Infusion"),
                 Assembly.Load("Infusion.LegacyApi"));

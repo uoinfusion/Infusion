@@ -51,7 +51,8 @@ namespace Infusion.Desktop
 
             string scriptDirectory = Path.GetDirectoryName(scriptPath);
             scriptOptions = scriptOptions.WithSourceResolver(
-                ScriptSourceResolver.Default.WithSearchPaths(scriptDirectory));
+                    ScriptSourceResolver.Default.WithSearchPaths(scriptDirectory))
+                .WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(scriptDirectory));
 
             Directory.SetCurrentDirectory(scriptDirectory);
 

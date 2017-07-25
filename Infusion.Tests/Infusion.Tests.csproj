@@ -96,8 +96,6 @@
     <Compile Include="Packets\Server\WornItemPacketTests.cs" />
     <Compile Include="Packets\SpeechRequestTests.cs" />
     <Compile Include="Parsers\OutputLogParserTests.cs" />
-    <Compile Include="Strategies\KnownPathRetreatStrategyTests.cs" />
-    <Compile Include="Strategies\PathFinderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerConnectionTests.cs" />
     <Compile Include="TestMemoryStream.cs" />

@@ -207,7 +207,7 @@ namespace Infusion.LegacyApi
 
         public static void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type,
             Color color, bool log = true)
-            => Current.ClientPrint(message, name, itemId, itemModel, type, color);
+            => Current.ClientPrint(message, name, itemId, itemModel, type, color, log);
 
         public static void ClientPrint(string message, bool log = true)
             => Current.ClientPrint(message, log);

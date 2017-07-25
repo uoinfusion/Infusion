@@ -44,4 +44,4 @@ public static class HitPointNotifier
     }
 }
 
-UO.RegisterCommand("hpnotification", HitPointNotifier.Toggle);
+UO.RegisterCommand("hpnotify", HitPointNotifier.Toggle);

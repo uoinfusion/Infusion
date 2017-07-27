@@ -38,7 +38,7 @@ namespace Infusion.Desktop
         {
             this.scriptOutput = scriptOutput;
             scriptOptions = ScriptOptions.Default
-                .WithImports("System.Linq", "Infusion.LegacyApi", "Infusion.Packets", "Infusion.Gumps", "Infusion.Packets")
+                .WithImports("Infusion.LegacyApi", "Infusion.Packets", "Infusion.Gumps")
                 .WithReferences(
                 Assembly.Load("Infusion"),
                 Assembly.Load("Infusion.LegacyApi"));
@@ -48,11 +48,12 @@ namespace Infusion.Desktop
         {
             scriptOutput.Info($"Loading script: {scriptPath}");
             string scriptText = File.ReadAllText(scriptPath);
+            string binDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
 
             string scriptDirectory = Path.GetDirectoryName(scriptPath);
             scriptOptions = scriptOptions.WithSourceResolver(
                     ScriptSourceResolver.Default.WithSearchPaths(scriptDirectory))
-                .WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(scriptDirectory));
+                .WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(scriptDirectory, binDirectory));
 
             Directory.SetCurrentDirectory(scriptDirectory);
 

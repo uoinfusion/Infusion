@@ -32,7 +32,7 @@ namespace Infusion.LegacyApi
                 i.Layer.HasValue && i.Layer.Value == layer &&
                 i.ContainerId.HasValue && i.ContainerId.Value == UO.Me.PlayerId);
 
-        public static Item First(this IEnumerable<Item> items) => items.FirstOrDefault();
+        public static Item FirstOrDefault(this IEnumerable<Item> items) => Enumerable.FirstOrDefault(items);
 
         public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, Item container)
             => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);

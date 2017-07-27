@@ -86,9 +86,9 @@ namespace Infusion.LegacyApi
                 "Shows information about the last gump dispalyed in Ultima Online client."));
             CommandHandler.RegisterCommand(new Command("opendoor", OpenDoor,
                 "Opens neares closed doors. This is analogue to UO client's 'opendoor' macro."));
-            CommandHandler.RegisterCommand(new Command("waron", WarModeOn,
+            CommandHandler.RegisterCommand(new Command("warmode-on", WarModeOn,
                 "War mode on."));
-            CommandHandler.RegisterCommand(new Command("waroff", WarModeOff,
+            CommandHandler.RegisterCommand(new Command("warmode-off", WarModeOff,
                 "War mode off."));
             CommandHandler.RegisterCommand(new Command("terminate", Terminate,
                 "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
@@ -114,7 +114,7 @@ namespace Infusion.LegacyApi
         public Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
-            Me = new Player(() => Items.OnLayer(Layer.Mount).First() != null, ultimaServer, this);
+            Me = new Player(() => Items.OnLayer(Layer.Mount).FirstOrDefault() != null, ultimaServer, this);
             gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
             Items = new ItemCollection(Me);
             itemsObserver = new ItemsObservers(Items, ultimaServer, this);
@@ -173,10 +173,10 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).First()
-                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).First()
-                       ?? Items.Matching(spec).InContainer(Me.BackPack).First()
-                       ?? Items.Matching(spec).OnLayer(Layer.Backpack).First();
+            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
+                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
+                       ?? Items.Matching(spec).InContainer(Me.BackPack).FirstOrDefault()
+                       ?? Items.Matching(spec).OnLayer(Layer.Backpack).FirstOrDefault();
 
             if (item != null)
                 Use(item);
@@ -190,10 +190,10 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon).First()
-                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).First()
-                       ?? Items.OfType(type).InContainer(Me.BackPack).First()
-                       ?? Items.OfType(type).OnLayer(Layer.Backpack).First();
+            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
+                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
+                       ?? Items.OfType(type).InContainer(Me.BackPack).FirstOrDefault()
+                       ?? Items.OfType(type).OnLayer(Layer.Backpack).FirstOrDefault();
             if (item != null)
             {
                 Use(item);
@@ -208,10 +208,10 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(types).InContainer(Me.BackPack).First()
-                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).First()
-                       ?? Items.OfType(types).OnLayer(Layer.TwoHandedWeapon).First()
-                       ?? Items.OfType(types).OnLayer(Layer.Backpack).First();
+            var item = Items.OfType(types).InContainer(Me.BackPack).FirstOrDefault()
+                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
+                       ?? Items.OfType(types).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
+                       ?? Items.OfType(types).OnLayer(Layer.Backpack).FirstOrDefault();
 
             if (item != null)
             {

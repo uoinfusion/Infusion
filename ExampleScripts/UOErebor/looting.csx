@@ -1,6 +1,7 @@
 #load "ItemSpecs.csx"
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using Infusion.Commands;
@@ -117,7 +118,7 @@ public static class Looting
         LootGround();
 
         var corpses = GetLootableCorpses().ToArray();
-        var corpse = corpses.MaxDistance(3).First();
+        var corpse = corpses.MaxDistance(3).FirstOrDefault();
 
         if (corpse != null)
         {
@@ -212,7 +213,7 @@ public static class Looting
     public static void Rip(Item container)
     {
         UO.ClientPrint("Ripping");
-        var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).First() ?? UO.Items.OnLayer(Layer.TwoHandedWeapon).First();
+        var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault() ?? UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
         if (!UO.Use(ItemSpecs.Knives))
             return;
 

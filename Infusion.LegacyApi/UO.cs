@@ -37,7 +37,9 @@ namespace Infusion.LegacyApi
 
         public static UltimaMap Map => Current.Map;
 
+        internal static GameObjectCollection GameObjects => Current.GameObjects;
         public static ItemCollection Items => Current.Items;
+        public static MobileCollection Mobiles => Current.Mobiles;
 
         public static Player Me => Current.Me;
 
@@ -73,13 +75,19 @@ namespace Infusion.LegacyApi
         public static void Use(uint objectId)
             => Current.Use(objectId);
 
-        public static void RequestStatus(Item item)
+        public static void RequestStatus(Mobile item)
             => Current.RequestStatus(item);
 
-        public static void Use(Item item)
+        public static Item AskForItem()
+            => Current.AskForItem();
+
+        public static Mobile AskForMobile()
+            => Current.AskForMobile();
+
+        public static void Use(GameObject item)
             => Current.Use(item);
 
-        public static void Click(Item item)
+        public static void Click(GameObject item)
             => Current.Click(item);
 
         public static bool Use(ItemSpec spec)
@@ -112,13 +120,13 @@ namespace Infusion.LegacyApi
         public static void WarModeOff()
             => Current.WarModeOff();
 
-        public static AttackResult Attack(Item target, TimeSpan? timeout = null)
+        public static AttackResult Attack(Mobile target, TimeSpan? timeout = null)
             => Current.Attack(target, timeout);
 
         public static void TargetTile(string tileInfo)
             => Current.TargetTile(tileInfo);
 
-        public static void Target(Item item)
+        public static void Target(GameObject item)
             => Current.Target(item);
 
         public static void Target(Player player)
@@ -129,9 +137,6 @@ namespace Infusion.LegacyApi
 
         public static string Info()
             => Current.Info();
-
-        public static Item ItemInfo()
-            => Current.ItemInfo();
 
         public static void WaitForTarget()
             => Current.WaitForTarget();
@@ -177,8 +182,8 @@ namespace Infusion.LegacyApi
         public static void StepToward(Location2D currentLocation, Location2D targetLocation)
             => Current.StepToward(currentLocation, targetLocation);
 
-        public static void StepToward(Item item)
-            => Current.StepToward(item);
+        public static void StepToward(GameObject gameObject)
+            => Current.StepToward(gameObject);
 
         public static void StepToward(Location2D targetLocation)
             => Current.StepToward(targetLocation);
@@ -221,7 +226,7 @@ namespace Infusion.LegacyApi
         public static void CloseContainer(Item container)
             => Current.CloseContainer(container);
 
-        public static IEnumerable<uint> IgnoredItems => Current.IgnoredItems;
+        public static IEnumerable<uint> IgnoredObjects => Current.IgnoredItems;
 
     }
 }

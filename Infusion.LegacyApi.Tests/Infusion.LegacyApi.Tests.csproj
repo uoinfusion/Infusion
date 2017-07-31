@@ -61,6 +61,7 @@
     <Compile Include="ItemCollectionTests.cs" />
     <Compile Include="ItemSpecTests.cs" />
     <Compile Include="JournalAwaiterTests.cs" />
+    <Compile Include="MobileSpecTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

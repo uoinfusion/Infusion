@@ -4,13 +4,13 @@ namespace Infusion.LegacyApi
 {
     public struct CurrentHealthUpdatedArgs
     {
-        internal CurrentHealthUpdatedArgs(Item updatedItem, ushort oldHealth)
+        internal CurrentHealthUpdatedArgs(Mobile updatedMobile, ushort oldHealth)
         {
-            UpdatedItem = updatedItem;
+            UpdatedMobile = updatedMobile;
             OldHealth = oldHealth;
         }
 
-        public Item UpdatedItem { get; }
+        public Mobile UpdatedMobile { get; }
         public ushort OldHealth { get; }
     }
 }

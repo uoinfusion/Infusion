@@ -18,7 +18,7 @@ namespace Infusion.LegacyApi
         public static IEnumerable<Item> OfType(this IEnumerable<Item> items, ModelId[] types)
             => items.Where(i => types.Contains(i.Type));
 
-        public static IEnumerable<Item> OfColor(this IEnumerable<Item> items, Color color)
+        public static IEnumerable<Item> OfColor(this IEnumerable<Item> items, Color? color)
             => items.Where(i => i.Color == color);
 
         public static IEnumerable<Item> Matching(this IEnumerable<Item> items, ItemSpec spec)
@@ -34,7 +34,7 @@ namespace Infusion.LegacyApi
 
         public static Item FirstOrDefault(this IEnumerable<Item> items) => Enumerable.FirstOrDefault(items);
 
-        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, Item container)
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, GameObject container)
             => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
 
         public static IEnumerable<Item> OnGround(this IEnumerable<Item> items)
@@ -48,7 +48,7 @@ namespace Infusion.LegacyApi
 
         public static ModelId[] ToModelIds(this ushort[] ids) => ids.Select(i => (ModelId) i).ToArray();
 
-        public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, ushort maxDistance) 
+        public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, ushort maxDistance)
             => items.Where(i => i.GetDistance(UO.Me.Location) <= maxDistance);
 
         public static IEnumerable<Item> MaxDistance(this IEnumerable<Item> items, Location2D referenceLocation,
@@ -63,8 +63,10 @@ namespace Infusion.LegacyApi
         public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, ushort minDistance)
             => items.Where(i => i.GetDistance(UO.Me.Location) >= minDistance);
 
-        public static IEnumerable<Item> NotIgnored(this IEnumerable<Item> items) => items.Where(x => !UO.IgnoredItems.Contains(x.Id));
+        public static IEnumerable<Item> NotIgnored(this IEnumerable<Item> items) => items.Where(x => !UO.IgnoredObjects
+            .Contains(x.Id));
 
-        public static IEnumerable<Item> Ignored(this IEnumerable<Item> items) => items.Where(x => UO.IgnoredItems.Contains(x.Id));
+        public static IEnumerable<Item> Ignored(this IEnumerable<Item> items) => items.Where(x => UO.IgnoredObjects
+            .Contains(x.Id));
     }
 }

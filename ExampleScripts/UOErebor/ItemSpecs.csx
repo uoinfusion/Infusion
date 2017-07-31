@@ -290,7 +290,7 @@ public static class ItemSpecs
         0x1CDF, 0x1CDE, 0x1CE6, 0x1CF0, 0x1CEA
     };
 
-    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366 };
+    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363 };
 
     private static Lazy<Dictionary<string, ItemSpec>> itemSpecs = new Lazy<Dictionary<string, ItemSpec>>(GetSpecs, true);
 

@@ -9,16 +9,17 @@ namespace Infusion.LegacyApi
     internal class ItemsObservers
     {
         private readonly ManualResetEvent drawContainerReceivedEvent = new ManualResetEvent(false);
+        private readonly GameObjectCollection gameObjects;
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
-        private readonly ItemCollection items;
         private readonly Legacy legacyApi;
 
         private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
 
-        public ItemsObservers(ItemCollection items, IServerPacketSubject serverPacketSubject, Legacy legacyApi)
+        public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject,
+            Legacy legacyApi)
         {
-            this.items = items;
+            this.gameObjects = gameObjects;
             this.legacyApi = legacyApi;
             serverPacketSubject.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
@@ -45,13 +46,13 @@ namespace Infusion.LegacyApi
 
         private void UpdateHealth(uint id, ushort newHealth, ushort newMaxHealth)
         {
-            var item = items[id];
-            if (item != null)
+            var mobile = gameObjects[id] as Mobile;
+            if (mobile != null)
             {
-                var oldHealth = item.CurrentHealth;
+                var oldHealth = mobile.CurrentHealth;
 
-                var updatedItem = item.UpdateHealth(newHealth, newMaxHealth);
-                items.UpdateItem(updatedItem);
+                var updatedItem = mobile.UpdateHealth(newHealth, newMaxHealth);
+                gameObjects.UpdateObject(updatedItem);
 
                 if (oldHealth != newHealth && CurrentHealthUpdated != null)
                 {
@@ -69,10 +70,10 @@ namespace Infusion.LegacyApi
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
-            var item = items[packet.Id];
+            var item = gameObjects[packet.Id];
 
             if (item != null && packet.Name != null && !packet.Name.Equals(item.Name, StringComparison.Ordinal))
-                items.UpdateItem(item.UpdateName(packet.Name));
+                gameObjects.UpdateObject(item.UpdateName(packet.Name));
         }
 
         private void HandlePauseClient(PauseClientPacket packet)
@@ -89,7 +90,7 @@ namespace Infusion.LegacyApi
 
         private void HandleWornItemPacket(WornItemPacket packet)
         {
-            items.UpdateItem(new Item(packet.ItemId, packet.Type, 1, new Location3D(0, 0, 0), packet.Color,
+            gameObjects.UpdateObject(new Item(packet.ItemId, packet.Type, 1, new Location3D(0, 0, 0), packet.Color,
                 packet.PlayerId, packet.Layer));
         }
 
@@ -107,13 +108,16 @@ namespace Infusion.LegacyApi
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
         {
-            Item existingItem;
-            if (items.TryGet(packet.PlayerId, out existingItem))
-                items.UpdateItem(existingItem.Update(packet.Type, 1, packet.Location, packet.Color, null));
+            if (gameObjects.TryGet(packet.PlayerId, out GameObject existingObject) &&
+                existingObject is Mobile existingMobile)
+            {
+                gameObjects.UpdateObject(existingMobile.Update(packet.Type, packet.Location, packet.Color,
+                    packet.Direction, existingMobile.Notoriety));
+            }
             else
             {
-                items.UpdateItem(new Item(packet.PlayerId, packet.Type, 1, packet.Location, packet.Color,
-                    orientation: packet.Direction));
+                gameObjects.UpdateObject(new Mobile(packet.PlayerId, packet.Type, packet.Location, packet.Color,
+                    packet.Direction, null));
             }
         }
 
@@ -125,23 +129,22 @@ namespace Infusion.LegacyApi
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
         {
-            Item existingItem;
-            if (items.TryGet(packet.ItemId, out existingItem))
+            if (gameObjects.TryGet(packet.ItemId, out GameObject existingObject) && existingObject is Item existingItem)
             {
-                items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, (Location3D) packet.Location,
+                gameObjects.UpdateObject(existingItem.Update(packet.Type, packet.Amount, (Location3D) packet.Location,
                     packet.Color,
                     packet.ContainerId));
             }
             else
             {
-                items.AddItem(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
-                    packet.Color, packet.ContainerId));
+                gameObjects.AddObject(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
+                    packet.Color, packet.ContainerId, null));
             }
         }
 
         private void HandleAddMultipleItemsInContainer(AddMultipleItemsInContainerPacket packet)
         {
-            items.AddItemRange(packet.Items);
+            gameObjects.AddItemRange(packet.Items);
         }
 
         private void HandleDeleteObjectPacket(DeleteObjectPacket packet)
@@ -155,20 +158,21 @@ namespace Infusion.LegacyApi
                 itemDragResultReceived.Set();
             }
 
-            items.RemoveItem(packet.Id);
+            gameObjects.RemoveItem(packet.Id);
         }
 
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
         {
-            if (items.TryGet(packet.Id, out Item existingItem))
+            if (gameObjects.TryGet(packet.Id, out GameObject existingObject) && existingObject is Item existingItem)
             {
-                items.UpdateItem(existingItem.Update(packet.Type, packet.Amount, packet.Location, existingItem.Color,
+                gameObjects.UpdateObject(existingItem.Update(packet.Type, packet.Amount, packet.Location,
+                    existingItem.Color,
                     existingItem.ContainerId));
             }
             else
             {
-                var item = new Item(packet.Id, packet.Type, packet.Amount, packet.Location);
-                items.AddItem(item);
+                var item = new Item(packet.Id, packet.Type, packet.Amount, packet.Location, packet.Dye, null, null);
+                gameObjects.AddObject(item);
                 OnItemEnteredView(item);
             }
         }
@@ -176,23 +180,23 @@ namespace Infusion.LegacyApi
         private void OnItemEnteredView(Item item)
         {
             if (ItemEnteredView != null)
-            {
                 Task.Run(() => { ItemEnteredView?.Invoke(this, new ItemEnteredViewArgs(item)); });
-            }
             ;
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
         {
-            items.AddItemRange(packet.Items);
+            gameObjects.AddItemRange(packet.Items);
 
-            var item = items[packet.Id];
-            if (item != null)
-                items.UpdateItem(item.Update(packet.Type, 1, packet.Location, packet.Color, null, packet.Notoriety));
+            var mobile = gameObjects[packet.Id] as Mobile;
+            if (mobile != null)
+                gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction,
+                    packet.Notoriety));
             else
             {
-                items.AddItem(new Item(packet.Id, packet.Type, 1, packet.Location, packet.Color,
-                    notoriety: packet.Notoriety));
+                gameObjects.AddObject(new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,
+                    packet.Direction,
+                    packet.Notoriety));
             }
         }
 
@@ -200,7 +204,7 @@ namespace Infusion.LegacyApi
         {
             var newPosition = (Location2D) e;
 
-            items.PurgeUnreachableItems(newPosition, 25);
+            gameObjects.PurgeUnreachableItems(newPosition, 25);
         }
 
         public DragResult WaitForItemDragged(TimeSpan? timeout)

@@ -42,7 +42,9 @@ namespace Infusion.LegacyApi
 
         public UltimaMap Map { get; } = new UltimaMap();
 
+        internal GameObjectCollection GameObjects { get; }
         public ItemCollection Items { get; }
+        public MobileCollection Mobiles { get; }
 
         public Player Me { get; }
 
@@ -114,10 +116,12 @@ namespace Infusion.LegacyApi
         public Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
-            Me = new Player(() => Items.OnLayer(Layer.Mount).FirstOrDefault() != null, ultimaServer, this);
+            Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null, ultimaServer, this);
             gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
-            Items = new ItemCollection(Me);
-            itemsObserver = new ItemsObservers(Items, ultimaServer, this);
+            GameObjects = new GameObjectCollection(Me);
+            Items = new ItemCollection(GameObjects);
+            Mobiles = new MobileCollection(GameObjects);
+            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, this);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
             Journal = new GameJournal(journalSource, this);
@@ -154,17 +158,17 @@ namespace Infusion.LegacyApi
             cancellationToken.Value?.ThrowIfCancellationRequested();
         }
 
-        public void RequestStatus(Item item)
+        public void RequestStatus(Mobile item)
         {
             Server.RequestStatus(item.Id);
         }
 
-        public void Use(Item item)
+        public void Use(GameObject item)
         {
             Use(item.Id);
         }
 
-        public void Click(Item item)
+        public void Click(GameObject item)
         {
             Server.Click(item.Id);
         }
@@ -268,7 +272,7 @@ namespace Infusion.LegacyApi
             Server.RequestWarMode(WarMode.Normal);
         }
 
-        public AttackResult Attack(Item target, TimeSpan? timeout = null)
+        public AttackResult Attack(Mobile target, TimeSpan? timeout = null)
         {
             return playerObservers.Attack(target.Id, timeout);
         }
@@ -281,7 +285,7 @@ namespace Infusion.LegacyApi
             targeting.TargetTile(tileInfo);
         }
 
-        public void Target(Item item)
+        public void Target(GameObject item)
         {
             CheckCancellation();
 
@@ -324,15 +328,24 @@ namespace Infusion.LegacyApi
             ClientPrint(!string.IsNullOrEmpty(info) ? info : "Targeting cancelled.");
         }
 
-        public Item ItemInfo()
+        public Item AskForItem()
         {
             var itemId = targeting.ItemIdInfo();
 
-            Item item;
-            if (!Items.TryGet(itemId, out item))
+            if (!GameObjects.TryGet(itemId, out GameObject obj))
                 return null;
 
-            return item;
+            return obj as Item;
+        }
+
+        public Mobile AskForMobile()
+        {
+            var itemId = targeting.ItemIdInfo();
+
+            if (!GameObjects.TryGet(itemId, out GameObject obj))
+                return null;
+
+            return obj as Mobile;
         }
 
         public void WaitForTarget()
@@ -435,9 +448,9 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void StepToward(Item item)
+        public void StepToward(GameObject gameObject)
         {
-            StepToward(item.Location);
+            StepToward(gameObject.Location);
         }
 
         public void StepToward(Location2D targetLocation)

@@ -63,7 +63,7 @@ namespace Infusion.LegacyApi
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        var lastItem = legacyApi.Items[lastItemIdInfo];
+                        var lastItem = legacyApi.GameObjects[lastItemIdInfo];
                         lastTargetInfo = lastItem?.ToString() ??
                                          $"{packet.ClickedOnId:X8} {packet.ClickedOnType} {packet.ClickedOnType}";
                         break;
@@ -155,7 +155,7 @@ namespace Infusion.LegacyApi
             client.CancelTarget(lastCursorId, itemId, location, type);
         }
 
-        public void Target(Item item)
+        public void Target(GameObject item)
         {
             Target(item.Id, item.Type, item.Location);
         }

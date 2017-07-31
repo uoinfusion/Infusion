@@ -54,7 +54,7 @@ namespace Infusion.LegacyApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => legacyApi.Items.FirstOrDefault(i => i.Type == backPackType && i.ContainerId == PlayerId);
+        public Item BackPack => legacyApi.GameObjects.OfType<Item>().FirstOrDefault(i => i.Type == backPackType && i.Layer == Layer.Backpack);
         public Item BankBox => legacyApi.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
         public Color Color { get; set; }

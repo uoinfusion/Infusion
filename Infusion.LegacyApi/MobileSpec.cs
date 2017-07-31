@@ -1,14 +1,14 @@
-﻿using System;
+using System;
 using System.Linq;
 using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
-    public class ItemSpec
+    public class MobileSpec
     {
-        private readonly ItemSpec[] childSpecs;
+        private readonly MobileSpec[] childSpecs;
 
-        public ItemSpec(ModelId type, Color? color = null)
+        public MobileSpec(ModelId type, Color? color = null)
         {
             Specificity = color.HasValue ? ItemSpecSpecificity.TypeAndColor : ItemSpecSpecificity.Type;
 
@@ -16,7 +16,7 @@ namespace Infusion.LegacyApi
             Color = color;
         }
 
-        public ItemSpec(params ItemSpec[] childSpecs)
+        public MobileSpec(params MobileSpec[] childSpecs)
         {
             Specificity = ItemSpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;
@@ -26,7 +26,7 @@ namespace Infusion.LegacyApi
         private Color? Color { get; }
         public ItemSpecSpecificity Specificity { get; }
 
-        public bool Matches(Item item)
+        public bool Matches(Mobile item)
         {
             if (Type.HasValue)
                 return item.Type == Type && (!Color.HasValue || Color == item.Color);
@@ -44,34 +44,34 @@ namespace Infusion.LegacyApi
             return childSpecs.Any(s => s.Matches(type));
         }
 
-        public ItemSpec Including(params ItemSpec[] childSpecs)
+        public MobileSpec Including(params MobileSpec[] childSpecs)
         {
-            return new ItemSpec(childSpecs.Concat(new[] {this}).ToArray());
+            return new MobileSpec(childSpecs.Concat(new[] { this }).ToArray());
         }
 
-        public static implicit operator ItemSpec(ushort[] types)
+        public static implicit operator MobileSpec(ushort[] types)
         {
-            return new ItemSpec(types.Select(t => new ItemSpec(t)).ToArray());
+            return new MobileSpec(types.Select(t => new MobileSpec(t)).ToArray());
         }
 
-        public static implicit operator ItemSpec(ModelId[] types)
+        public static implicit operator MobileSpec(ModelId[] types)
         {
-            return new ItemSpec(types.Select(t => new ItemSpec(t)).ToArray());
+            return new MobileSpec(types.Select(t => new MobileSpec(t)).ToArray());
         }
 
-        public static implicit operator ItemSpec(int[] types)
+        public static implicit operator MobileSpec(int[] types)
         {
-            return new ItemSpec(types.Select(t => new ItemSpec((ushort) t)).ToArray());
+            return new MobileSpec(types.Select(t => new MobileSpec((ushort)t)).ToArray());
         }
 
-        public static implicit operator ItemSpec(ItemSpec[] specs)
+        public static implicit operator MobileSpec(MobileSpec[] specs)
         {
-            return new ItemSpec(specs);
+            return new MobileSpec(specs);
         }
 
-        public static implicit operator ItemSpec(ushort type)
+        public static implicit operator MobileSpec(ushort type)
         {
-            return new ItemSpec(type);
+            return new MobileSpec(type);
         }
     }
 }

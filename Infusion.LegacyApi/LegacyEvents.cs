@@ -1,4 +1,5 @@
 ﻿using System;
+using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
@@ -23,9 +24,25 @@ namespace Infusion.LegacyApi
             remove => itemsObserver.ItemEnteredView -= value;
         }
 
+        public event EventHandler<ItemUseRequestedArgs> ItemUseRequested
+        {
+            add => itemsObserver.DoubleClickRequested += value;
+            remove => itemsObserver.DoubleClickRequested -= value;
+        }
+
         internal void ResetEvents()
         {
             itemsObserver.ResetEvents();
+        }
+    }
+
+    public struct ItemUseRequestedArgs
+    {
+        public ObjectId ItemId { get; }
+
+        public ItemUseRequestedArgs(ObjectId itemId)
+        {
+            ItemId = itemId;
         }
     }
 }

@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class RejectMoveItemRequestPacket : MaterializedPacket
+    internal sealed class RejectMoveItemRequestPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

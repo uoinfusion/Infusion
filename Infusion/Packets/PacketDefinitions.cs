@@ -4,7 +4,7 @@ using Infusion.Packets.Server;
 
 namespace Infusion.Packets
 {
-    public static class PacketDefinitions
+    internal static class PacketDefinitions
     {
         #region Client
 

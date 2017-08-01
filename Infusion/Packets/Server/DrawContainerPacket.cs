@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class DrawContainerPacket : MaterializedPacket
+    internal sealed class DrawContainerPacket : MaterializedPacket
     {
         public ObjectId ContainerId { get; private set; }
 

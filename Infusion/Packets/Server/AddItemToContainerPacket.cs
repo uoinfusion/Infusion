@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class AddItemToContainerPacket : MaterializedPacket
+    internal sealed class AddItemToContainerPacket : MaterializedPacket
     {
         public ObjectId ItemId { get; private set; }
         public ModelId Type { get; private set; }

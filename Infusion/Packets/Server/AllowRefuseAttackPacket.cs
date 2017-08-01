@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class AllowRefuseAttackPacket : MaterializedPacket
+    internal sealed class AllowRefuseAttackPacket : MaterializedPacket
     {
         public ObjectId AttackTargetId { get; set; }
 

@@ -141,7 +141,7 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        public void RequestGumpSelection(GumpMenuSelectionRequest packet)
+        internal void RequestGumpSelection(GumpMenuSelectionRequest packet)
         {
             Send(packet.RawPacket);
         }

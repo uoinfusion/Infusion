@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class DeleteObjectPacket : MaterializedPacket
+    internal sealed class DeleteObjectPacket : MaterializedPacket
     {
         public ObjectId Id { get; private set; }
 

@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class TargetLocationRequest
+    internal sealed class TargetLocationRequest
     {
         public TargetLocationRequest(CursorId cursorId, Location3D location, ModelId tileType, CursorType cursorType)
         {

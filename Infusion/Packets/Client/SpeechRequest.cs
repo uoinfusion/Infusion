@@ -3,7 +3,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    public class SpeechRequest : MaterializedPacket
+    internal sealed class SpeechRequest : MaterializedPacket
     {
         private Packet rawPacket;
 

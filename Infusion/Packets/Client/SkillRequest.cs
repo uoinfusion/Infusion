@@ -4,7 +4,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    public class SkillRequest
+    internal sealed class SkillRequest
     {
         private static readonly Dictionary<Skill, string> skills = new Dictionary<Skill, string>
         {

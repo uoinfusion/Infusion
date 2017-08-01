@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class ConnectToGameServerPacket : MaterializedPacket
+    internal sealed class ConnectToGameServerPacket : MaterializedPacket
     {
         private byte[] payload;
 

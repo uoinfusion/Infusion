@@ -4,7 +4,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Both
 {
-    public class SendSkillsPacket : MaterializedPacket
+    internal sealed class SendSkillsPacket : MaterializedPacket
     {
         public SkillValue[] Values { get; private set; }
 

@@ -1,6 +1,6 @@
 ﻿namespace Infusion.Packets.Both
 {
-    public class CharacterMoveAckPacket : MaterializedPacket
+    internal sealed class CharacterMoveAckPacket : MaterializedPacket
     {
         public byte MovementSequenceKey { get; set; }
         public byte NotorietyFlag { get; set; }

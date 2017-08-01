@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class AttackRequest
+    internal sealed class AttackRequest
     {
         private readonly ObjectId targetId;
 

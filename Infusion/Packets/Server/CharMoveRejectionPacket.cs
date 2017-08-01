@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class CharMoveRejectionPacket : MaterializedPacket
+    internal sealed class CharMoveRejectionPacket : MaterializedPacket
     {
         private Packet rawPacket;
         public byte SequenceKey { get; private set; }

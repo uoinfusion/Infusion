@@ -52,8 +52,8 @@ namespace Infusion.LegacyApi
 
         public ISet<ObjectId> IgnoredItems { get; } = new HashSet<ObjectId>();
 
-        public UltimaServer Server { get; }
-        public UltimaClient Client { get; }
+        internal UltimaServer Server { get; }
+        internal UltimaClient Client { get; }
 
         public void OpenContainer(Item container, TimeSpan? timeout = null)
         {
@@ -121,7 +121,7 @@ namespace Infusion.LegacyApi
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
-            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, this);
+            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
             Journal = new GameJournal(journalSource, this);

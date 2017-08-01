@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class WearItemRequest
+    internal sealed class WearItemRequest
     {
         public WearItemRequest(ObjectId itemId, Layer layer, ObjectId playerId)
         {

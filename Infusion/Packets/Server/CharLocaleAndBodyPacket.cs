@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class CharLocaleAndBodyPacket : MaterializedPacket
+    internal sealed class CharLocaleAndBodyPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

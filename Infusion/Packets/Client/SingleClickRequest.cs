@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class SingleClickRequest
+    internal sealed class SingleClickRequest
     {
         public SingleClickRequest(ObjectId itemId)
         {

@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class DoubleClickRequest : MaterializedPacket
+    internal sealed class DoubleClickRequest : MaterializedPacket
     {
         private Packet rawPacket;
 

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Infusion.Packets;
+using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 
 namespace Infusion.LegacyApi
@@ -16,7 +17,7 @@ namespace Infusion.LegacyApi
         private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
 
-        public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject,
+        public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi)
         {
             this.gameObjects = gameObjects;
@@ -35,6 +36,12 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
             serverPacketSubject.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
+            clientPacketSubject.Subscribe(PacketDefinitions.DoubleClick, HandleDoubleClick);
+        }
+
+        private void HandleDoubleClick(DoubleClickRequest request)
+        {
+            DoubleClickRequested?.Invoke(this, new ItemUseRequestedArgs(request.ItemId));
         }
 
         public ObjectId? DraggedItemId { get; set; }
@@ -66,6 +73,7 @@ namespace Infusion.LegacyApi
         }
 
         internal event EventHandler<CurrentHealthUpdatedArgs> CurrentHealthUpdated;
+        internal event EventHandler<ItemUseRequestedArgs> DoubleClickRequested;
         internal event EventHandler<ItemEnteredViewArgs> ItemEnteredView;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)

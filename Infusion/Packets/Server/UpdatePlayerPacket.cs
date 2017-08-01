@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class UpdatePlayerPacket : MaterializedPacket
+    internal sealed class UpdatePlayerPacket : MaterializedPacket
     {
         public ObjectId PlayerId { get; private set; }
         public ModelId Type { get; private set; }

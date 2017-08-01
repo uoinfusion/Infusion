@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class CloseContainerPacket
+    internal sealed class CloseContainerPacket
     {
         public Packet RawPacket { get; private set; }
 

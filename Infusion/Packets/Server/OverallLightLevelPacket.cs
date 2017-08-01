@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class OverallLightLevelPacket : MaterializedPacket
+    internal sealed class OverallLightLevelPacket : MaterializedPacket
     {
         public override void Deserialize(Packet rawPacket)
         {

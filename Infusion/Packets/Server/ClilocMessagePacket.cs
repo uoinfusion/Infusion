@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public sealed class ClilocMessagePacket : MaterializedPacket
+    internal sealed class ClilocMessagePacket : MaterializedPacket
     {
         public ObjectId SpeakerId { get; set; }
         public ModelId SpeakerBody { get; set; }

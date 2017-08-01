@@ -12,7 +12,7 @@ namespace Infusion.Gumps
         private readonly List<GumpControlId> selectedCheckBoxes = new List<GumpControlId>();
         private readonly List<Tuple<ushort, string>> textEntries = new List<Tuple<ushort, string>>();
 
-        public GumpResponseBuilder(Gump gump, Action<GumpMenuSelectionRequest> triggerGump)
+        internal GumpResponseBuilder(Gump gump, Action<GumpMenuSelectionRequest> triggerGump)
         {
             this.gump = gump;
             this.triggerGump = triggerGump;

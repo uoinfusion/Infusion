@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class SpeechMessagePacket : MaterializedPacket
+    internal sealed class SpeechMessagePacket : MaterializedPacket
     {
         public ObjectId Id { get; private set; }
 

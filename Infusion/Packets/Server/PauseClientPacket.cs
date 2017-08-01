@@ -1,8 +1,8 @@
 ﻿using Infusion.IO;
 
 namespace Infusion.Packets.Server
-{   
-    public class PauseClientPacket : MaterializedPacket
+{
+    internal sealed class PauseClientPacket : MaterializedPacket
     {
         private Packet rawPacket;
         public PauseClientChoice Choice { get; set; }

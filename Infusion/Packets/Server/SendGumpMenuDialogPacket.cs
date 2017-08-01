@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class SendGumpMenuDialogPacket : MaterializedPacket
+    internal sealed class SendGumpMenuDialogPacket : MaterializedPacket
     {
         private Packet rawPacket;
         public GumpTypeId Id { get; private set; }

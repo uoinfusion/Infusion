@@ -3,7 +3,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public sealed class AddMultipleItemsInContainerPacket : MaterializedPacket
+    internal sealed class AddMultipleItemsInContainerPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

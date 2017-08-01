@@ -3,7 +3,7 @@ using Infusion.Packets.Client;
 
 namespace Infusion.Packets.Both
 {
-    public class TargetCursorPacket : MaterializedPacket
+    internal sealed class TargetCursorPacket : MaterializedPacket
     {
         public CursorTarget CursorTarget { get; private set; }
         public CursorId CursorId { get; private set; }

@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class DropItemRequest
+    internal sealed class DropItemRequest
     {
         public ObjectId ItemId { get; }
 

@@ -1,6 +1,6 @@
 ﻿namespace Infusion.Packets.Client
 {
-    public class MoveRequest : MaterializedPacket
+    internal sealed class MoveRequest : MaterializedPacket
     {
         public Movement Movement { get; set; }
         public byte SequenceKey { get; set; }

@@ -3,7 +3,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class StatusBarInfoPacket : MaterializedPacket
+    internal sealed class StatusBarInfoPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

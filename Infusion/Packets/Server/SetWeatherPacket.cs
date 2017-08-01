@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class SetWeatherPacket : MaterializedPacket
+    internal sealed class SetWeatherPacket : MaterializedPacket
     {
         public WeatherType Type { get; set; }
 

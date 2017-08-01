@@ -3,7 +3,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class DrawObjectPacket : MaterializedPacket
+    internal sealed class DrawObjectPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

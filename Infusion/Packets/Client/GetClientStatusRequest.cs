@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    public class GetClientStatusRequest
+    internal sealed class GetClientStatusRequest
     {
         public Packet RawPacket { get; }
 

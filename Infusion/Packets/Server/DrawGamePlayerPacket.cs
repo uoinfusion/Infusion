@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class DrawGamePlayerPacket : MaterializedPacket
+    internal sealed class DrawGamePlayerPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

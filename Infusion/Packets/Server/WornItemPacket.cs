@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class WornItemPacket : MaterializedPacket
+    internal sealed class WornItemPacket : MaterializedPacket
     {
         private Packet rawPacket;
         public ObjectId ItemId { get; private set; }

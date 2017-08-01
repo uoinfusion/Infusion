@@ -35,5 +35,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
+[assembly: InternalsVisibleTo("Infusion.Tests")]
+[assembly: InternalsVisibleTo("Infusion.Proxy")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi.Tests")]

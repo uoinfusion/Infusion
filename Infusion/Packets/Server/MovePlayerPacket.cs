@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class MovePlayerPacket : MaterializedPacket
+    internal sealed class MovePlayerPacket : MaterializedPacket
     {
         public Direction Direction { get; set; }
 

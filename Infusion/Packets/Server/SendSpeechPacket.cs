@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    public class SendSpeechPacket : MaterializedPacket
+    internal sealed class SendSpeechPacket : MaterializedPacket
     {
         private Packet rawPacket;
 

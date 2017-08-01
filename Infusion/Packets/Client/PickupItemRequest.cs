@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Client
 {
-    public class PickupItemRequest
+    internal sealed class PickupItemRequest
     {
         public ObjectId ItemId { get; }
 

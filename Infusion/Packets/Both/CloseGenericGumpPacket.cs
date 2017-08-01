@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Both
 {
-    internal class CloseGenericGumpPacket
+    internal sealed class CloseGenericGumpPacket
     {
         public GumpInstanceId GumpId { get; }
 

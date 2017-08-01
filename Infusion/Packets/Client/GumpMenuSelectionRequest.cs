@@ -4,7 +4,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    public class GumpMenuSelectionRequest : MaterializedPacket
+    internal sealed class GumpMenuSelectionRequest : MaterializedPacket
     {
         private Packet rawPacket;
 

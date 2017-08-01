@@ -36,6 +36,9 @@ namespace Infusion.TextFilters
 
                 for (int i = 0; i < colonIndex; i++)
                 {
+                    if (speechIndex == text.Length && text[i] == ' ')
+                        return false;
+
                     if (text[i] != text[speechIndex])
                         return true;
 

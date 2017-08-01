@@ -13,6 +13,13 @@ namespace Infusion.Tests.TextFilters
     public class NameFilterTests
     {
         [TestMethod]
+        public void Can_filter_out_name_containing_space()
+        {
+            // Space is intentionally missing at the end of message, it seems that Sphere 0.99 trims space from the message
+            new NameFilter().IsPassing("name : name").Should().BeFalse();
+        }
+
+        [TestMethod]
         public void Can_filter_out_name()
         {
             new NameFilter().IsPassing("Pipka: Pipka").Should().BeFalse();

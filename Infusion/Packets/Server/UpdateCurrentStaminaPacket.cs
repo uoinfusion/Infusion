@@ -5,7 +5,7 @@ namespace Infusion.Packets.Server
     public class UpdateCurrentStaminaPacket : MaterializedPacket
     {
         private Packet rawPacket;
-        public uint PlayerId { get; private set; }
+        public ObjectId PlayerId { get; private set; }
 
         public ushort MaxStamina { get; private set; }
 
@@ -19,7 +19,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(1);
 
-            PlayerId = reader.ReadUInt();
+            PlayerId = reader.ReadObjectId();
             MaxStamina = reader.ReadUShort();
             CurrentStamina = reader.ReadUShort();
         }

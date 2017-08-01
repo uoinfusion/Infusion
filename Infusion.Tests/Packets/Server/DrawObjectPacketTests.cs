@@ -36,10 +36,10 @@ namespace Infusion.Tests.Packets.Server
             var items = materializedPacket.Items.ToArray();
 
             items.Length.Should().Be(1);
-            items.First().Id.Should().Be(0x4000000C);
+            items.First().Id.Should().Be(new ObjectId(0x4000000C));
             items.First().Type.Should().Be((ModelId)0x0F44);
             items.First().Amount.Should().Be(1);
-            items.First().ContainerId.Should().Be(0x00000001u);
+            items.First().ContainerId.Should().Be(new ObjectId(0x00000001u));
             items.First().Layer.Should().Be(Layer.TwoHandedWeapon);
         }
 
@@ -71,10 +71,10 @@ namespace Infusion.Tests.Packets.Server
             var items = materializedPacket.Items.ToArray();
 
             items.Length.Should().Be(1);
-            items.First().Id.Should().Be(0x40000002);
+            items.First().Id.Should().Be(new ObjectId(0x40000002));
             items.First().Type.Should().Be((ModelId)(0xA03B - 0x8000));
             items.First().Amount.Should().Be(1);
-            items.First().ContainerId.Should().Be(0x00000001u);
+            items.First().ContainerId.Should().Be(new ObjectId(0x00000001u));
             items.First().Layer.Should().Be(Layer.Hair);
             items.First().Color.Should().Be((Color) 0x044E);
         }
@@ -101,7 +101,7 @@ namespace Infusion.Tests.Packets.Server
             var drawObjectPacket = new DrawObjectPacket();
             drawObjectPacket.Deserialize(drawObjectPacketWithoutItems);
 
-            drawObjectPacket.Id.Should().Be(0x00000001);
+            drawObjectPacket.Id.Should().Be(new ObjectId(0x00000001));
             drawObjectPacket.Type.Should().Be((ModelId)0x0190);
             drawObjectPacket.Location.X.Should().Be(0x129B);
             drawObjectPacket.Location.Y.Should().Be(0x0553);

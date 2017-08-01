@@ -30,9 +30,9 @@ namespace Infusion.Tests.Packets.Both
             materializedPacket.Deserialize(rawPacket);
 
             materializedPacket.CursorTarget.Should().Be(CursorTarget.Object);
-            materializedPacket.CursorId.Should().Be(0xDEADBEEF);
+            materializedPacket.CursorId.Should().Be(new CursorId(0xDEADBEEF));
             materializedPacket.CursorType.Should().Be(CursorType.Neutral);
-            materializedPacket.ClickedOnId.Should().Be(0x4000000B);
+            materializedPacket.ClickedOnId.Should().Be(new ObjectId(0x4000000B));
             materializedPacket.Location.X.Should().Be(0x0080);
             materializedPacket.Location.Y.Should().Be(0x006D);
             materializedPacket.Location.Z.Should().Be(0);
@@ -60,9 +60,9 @@ namespace Infusion.Tests.Packets.Both
             materializedPacket.Deserialize(rawPacket);
 
             materializedPacket.CursorTarget.Should().Be(CursorTarget.Location);
-            materializedPacket.CursorId.Should().Be(0xDEADBEEF);
+            materializedPacket.CursorId.Should().Be(new CursorId(0xDEADBEEF));
             materializedPacket.CursorType.Should().Be(CursorType.Neutral);
-            materializedPacket.ClickedOnId.Should().Be(0);
+            materializedPacket.ClickedOnId.Should().Be(new ObjectId(0));
             materializedPacket.Location.X.Should().Be(0x03E8);
             materializedPacket.Location.Y.Should().Be(0x03E8);
             materializedPacket.Location.Z.Should().Be(0);

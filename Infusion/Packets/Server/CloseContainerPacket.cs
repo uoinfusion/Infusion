@@ -11,7 +11,7 @@ namespace Infusion.Packets.Server
     {
         public Packet RawPacket { get; private set; }
 
-        public CloseContainerPacket(uint containerId)
+        public CloseContainerPacket(ObjectId containerId)
         {
             byte[] payload = new byte[13];
 
@@ -20,7 +20,7 @@ namespace Infusion.Packets.Server
             writer.WriteUShort(13);
             writer.WriteUShort(0x16);
             writer.WriteUInt(0x0C);
-            writer.WriteUInt(containerId);
+            writer.WriteId(containerId);
 
             RawPacket = new Packet(PacketDefinitions.GeneralInformationPacket.Id, payload);
         }

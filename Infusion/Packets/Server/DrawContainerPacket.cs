@@ -9,7 +9,7 @@ namespace Infusion.Packets.Server
 {
     public class DrawContainerPacket : MaterializedPacket
     {
-        public uint ContainerId { get; private set; }
+        public ObjectId ContainerId { get; private set; }
 
         public ModelId GumpModel { get; private set; }
 
@@ -20,7 +20,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(1);
 
-            ContainerId = reader.ReadUInt();
+            ContainerId = reader.ReadObjectId();
             GumpModel = reader.ReadModelId();
         }
 

@@ -2,6 +2,7 @@
 using System.ComponentModel.Design;
 using FluentAssertions;
 using Infusion.Gumps;
+using Infusion.Packets;
 using Infusion.Packets.Server;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -23,7 +24,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_trigger_button()
         {
-            var gump = new Gump(0, 1, "{Button 13 158 4005 4007 1 0 2}", new string[] { });
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 1 0 2}", new string[] { });
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -34,7 +35,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_checkbox()
         {
-            var gump = new Gump(0, 1, "{CheckBox 13 57 9904 9903 0 100}", new string[] { });
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{CheckBox 13 57 9904 9903 0 100}", new string[] { });
             parser.Parse(gump);
             string description = processor.GetDescription().Trim();
 
@@ -44,7 +45,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_textentry()
         {
-            var gump = new Gump(0, 1, "{TextEntry 41 130 40 20 2301 1 1000}", new string[] { });
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{TextEntry 41 130 40 20 2301 1 1000}", new string[] { });
             parser.Parse(gump);
             string description = processor.GetDescription().Trim();
 
@@ -54,7 +55,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_nonTrigger_button()
         {
-            var gump = new Gump(0, 1, "{Button 13 158 4005 4007 0 0 0}", new string[] { });
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 0 0 0}", new string[] { });
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -65,7 +66,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_two_buttons()
         {
-            var gump = new Gump(0, 1, "{Button 13 158 4005 4007 1 0 2}{Button 13 158 4005 4007 0 0 0}", new string[] { });
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 1 0 2}{Button 13 158 4005 4007 0 0 0}", new string[] { });
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -76,7 +77,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_text()
         {
-            var gump = new Gump(0, 1, "{Text 164 13 955 0}", new[] { "This is a test text" });
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Text 164 13 955 0}", new[] { "This is a test text" });
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -87,7 +88,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_unknown_control()
         {
-            var gump = new Gump(0, 1, "{Unknown 159 13 88 19 2624}", new string[0]);
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Unknown 159 13 88 19 2624}", new string[0]);
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -98,7 +99,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_button_after_unknown_control()
         {
-            var gump = new Gump(0, 1, "{Unknown 159 13 88 19 2624}{Button 13 158 4005 4007 0 0 0}", new string[0]);
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Unknown 159 13 88 19 2624}{Button 13 158 4005 4007 0 0 0}", new string[0]);
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -109,7 +110,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_button_before_unknown_control()
         {
-            var gump = new Gump(0, 1, "{Button 13 158 4005 4007 0 0 0}{Unknown 159 13 88 19 2624}", new string[0]);
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 0 0 0}{Unknown 159 13 88 19 2624}", new string[0]);
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -120,7 +121,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_button_between_unknown_control()
         {
-            var gump = new Gump(0, 1, "{Unknown 159 13 88 19 2624}{Button 13 158 4005 4007 0 0 0}{Unknown 159 13 88 19 2624}", new string[0]);
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Unknown 159 13 88 19 2624}{Button 13 158 4005 4007 0 0 0}{Unknown 159 13 88 19 2624}", new string[0]);
 
             parser.Parse(gump);
             string description = processor.GetDescription();
@@ -131,7 +132,7 @@ namespace Infusion.Tests.Gumps
         [TestMethod]
         public void Can_parse_unknown_control_between_buttons()
         {
-            var gump = new Gump(0, 1, "{Button 13 158 4005 4007 0 0 0}{Unknown 159 13 88 19 2624}{Button 13 158 4005 4007 0 0 0}", new string[0]);
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 0 0 0}{Unknown 159 13 88 19 2624}{Button 13 158 4005 4007 0 0 0}", new string[0]);
 
             parser.Parse(gump);
             string description = processor.GetDescription();

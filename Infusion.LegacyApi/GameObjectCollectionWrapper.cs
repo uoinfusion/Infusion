@@ -17,7 +17,7 @@ namespace Infusion.LegacyApi
             this.gameObjects = gameObjects;
         }
 
-        public T this[uint id]
+        public T this[ObjectId id]
         {
             get
             {
@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi
             return gameObjects.OfType<T>().GetEnumerator();
         }
 
-        public bool TryGet(uint id, out T item)
+        public bool TryGet(ObjectId id, out T item)
         {
             if (gameObjects.TryGet(id, out GameObject gameObject))
             {
@@ -53,7 +53,7 @@ namespace Infusion.LegacyApi
             return false;
         }
 
-        public T Get(uint id)
+        public T Get(ObjectId id)
         {
             if (gameObjects.TryGet(id, out GameObject gameObject))
             {
@@ -61,7 +61,7 @@ namespace Infusion.LegacyApi
                     return item;
             }
 
-            throw new InvalidOperationException($"Item {id:X8} not found.");
+            throw new InvalidOperationException($"Item {id} not found.");
         }
 
         public override string ToString()

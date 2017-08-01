@@ -27,12 +27,12 @@ namespace Infusion.Tests.Packets.Server
             var packet = new AddItemToContainerPacket();
             packet.Deserialize(rawPacket);
 
-            packet.ItemId.Should().Be(0x40064087);
+            packet.ItemId.Should().Be(new ObjectId(0x40064087));
             packet.Type.Should().Be((ModelId)0x1BDD);
             packet.Amount.Should().Be(2);
             packet.Location.X.Should().Be(0x72);
             packet.Location.Y.Should().Be(0x74);
-            packet.ContainerId.Should().Be(0x40024333);
+            packet.ContainerId.Should().Be(new ObjectId(0x40024333));
             packet.Color.Should().Be((Color) 0);
         }
     }

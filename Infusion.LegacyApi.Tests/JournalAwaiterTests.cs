@@ -26,7 +26,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "cas InSeNsItIvE", 0, 0);
+            source.AddMessage("name", "cas InSeNsItIvE", new ObjectId(0), 0);
 
             bool executed = false;
 
@@ -50,7 +50,7 @@ namespace Infusion.LegacyApi.Tests
                     .WaitAny(TimeSpan.FromMilliseconds(250));
             });
             Thread.Sleep(25);
-            source.AddMessage("name", "InSeNsItIvE", 0, 0);
+            source.AddMessage("name", "InSeNsItIvE", new ObjectId(0), 0);
 
             task.Wait();
 
@@ -72,7 +72,7 @@ namespace Infusion.LegacyApi.Tests
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", 1234, (ModelId) 4321));
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321));
             task.Wait();
 
             executed.Should().Be(true);
@@ -96,7 +96,7 @@ namespace Infusion.LegacyApi.Tests
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry(0, "TestName", "somethingsomething word2 somethingsomething", 1234,
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "TestName", "somethingsomething word2 somethingsomething", new ObjectId(1234),
                 (ModelId) 4321));
 
             task.Wait(100);
@@ -121,7 +121,7 @@ namespace Infusion.LegacyApi.Tests
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", 1234, (ModelId) 4321));
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321));
             task.Wait(100);
 
             executed.Should().Be(true);

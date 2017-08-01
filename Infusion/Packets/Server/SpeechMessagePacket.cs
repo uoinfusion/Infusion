@@ -4,7 +4,7 @@ namespace Infusion.Packets.Server
 {
     public class SpeechMessagePacket : MaterializedPacket
     {
-        public uint Id { get; private set; }
+        public ObjectId Id { get; private set; }
 
         public ModelId Model { get; private set; }
 
@@ -28,7 +28,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(3);
 
-            Id = reader.ReadUInt();
+            Id = reader.ReadObjectId();
             Model = reader.ReadModelId();
             Type = (SpeechType)reader.ReadByte();
             Color = (Color) reader.ReadUShort();

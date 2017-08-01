@@ -51,7 +51,7 @@ namespace Infusion.LegacyApi
         public static void OpenContainer(Item container, TimeSpan? timeout = null)
             => Current.OpenContainer(container, timeout);
 
-        public static void OpenContainer(uint containerId, TimeSpan? timeout = null)
+        public static void OpenContainer(ObjectId containerId, TimeSpan? timeout = null)
             => Current.OpenContainer(containerId, timeout);
 
         public static Command RegisterCommand(string name, Action commandAction)
@@ -72,7 +72,7 @@ namespace Infusion.LegacyApi
         public static Gump WaitForGump(TimeSpan? timeout = null)
             => Current.WaitForGump(timeout);
 
-        public static void Use(uint objectId)
+        public static void Use(ObjectId objectId)
             => Current.Use(objectId);
 
         public static void RequestStatus(Mobile item)
@@ -164,7 +164,7 @@ namespace Infusion.LegacyApi
         public static void Log(string message)
             => Current.Log(message);
 
-        public static void TriggerGump(uint triggerId)
+        public static void TriggerGump(GumpControlId triggerId)
             => Current.TriggerGump(triggerId);
 
         public static GumpResponseBuilder GumpResponse()
@@ -210,7 +210,7 @@ namespace Infusion.LegacyApi
         public static void Ignore(Item item)
             => Current.Ignore(item);
 
-        public static void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type,
+        public static void ClientPrint(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type,
             Color color, bool log = true)
             => Current.ClientPrint(message, name, itemId, itemModel, type, color, log);
 
@@ -226,7 +226,7 @@ namespace Infusion.LegacyApi
         public static void CloseContainer(Item container)
             => Current.CloseContainer(container);
 
-        public static IEnumerable<uint> IgnoredObjects => Current.IgnoredItems;
+        public static IEnumerable<ObjectId> IgnoredObjects => Current.IgnoredItems;
 
     }
 }

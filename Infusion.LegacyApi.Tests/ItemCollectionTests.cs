@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi.Tests
         [TestMethod]
         public void Can_update_item()
         {
-            var item = new Mobile(0x12345678, (ModelId) 0x4321, new Location3D(6, 5, 4), null, new Movement(Direction.East, MovementType.Run), null);
+            var item = new Mobile(new ObjectId(0x12345678), 0x4321, new Location3D(6, 5, 4), null, new Movement(Direction.East, MovementType.Run), null);
             var itemCollection = new GameObjectCollection(new Player(null, null, null));
 
             itemCollection.UpdateObject(item);

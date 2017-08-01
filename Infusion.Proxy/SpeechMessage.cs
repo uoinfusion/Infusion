@@ -5,7 +5,7 @@ namespace Infusion.Proxy
 {
     public class SpeechMessage
     {
-        public uint SpeakerId { get; set; }
+        public ObjectId SpeakerId { get; set; }
         public string Message { get; set; }
         public SpeechType Type { get; set; }
         public string Name { get; set; }

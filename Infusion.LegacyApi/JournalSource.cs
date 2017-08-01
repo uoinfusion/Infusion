@@ -36,7 +36,7 @@ namespace Infusion.LegacyApi
             lastActionJournalEntryId = CurrentJournalEntryId;
         }
 
-        public void AddMessage(string name, string message, uint speakerId, ModelId type)
+        public void AddMessage(string name, string message, ObjectId speakerId, ModelId type)
         {
             JournalEntry entry;
 

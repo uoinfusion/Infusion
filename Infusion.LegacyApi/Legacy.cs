@@ -50,7 +50,7 @@ namespace Infusion.LegacyApi
 
         public GameJournal Journal { get; }
 
-        public ISet<uint> IgnoredItems { get; } = new HashSet<uint>();
+        public ISet<ObjectId> IgnoredItems { get; } = new HashSet<ObjectId>();
 
         public UltimaServer Server { get; }
         public UltimaClient Client { get; }
@@ -60,7 +60,7 @@ namespace Infusion.LegacyApi
             OpenContainer(container.Id);
         }
 
-        public void OpenContainer(uint containerId, TimeSpan? timeout = null)
+        public void OpenContainer(ObjectId containerId, TimeSpan? timeout = null)
         {
             Use(containerId);
 
@@ -145,7 +145,7 @@ namespace Infusion.LegacyApi
             Configuration = configuration;
         }
 
-        public void Use(uint objectId)
+        public void Use(ObjectId objectId)
         {
             CheckCancellation();
 
@@ -177,10 +177,10 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
-                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
+            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.Matching(spec).InContainer(Me.BackPack).FirstOrDefault()
-                       ?? Items.Matching(spec).OnLayer(Layer.Backpack).FirstOrDefault();
+                       ?? Items.Matching(spec).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
             if (item != null)
                 Use(item);
@@ -194,10 +194,10 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
-                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
+            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(type).InContainer(Me.BackPack).FirstOrDefault()
-                       ?? Items.OfType(type).OnLayer(Layer.Backpack).FirstOrDefault();
+                       ?? Items.OfType(type).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
             if (item != null)
             {
                 Use(item);
@@ -212,10 +212,10 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(types).InContainer(Me.BackPack).FirstOrDefault()
-                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
+            var item = Items.OfType(types).InContainer(Me.BackPack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(types).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
-                       ?? Items.OfType(types).OnLayer(Layer.Backpack).FirstOrDefault();
+                       ?? Items.OfType(types).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
             if (item != null)
             {
@@ -406,7 +406,7 @@ namespace Infusion.LegacyApi
             logger.Info(message);
         }
 
-        public void TriggerGump(uint triggerId)
+        public void TriggerGump(GumpControlId triggerId)
         {
             gumpObservers.TriggerGump(triggerId);
         }
@@ -512,7 +512,7 @@ namespace Infusion.LegacyApi
             IgnoredItems.Add(item.Id);
         }
 
-        public void ClientPrint(string message, string name, uint itemId, ModelId itemModel, SpeechType type,
+        public void ClientPrint(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type,
             Color color,  bool log = true)
         {
             Client.SendSpeech(message, name, itemId, itemModel, type, color);
@@ -522,7 +522,7 @@ namespace Infusion.LegacyApi
 
         public void ClientPrint(string message, bool log = true)
         {
-            ClientPrint(message, "System", 0, 0, SpeechType.Normal, (Color) 0x03B2, log);
+            ClientPrint(message, "System", new ObjectId(0), 0, SpeechType.Normal, (Color) 0x03B2, log);
         }
 
         public void ClientPrint(string message, string name, Player onBehalfPlayer, bool log = true)

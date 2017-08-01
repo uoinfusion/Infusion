@@ -1,8 +1,10 @@
+using Infusion.Packets;
+
 namespace Infusion.Gumps
 {
     public sealed class Gump
     {
-        public Gump(uint id, uint gumpId, string commands, string[] textLines)
+        public Gump(GumpTypeId id, GumpInstanceId gumpId, string commands, string[] textLines)
         {
             Id = id;
             GumpId = gumpId;
@@ -14,8 +16,8 @@ namespace Infusion.Gumps
 
         public string[] TextLines { get; }
 
-        public uint Id { get; set; }
+        public GumpTypeId Id { get; set; }
 
-        public uint GumpId { get; set; }
+        public GumpInstanceId GumpId { get; set; }
     }
 }

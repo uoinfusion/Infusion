@@ -39,12 +39,12 @@ namespace Infusion
             packetSubject.Unsubscribe(definition, observer);
         }
 
-        public void CloseContainer(uint containerId)
+        public void CloseContainer(ObjectId containerId)
         {
             Send(new CloseContainerPacket(containerId).RawPacket);
         }
 
-        public void SendSpeech(string message, string name, uint itemId, ModelId itemModel, SpeechType type, Color color)
+        public void SendSpeech(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type, Color color)
         {
             var packet = new SendSpeechPacket
             {
@@ -62,31 +62,31 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        public void CloseGump(uint gumpId)
+        public void CloseGump(GumpInstanceId gumpId)
         {
             Send(new CloseGenericGumpPacket(gumpId).RawPacket);
         }
 
-        public void DrawGamePlayer(uint playerId, ModelId bodyType, Location3D location, Movement movement, Color color)
+        public void DrawGamePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Movement movement, Color color)
         {
             var drawGamePlayerPacket = new DrawGamePlayerPacket(playerId, bodyType,
                 location, movement, color);
             Send(drawGamePlayerPacket.RawPacket);
         }
 
-        public void TargetCursor(CursorTarget location, uint cursorId, CursorType type)
+        public void TargetCursor(CursorTarget location, CursorId cursorId, CursorType type)
         {
             var packet = new TargetCursorPacket(location, cursorId, type);
             Send(packet.RawPacket);
         }
 
-        public void TargetLocation(uint cursorId, Location3D location, ModelId tileType, CursorType cursorType)
+        public void TargetLocation(CursorId cursorId, Location3D location, ModelId tileType, CursorType cursorType)
         {
             var targetRequest = new TargetLocationRequest(cursorId, location, tileType, cursorType);
             Send(targetRequest.RawPacket);
         }
 
-        public void CancelTarget(uint lastCursorId, uint itemId, Location3D location, ModelId type)
+        public void CancelTarget(CursorId lastCursorId, ObjectId itemId, Location3D location, ModelId type)
         {
             var cancelRequest = new TargetLocationRequest(lastCursorId, itemId, CursorType.Cancel, location,
                 type);

@@ -10,13 +10,13 @@ namespace Infusion.Packets.Client
         {
         }
 
-        public DoubleClickRequest(uint itemId)
+        public DoubleClickRequest(ObjectId itemId)
         {
             byte[] payload = new byte[5];
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte)PacketDefinitions.DoubleClick.Id);
-            writer.WriteUInt(itemId);
+            writer.WriteId(itemId);
             rawPacket = new Packet(PacketDefinitions.DoubleClick.Id, payload);
 
             ItemId = itemId;
@@ -30,9 +30,9 @@ namespace Infusion.Packets.Client
 
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(1);
-            ItemId = reader.ReadUInt();
+            ItemId = reader.ReadObjectId();
         }
 
-        public uint ItemId { get; private set; }
+        public ObjectId ItemId { get; private set; }
     }
 }

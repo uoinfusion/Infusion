@@ -24,7 +24,7 @@ namespace Infusion.Packets
         public Movement? Orientation { get; private set; }
         public Notoriety? Notoriety { get; private set; }
 
-        public Mobile(uint id, ModelId type, Location3D location, Color? color,
+        public Mobile(ObjectId id, ModelId type, Location3D location, Color? color,
             Movement? orientation, Notoriety? notoriety)
             : base(id, type, location)
         {
@@ -35,7 +35,7 @@ namespace Infusion.Packets
 
         public override bool IsOnGround => true;
 
-        public Mobile(uint id, ModelId type, Location3D location) : base(id, type, location)
+        public Mobile(ObjectId id, ModelId type, Location3D location) : base(id, type, location)
         {            
         }
 

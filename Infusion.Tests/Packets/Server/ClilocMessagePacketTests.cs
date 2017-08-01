@@ -26,11 +26,11 @@ namespace Infusion.Tests.Packets.Server
             var packet = new ClilocMessagePacket();
             packet.Deserialize(rawPacket);
 
-            packet.SpeakerId.Should().Be(0);
+            packet.SpeakerId.Should().Be(new ObjectId(0));
             packet.SpeakerBody.Should().Be((ModelId)0);
             packet.Color.Should().Be((Color) 0x03B2);
             packet.Font.Should().Be(0x03);
-            packet.MessageId.Should().Be(0x0007A258);
+            packet.MessageId.Should().Be(new MessageId(0x0007A258));
             packet.Name.Should().Be("System");
             packet.Arguments.Should().Be(string.Empty);
         }

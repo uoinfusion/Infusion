@@ -4,11 +4,7 @@ namespace Infusion.Packets.Client
 {
     public class WearItemRequest
     {
-        public uint ItemId { get; }
-        public Layer Layer { get; }
-        public uint PlayerId { get; }
-
-        public WearItemRequest(uint itemId, Layer layer, uint playerId)
+        public WearItemRequest(ObjectId itemId, Layer layer, ObjectId playerId)
         {
             ItemId = itemId;
             Layer = layer;
@@ -17,13 +13,17 @@ namespace Infusion.Packets.Client
             var payload = new byte[10];
 
             var writer = new ArrayPacketWriter(payload);
-            writer.WriteByte((byte)PacketDefinitions.DropWearItem.Id);
-            writer.WriteUInt(itemId);
-            writer.WriteByte((byte)layer);
-            writer.WriteUInt(playerId);
+            writer.WriteByte((byte) PacketDefinitions.DropWearItem.Id);
+            writer.WriteId(itemId);
+            writer.WriteByte((byte) layer);
+            writer.WriteId(playerId);
 
             RawPacket = new Packet(PacketDefinitions.AttackRequest.Id, payload);
         }
+
+        public ObjectId ItemId { get; }
+        public Layer Layer { get; }
+        public ObjectId PlayerId { get; }
 
         public Packet RawPacket { get; }
     }

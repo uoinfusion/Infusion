@@ -32,7 +32,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new SpeechMessagePacket();
             packet.Deserialize(rawPacket);
 
-            packet.Id.Should().Be(0x00000001);
+            packet.Id.Should().Be(new ObjectId(0x00000001));
             packet.Model.Should().Be((ModelId)0x0190);
             packet.Type.Should().Be((SpeechType)3);
             packet.Color.Should().Be((Color)0x02B2);

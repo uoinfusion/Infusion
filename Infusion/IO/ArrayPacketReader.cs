@@ -26,9 +26,10 @@ namespace Infusion.IO
             return result;
         }
 
-        public static ModelId ReadModelId(byte[] array, int position) => (ModelId) ReadUShort(array, position);
+        public static ObjectId ReadId(byte[] array, int position) => new ObjectId(ReadUInt(array, position));
+        public static ModelId ReadModelId(byte[] array, int position) => ReadUShort(array, position);
 
-        public ModelId ReadModelId() => (ModelId) ReadUShort();
+        public ModelId ReadModelId() => ReadUShort();
 
         internal static ushort ReadUShort(byte[] array, int position)
         {
@@ -158,5 +159,7 @@ namespace Infusion.IO
             }
             return false;
         }
+
+        public ObjectId ReadObjectId() => new ObjectId(ReadUInt());
     }
 }

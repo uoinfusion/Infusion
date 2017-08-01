@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Infusion.Packets;
 using Infusion.Packets.Server;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -20,7 +21,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new UpdateCurrentStaminaPacket();
             packet.Deserialize(rawPacket);
 
-            packet.PlayerId.Should().Be(0x00045B2A);
+            packet.PlayerId.Should().Be(new ObjectId(0x00045B2A));
             packet.MaxStamina.Should().Be(0x0068);
             packet.CurrentStamina.Should().Be(0x0053);
         }

@@ -4,11 +4,11 @@ namespace Infusion.Packets.Client
 {
     public class PickupItemRequest
     {
-        public uint ItemId { get; }
+        public ObjectId ItemId { get; }
 
         public ushort Count { get; }
 
-        public PickupItemRequest(uint itemId, ushort count)
+        public PickupItemRequest(ObjectId itemId, ushort count)
         {
             ItemId = itemId;
             Count = count;
@@ -17,7 +17,7 @@ namespace Infusion.Packets.Client
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte)PacketDefinitions.PickUpItem.Id);
-            writer.WriteUInt(itemId);
+            writer.WriteId(itemId);
             writer.WriteUShort(count);
 
             RawPacket = new Packet(PacketDefinitions.PickUpItem.Id, payload);

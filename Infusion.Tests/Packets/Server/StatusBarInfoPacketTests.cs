@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using Infusion.Packets;
 using Infusion.Packets.Server;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -38,7 +39,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new StatusBarInfoPacket();
             packet.Deserialize(rawPacket);
 
-            packet.PlayerId.Should().Be(0x00045B2A);
+            packet.PlayerId.Should().Be(new ObjectId(0x00045B2A));
             packet.PlayerName.Should().Be("Pipka");
             packet.CurrentHealth.Should().Be(0x68);
             packet.MaxHealth.Should().Be(0x68);
@@ -74,7 +75,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new StatusBarInfoPacket();
             packet.Deserialize(rawPacket);
 
-            packet.PlayerId.Should().Be(0x000575F7);
+            packet.PlayerId.Should().Be(new ObjectId(0x000575F7));
             packet.PlayerName.Should().Be("Ptacek");
             packet.CurrentHealth.Should().Be(0x64);
             packet.MaxHealth.Should().Be(0x64);
@@ -115,7 +116,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new StatusBarInfoPacket();
             packet.Deserialize(rawPacket);
 
-            packet.PlayerId.Should().Be(0x00045B2A);
+            packet.PlayerId.Should().Be(new ObjectId(0x00045B2A));
             packet.PlayerName.Should().Be("Pipka");
             packet.CurrentHealth.Should().Be(0x68);
             packet.MaxHealth.Should().Be(0x68);

@@ -14,8 +14,8 @@ namespace Infusion.LegacyApi
         private readonly UltimaServer server;
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
         private bool discardNextTargetLocationRequestIfEmpty;
-        private uint lastCursorId = 0x00000025;
-        private uint lastItemIdInfo;
+        private CursorId lastCursorId = new CursorId(0x00000025);
+        private ObjectId lastItemIdInfo;
 
         private string lastTargetInfo;
         private ModelId lastTypeInfo;
@@ -46,13 +46,13 @@ namespace Infusion.LegacyApi
             {
                 discardNextTargetLocationRequestIfEmpty = false;
                 if (packet.Location.X == 0xFFFF && packet.Location.Y == 0xFFFF &&
-                    packet.ClickedOnId == 0)
+                    packet.ClickedOnId.Value == 0)
                 {
                     return null;
                 }
             }
 
-            if (packet.CursorId == 0xDEADBEEF)
+            if (packet.CursorId == new CursorId(0xDEADBEEF))
             {
                 switch (packet.CursorTarget)
                 {
@@ -65,7 +65,7 @@ namespace Infusion.LegacyApi
                         lastItemIdInfo = packet.ClickedOnId;
                         var lastItem = legacyApi.GameObjects[lastItemIdInfo];
                         lastTargetInfo = lastItem?.ToString() ??
-                                         $"{packet.ClickedOnId:X8} {packet.ClickedOnType} {packet.ClickedOnType}";
+                                         $"{packet.ClickedOnId} {packet.ClickedOnType} {packet.ClickedOnType}";
                         break;
                 }
 
@@ -89,7 +89,7 @@ namespace Infusion.LegacyApi
         {
             receivedTargetInfoEvent.Reset();
 
-            client.TargetCursor(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
+            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
@@ -101,9 +101,9 @@ namespace Infusion.LegacyApi
 
         public void TargetTile(Location3D location, ModelId tileType)
         {
-            server.TargetLocation(0x00000025, location, tileType, CursorType.Harmful);
+            server.TargetLocation(new CursorId(0x00000025), location, tileType, CursorType.Harmful);
 
-            client.TargetLocation(0x00000025, location, tileType, CursorType.Cancel);
+            client.TargetLocation(new CursorId(0x00000025), location, tileType, CursorType.Cancel);
 
             discardNextTargetLocationRequestIfEmpty = true;
         }
@@ -147,7 +147,7 @@ namespace Infusion.LegacyApi
             Target(player.PlayerId, player.BodyType, player.Location);
         }
 
-        private void Target(uint itemId, ModelId type, Location3D location)
+        private void Target(ObjectId itemId, ModelId type, Location3D location)
         {
             server.TargetItem(lastCursorId, itemId, CursorType.Harmful, location, type);
 
@@ -163,7 +163,7 @@ namespace Infusion.LegacyApi
         public ModelId TypeInfo()
         {
             receivedTargetInfoEvent.Reset();
-            client.TargetCursor(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
+            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {
@@ -173,10 +173,10 @@ namespace Infusion.LegacyApi
             return lastTypeInfo;
         }
 
-        public uint ItemIdInfo()
+        public ObjectId ItemIdInfo()
         {
             receivedTargetInfoEvent.Reset();
-            client.TargetCursor(CursorTarget.Location, 0xDEADBEEF, CursorType.Neutral);
+            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
             while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
             {

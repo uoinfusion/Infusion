@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
+using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Infusion.LegacyApi.Tests
@@ -14,7 +15,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", 0, 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
 
             journal.Contains("afk").Should().BeTrue();
         }
@@ -25,7 +26,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", 0, 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
 
             journal.Contains("and now for completely something else").Should().BeFalse();
         }
@@ -37,9 +38,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "before last action", 0, 0);
+            source.AddMessage("name", "before last action", new ObjectId(0), 0);
             source.NotifyLastAction();
-            source.AddMessage("name", "after last action", 0, 0);
+            source.AddMessage("name", "after last action", new ObjectId(0), 0);
 
             journal.When("after last action", () => executed = true).WaitAny(TimeSpan.FromMilliseconds(100));
 
@@ -54,9 +55,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "before last action", 0, 0);
+            source.AddMessage("name", "before last action", new ObjectId(0), 0);
             source.NotifyLastAction();
-            source.AddMessage("name", "after last action", 0, 0);
+            source.AddMessage("name", "after last action", new ObjectId(0), 0);
 
             journal.When("before last action", () => executed = true).WhenTimeout(() => timeoutExecuted = true).WaitAny(TimeSpan.FromMilliseconds(10));
 
@@ -72,7 +73,7 @@ namespace Infusion.LegacyApi.Tests
             bool firstCheckExecuted = false;
             bool secondCheckExecuted = false;
 
-            source.AddMessage("name", "message1", 0, 0);
+            source.AddMessage("name", "message1", new ObjectId(0), 0);
             journal.When("message1", () => { firstCheckExecuted = true; }).WaitAny(TimeSpan.FromMilliseconds(1));
             journal.When("message1", () => { secondCheckExecuted = true; }).WaitAny(TimeSpan.FromMilliseconds(1));
 
@@ -86,13 +87,13 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "first message", 0, 0);
+            source.AddMessage("name", "first message", new ObjectId(0), 0);
 
             using (var enumerator = journal.GetEnumerator())
             {
                 enumerator.MoveNext().Should().BeTrue();
                 enumerator.Current.Message.Should().Be("first message");
-                source.AddMessage("name", "second, concurrently added message", 0, 0);
+                source.AddMessage("name", "second, concurrently added message", new ObjectId(0), 0);
                 enumerator.MoveNext().Should().BeFalse();
             }
         }
@@ -103,9 +104,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "first message", 0, 0);
+            source.AddMessage("name", "first message", new ObjectId(0), 0);
             journal.Delete();
-            source.AddMessage("name", "message after delete", 0, 0);
+            source.AddMessage("name", "message after delete", new ObjectId(0), 0);
 
             journal.Contains("message after delete").Should().BeTrue();
         }
@@ -116,7 +117,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "message before delete", 0, 0);
+            source.AddMessage("name", "message before delete", new ObjectId(0), 0);
             journal.Delete();
 
             journal.Contains("message before delete").Should().BeFalse();
@@ -126,7 +127,7 @@ namespace Infusion.LegacyApi.Tests
         public void Cannot_see_entries_received_before_journal_instantiation()
         {
             var source = new JournalSource();
-            source.AddMessage("name", "message before instantiation", 0, 0);
+            source.AddMessage("name", "message before instantiation", new ObjectId(0), 0);
 
             var journal = new GameJournal(source, null);
 
@@ -139,7 +140,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "message after instantiation", 0, 0);
+            source.AddMessage("name", "message after instantiation", new ObjectId(0), 0);
 
             journal.Contains("message after instantiation").Should().BeTrue();
         }
@@ -150,7 +151,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new JournalSource();
             var journal = new GameJournal(source, null);
 
-            source.AddMessage("name", "message1", 0, 0);
+            source.AddMessage("name", "message1", new ObjectId(0), 0);
 
             journal.When("message1", () => { }).WaitAny(TimeSpan.FromMilliseconds(1));
 

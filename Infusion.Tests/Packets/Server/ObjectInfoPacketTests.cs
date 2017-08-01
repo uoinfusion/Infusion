@@ -38,7 +38,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new ObjectInfoPacket();
             packet.Deserialize(ObjectInfoPacketWithAmountWithFlag);
 
-            packet.Id.Should().Be(0x4000000B);
+            packet.Id.Should().Be(new ObjectId(0x4000000B));
             packet.Type.Should().Be((ModelId)0x0EED);
             packet.Amount.Should().Be(0x01F4);
             packet.Location.X.Should().Be(0x128A);
@@ -53,7 +53,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new ObjectInfoPacket();
             packet.Deserialize(ObjectInfoPacket);
 
-            packet.Id.Should().Be(0x4000000F);
+            packet.Id.Should().Be(new ObjectId(0x4000000F));
             packet.Type.Should().Be((ModelId)0x372A);
             packet.Amount.Should().Be(1);
             packet.Location.X.Should().Be(0x129B);
@@ -80,7 +80,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new ObjectInfoPacket();
             packet.Deserialize(rawPacket);
 
-            packet.Id.Should().Be(0x400324dd);
+            packet.Id.Should().Be(new ObjectId(0x400324dd));
             packet.Type.Should().Be((ModelId)0x198a);
             packet.Location.X.Should().Be(0x14EB);
             packet.Location.Y.Should().Be(0x0bd0);
@@ -105,7 +105,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new ObjectInfoPacket();
             packet.Deserialize(rawPacket);
 
-            packet.Id.Should().Be(0x40037cbd);
+            packet.Id.Should().Be(new ObjectId(0x40037cbd));
             packet.Type.Should().Be((ModelId)0x1ad7);
             packet.Location.X.Should().Be(0x14f4);
             packet.Location.Y.Should().Be(0x0BAE);

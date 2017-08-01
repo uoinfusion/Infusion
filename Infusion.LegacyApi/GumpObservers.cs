@@ -122,7 +122,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        internal void TriggerGump(uint triggerId)
+        internal void TriggerGump(GumpControlId triggerId)
         {
             lock (gumpLock)
             {

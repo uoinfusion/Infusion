@@ -32,7 +32,7 @@ namespace Infusion.LegacyApi
             this.legacyApi = legacyApi;
         }
 
-        public uint PlayerId { get; set; }
+        public ObjectId PlayerId { get; set; }
 
         public Location3D Location
         {
@@ -54,7 +54,7 @@ namespace Infusion.LegacyApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => legacyApi.GameObjects.OfType<Item>().FirstOrDefault(i => i.Type == backPackType && i.Layer == Layer.Backpack);
+        public Item BackPack => legacyApi.GameObjects.OfType<Item>().FirstOrDefault(i => i.Type == backPackType && i.Layer == Layer.Backpack && i.ContainerId.HasValue && i.ContainerId == PlayerId);
         public Item BankBox => legacyApi.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
         public Color Color { get; set; }

@@ -50,18 +50,18 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        public void DoubleClick(uint itemId)
+        public void DoubleClick(ObjectId itemId)
         {
             var packet = new DoubleClickRequest(itemId);
             Send(packet.RawPacket);
         }
 
-        public void Click(uint itemId)
+        public void Click(ObjectId itemId)
         {
             Send(new SingleClickRequest(itemId).RawPacket);
         }
 
-        public void RequestStatus(uint id)
+        public void RequestStatus(ObjectId id)
         {
             var packet = new GetClientStatusRequest(id);
 
@@ -74,19 +74,19 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        public void DropItem(uint itemId, uint targetContainerId)
+        public void DropItem(ObjectId itemId, ObjectId targetContainerId)
         {
             var dropPacket = new DropItemRequest(itemId, targetContainerId);
             Send(dropPacket.RawPacket);
         }
 
-        public void DragItem(uint itemId, ushort amount)
+        public void DragItem(ObjectId itemId, ushort amount)
         {
             var pickupPacket = new PickupItemRequest(itemId, amount);
             Send(pickupPacket.RawPacket);
         }
 
-        public void Wear(uint itemId, Layer layer, uint playerId)
+        public void Wear(ObjectId itemId, Layer layer, ObjectId playerId)
         {
             var request = new WearItemRequest(itemId, layer, playerId);
             Send(request.RawPacket);
@@ -110,19 +110,19 @@ namespace Infusion
             Send(request.RawPacket);
         }
 
-        public void AttackRequest(uint targetId)
+        public void AttackRequest(ObjectId targetId)
         {
             var packet = new AttackRequest(targetId);
             Send(packet.RawPacket);
         }
 
-        public void TargetLocation(uint cursorId, Location3D location, ModelId tileType, CursorType cursorType)
+        public void TargetLocation(CursorId cursorId, Location3D location, ModelId tileType, CursorType cursorType)
         {
             var targetRequest = new TargetLocationRequest(cursorId, location, tileType, cursorType);
             Send(targetRequest.RawPacket);
         }
 
-        public void TargetItem(uint cursorId, uint itemId, CursorType cursorType, Location3D location, ModelId type)
+        public void TargetItem(CursorId cursorId, ObjectId itemId, CursorType cursorType, Location3D location, ModelId type)
         {
             var targetRequest = new TargetLocationRequest(cursorId, itemId, CursorType.Harmful, location,
                 type);

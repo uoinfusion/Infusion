@@ -107,7 +107,7 @@ namespace Infusion.Proxy
             var message = new SpeechMessage
             {
                 Type = SpeechType.Speech,
-                Message = clilocDictionary.GetString(packet.MessageId) + packet.Affix,
+                Message = clilocDictionary.GetString(packet.MessageId.Value) + packet.Affix,
                 Name = packet.Name,
                 SpeakerId = packet.SpeakerId
             };
@@ -120,7 +120,7 @@ namespace Infusion.Proxy
             var message = new SpeechMessage
             {
                 Type = SpeechType.Speech,
-                Message = clilocDictionary.GetString(packet.MessageId),
+                Message = clilocDictionary.GetString(packet.MessageId.Value),
                 Name = packet.Name,
                 SpeakerId = packet.SpeakerId
             };

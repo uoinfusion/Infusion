@@ -4,13 +4,13 @@ namespace Infusion.Packets.Client
 {
     public class DropItemRequest
     {
-        public uint ItemId { get; }
+        public ObjectId ItemId { get; }
 
         public Location3D Location { get; }
 
-        public uint ContainerId { get; }
+        public ObjectId ContainerId { get; }
 
-        public DropItemRequest(uint itemId, uint containerId)
+        public DropItemRequest(ObjectId itemId, ObjectId containerId)
         {
             ItemId = itemId;
             ContainerId = containerId;
@@ -25,11 +25,11 @@ namespace Infusion.Packets.Client
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte) PacketDefinitions.DropItem.Id);
-            writer.WriteUInt(ItemId);
+            writer.WriteId(ItemId);
             writer.WriteUShort(Location.X);
             writer.WriteUShort(Location.Y);
             writer.WriteByte(Location.Z);
-            writer.WriteUInt(ContainerId);
+            writer.WriteId(ContainerId);
 
             return new Packet(PacketDefinitions.DropItem.Id, payload);
         }

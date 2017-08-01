@@ -9,7 +9,7 @@ namespace Infusion.Packets.Server
 {
     public class AllowRefuseAttackPacket : MaterializedPacket
     {
-        public uint AttackTargetId { get; set; }
+        public ObjectId AttackTargetId { get; set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -18,7 +18,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(1);
 
-            AttackTargetId = reader.ReadUInt();
+            AttackTargetId = reader.ReadObjectId();
         }
 
         public override Packet RawPacket => rawPacket;

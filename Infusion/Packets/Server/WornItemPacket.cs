@@ -5,10 +5,10 @@ namespace Infusion.Packets.Server
     public class WornItemPacket : MaterializedPacket
     {
         private Packet rawPacket;
-        public uint ItemId { get; private set; }
+        public ObjectId ItemId { get; private set; }
         public ModelId Type { get; private set; }
         public Layer Layer { get; private set; }
-        public uint PlayerId { get; private set; }
+        public ObjectId PlayerId { get; private set; }
         public Color Color { get; private set; }
 
         public override Packet RawPacket => rawPacket;
@@ -19,11 +19,11 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
 
             reader.Skip(1);
-            ItemId = reader.ReadUInt();
+            ItemId = reader.ReadObjectId();
             Type = reader.ReadModelId();
             reader.Skip(1);
             Layer = reader.ReadLayer();
-            PlayerId = reader.ReadUInt();
+            PlayerId = reader.ReadObjectId();
             Color = reader.ReadColor();
         }
     }

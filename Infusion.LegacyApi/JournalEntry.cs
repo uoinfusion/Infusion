@@ -7,7 +7,7 @@ namespace Infusion.LegacyApi
     {
         private string text;
 
-        public JournalEntry(long id, string name, string message, uint speakerId, ModelId type)
+        public JournalEntry(long id, string name, string message, ObjectId speakerId, ModelId type)
         {
             Id = id;
             Name = name;
@@ -22,7 +22,7 @@ namespace Infusion.LegacyApi
         public string Message { get; }
         public string Name { get; }
 
-        public uint SpeakerId { get; }
+        public ObjectId SpeakerId { get; }
         public ModelId Type { get; }
 
         public DateTime Created { get; }

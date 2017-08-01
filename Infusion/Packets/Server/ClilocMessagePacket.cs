@@ -9,11 +9,11 @@ namespace Infusion.Packets.Server
 {
     public sealed class ClilocMessagePacket : MaterializedPacket
     {
-        public uint SpeakerId { get; set; }
+        public ObjectId SpeakerId { get; set; }
         public ModelId SpeakerBody { get; set; }
         public Color Color { get; set; }
         public ushort Font { get; set; }
-        public int MessageId { get; set; }
+        public MessageId MessageId { get; set; }
         public string Name { get; set; }
         public string Arguments { get; set; }
 
@@ -25,12 +25,12 @@ namespace Infusion.Packets.Server
             reader.Skip(1);
 
             var packetSize = reader.ReadUShort();
-            SpeakerId = reader.ReadUInt();
+            SpeakerId = reader.ReadObjectId();
             SpeakerBody = reader.ReadModelId();
             reader.ReadByte(); // type
             Color = reader.ReadColor();
             Font = reader.ReadUShort();
-            MessageId = reader.ReadInt();
+            MessageId = new MessageId(reader.ReadInt());
             Name = reader.ReadString(30);
             Arguments = reader.ReadNullTerminatedUnicodeString();
         }

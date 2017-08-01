@@ -11,7 +11,7 @@ namespace Infusion.LegacyApi.Tests
         public void Spec_with_ModelId_matches_Mobile_with_same_ModelId()
         {
             var spec = new MobileSpec(0x4444);
-            var movile = new Mobile(0x000000, 0x4444, new Location3D(0, 0, 0));
+            var movile = new Mobile(new ObjectId(0), 0x4444, new Location3D(0, 0, 0));
 
             spec.Matches(movile).Should().BeTrue();
         }
@@ -41,7 +41,7 @@ namespace Infusion.LegacyApi.Tests
         public void Spec_with_ModelId_not_matching_Item_with_other_ModelId()
         {
             var spec = new MobileSpec(0x4444);
-            var mobile = new Mobile(0x000000, 0x2222, new Location3D(0, 0, 0), (Color)0, null, null);
+            var mobile = new Mobile(new ObjectId(0), 0x2222, new Location3D(0, 0, 0), (Color)0, null, null);
 
             spec.Matches(mobile).Should().BeFalse();
         }
@@ -50,7 +50,7 @@ namespace Infusion.LegacyApi.Tests
         public void Spec_with_ModelId_and_Color_matching_Item_with_same_ModelId_and_Color()
         {
             var spec = new MobileSpec(0x4444, (Color)0x22);
-            var mobile = new Mobile(0x000000, 0x4444, new Location3D(0, 0, 0), (Color)0x22, null, null);
+            var mobile = new Mobile(new ObjectId(0), 0x4444, new Location3D(0, 0, 0), (Color)0x22, null, null);
 
             spec.Matches(mobile).Should().BeTrue();
         }
@@ -59,7 +59,7 @@ namespace Infusion.LegacyApi.Tests
         public void Spec_with_ModelId_and_Color_not_matching_Item_with_different_Color()
         {
             var spec = new MobileSpec(0x4444, (Color)0x22);
-            var mobile = new Mobile(0x000000, 0x4444, new Location3D(0, 0, 0), (Color)0x99, null, null);
+            var mobile = new Mobile(new ObjectId(0), 0x4444, new Location3D(0, 0, 0), (Color)0x99, null, null);
 
             spec.Matches(mobile).Should().BeFalse();
         }
@@ -69,7 +69,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var spec = new MobileSpec(new MobileSpec(0x1111), new MobileSpec(0x2222));
 
-            var mobile = new Mobile(0x000000, 0x1111, new Location3D(0, 0, 0), (Color)0x99, null, null);
+            var mobile = new Mobile(new ObjectId(0), 0x1111, new Location3D(0, 0, 0), (Color)0x99, null, null);
 
             spec.Matches(mobile).Should().BeTrue();
         }
@@ -79,7 +79,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var spec = new MobileSpec(new MobileSpec(0x1111), new MobileSpec(0x2222));
 
-            var mobile = new Mobile(0x000000, 0x9999, new Location3D(0, 0, 0), (Color)0x99, null, null);
+            var mobile = new Mobile(new ObjectId(0), 0x9999, new Location3D(0, 0, 0), (Color)0x99, null, null);
 
             spec.Matches(mobile).Should().BeFalse();
         }
@@ -99,9 +99,9 @@ namespace Infusion.LegacyApi.Tests
         {
             var spec = new MobileSpec(0x1111).Including(new MobileSpec(0x2222), new MobileSpec(0x3333));
 
-            spec.Matches(new Mobile(0x000000, 0x1111, new Location3D(0, 0, 0), (Color)0x99, null, null)).Should().BeTrue();
-            spec.Matches(new Mobile(0x000000, 0x2222, new Location3D(0, 0, 0), (Color)0x99, null, null)).Should().BeTrue();
-            spec.Matches(new Mobile(0x000000, 0x3333, new Location3D(0, 0, 0), (Color)0x99, null, null)).Should().BeTrue();
+            spec.Matches(new Mobile(new ObjectId(0), 0x1111, new Location3D(0, 0, 0), (Color)0x99, null, null)).Should().BeTrue();
+            spec.Matches(new Mobile(new ObjectId(0), 0x2222, new Location3D(0, 0, 0), (Color)0x99, null, null)).Should().BeTrue();
+            spec.Matches(new Mobile(new ObjectId(0), 0x3333, new Location3D(0, 0, 0), (Color)0x99, null, null)).Should().BeTrue();
         }
 
         [TestMethod]

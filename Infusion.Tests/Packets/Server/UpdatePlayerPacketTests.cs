@@ -28,7 +28,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new UpdatePlayerPacket();
             packet.Deserialize(rawPacket);
 
-            packet.PlayerId.Should().Be(0x00066221);
+            packet.PlayerId.Should().Be(new ObjectId(0x00066221));
             packet.Type.Should().Be((ModelId)0x0006);
             packet.Location.X.Should().Be(0x08ed);
             packet.Location.Y.Should().Be(0x097f);

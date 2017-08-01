@@ -4,7 +4,7 @@ namespace Infusion.Packets.Server
 {
     public class UpdatePlayerPacket : MaterializedPacket
     {
-        public uint PlayerId { get; private set; }
+        public ObjectId PlayerId { get; private set; }
         public ModelId Type { get; private set; }
         public Location3D Location { get; private set; }
         public Movement Direction { get; private set; }
@@ -19,7 +19,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(1);
 
-            PlayerId = reader.ReadUInt();
+            PlayerId = reader.ReadObjectId();
             Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             Direction = (Movement) reader.ReadByte();

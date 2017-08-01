@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Infusion.Packets;
 
 namespace Infusion.Gumps
 {
@@ -6,10 +7,10 @@ namespace Infusion.Gumps
     {
         private readonly StringBuilder builder = new StringBuilder();
 
-        void IGumpParserProcessor.OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, uint triggerId)
+        void IGumpParserProcessor.OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId)
         {
             builder.AppendLine(
-                $"Button: x = {x}, y = {y}{(isTrigger ? ", isTrigger" : string.Empty)}, pageId = {pageId}, triggerId = {triggerId}");
+                $"Button: x = {x}, y = {y}{(isTrigger ? ", isTrigger" : string.Empty)}, pageId = {pageId}, triggerId = {triggerId.Value}");
         }
 
         void IGumpParserProcessor.OnText(int x, int y, uint hue, string text)
@@ -18,15 +19,15 @@ namespace Infusion.Gumps
         }
 
         public string GetDescription() => builder.ToString();
-        public void OnCheckBox(int x, int y, uint id)
+        public void OnCheckBox(int x, int y, GumpControlId id)
         {
-            builder.AppendLine($"CheckBox: x = {x}, y = {y}, id = {id}");
+            builder.AppendLine($"CheckBox: x = {x}, y = {y}, id = {id.Value}");
         }
 
-        public void OnTextEntry(int x, int y, int width, int maxLength, string text, uint id)
+        public void OnTextEntry(int x, int y, int width, int maxLength, string text, GumpControlId id)
         {
             builder.AppendLine(
-                $"TextEntry: x = {x}, y = {y}, width = {width}, maxLength = {maxLength}, text = {text}, id = {id}");
+                $"TextEntry: x = {x}, y = {y}, width = {width}, maxLength = {maxLength}, text = {text}, id = {id.Value}");
         }
     }
 }

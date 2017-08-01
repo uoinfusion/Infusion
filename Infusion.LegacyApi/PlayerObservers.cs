@@ -40,12 +40,12 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
         }
 
-        private uint acceptedAttackTargedId;
+        private ObjectId acceptedAttackTargedId;
         private readonly AutoResetEvent attackResponseReceivedEvent = new AutoResetEvent(false);
 
-        public AttackResult Attack(uint targetId, TimeSpan? timeout = null)
+        public AttackResult Attack(ObjectId targetId, TimeSpan? timeout = null)
         {
-            acceptedAttackTargedId = 0;
+            acceptedAttackTargedId = new ObjectId(0);
 
             server.AttackRequest(targetId);
 
@@ -59,7 +59,7 @@ namespace Infusion.LegacyApi
                 legacyApi.CheckCancellation();
             }
 
-            if (acceptedAttackTargedId == 0)
+            if (acceptedAttackTargedId.Value == 0)
                 return AttackResult.Refused;
 
             return AttackResult.Accepted;

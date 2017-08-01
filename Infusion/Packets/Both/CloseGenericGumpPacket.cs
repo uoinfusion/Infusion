@@ -7,11 +7,11 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Both
 {
-    public class CloseGenericGumpPacket
+    internal class CloseGenericGumpPacket
     {
-        public uint GumpId { get; }
+        public GumpInstanceId GumpId { get; }
 
-        public CloseGenericGumpPacket(uint gumpId)
+        public CloseGenericGumpPacket(GumpInstanceId gumpId)
         {
             GumpId = gumpId;
 
@@ -21,7 +21,7 @@ namespace Infusion.Packets.Both
             writer.WriteByte((byte)PacketDefinitions.GeneralInformationPacket.Id);
             writer.WriteUShort(13); // length
             writer.WriteUShort(4); // subcommand
-            writer.WriteUInt(gumpId);
+            writer.WriteUInt(gumpId.Value);
             writer.WriteUInt(0);
 
             RawPacket = new Packet(PacketDefinitions.GeneralInformationPacket.Id, payload);

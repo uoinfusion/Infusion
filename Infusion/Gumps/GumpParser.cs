@@ -1,4 +1,5 @@
 ﻿using System;
+using Infusion.Packets;
 
 namespace Infusion.Gumps
 {
@@ -59,7 +60,7 @@ namespace Infusion.Gumps
             var isChecked = ParseBoolParameter();
             var id = ParseIntParameter();
 
-            parserProcessor.OnCheckBox(x, y, (uint)id);
+            parserProcessor.OnCheckBox(x, y, new GumpControlId((uint)id));
         }
 
         private void ParseTextEntry()
@@ -72,7 +73,7 @@ namespace Infusion.Gumps
             var id = (uint)ParseIntParameter();
             var text = ParseStringParameter();
 
-            parserProcessor.OnTextEntry(x, y, width, maxLength, text, id);
+            parserProcessor.OnTextEntry(x, y, width, maxLength, text, new GumpControlId(id));
         }
 
         private void ParseUnknown()
@@ -101,7 +102,7 @@ namespace Infusion.Gumps
             var pageId = (uint)ParseIntParameter();
             var triggerId = (uint)ParseIntParameter();
 
-            parserProcessor.OnButton(x, y, down, up, isTrigger, pageId, triggerId);
+            parserProcessor.OnButton(x, y, down, up, isTrigger, pageId, new GumpControlId(triggerId));
         }
 
         private bool ParseBoolParameter()

@@ -29,7 +29,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new DrawGamePlayerPacket();
             packet.Deserialize(rawPacket);
 
-            packet.PlayerId.Should().Be(0x00000001);
+            packet.PlayerId.Should().Be(new ObjectId(0x00000001));
             packet.BodyType.Should().Be((ModelId)0x0190);
             packet.Location.X.Should().Be(0x129C);
             packet.Location.Y.Should().Be(0x0552);

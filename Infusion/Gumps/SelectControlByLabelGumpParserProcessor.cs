@@ -1,4 +1,5 @@
 using System;
+using Infusion.Packets;
 
 namespace Infusion.Gumps
 {
@@ -7,7 +8,7 @@ namespace Infusion.Gumps
         private readonly string controlLabel;
         private readonly GumpLabelPosition labelPosition;
         private bool takeNextControl;
-        private uint? previousControlId;
+        private GumpControlId? previousControlId;
         private GumpControls targetControl;
 
         public SelectControlByLabelGumpParserProcessor(string controlLabel, GumpLabelPosition labelPosition, GumpControls targetControl)
@@ -17,15 +18,15 @@ namespace Infusion.Gumps
             this.targetControl = targetControl;
         }
 
-        public uint? SelectedControldId { get; private set; }
+        public GumpControlId? SelectedControldId { get; private set; }
 
-        void IGumpParserProcessor.OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, uint triggerId)
+        void IGumpParserProcessor.OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId)
         {
             if (targetControl == GumpControls.Button)
                 ProcessControl(triggerId);
         }
 
-        private void ProcessControl(uint controlId)
+        private void ProcessControl(GumpControlId controlId)
         {
             if (SelectedControldId.HasValue)
                 return;
@@ -63,13 +64,13 @@ namespace Infusion.Gumps
             previousControlId = null;
         }
 
-        void IGumpParserProcessor.OnCheckBox(int x, int y, uint id)
+        void IGumpParserProcessor.OnCheckBox(int x, int y, GumpControlId id)
         {
             if (targetControl == GumpControls.CheckBox)
                 ProcessControl(id);
         }
 
-        public void OnTextEntry(int x, int y, int width, int maxLength, string text, uint id)
+        public void OnTextEntry(int x, int y, int width, int maxLength, string text, GumpControlId id)
         {
             if (targetControl == GumpControls.TextEntry)
                 ProcessControl(id);

@@ -61,11 +61,11 @@ namespace Infusion.Tests.Packets.Server
             packet.Deserialize(AddMultipleItemsInContainerPacket);
 
             var firstItem = packet.Items.First();
-            firstItem.Id.Should().Be(0x4000000b);
+            firstItem.Id.Should().Be(new ObjectId(0x4000000b));
             firstItem.Type.Should().Be((ModelId)0x0eed);
             firstItem.Amount.Should().Be(0x01f4);
             firstItem.Color.Should().Be(new Color(0x0000));
-            firstItem.ContainerId.Value.Should().Be(0x40000004);
+            firstItem.ContainerId.Value.Should().Be(new ObjectId(0x40000004));
             firstItem.Location.X.Should().Be(0x74);
             firstItem.Location.Y.Should().Be(0x61);
         }
@@ -77,11 +77,11 @@ namespace Infusion.Tests.Packets.Server
             packet.Deserialize(AddMultipleItemsInContainerPacket);
 
             var firstItem = packet.Items.Skip(1).First();
-            firstItem.Id.Should().Be(0x4000000a);
+            firstItem.Id.Should().Be(new ObjectId(0x4000000a));
             firstItem.Type.Should().Be((ModelId)0x0ff1);
             firstItem.Amount.Should().Be(1);
             firstItem.Color.Should().Be(new Color(0x0000));
-            firstItem.ContainerId.Value.Should().Be(0x40000004);
+            firstItem.ContainerId.Value.Should().Be(new ObjectId(0x40000004));
             firstItem.Location.X.Should().Be(0x0043);
             firstItem.Location.Y.Should().Be(0x0082);
         }

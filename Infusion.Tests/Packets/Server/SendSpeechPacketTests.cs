@@ -32,7 +32,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new SendSpeechPacket();
             packet.Deserialize(rawPacket);
 
-            packet.Id.Should().Be(0);
+            packet.Id.Should().Be(new ObjectId(0));
             packet.Model.Should().Be((ModelId) 0);
             packet.Type.Should().Be(SpeechType.Normal);
             packet.Color.Should().Be((Color) 0x03B2);
@@ -46,8 +46,8 @@ namespace Infusion.Tests.Packets.Server
         {
             var packet = new SendSpeechPacket
             {
-                Id = 0x0006A12A,
-                Model = (ModelId) 0x000,
+                Id = new ObjectId(0x0006A12A),
+                Model = 0x000,
                 Type = SpeechType.Speech,
                 Color = (Color) 0x0026,
                 Font = 0x0003,

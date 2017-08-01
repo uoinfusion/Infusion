@@ -9,7 +9,7 @@ namespace Infusion.Gumps
     {
         private readonly Gump gump;
         private readonly Action<GumpMenuSelectionRequest> triggerGump;
-        private readonly List<uint> selectedCheckBoxes = new List<uint>();
+        private readonly List<GumpControlId> selectedCheckBoxes = new List<GumpControlId>();
         private readonly List<Tuple<ushort, string>> textEntries = new List<Tuple<ushort, string>>();
 
         public GumpResponseBuilder(Gump gump, Action<GumpMenuSelectionRequest> triggerGump)
@@ -18,7 +18,7 @@ namespace Infusion.Gumps
             this.triggerGump = triggerGump;
         }
 
-        public GumpResponse Trigger(uint triggerId)
+        public GumpResponse Trigger(GumpControlId triggerId)
         {
             return new TriggerGumpResponse(gump, triggerId, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray());
         }
@@ -61,7 +61,7 @@ namespace Infusion.Gumps
             parser.Parse(gump);
 
             if (processor.SelectedControldId.HasValue)
-                textEntries.Add(new Tuple<ushort, string>((ushort)processor.SelectedControldId.Value, value));
+                textEntries.Add(new Tuple<ushort, string>((ushort)processor.SelectedControldId.Value.Value, value));
 
             return this;
         }

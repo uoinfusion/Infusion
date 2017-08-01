@@ -7,7 +7,7 @@ namespace Infusion.Packets.Server
     {
         private Packet rawPacket;
 
-        public uint PlayerId { get; private set; }
+        public ObjectId PlayerId { get; private set; }
         public string PlayerName { get; private set; }
         public ushort CurrentHealth { get; private set; }
         public ushort MaxHealth { get; private set; }
@@ -30,7 +30,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
 
             reader.Skip(3);
-            PlayerId = reader.ReadUInt();
+            PlayerId = reader.ReadObjectId();
             PlayerName = reader.ReadString(30);
             CurrentHealth = reader.ReadUShort();
             MaxHealth = reader.ReadUShort();

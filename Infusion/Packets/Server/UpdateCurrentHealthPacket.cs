@@ -5,7 +5,7 @@ namespace Infusion.Packets.Server
     public class UpdateCurrentHealthPacket : MaterializedPacket
     {
         private Packet rawPacket;
-        public uint PlayerId { get; private set; }
+        public ObjectId PlayerId { get; private set; }
 
         public ushort MaxHealth { get; private set; }
         public ushort CurrentHealth { get; private set; }
@@ -18,7 +18,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
 
             reader.Skip(1);
-            PlayerId = reader.ReadUInt();
+            PlayerId = reader.ReadObjectId();
             MaxHealth = reader.ReadUShort();
             CurrentHealth = reader.ReadUShort();
         }

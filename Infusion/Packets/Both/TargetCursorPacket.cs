@@ -6,16 +6,16 @@ namespace Infusion.Packets.Both
     public class TargetCursorPacket : MaterializedPacket
     {
         public CursorTarget CursorTarget { get; private set; }
-        public uint CursorId { get; private set; }
+        public CursorId CursorId { get; private set; }
         public CursorType CursorType { get; private set; }
 
-        public uint ClickedOnId { get; private set; }
+        public ObjectId ClickedOnId { get; private set; }
         public ModelId ClickedOnType { get; private set; }
         public Location3D Location { get; set; }
 
         private Packet rawPacket;
 
-        public TargetCursorPacket(CursorTarget cursorTarget, uint cursorId, CursorType cursorType)
+        public TargetCursorPacket(CursorTarget cursorTarget, CursorId cursorId, CursorType cursorType)
         {
             CursorTarget = cursorTarget;
             CursorId = cursorId;
@@ -25,7 +25,7 @@ namespace Infusion.Packets.Both
 
             writer.WriteByte((byte)PacketDefinitions.TargetCursor.Id);
             writer.WriteByte((byte)cursorTarget);
-            writer.WriteUInt(cursorId);
+            writer.WriteUInt(cursorId.Value);
             writer.WriteByte((byte)cursorType);
 
             rawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);
@@ -42,9 +42,9 @@ namespace Infusion.Packets.Both
             reader.Skip(1);
 
             CursorTarget = (CursorTarget)reader.ReadByte();
-            CursorId = reader.ReadUInt();
+            CursorId = new CursorId(reader.ReadUInt());
             CursorType = (CursorType)reader.ReadByte();
-            ClickedOnId = reader.ReadUInt();
+            ClickedOnId = reader.ReadObjectId();
 
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();

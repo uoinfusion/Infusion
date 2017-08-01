@@ -37,14 +37,14 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
         }
 
-        public uint? DraggedItemId { get; set; }
+        public ObjectId? DraggedItemId { get; set; }
 
         private void HandleStatusBarInfo(StatusBarInfoPacket packet)
         {
             UpdateHealth(packet.PlayerId, packet.CurrentHealth, packet.MaxHealth);
         }
 
-        private void UpdateHealth(uint id, ushort newHealth, ushort newMaxHealth)
+        private void UpdateHealth(ObjectId id, ushort newHealth, ushort newMaxHealth)
         {
             var mobile = gameObjects[id] as Mobile;
             if (mobile != null)

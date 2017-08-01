@@ -2,7 +2,7 @@
 {
     public abstract class GameObject
     {
-        protected GameObject(uint id, ModelId type, Location3D location)
+        protected GameObject(ObjectId id, ModelId type, Location3D location)
         {
             Id = id;
             Type = type;
@@ -11,7 +11,7 @@
 
         public ModelId Type { get; protected set; }
 
-        public uint Id { get; }
+        public ObjectId Id { get; }
 
         public string Name { get; private set; }
 

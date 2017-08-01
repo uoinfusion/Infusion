@@ -4,9 +4,9 @@ namespace Infusion.Packets.Client
 {
     public class AttackRequest
     {
-        private readonly uint targetId;
+        private readonly ObjectId targetId;
 
-        public AttackRequest(uint targetId)
+        public AttackRequest(ObjectId targetId)
         {
             this.targetId = targetId;
 
@@ -14,12 +14,12 @@ namespace Infusion.Packets.Client
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte) PacketDefinitions.AttackRequest.Id);
-            writer.WriteUInt(targetId);
+            writer.WriteId(targetId);
 
             RawPacket = new Packet(PacketDefinitions.AttackRequest.Id, payload);
         }
 
-        public uint TargetId { get; }
+        public ObjectId TargetId { get; }
 
         public Packet RawPacket { get; }
     }

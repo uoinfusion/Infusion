@@ -7,7 +7,7 @@ namespace Infusion.Packets.Server
     {
         private Packet rawPacket;
 
-        public uint Id { get; private set; }
+        public ObjectId Id { get; private set; }
         public ModelId Type { get; private set; }
         public Location3D Location { get; private set; }
 
@@ -23,7 +23,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(3);
 
-            Id = reader.ReadUInt();
+            Id = reader.ReadObjectId();
             Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             Direction = (Movement) reader.ReadByte();
@@ -45,7 +45,7 @@ namespace Infusion.Packets.Server
                     color = (Color) reader.ReadUShort();
                 }
 
-                var item = new Item(itemId, (ModelId)type, 1, new Location3D(0, 0, 0), containerId: Id,
+                var item = new Item(new ObjectId(itemId), new ModelId(type), 1, new Location3D(0, 0, 0), containerId: Id,
                     layer: layer, color: color);
 
                 items.Add(item);

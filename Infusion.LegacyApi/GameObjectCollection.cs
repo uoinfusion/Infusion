@@ -11,14 +11,14 @@ namespace Infusion.LegacyApi
     {
         internal Player Player { get; }
 
-        private ImmutableDictionary<uint, GameObject> gameObjects = ImmutableDictionary<uint, GameObject>.Empty;
+        private ImmutableDictionary<ObjectId, GameObject> gameObjects = ImmutableDictionary<ObjectId, GameObject>.Empty;
 
         public GameObjectCollection(Player player)
         {
             Player = player;
         }
 
-        public GameObject this[uint id]
+        public GameObject this[ObjectId id]
         {
             get
             {
@@ -39,12 +39,12 @@ namespace Infusion.LegacyApi
             return gameObjects.Values.GetEnumerator();
         }
 
-        public bool TryGet(uint id, out GameObject gameObject)
+        public bool TryGet(ObjectId id, out GameObject gameObject)
         {
             return gameObjects.TryGetValue(id, out gameObject);
         }
 
-        public GameObject Get(uint id)
+        public GameObject Get(ObjectId id)
         {
             if (gameObjects.TryGetValue(id, out GameObject gameObject))
                 return gameObject;
@@ -73,7 +73,7 @@ namespace Infusion.LegacyApi
             gameObjects = gameObjects.SetItem(gameObject.Id, gameObject);
         }
 
-        internal void RemoveItem(uint id)
+        internal void RemoveItem(ObjectId id)
         {
             gameObjects = gameObjects.Remove(id);
         }

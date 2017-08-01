@@ -6,7 +6,7 @@ namespace Infusion.Packets.Server
     {
         public ModelId Type { get; private set; }
 
-        public uint Id { get; private set; }
+        public ObjectId Id { get; private set; }
 
         public ushort Amount { get; private set; }
 
@@ -25,16 +25,18 @@ namespace Infusion.Packets.Server
             uint rawId = reader.ReadUInt();
             ushort rawType = reader.ReadUShort();
 
+            uint finalId;
             if ((rawId & 0x80000000) != 0)
             {
-                Id = rawId - 0x80000000;
+                finalId = rawId - 0x80000000;
                 Amount = reader.ReadUShort();
             }
             else
             {
                 Amount = 1;
-                Id = rawId;
+                finalId = rawId;
             }
+            Id = new ObjectId(finalId);
 
             if ((rawType & 0x8000) != 0)
             {

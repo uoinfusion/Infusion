@@ -2,7 +2,7 @@
 {
     public sealed class Item : GameObject
     {
-        public Item(uint id, ModelId type, ushort amount, Location3D location, Color? color, uint? containerId, Layer? layer)
+        public Item(ObjectId id, ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId, Layer? layer)
             : base(id, type, location)
         {
             Amount = amount;
@@ -11,7 +11,7 @@
             Layer = layer;
         }
 
-        private Item(uint id, ModelId type, Location3D location) : base(id, type, location)
+        private Item(ObjectId id, ModelId type, Location3D location) : base(id, type, location)
         {
         }
 
@@ -19,7 +19,7 @@
 
         public ushort Amount { get; private set; }
 
-        public uint? ContainerId { get; private set; }
+        public ObjectId? ContainerId { get; private set; }
 
         public Color? Color { get; private set; }
 
@@ -28,7 +28,7 @@
         public override string ToString()
         {
             return
-                $"Id: {Id:X8}; Type: {Type}; Name: {Name}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId:X8}; Layer: {Layer}";
+                $"Id: {Id}; Type: {Type}; Name: {Name}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId}; Layer: {Layer}";
         }
 
         protected override GameObject Duplicate()
@@ -42,7 +42,7 @@
             };
         }
 
-        public Item Update(ModelId type, ushort amount, Location3D location, Color? color, uint? containerId)
+        public Item Update(ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId)
         {
             var updatedItem = (Item)Duplicate();
             updatedItem.Location = location;

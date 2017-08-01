@@ -6,7 +6,7 @@ namespace Infusion.Packets.Server
     {
         private Packet rawPacket;
 
-        public uint Id { get; set; }
+        public ObjectId Id { get; set; }
 
         public ModelId Model { get; set; }
 
@@ -26,7 +26,7 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(3);
 
-            Id = reader.ReadUInt();
+            Id = reader.ReadObjectId();
             Model = reader.ReadModelId();
             Type = (SpeechType) reader.ReadByte();
             Color = (Color) reader.ReadUShort();
@@ -44,7 +44,7 @@ namespace Infusion.Packets.Server
 
             writer.WriteByte((byte)PacketDefinitions.SendSpeech.Id);
             writer.WriteUShort(size);
-            writer.WriteUInt(Id);
+            writer.WriteId(Id);
             writer.WriteModelId(Model);
             writer.WriteByte((byte)Type);
             writer.WriteUShort(Color.Id);

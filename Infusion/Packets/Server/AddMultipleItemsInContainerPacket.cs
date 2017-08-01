@@ -20,11 +20,11 @@ namespace Infusion.Packets.Server
                 for (var i = 0; i < ItemCount; i++)
                 {
                     yield return new Item(
-                        id: ArrayPacketReader.ReadUInt(rawPacket.Payload, position),
+                        id: ArrayPacketReader.ReadId(rawPacket.Payload, position),
                         type: ArrayPacketReader.ReadModelId(rawPacket.Payload, position + 4),
                         amount: ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 7),
                         location: new Location3D(ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 9), ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 11), 0),
-                        containerId: ArrayPacketReader.ReadUInt(rawPacket.Payload, position + 13),
+                        containerId: ArrayPacketReader.ReadId(rawPacket.Payload, position + 13),
                         color: (Color)ArrayPacketReader.ReadUShort(rawPacket.Payload, position + 17),
                         layer: null
                     );

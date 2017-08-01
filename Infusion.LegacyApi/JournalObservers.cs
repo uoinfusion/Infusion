@@ -20,12 +20,12 @@ namespace Infusion.LegacyApi
 
         private void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
         {
-            journalSource.AddMessage(packet.Name, clilocDictionary.GetString(packet.MessageId) + packet.Affix, packet.SpeakerId, packet.SpeakerBody);
+            journalSource.AddMessage(packet.Name, clilocDictionary.GetString(packet.MessageId.Value) + packet.Affix, packet.SpeakerId, packet.SpeakerBody);
         }
 
         private void HandleClilocMessage(ClilocMessagePacket packet)
         {
-            journalSource.AddMessage(packet.Name, clilocDictionary.GetString(packet.MessageId), packet.SpeakerId, packet.SpeakerBody);
+            journalSource.AddMessage(packet.Name, clilocDictionary.GetString(packet.MessageId.Value), packet.SpeakerId, packet.SpeakerBody);
         }
 
         private void HandleSpeechMessagePacket(SpeechMessagePacket packet)

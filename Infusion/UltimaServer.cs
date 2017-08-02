@@ -134,7 +134,8 @@ namespace Infusion
         {
             var packet = new MoveRequest
             {
-                Movement = new Movement(direction, movementType),
+                Direction = direction,
+                MovementType = movementType,
                 SequenceKey = sequenceKey
             };
 

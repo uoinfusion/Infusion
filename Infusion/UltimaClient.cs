@@ -67,10 +67,10 @@ namespace Infusion
             Send(new CloseGenericGumpPacket(gumpId).RawPacket);
         }
 
-        public void DrawGamePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Movement movement, Color color)
+        public void DrawGamePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, MovementType movementType, Color color)
         {
             var drawGamePlayerPacket = new DrawGamePlayerPacket(playerId, bodyType,
-                location, movement, color);
+                location, direction, movementType, color);
             Send(drawGamePlayerPacket.RawPacket);
         }
 

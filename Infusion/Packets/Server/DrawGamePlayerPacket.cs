@@ -10,7 +10,7 @@ namespace Infusion.Packets.Server
         {
         }
 
-        public DrawGamePlayerPacket(ObjectId playerId, ModelId bodyType, Location3D location, Movement movement, Color color)
+        public DrawGamePlayerPacket(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, MovementType movementType, Color color)
         {
             var payload = new byte[19];
             var writer = new ArrayPacketWriter(payload);
@@ -18,7 +18,6 @@ namespace Infusion.Packets.Server
             PlayerId = playerId;
             BodyType = bodyType;
             Location = location;
-            Movement = movement;
             Color = color;
 
             writer.WriteByte((byte) PacketDefinitions.DrawGamePlayer.Id);
@@ -30,7 +29,7 @@ namespace Infusion.Packets.Server
             writer.WriteUShort(location.X);
             writer.WriteUShort(location.Y);
             writer.WriteUShort(0); // unknown
-            writer.WriteMovement(movement);
+            writer.WriteMovement(direction, movementType);
             writer.WriteByte(location.Z);
 
             rawPacket = new Packet(PacketDefinitions.DrawGamePlayer.Id, payload);
@@ -44,7 +43,9 @@ namespace Infusion.Packets.Server
 
         public override Packet RawPacket => rawPacket;
 
-        public Movement Movement { get; private set; }
+        public Direction Direction { get; set; }
+
+        public MovementType MovementType { get; set; }
 
         public Color Color { get; private set; }
 
@@ -64,7 +65,7 @@ namespace Infusion.Packets.Server
             var xloc = reader.ReadUShort();
             var yloc = reader.ReadUShort();
             reader.Skip(2); // unknown
-            Movement = (Movement) reader.ReadByte();
+            (Direction, MovementType) = reader.ReadDirection();
             var zloc = reader.ReadByte();
 
             Location = new Location3D(xloc, yloc, zloc);

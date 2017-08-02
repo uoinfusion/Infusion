@@ -106,8 +106,8 @@ namespace Infusion.Tests.Packets.Server
             drawObjectPacket.Location.X.Should().Be(0x129B);
             drawObjectPacket.Location.Y.Should().Be(0x0553);
             drawObjectPacket.Location.Z.Should().Be(0x0A);
-            drawObjectPacket.Direction.Direction.Should().Be(Direction.Northwest);
-            drawObjectPacket.Direction.Type.Should().Be(MovementType.Walk);
+            drawObjectPacket.Direction.Should().Be(Direction.Northwest);
+            drawObjectPacket.MovementType.Should().Be(MovementType.Walk);
             drawObjectPacket.Notoriety.Should().Be(Notoriety.Innocent);
             drawObjectPacket.Color.Should().Be((Color) 0x83EA);
             drawObjectPacket.Items.Should().BeEmpty();

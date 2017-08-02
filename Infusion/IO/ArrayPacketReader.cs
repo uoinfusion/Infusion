@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Infusion.Packets;
 
 namespace Infusion.IO
@@ -28,6 +29,9 @@ namespace Infusion.IO
 
         public static ObjectId ReadId(byte[] array, int position) => new ObjectId(ReadUInt(array, position));
         public static ModelId ReadModelId(byte[] array, int position) => ReadUShort(array, position);
+
+        public static (Direction, MovementType) ReadDirection(byte[] array, int position) =>
+            ConvertToDirection(array[position]);
 
         public ModelId ReadModelId() => ReadUShort();
 
@@ -161,5 +165,26 @@ namespace Infusion.IO
         }
 
         public ObjectId ReadObjectId() => new ObjectId(ReadUInt());
+
+        public (Direction, MovementType) ReadDirection() => ConvertToDirection(ReadByte());
+
+        private static (Direction, MovementType) ConvertToDirection(byte rawDirection)
+        {
+            Direction direction;
+            MovementType type;
+
+            if ((rawDirection & 0x80) != 0)
+            {
+                direction = (Direction)(rawDirection - 0x80);
+                type = MovementType.Run;
+            }
+            else
+            {
+                direction = (Direction)rawDirection;
+                type = MovementType.Walk;
+            }
+
+            return (direction, type);
+        }
     }
 }

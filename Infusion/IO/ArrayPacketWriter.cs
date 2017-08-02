@@ -60,10 +60,10 @@ namespace Infusion.IO
             WriteUShort(color.Id);
         }
 
-        public void WriteMovement(Movement movement)
+        public void WriteMovement(Direction direction, MovementType movementType)
         {
             WriteByte((byte)
-                ((movement.Type == MovementType.Walk) ? (byte) movement.Direction : 0x80 + (byte) movement.Direction));
+                ((movementType == MovementType.Walk) ? (byte) direction : 0x80 + (byte) direction));
         }
 
         public void WriteString(string str)

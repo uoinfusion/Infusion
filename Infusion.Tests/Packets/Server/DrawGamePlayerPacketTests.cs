@@ -35,8 +35,8 @@ namespace Infusion.Tests.Packets.Server
             packet.Location.Y.Should().Be(0x0552);
             packet.Location.Z.Should().Be(0x0A);
             packet.Color.Should().Be((Color) 0x83EA);
-            packet.Movement.Type.Should().Be(MovementType.Walk);
-            packet.Movement.Direction.Should().Be(Direction.South);
+            packet.MovementType.Should().Be(MovementType.Walk);
+            packet.Direction.Should().Be(Direction.South);
         }
     }
 }

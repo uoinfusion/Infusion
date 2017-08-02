@@ -21,8 +21,8 @@ namespace Infusion.Tests.Packets
 
             var packet = new MoveRequest();
             packet.Deserialize(rawPacket);
-            packet.Movement.Direction.Should().Be(Direction.North);
-            packet.Movement.Type.Should().Be(MovementType.Run);
+            packet.Direction.Should().Be(Direction.North);
+            packet.MovementType.Should().Be(MovementType.Run);
             packet.SequenceKey.Should().Be(0x06);
         }
 
@@ -39,8 +39,8 @@ namespace Infusion.Tests.Packets
 
             var packet = new MoveRequest();
             packet.Deserialize(rawPacket);
-            packet.Movement.Direction.Should().Be(Direction.North);
-            packet.Movement.Type.Should().Be(MovementType.Walk);
+            packet.Direction.Should().Be(Direction.North);
+            packet.MovementType.Should().Be(MovementType.Walk);
             packet.SequenceKey.Should().Be(0x06);
         }
     }

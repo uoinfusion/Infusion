@@ -48,9 +48,10 @@ namespace Infusion.LegacyApi
         }
 
         public Location3D PredictedLocation { get; set; }
-        public Movement PredictedMovement { get; set; }
+        internal Direction PredictedDirection { get; set; }
 
-        public Movement Movement { get; set; }
+        public Direction Direction { get; set; }
+        public MovementType MovementType { get; set; }
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
@@ -123,11 +124,9 @@ namespace Infusion.LegacyApi
 
         internal void Walk(Direction direction, MovementType movementType)
         {
-            var movement = new Movement(direction, movementType);
-
-            WalkRequestQueue.Enqueue(new WalkRequest(CurrentSequenceKey, movement, true));
-            if (PredictedMovement.Direction != movement.Direction)
-                PredictedMovement = movement;
+            WalkRequestQueue.Enqueue(new WalkRequest(CurrentSequenceKey, direction, MovementType, true));
+            if (PredictedDirection != direction)
+                PredictedDirection = direction;
             else
                 PredictedLocation = PredictedLocation.LocationInDirection(direction);
 

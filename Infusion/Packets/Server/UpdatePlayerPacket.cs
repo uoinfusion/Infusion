@@ -7,7 +7,8 @@ namespace Infusion.Packets.Server
         public ObjectId PlayerId { get; private set; }
         public ModelId Type { get; private set; }
         public Location3D Location { get; private set; }
-        public Movement Direction { get; private set; }
+        public Direction Direction { get; private set; }
+        public MovementType MovementType { get; set; }
         public Color Color { get; private set; }
 
         private Packet rawPacket;
@@ -22,7 +23,7 @@ namespace Infusion.Packets.Server
             PlayerId = reader.ReadObjectId();
             Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
-            Direction = (Movement) reader.ReadByte();
+            (Direction, MovementType) = reader.ReadDirection();
             Color = (Color) reader.ReadUShort();
         }
 

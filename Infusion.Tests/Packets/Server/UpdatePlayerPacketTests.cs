@@ -33,8 +33,8 @@ namespace Infusion.Tests.Packets.Server
             packet.Location.X.Should().Be(0x08ed);
             packet.Location.Y.Should().Be(0x097f);
             packet.Location.Z.Should().Be(1);
-            packet.Direction.Direction.Should().Be(Direction.Northeast);
-            packet.Direction.Type.Should().Be(MovementType.Walk);
+            packet.Direction.Should().Be(Direction.Northeast);
+            packet.MovementType.Should().Be(MovementType.Walk);
             packet.Color.Should().Be((Color) 0x0901);
         }
     }

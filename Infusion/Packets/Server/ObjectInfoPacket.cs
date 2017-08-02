@@ -14,7 +14,7 @@ namespace Infusion.Packets.Server
 
         public ObjectFlag Flags { get; private set; }
 
-        public Movement Facing { get; private set; }
+        public Direction Facing { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -42,10 +42,8 @@ namespace Infusion.Packets.Server
             {
                 throw new PacketParsingException(rawPacket, "Not implementated: Type & 0x8000");
             }
-            else
-            {
-                Type = (ModelId) rawType;
-            }
+
+            Type = rawType;
 
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();
@@ -53,7 +51,11 @@ namespace Infusion.Packets.Server
             if ((xloc & 0x8000) != 0)
             {
                 xloc -= 0x8000;
-                Facing = (Movement) reader.ReadByte();
+
+                MovementType type;
+                (Facing, type) = reader.ReadDirection();
+                if (type != MovementType.Walk)
+                    throw new PacketParsingException(rawPacket, "Other movment type than walk for an item");
             }
 
             byte zloc = reader.ReadByte();
@@ -67,7 +69,7 @@ namespace Infusion.Packets.Server
             if ((yloc & 0x4000) != 0)
             {
                 yloc -= 0x4000;
-                this.Flags = (ObjectFlag)reader.ReadByte();
+                Flags = (ObjectFlag)reader.ReadByte();
             }
 
             Location = new Location3D(xloc, yloc, zloc);

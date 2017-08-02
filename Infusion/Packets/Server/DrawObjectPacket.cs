@@ -12,7 +12,8 @@ namespace Infusion.Packets.Server
         public Location3D Location { get; private set; }
 
         public override Packet RawPacket => rawPacket;
-        public Movement Direction { get; private set; }
+        public Direction Direction { get; private set; }
+        public MovementType MovementType { get; set; }
         public Color Color { get; private set; }
         public Notoriety Notoriety { get; private set; }
         public IEnumerable<Item> Items { get; private set; }
@@ -26,7 +27,7 @@ namespace Infusion.Packets.Server
             Id = reader.ReadObjectId();
             Type = reader.ReadModelId();
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
-            Direction = (Movement) reader.ReadByte();
+            (Direction, MovementType) = reader.ReadDirection();
             Color = (Color) reader.ReadUShort();
             var ignoredFlag = reader.ReadByte();
             Notoriety = (Notoriety) reader.ReadByte();

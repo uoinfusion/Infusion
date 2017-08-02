@@ -440,7 +440,7 @@ namespace Infusion.LegacyApi
                 var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
 
                 var direction = walkVector.ToDirection();
-                if (Me.Movement.Direction == direction)
+                if (Me.Direction == direction)
                     WaitToAvoidFastWalk(movementType);
 
                 Walk(direction, movementType);

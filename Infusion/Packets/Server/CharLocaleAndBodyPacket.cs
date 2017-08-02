@@ -12,7 +12,9 @@ namespace Infusion.Packets.Server
 
         public Location3D Location { get; private set; }
 
-        public Movement Movement { get; set; }
+        public Direction Direction { get; set; }
+
+        public MovementType MovementType { get; set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -28,7 +30,7 @@ namespace Infusion.Packets.Server
             byte unknown2 = reader.ReadByte();
             byte zloc = reader.ReadByte();
             Location = new Location3D(xloc, yloc, zloc);
-            Movement = (Movement)reader.ReadByte();
+            (Direction, MovementType) = reader.ReadDirection();
         }
 
         public override Packet RawPacket => rawPacket;

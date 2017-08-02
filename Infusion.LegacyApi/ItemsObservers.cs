@@ -120,12 +120,12 @@ namespace Infusion.LegacyApi
                 existingObject is Mobile existingMobile)
             {
                 gameObjects.UpdateObject(existingMobile.Update(packet.Type, packet.Location, packet.Color,
-                    packet.Direction, existingMobile.Notoriety));
+                    packet.Direction, packet.MovementType, existingMobile.Notoriety));
             }
             else
             {
                 gameObjects.UpdateObject(new Mobile(packet.PlayerId, packet.Type, packet.Location, packet.Color,
-                    packet.Direction, null));
+                    packet.Direction, packet.MovementType, null));
             }
         }
 
@@ -198,12 +198,12 @@ namespace Infusion.LegacyApi
 
             var mobile = gameObjects[packet.Id] as Mobile;
             if (mobile != null)
-                gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction,
+                gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction, packet.MovementType,
                     packet.Notoriety));
             else
             {
                 gameObjects.AddObject(new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,
-                    packet.Direction,
+                    packet.Direction, packet.MovementType,
                     packet.Notoriety));
             }
         }

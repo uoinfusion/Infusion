@@ -155,8 +155,9 @@ namespace Infusion.LegacyApi
             player.PlayerId = packet.PlayerId;
             player.Location = packet.Location;
             player.PredictedLocation = packet.Location;
-            player.Movement = packet.Movement;
-            player.PredictedMovement = player.Movement;
+            player.Direction = packet.Direction;
+            player.MovementType = packet.MovementType;
+            player.PredictedDirection = player.Direction;
         }
 
         private void HandleDrawGamePlayerPacket(DrawGamePlayerPacket packet)
@@ -165,8 +166,9 @@ namespace Infusion.LegacyApi
             {
                 player.Location = packet.Location;
                 player.PredictedLocation = packet.Location;
-                player.Movement = packet.Movement;
-                player.PredictedMovement = player.Movement;
+                player.Direction = packet.Direction;
+                player.MovementType = packet.MovementType;
+                player.PredictedDirection = player.Direction;
                 player.ResetWalkRequestQueue();
 
                 player.CurrentSequenceKey = 0;
@@ -181,8 +183,9 @@ namespace Infusion.LegacyApi
         {
             player.Location = packet.Location;
             player.PredictedLocation = packet.Location;
-            player.Movement = packet.Movement;
-            player.PredictedMovement = player.Movement;
+            player.Direction = packet.Direction;
+            player.MovementType = packet.MovementType;
+            player.PredictedDirection = player.Direction;
             player.CurrentSequenceKey = 0;
             player.ResetWalkRequestQueue();
 
@@ -210,15 +213,15 @@ namespace Infusion.LegacyApi
                         discardNextClientAck = true;
 
                         client.DrawGamePlayer(player.PlayerId, player.BodyType,
-                            player.Location, player.Movement, player.Color);
+                            player.Location, player.Direction, player.MovementType, player.Color);
 
                         discardCurrentPacket = true;
                     }
 
-                    if (player.Movement.Direction != walkRequest.Movement.Direction)
-                        player.Movement = walkRequest.Movement;
+                    if (player.Direction != walkRequest.Direction)
+                        player.Direction = walkRequest.Direction;
                     else
-                        player.Location = player.Location.LocationInDirection(walkRequest.Movement.Direction);
+                        player.Location = player.Location.LocationInDirection(walkRequest.Direction);
 
                 }
                 finally
@@ -235,7 +238,7 @@ namespace Infusion.LegacyApi
         {
             player.CurrentSequenceKey = (byte) (packet.SequenceKey + 1);
             player.WalkRequestQueue.Enqueue(new WalkRequest(packet.SequenceKey,
-                packet.Movement, false));
+                packet.Direction, packet.MovementType, false));
         }
 
         private void OnWalkRequestDequeued()

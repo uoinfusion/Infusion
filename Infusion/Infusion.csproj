@@ -43,6 +43,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0-preview2-25405-01\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -157,7 +160,6 @@
     <Compile Include="Packets\Both\RequestWarMode.cs" />
     <Compile Include="Packets\Client\WearItemRequest.cs" />
     <Compile Include="Packets\ModelId.cs" />
-    <Compile Include="Packets\Movement.cs" />
     <Compile Include="Packets\MovementType.cs" />
     <Compile Include="Packets\Client\MoveRequest.cs" />
     <Compile Include="Packets\Client\TargetLocationRequest.cs" />

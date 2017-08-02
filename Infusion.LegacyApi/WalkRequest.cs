@@ -4,15 +4,17 @@ namespace Infusion.LegacyApi
 {
     internal struct WalkRequest
     {
-        public WalkRequest(byte sequenceKey, Movement movement, bool issuedByProxy)
+        public WalkRequest(byte sequenceKey, Direction direction, MovementType movementType, bool issuedByProxy)
         {
             SequenceKey = sequenceKey;
-            Movement = movement;
+            Direction = direction;
+            MovementType = movementType;
             IssuedByProxy = issuedByProxy;
         }
 
+        public MovementType MovementType { get; set; }
         public byte SequenceKey { get; }
-        public Movement Movement { get; }
+        public Direction Direction { get; }
         public bool IssuedByProxy { get; }
     }
 }

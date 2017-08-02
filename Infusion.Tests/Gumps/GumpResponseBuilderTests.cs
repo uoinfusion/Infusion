@@ -29,7 +29,7 @@ namespace Infusion.Tests.Gumps
             var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
-                GumpLabelPosition.Before).Execute();
+                GumpLabelPosition.Before);
 
             resultPacket.Should().NotBeNull();
             resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
@@ -54,7 +54,7 @@ namespace Infusion.Tests.Gumps
                 "{Text 50 215 955 0}{Text 50 215 955 1}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label", "test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
-                GumpLabelPosition.Before).Execute();
+                GumpLabelPosition.Before);
 
             resultPacket.Should().NotBeNull();
             resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
@@ -84,7 +84,7 @@ namespace Infusion.Tests.Gumps
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; })
                 .SelectCheckBox("test label", GumpLabelPosition.Before)
                 .SelectCheckBox("test label2", GumpLabelPosition.Before)
-                .Trigger(new GumpControlId(0x09)).Execute();
+                .Trigger(new GumpControlId(0x09));
 
             resultPacket.Should().Should().NotBeNull();
             resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
@@ -114,7 +114,7 @@ namespace Infusion.Tests.Gumps
 
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; })
                 .SetTextEntry("test label", "2", GumpLabelPosition.Before)
-                .Trigger(new GumpControlId(0x09)).Execute();
+                .Trigger(new GumpControlId(0x09));
 
             resultPacket.Should().NotBeNull();
             resultPacket.RawPacket.Payload.Should().IsSameOrEqualTo(expectedResponsePayload);
@@ -142,7 +142,7 @@ namespace Infusion.Tests.Gumps
             var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495), "{Button 13 215 4005 4007 1 0 9}{Text 50 215 955 0}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
-                GumpLabelPosition.After).Execute();
+                GumpLabelPosition.After);
 
             resultPacket.Should().NotBeNull();
             resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);
@@ -152,10 +152,10 @@ namespace Infusion.Tests.Gumps
         public void Can_create_failure_response_for_non_existent_label()
         {
             var gump = new Gump(new GumpTypeId(1), new GumpInstanceId(2), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}", new[] {"test label"});
-            var response = new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
+            Action response = () => new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
                 GumpLabelPosition.Before);
 
-            ((Action) response.Execute).ShouldThrow<GumpException>();
+            response.ShouldThrow<GumpException>();
         }
 
         [TestMethod]
@@ -163,10 +163,10 @@ namespace Infusion.Tests.Gumps
         {
             var gump = new Gump(new GumpTypeId(1), new GumpInstanceId(2), "{Text 50 215 955 0}{Text 50 215 955 1}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label", "second not request label"});
-            var response = new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
+            Action response = () => new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
                 GumpLabelPosition.Before);
 
-            ((Action) response.Execute).ShouldThrow<GumpException>();
+            response.ShouldThrow<GumpException>();
         }
 
         [TestMethod]
@@ -186,7 +186,7 @@ namespace Infusion.Tests.Gumps
             GumpMenuSelectionRequest resultPacket = null;
             var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label"});
-            new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).Cancel().Execute();
+            new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).Cancel();
 
             resultPacket.Should().NotBeNull();
             resultPacket.RawPacket.Payload.Should().BeEquivalentTo(expectedResponsePayload);

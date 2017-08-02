@@ -104,8 +104,7 @@ namespace Infusion.LegacyApi
             {
                 if (CurrentGump != null)
                 {
-                    new GumpResponseBuilder(CurrentGump, TriggerGump).PushButton(buttonLabel, labelPosition)
-                        .Execute();
+                    new GumpResponseBuilder(CurrentGump, TriggerGump).PushButton(buttonLabel, labelPosition);
                 }
             }
         }
@@ -128,8 +127,7 @@ namespace Infusion.LegacyApi
             {
                 if (CurrentGump != null)
                 {
-                    new GumpResponseBuilder(CurrentGump, TriggerGump).Trigger(triggerId)
-                        .Execute();
+                    new GumpResponseBuilder(CurrentGump, TriggerGump).Trigger(triggerId);
                 }
             }
         }
@@ -139,7 +137,7 @@ namespace Infusion.LegacyApi
             lock (gumpLock)
             {
                 if (CurrentGump != null)
-                    new GumpResponseBuilder(CurrentGump, TriggerGump).Cancel().Execute();
+                    new GumpResponseBuilder(CurrentGump, TriggerGump).Cancel();
             }
         }
 

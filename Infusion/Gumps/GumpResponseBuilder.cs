@@ -18,12 +18,12 @@ namespace Infusion.Gumps
             this.triggerGump = triggerGump;
         }
 
-        public GumpResponse Trigger(GumpControlId triggerId)
+        public void Trigger(GumpControlId triggerId)
         {
-            return new TriggerGumpResponse(gump, triggerId, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray());
+            new TriggerGumpResponse(gump, triggerId, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray()).Execute();
         }
 
-        public GumpResponse PushButton(string buttonLabel, GumpLabelPosition labelPosition)
+        public void PushButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
             var processor = new SelectControlByLabelGumpParserProcessor(buttonLabel, labelPosition, GumpControls.Button);
             var parser = new GumpParser(processor);
@@ -31,15 +31,16 @@ namespace Infusion.Gumps
 
             if (processor.SelectedControldId.HasValue)
             {
-                return new TriggerGumpResponse(gump, processor.SelectedControldId.Value, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray());
+                new TriggerGumpResponse(gump, processor.SelectedControldId.Value, triggerGump, selectedCheckBoxes.ToArray(), textEntries.ToArray()).Execute();
+                return;
             }
 
-            return new GumpFailureResponse(gump, $"Cannot find button '{buttonLabel}'.");
+            new GumpFailureResponse(gump, $"Cannot find button '{buttonLabel}'.").Execute();
         }
 
-        public GumpResponse Cancel()
+        public void Cancel()
         {
-            return new CancelGumpResponse(gump, triggerGump);
+            new CancelGumpResponse(gump, triggerGump).Execute();
         }
 
         public GumpResponseBuilder SelectCheckBox(string checkBoxLabel, GumpLabelPosition labelPosition)

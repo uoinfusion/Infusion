@@ -1,4 +1,4 @@
-﻿namespace Infusion.Packets
+﻿namespace Infusion
 {
     public sealed class Item : GameObject
     {

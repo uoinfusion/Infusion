@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Infusion.Packets;
 using Ultima;
 
 namespace Infusion.LegacyApi

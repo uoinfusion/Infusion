@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="Color.cs" />
+    <Compile Include="Colors.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandAutocompleter.cs" />
     <Compile Include="Commands\CommandAutocompletion.cs" />
@@ -67,6 +69,12 @@
     <Compile Include="Commands\CommandParser.cs" />
     <Compile Include="Commands\CommandSyntax.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="CursorId.cs" />
+    <Compile Include="Direction.cs" />
+    <Compile Include="DragResult.cs" />
+    <Compile Include="GameObject.cs" />
+    <Compile Include="GumpControlId.cs" />
+    <Compile Include="GumpInstanceId.cs" />
     <Compile Include="Gumps\CancelGumpResponse.cs" />
     <Compile Include="Gumps\Gump.cs" />
     <Compile Include="Gumps\GumpControls.cs" />
@@ -80,6 +88,7 @@
     <Compile Include="Gumps\IGumpParserProcessor.cs" />
     <Compile Include="Gumps\SelectControlByLabelGumpParserProcessor.cs" />
     <Compile Include="Gumps\TriggerGumpResponse.cs" />
+    <Compile Include="GumpTypeId.cs" />
     <Compile Include="IO\BinaryPushStreamWriter.cs" />
     <Compile Include="Diagnostic\BinaryDiagnosticPushStream.cs" />
     <Compile Include="Diagnostic\CompositeDiagnosticPushStream.cs" />
@@ -113,6 +122,10 @@
     <Compile Include="Diagnostic\NullDiagnosticPullStream.cs" />
     <Compile Include="IClientPacketSubject.cs" />
     <Compile Include="IServerPacketSubject.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="Layer.cs" />
+    <Compile Include="Location2D.cs" />
+    <Compile Include="Location3D.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPullStream.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
@@ -121,21 +134,17 @@
     <Compile Include="Logging\MultiplexLogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Logging\RingBufferLogger.cs" />
+    <Compile Include="MessageId.cs" />
+    <Compile Include="Mobile.cs" />
+    <Compile Include="ModelId.cs" />
+    <Compile Include="MovementType.cs" />
+    <Compile Include="Notoriety.cs" />
+    <Compile Include="ObjectId.cs" />
     <Compile Include="PacketHandler.cs" />
     <Compile Include="Packets\Both\CloseGenericGumpPacket.cs" />
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
     <Compile Include="Packets\Client\SingleClickRequest.cs" />
     <Compile Include="Packets\Client\SkillRequest.cs" />
-    <Compile Include="Packets\Colors.cs" />
-    <Compile Include="Packets\DragResult.cs" />
-    <Compile Include="Packets\GameObject.cs" />
-    <Compile Include="Packets\GumpControlId.cs" />
-    <Compile Include="Packets\GumpInstanceId.cs" />
-    <Compile Include="Packets\GumpTypeId.cs" />
-    <Compile Include="Packets\Mobile.cs" />
-    <Compile Include="Packets\MessageId.cs" />
-    <Compile Include="Packets\CursorId.cs" />
-    <Compile Include="Packets\ObjectId.cs" />
     <Compile Include="Packets\Server\AllowRefuseAttackPacket.cs" />
     <Compile Include="Packets\Server\ClilocMessageAffixPacket.cs" />
     <Compile Include="Packets\Server\ClilocMessagePacket.cs" />
@@ -143,7 +152,6 @@
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
     <Compile Include="Packets\Server\PauseClientChoice.cs" />
     <Compile Include="Packets\Server\PauseClientPacket.cs" />
-    <Compile Include="Packets\Spell.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />
@@ -159,22 +167,14 @@
     <Compile Include="Packets\Client\PickupItemRequest.cs" />
     <Compile Include="Packets\Both\RequestWarMode.cs" />
     <Compile Include="Packets\Client\WearItemRequest.cs" />
-    <Compile Include="Packets\ModelId.cs" />
-    <Compile Include="Packets\MovementType.cs" />
     <Compile Include="Packets\Client\MoveRequest.cs" />
     <Compile Include="Packets\Client\TargetLocationRequest.cs" />
-    <Compile Include="Packets\Layer.cs" />
-    <Compile Include="Packets\Notoriety.cs" />
     <Compile Include="Packets\PacketMaterializationException.cs" />
     <Compile Include="Diagnostic\PacketLogEntry.cs" />
     <Compile Include="Diagnostic\PacketLogEntryEnumerableExtensions.cs" />
     <Compile Include="Diagnostic\PacketLogParser.cs" />
     <Compile Include="Packets\Server\AddItemToContainerPacket.cs" />
     <Compile Include="Packets\Server\AddMultipleItemsInContainerPacket.cs" />
-    <Compile Include="Packets\Color.cs" />
-    <Compile Include="Packets\Item.cs" />
-    <Compile Include="Packets\Location2D.cs" />
-    <Compile Include="Packets\Location3D.cs" />
     <Compile Include="Packets\ObjectFlag.cs" />
     <Compile Include="Packets\Server\CharLocaleAndBodyPacket.cs" />
     <Compile Include="Packets\Server\CharMoveRejectionPacket.cs" />
@@ -192,8 +192,6 @@
     <Compile Include="Packets\Server\UpdateCurrentStaminaPacket.cs" />
     <Compile Include="Packets\Server\UpdatePlayerPacket.cs" />
     <Compile Include="Packets\Server\WornItemPacket.cs" />
-    <Compile Include="Packets\Skill.cs" />
-    <Compile Include="Packets\SpeechType.cs" />
     <Compile Include="Packets\MaterializedPacket.cs" />
     <Compile Include="Packets\Packet.cs" />
     <Compile Include="IO\IPacketReader.cs" />
@@ -204,13 +202,9 @@
     <Compile Include="IO\ArrayPacketWriter.cs" />
     <Compile Include="Packets\Server\ConnectToGameServerPacket.cs" />
     <Compile Include="Packets\Client\SpeechRequest.cs" />
-    <Compile Include="Packets\Direction.cs" />
     <Compile Include="Packets\Server\MovePlayerPacket.cs" />
     <Compile Include="Packets\Server\OverallLightLevelPacket.cs" />
     <Compile Include="Packets\Server\SetWeatherPacket.cs" />
-    <Compile Include="Packets\Vector.cs" />
-    <Compile Include="Packets\WarMode.cs" />
-    <Compile Include="Packets\WeatherType.cs" />
     <Compile Include="Packets\VariablePacketLength.cs" />
     <Compile Include="Packets\StaticPacketLength.cs" />
     <Compile Include="Parsers\Processors\LumberjackingHarvestProcessor.cs" />
@@ -221,6 +215,9 @@
     <Compile Include="ServerConnection.cs" />
     <Compile Include="IO\StreamPacketReader.cs" />
     <Compile Include="ServerConnectionStatus.cs" />
+    <Compile Include="Skill.cs" />
+    <Compile Include="SpeechType.cs" />
+    <Compile Include="Spell.cs" />
     <Compile Include="TextFilters\ContainsFilter.cs" />
     <Compile Include="TextFilters\EndsWithFilter.cs" />
     <Compile Include="TextFilters\ITextFilter.cs" />
@@ -232,6 +229,9 @@
     <Compile Include="UltimaClientConnection.cs" />
     <Compile Include="UltimaClientConnectionStatus.cs" />
     <Compile Include="UltimaServer.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="WarMode.cs" />
+    <Compile Include="WeatherType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

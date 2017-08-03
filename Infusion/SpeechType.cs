@@ -1,4 +1,4 @@
-﻿namespace Infusion.Packets
+﻿namespace Infusion
 {
     public enum SpeechType : byte
     {

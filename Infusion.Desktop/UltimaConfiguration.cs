@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Ultima;
 
 namespace Infusion.Desktop
@@ -17,19 +14,19 @@ namespace Infusion.Desktop
 
         private static void SetProperty(string property, string value)
         {
-            string path = Path.Combine(Files.RootDir, "uo.cfg");
-            string updatedContent = SetProperty(File.ReadAllText(path), property, value);
+            var path = Path.Combine(Files.RootDir, "uo.cfg");
+            var updatedContent = SetProperty(File.ReadAllText(path), property, value);
             File.WriteAllText(path, updatedContent);
         }
 
         public static string SetProperty(string configuration, string property, string value)
         {
-            var lines = configuration.Split(new [] { Environment.NewLine }, StringSplitOptions.None);
+            var lines = configuration.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
             var outputLines = new List<string>(lines.Length + 1);
 
-            string propertyAssignment = $"{property}={value}";
-            bool propertyFound = false;
-            foreach (string line in lines)
+            var propertyAssignment = $"{property}={value}";
+            var propertyFound = false;
+            foreach (var line in lines)
             {
                 if (line.StartsWith($"{property}="))
                 {

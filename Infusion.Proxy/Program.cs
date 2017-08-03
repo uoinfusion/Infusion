@@ -11,8 +11,6 @@ using Infusion.IO;
 using Infusion.LegacyApi;
 using Infusion.Logging;
 using Infusion.Packets;
-using Infusion.Packets.Both;
-using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 using Ultima;
 

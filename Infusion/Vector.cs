@@ -1,6 +1,6 @@
 using System;
 
-namespace Infusion.Packets
+namespace Infusion
 {
     public struct Vector
     {

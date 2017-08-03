@@ -48,7 +48,12 @@ namespace Infusion.LegacyApi
 
         private void HandleStatusBarInfo(StatusBarInfoPacket packet)
         {
-            UpdateHealth(packet.PlayerId, packet.CurrentHealth, packet.MaxHealth);
+            var mobile = gameObjects[packet.PlayerId] as Mobile;
+            if (mobile != null)
+            {
+                mobile = (Mobile)mobile.UpdateName(packet.PlayerName);
+                UpdateHealth(mobile, packet.CurrentHealth, packet.MaxHealth);
+            }
         }
 
         private void UpdateHealth(ObjectId id, ushort newHealth, ushort newMaxHealth)
@@ -56,19 +61,24 @@ namespace Infusion.LegacyApi
             var mobile = gameObjects[id] as Mobile;
             if (mobile != null)
             {
-                var oldHealth = mobile.CurrentHealth;
+                UpdateHealth(mobile, newHealth, newMaxHealth);
+            }
+        }
 
-                var updatedItem = mobile.UpdateHealth(newHealth, newMaxHealth);
-                gameObjects.UpdateObject(updatedItem);
+        private void UpdateHealth(Mobile mobile, ushort newHealth, ushort newMaxHealth)
+        {
+            var oldHealth = mobile.CurrentHealth;
 
-                if (oldHealth != newHealth && CurrentHealthUpdated != null)
+            var updatedItem = mobile.UpdateHealth(newHealth, newMaxHealth);
+            gameObjects.UpdateObject(updatedItem);
+
+            if (oldHealth != newHealth && CurrentHealthUpdated != null)
+            {
+                Task.Run(() =>
                 {
-                    Task.Run(() =>
-                    {
-                        CurrentHealthUpdated?.Invoke(this,
-                            new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
-                    });
-                }
+                    CurrentHealthUpdated?.Invoke(this,
+                        new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
+                });
             }
         }
 

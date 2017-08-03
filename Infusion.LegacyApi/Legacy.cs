@@ -173,7 +173,7 @@ namespace Infusion.LegacyApi
             Server.Click(item.Id);
         }
 
-        public bool Use(ItemSpec spec)
+        public bool TryUse(ItemSpec spec)
         {
             CheckCancellation();
 
@@ -183,14 +183,21 @@ namespace Infusion.LegacyApi
                        ?? Items.Matching(spec).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
             if (item != null)
+            {
                 Use(item);
-            else
-                return false;
+                return true;
+            }
 
-            return true;
+            return false;
         }
 
-        public bool UseType(ModelId type)
+        public void Use(ItemSpec spec)
+        {
+            if (!TryUse(spec))
+                throw new LegacyException($"Cannot find item {spec}.");
+        }
+
+        public bool TryUse(ModelId type)
         {
             CheckCancellation();
 
@@ -201,14 +208,19 @@ namespace Infusion.LegacyApi
             if (item != null)
             {
                 Use(item);
+                return true;
             }
-            else
-                return false;
 
-            return true;
+            return false;
         }
 
-        public bool UseType(params ModelId[] types)
+        public void Use(ModelId type)
+        {
+            if (!TryUse(type))
+                throw new LegacyException($"Cannot find of type {type}.");
+        }
+
+        public bool TryUse(params ModelId[] types)
         {
             CheckCancellation();
 
@@ -223,10 +235,16 @@ namespace Infusion.LegacyApi
                 return true;
             }
 
-            var typesString = types.Select(u => u.ToString()).Aggregate(string.Empty, (l, r) => l + ", " + r);
-            Log($"Item of any type {typesString} not found.");
-
             return false;
+        }
+
+        public void Use(params ModelId[] types)
+        {
+            if (!TryUse(types))
+            {
+                var typesString = types.Select(u => u.ToString()).Aggregate(string.Empty, (l, r) => l + ", " + r);
+                throw new LegacyException($"Item of any type {typesString} not found.");
+            }
         }
 
         public void Wait(int milliseconds)
@@ -272,7 +290,7 @@ namespace Infusion.LegacyApi
             Server.RequestWarMode(WarMode.Normal);
         }
 
-        public AttackResult Attack(Mobile target, TimeSpan? timeout = null)
+        public AttackResult TryAttack(Mobile target, TimeSpan? timeout = null)
         {
             return playerObservers.Attack(target.Id, timeout);
         }
@@ -375,13 +393,13 @@ namespace Infusion.LegacyApi
             Server.DragItem(item.Id, amount);
         }
 
-        public bool MoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
+        public bool TryMoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
         {
-            return MoveItem(item, item.Amount, targetContainer, timeout, dropDelay);
+            return TryMoveItem(item, item.Amount, targetContainer, timeout, dropDelay);
         }
 
-        public bool MoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+        public bool TryMoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
         {
             DragItem(item, amount);
@@ -477,7 +495,13 @@ namespace Infusion.LegacyApi
             WalkTo((ushort) parser.ParseInt(), (ushort) parser.ParseInt());
         }
 
-        public bool Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        {
+            if (!TryWear(item, layer, timeout))
+                throw new LegacyException($"Cannot pickup {item}");
+        }
+
+        public bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
         {
             DragItem(item, 1);
             if (WaitForItemDragged(timeout) != DragResult.Success)

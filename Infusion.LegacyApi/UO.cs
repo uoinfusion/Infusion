@@ -87,14 +87,23 @@ namespace Infusion.LegacyApi
         public static void Click(GameObject item)
             => Current.Click(item);
 
-        public static bool Use(ItemSpec spec)
+        public static bool TryUse(ItemSpec spec)
+            => Current.TryUse(spec);
+
+        public static void Use(ItemSpec spec)
             => Current.Use(spec);
 
-        public static bool UseType(ModelId type)
-            => Current.UseType(type);
+        public static bool TryUse(ModelId type)
+            => Current.TryUse(type);
 
-        public static bool UseType(params ModelId[] types)
-            => Current.UseType(types);
+        public static void Use(ModelId type)
+            => Current.Use(type);
+
+        public static bool TryUse(params ModelId[] types)
+            => Current.TryUse(types);
+
+        public static void Use(params ModelId[] types)
+            => Current.TryUse(types);
 
         public static void Wait(int milliseconds)
             => Current.Wait(milliseconds);
@@ -117,8 +126,8 @@ namespace Infusion.LegacyApi
         public static void WarModeOff()
             => Current.WarModeOff();
 
-        public static AttackResult Attack(Mobile target, TimeSpan? timeout = null)
-            => Current.Attack(target, timeout);
+        public static AttackResult TryAttack(Mobile target, TimeSpan? timeout = null)
+            => Current.TryAttack(target, timeout);
 
         public static void TargetTile(string tileInfo)
             => Current.TargetTile(tileInfo);
@@ -147,13 +156,13 @@ namespace Infusion.LegacyApi
         public static void DragItem(Item item, ushort amount)
             => Current.DragItem(item, amount);
 
-        public static bool MoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
+        public static bool TryMoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
-            => Current.MoveItem(item, targetContainer, timeout);
+            => Current.TryMoveItem(item, targetContainer, timeout);
 
-        public static bool MoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+        public static bool TryMoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
-            => Current.MoveItem(item, amount, targetContainer, timeout, dropDelay);
+            => Current.TryMoveItem(item, amount, targetContainer, timeout, dropDelay);
 
         public static DragResult WaitForItemDragged(TimeSpan? timeout = null)
             => Current.WaitForItemDragged(timeout);
@@ -192,7 +201,10 @@ namespace Infusion.LegacyApi
             => Current.WalkTo(xloc, yloc);
 
 
-        public static bool Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        public static bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
+            => Current.TryWear(item, layer, timeout);
+
+        public static void Wear(Item item, Layer layer, TimeSpan? timeout = null)
             => Current.Wear(item, layer, timeout);
 
         public static void CastSpell(Spell spell)

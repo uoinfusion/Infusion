@@ -5,7 +5,7 @@ using Infusion.Packets;
 
 namespace Infusion.Parsers
 {
-    public static class PacketLogParser
+    internal static class PacketLogParser
     {
         public static IEnumerable<Packet> ParseBatch(IPullStream inputStream)
         {

@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public class MemoryBatchedStream : IPullStream
+    internal sealed class MemoryBatchedStream : IPullStream
     {
         private readonly IEnumerator<byte[]> contentEnumerator;
         private int position;

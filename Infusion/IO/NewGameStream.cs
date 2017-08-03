@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Infusion.IO
 {
-    public class NewGameStream : Stream
+    internal sealed class NewGameStream : Stream
     {
         private static readonly byte[] sm_bData =
         {

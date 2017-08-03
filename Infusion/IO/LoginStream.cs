@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Infusion.IO
 {
-    public class LoginStream : Stream
+    internal class LoginStream : Stream
     {
         private readonly uint[] m_key;
         private readonly uint m_key1;

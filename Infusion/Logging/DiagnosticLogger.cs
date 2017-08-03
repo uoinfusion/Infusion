@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Infusion.Logging
 {
-    public class DiagnosticLogger : ILogger
+    internal class DiagnosticLogger : ILogger
     {
         private readonly ILogger baseLogger;
 

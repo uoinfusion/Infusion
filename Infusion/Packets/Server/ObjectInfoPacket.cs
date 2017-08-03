@@ -52,10 +52,7 @@ namespace Infusion.Packets.Server
             {
                 xloc -= 0x8000;
 
-                MovementType type;
-                (Facing, type) = reader.ReadDirection();
-                if (type != MovementType.Walk)
-                    throw new PacketParsingException(rawPacket, "Other movment type than walk for an item");
+                (Facing, _) = reader.ReadDirection();
             }
 
             byte zloc = reader.ReadByte();

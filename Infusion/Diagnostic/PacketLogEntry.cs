@@ -2,7 +2,7 @@
 
 namespace Infusion.Diagnostic
 {
-    public class PacketLogEntry
+    public sealed class PacketLogEntry
     {
         public PacketLogEntry(DateTime created, string name, PacketDirection direction, byte[] payload)
         {

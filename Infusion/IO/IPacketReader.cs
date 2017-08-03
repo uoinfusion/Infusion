@@ -1,6 +1,6 @@
 namespace Infusion.IO
 {
-    public interface IPacketReader
+    internal interface IPacketReader
     {
         byte ReadByte();
         ushort ReadUShort();

@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion.Diagnostic
 {
-    public class TextDiagnosticPullStream : IDiagnosticPullStream
+    internal class TextDiagnosticPullStream : IDiagnosticPullStream
     {
         private readonly DiagnosticPacketFormatter formatter;
 

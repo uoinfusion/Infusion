@@ -6,7 +6,7 @@ using Infusion.Packets;
 
 namespace Infusion
 {
-    public class ServerConnection
+    internal sealed class ServerConnection
     {
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;

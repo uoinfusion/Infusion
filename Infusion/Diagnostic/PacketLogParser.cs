@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Infusion.Diagnostic
 {
-    public class PacketLogParser
+    public sealed class PacketLogParser
     {
         private string log;
         private int position;

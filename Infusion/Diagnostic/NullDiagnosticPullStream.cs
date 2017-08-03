@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion.Diagnostic
 {
-    public sealed class NullDiagnosticPullStream : IDiagnosticPullStream
+    internal sealed class NullDiagnosticPullStream : IDiagnosticPullStream
     {
         public static NullDiagnosticPullStream Instance { get; } = new NullDiagnosticPullStream();
 

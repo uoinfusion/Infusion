@@ -5,7 +5,7 @@ using Infusion.Packets.Client;
 
 namespace Infusion.Gumps
 {
-    public class GumpResponseBuilder
+    public sealed class GumpResponseBuilder
     {
         private readonly Gump gump;
         private readonly Action<GumpMenuSelectionRequest> triggerGump;

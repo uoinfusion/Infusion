@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public interface IPullStream : IDisposable
+    internal interface IPullStream : IDisposable
     {
         bool DataAvailable { get; }
         int ReadByte();

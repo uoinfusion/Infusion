@@ -9,7 +9,7 @@ using Infusion.Packets.Client;
 
 namespace Infusion
 {
-    public class ClientPacketHandler : IClientPacketSubject
+    internal sealed class ClientPacketHandler : IClientPacketSubject
     {
         private readonly PacketHandler packetHandler = new PacketHandler();
 

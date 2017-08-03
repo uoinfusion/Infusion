@@ -7,7 +7,7 @@ using PacketLogParser = Infusion.Parsers.PacketLogParser;
 
 namespace Infusion
 {
-    public class UltimaClientConnection
+    internal sealed class UltimaClientConnection
     {
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;

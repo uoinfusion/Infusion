@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Infusion.IO
 {
-    public class PushStreamToStreamAdapter : Stream
+    internal sealed class PushStreamToStreamAdapter : Stream
     {
         private readonly IPushStream baseStream;
 

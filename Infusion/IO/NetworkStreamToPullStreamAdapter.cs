@@ -2,7 +2,7 @@ using System.Net.Sockets;
 
 namespace Infusion.IO
 {
-    public class NetworkStreamToPullStreamAdapter : IPullStream
+    internal sealed class NetworkStreamToPullStreamAdapter : IPullStream
     {
         private readonly NetworkStream baseStream;
 

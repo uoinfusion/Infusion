@@ -4,7 +4,7 @@ using Infusion.IO;
 namespace Infusion.Packets
 {
     // TODO: move materialization from packet to a materializer so it is possible to implement different protocol versions (two versions of the same packet)
-    public class PacketDefinition<TPacket> : PacketDefinition
+    internal class PacketDefinition<TPacket> : PacketDefinition
         where TPacket : MaterializedPacket
     {
         private readonly Func<Packet, TPacket> materializer;
@@ -21,7 +21,7 @@ namespace Infusion.Packets
         }
     }
 
-    public class PacketDefinition
+    internal class PacketDefinition
     {
         public PacketDefinition(int id, PacketLength length, string name)
         {

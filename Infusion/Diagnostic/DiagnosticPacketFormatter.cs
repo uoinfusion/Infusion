@@ -4,7 +4,7 @@ using Infusion.Packets;
 
 namespace Infusion.Diagnostic
 {
-    public sealed class DiagnosticPacketFormatter
+    internal sealed class DiagnosticPacketFormatter
     {
         private const int MaxColumns = 16;
         private readonly StringBuilder builder = new StringBuilder();

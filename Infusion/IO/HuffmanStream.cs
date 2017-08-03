@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Infusion.IO
 {
-    public class HuffmanStream : Stream
+    internal sealed class HuffmanStream : Stream
     {
         private static readonly int[,] CompressionTree =
         {

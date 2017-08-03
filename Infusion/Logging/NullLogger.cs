@@ -1,6 +1,6 @@
 ﻿namespace Infusion.Logging
 {
-    public class NullLogger : ILogger
+    internal class NullLogger : ILogger
     {
         public static ILogger Instance { get; } = new NullLogger();
 

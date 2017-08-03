@@ -37,5 +37,6 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("Infusion.Tests")]
 [assembly: InternalsVisibleTo("Infusion.Proxy")]
+[assembly: InternalsVisibleTo("Infusion.Desktop")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi.Tests")]

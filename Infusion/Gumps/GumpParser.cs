@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion.Gumps
 {
-    public class GumpParser
+    public sealed class GumpParser
     {
         private readonly IGumpParserProcessor parserProcessor;
         private Gump gump;

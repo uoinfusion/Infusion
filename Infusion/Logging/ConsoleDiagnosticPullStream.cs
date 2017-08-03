@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion.Logging
 {
-    public sealed class ConsoleDiagnosticPullStream : TextDiagnosticPullStream
+    internal sealed class ConsoleDiagnosticPullStream : TextDiagnosticPullStream
     {
         private readonly ILogger logger;
 

@@ -39,6 +39,7 @@
                 Amount = Amount,
                 ContainerId = ContainerId,
                 Layer = Layer,
+                Name = Name,
             };
         }
 

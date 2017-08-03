@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets
 {
-    public class VariablePacketLength : PacketLength
+    internal sealed class VariablePacketLength : PacketLength
     {
         public override int GetSize(IPacketReader reader)
         {

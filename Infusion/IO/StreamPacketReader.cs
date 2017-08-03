@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public class StreamPacketReader : IPacketReader
+    internal sealed class StreamPacketReader : IPacketReader
     {
         private readonly Stream sourceStream;
         private readonly byte[] targetBuffer;

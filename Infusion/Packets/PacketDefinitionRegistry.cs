@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Infusion.Packets
 {
-    public static class PacketDefinitionRegistry
+    internal static class PacketDefinitionRegistry
     {
         private static readonly Dictionary<int, PacketDefinition> Definitions = new Dictionary<int, PacketDefinition>();
 

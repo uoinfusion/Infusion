@@ -6,7 +6,7 @@ using Infusion.Packets;
 
 namespace Infusion.Diagnostic
 {
-    public class DiagnosticPacketReader : IDisposable
+    internal sealed class DiagnosticPacketReader : IDisposable
     {
         private readonly Stream inputStream;
         private readonly BinaryReader inputStreamReader;

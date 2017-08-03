@@ -113,7 +113,7 @@ namespace Infusion.LegacyApi
             return gumpObservers.WaitForGump(timeout);
         }
 
-        public Legacy(Configuration configuration, CommandHandler commandHandler,
+        internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null, ultimaServer, this);

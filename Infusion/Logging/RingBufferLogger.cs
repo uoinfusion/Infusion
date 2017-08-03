@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Infusion.Logging
 {
-    public sealed class RingBufferLogger : ILogger
+    internal sealed class RingBufferLogger : ILogger
     {
         private readonly int capacity;
         private readonly Queue<string> ringBufferQueue;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Infusion.IO
 {
-    public class SynchronizedPushStream : IPushStream
+    internal sealed class SynchronizedPushStream : IPushStream
     {
         private readonly IPushStream baseStream;
         private readonly object sync = new object();

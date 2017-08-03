@@ -2,7 +2,7 @@
 
 namespace Infusion.Logging
 {
-    public sealed class ConsoleDiagnosticPushStream : TextDiagnosticPushStream
+    internal sealed class ConsoleDiagnosticPushStream : TextDiagnosticPushStream
     {
         private readonly ILogger logger;
 

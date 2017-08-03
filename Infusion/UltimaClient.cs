@@ -6,7 +6,7 @@ using Infusion.Packets.Server;
 
 namespace Infusion
 {
-    public sealed class UltimaClient : IClientPacketSubject
+    internal sealed class UltimaClient : IClientPacketSubject
     {
         private readonly IClientPacketSubject packetSubject;
         private readonly Action<Packet> packetSender;

@@ -1,6 +1,6 @@
 ﻿namespace Infusion
 {
-    public enum UltimaClientConnectionStatus
+    internal enum UltimaClientConnectionStatus
     {
         Initial,
         ServerLogin,

@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public class StreamToPushStreamAdapter : IPushStream
+    internal sealed class StreamToPushStreamAdapter : IPushStream
     {
         private readonly Stream baseStream;
 

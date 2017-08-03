@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion.Gumps
 {
-    public class SelectControlByLabelGumpParserProcessor : IGumpParserProcessor
+    internal sealed class SelectControlByLabelGumpParserProcessor : IGumpParserProcessor
     {
         private readonly string controlLabel;
         private readonly GumpLabelPosition labelPosition;

@@ -2,7 +2,7 @@
 
 namespace Infusion.Logging
 {
-    public sealed class MultiplexLogger : ILogger
+    internal sealed class MultiplexLogger : ILogger
     {
         private readonly ILogger[] outputLoggers;
 

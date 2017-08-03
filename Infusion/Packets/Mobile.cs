@@ -38,7 +38,8 @@
                 CurrentHealth = CurrentHealth,
                 MaxHealth = MaxHealth,
                 Orientation = Orientation,
-                Notoriety = Notoriety
+                Notoriety = Notoriety,
+                Name = Name,
             };
         }
 

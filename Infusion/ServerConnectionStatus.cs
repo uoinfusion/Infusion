@@ -1,6 +1,6 @@
 ﻿namespace Infusion
 {
-    public enum ServerConnectionStatus
+    internal enum ServerConnectionStatus
     {
         Initial,
         PreLogin,

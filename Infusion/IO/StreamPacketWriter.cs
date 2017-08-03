@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Infusion.IO
 {
-    public class StreamPacketWriter
+    internal sealed class StreamPacketWriter
     {
         private readonly Stream stream;
 

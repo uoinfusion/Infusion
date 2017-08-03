@@ -1,6 +1,6 @@
 ﻿namespace Infusion.IO
 {
-    internal class TwofishEncryption : TwofishBase
+    internal sealed class TwofishEncryption : TwofishBase
     {
         private readonly EncryptionDirection encryptionDirection;
 

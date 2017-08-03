@@ -4,7 +4,7 @@ using Infusion.Packets;
 
 namespace Infusion.Diagnostic
 {
-    public sealed class InfusionBinaryDiagnosticPushStream : IDiagnosticPushStream
+    internal sealed class InfusionBinaryDiagnosticPushStream : IDiagnosticPushStream
     {
         private readonly DiagnosticStreamDirection direction;
         private readonly Func<BinaryDiagnosticPushStream> pushStreamProvider;

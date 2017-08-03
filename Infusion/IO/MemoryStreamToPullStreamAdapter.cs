@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public class MemoryStreamToPullStreamAdapter : IPullStream
+    internal sealed class MemoryStreamToPullStreamAdapter : IPullStream
     {
         private readonly MemoryStream baseStream;
 

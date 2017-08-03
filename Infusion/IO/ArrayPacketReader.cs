@@ -4,7 +4,7 @@ using Infusion.Packets;
 
 namespace Infusion.IO
 {
-    public class ArrayPacketReader : IPacketReader
+    internal sealed class ArrayPacketReader : IPacketReader
     {
         private readonly byte[] array;
 

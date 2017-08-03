@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion.Diagnostic
 {
-    public sealed class CompositeDiagnosticPushStream : IDiagnosticPushStream
+    internal sealed class CompositeDiagnosticPushStream : IDiagnosticPushStream
     {
         private readonly IDiagnosticPushStream[] diagnosticStreams;
         public IPushStream BaseStream { get; set; }

@@ -3,7 +3,7 @@ using Infusion.Packets;
 
 namespace Infusion
 {
-    public interface IServerPacketSubject
+    internal interface IServerPacketSubject
     {
         void RegisterFilter(Func<Packet, Packet?> filter);
 

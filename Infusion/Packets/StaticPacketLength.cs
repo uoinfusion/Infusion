@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets
 {
-    internal class StaticPacketLength : PacketLength
+    internal sealed class StaticPacketLength : PacketLength
     {
         private readonly int length;
 

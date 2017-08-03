@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public interface IDiagnosticPushStream : IPushStream
+    internal interface IDiagnosticPushStream : IPushStream
     {
         IPushStream BaseStream { get; set; }
 

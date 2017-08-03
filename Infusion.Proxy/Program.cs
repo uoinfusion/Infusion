@@ -48,7 +48,7 @@ namespace Infusion.Proxy
         private static ushort proxyLocalPort;
         private static CommandHandler commandHandler;
 
-        public static ILogger Console { get; set; } = new ConsoleLogger();
+        internal static ILogger Console { get; set; } = new ConsoleLogger();
 
         public static NetworkStream ClientStream { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace Infusion.IO
 {
-    public sealed class BinaryPushStreamWriter : IDisposable
+    internal sealed class BinaryPushStreamWriter : IDisposable
     {
         private readonly IPushStream baseStream;
 

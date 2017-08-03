@@ -45,9 +45,6 @@ namespace Infusion.LegacyApi
 
         public static GameJournal Journal => Current.Journal;
 
-        public static UltimaServer Server => Current.Server;
-        public static UltimaClient Client => Current.Client;
-
         public static void OpenContainer(Item container, TimeSpan? timeout = null)
             => Current.OpenContainer(container, timeout);
 

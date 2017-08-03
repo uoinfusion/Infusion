@@ -4,7 +4,7 @@ using Infusion.IO;
 
 namespace Infusion.Diagnostic
 {
-    public sealed class InfusionDiagnosticPushStreamProvider : IDisposable
+    internal sealed class InfusionDiagnosticPushStreamProvider : IDisposable
     {
         private readonly Configuration configuration;
         private BinaryDiagnosticPushStream outputStream;

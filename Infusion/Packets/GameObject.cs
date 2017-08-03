@@ -13,7 +13,7 @@
 
         public ObjectId Id { get; }
 
-        public string Name { get; private set; }
+        public string Name { get; protected set; }
 
         protected abstract GameObject Duplicate();
 

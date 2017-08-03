@@ -5,7 +5,7 @@ using Infusion.Packets;
 
 namespace Infusion
 {
-    internal class PacketHandler
+    internal sealed class PacketHandler
     {
         private readonly List<Func<Packet, Packet?>> filters = new List<Func<Packet, Packet?>>();
 

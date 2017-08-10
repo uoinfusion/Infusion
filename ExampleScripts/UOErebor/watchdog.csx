@@ -1,4 +1,4 @@
-#load "ItemSpecs.csx"
+#load "Specs.csx"
 
 using System;
 using System.Threading;
@@ -10,25 +10,9 @@ public static class Watchdog
 {
     public static ItemSpec[] WatchedItemSpecs =
     {
-        ItemSpecs.Wheat, ItemSpecs.Cotton, ItemSpecs.DoorSecretStone2, ItemSpecs.DoorSecretStone3, ItemSpecs.DoorSecretStone4,
-        ItemSpecs.DoorSecretWood1, ItemSpecs.DoorSecretWood2, ItemSpecs.Door
+        Specs.Wheat, Specs.Cotton, Specs.DoorSecretStone2, Specs.DoorSecretStone3, Specs.DoorSecretStone4,
+        Specs.DoorSecretWood1, Specs.DoorSecretWood2, Specs.Door, Specs.Packa
     };
-
-    public static void HandleObjectInfo(ObjectInfoPacket packet)
-    {
-        if (WatchedItemSpecs.Any(x => x.Matches(packet.Type)))
-        {
-            EnqueueNotification(packet.Id);
-        }
-    }
-    
-    public static void HandleDrawObject(DrawObjectPacket packet)
-    {
-        if (WatchedItemSpecs.Any(x => x.Matches(packet.Type)))
-        {
-            EnqueueNotification(packet.Id);
-        }
-    }
     
     private static object queueLock = new object();
     private static List<uint> notificationQueue = new List<uint>();
@@ -70,10 +54,15 @@ public static class Watchdog
     
     private static void Cleanup()
     {
-        UO.Server.Unsubscribe(PacketDefinitions.ObjectInfo, HandleObjectInfo);
-        UO.Server.Unsubscribe(PacketDefinitions.DrawObject, HandleDrawObject);
+        UO.Events.ItemEnteredView -= HandleNewItem;
 
         DequeueNotifications();
+    }
+    
+    private static void HandleNewItem(object sender, ItemEnteredViewArgs args)
+    {
+        if (WatchedItemSpecs.Any(s => s.Matches(args.NewItem)))
+            EnqueueNotification(args.NewItem.Id);
     }
     
     public static void ShowWatchdog()
@@ -96,7 +85,7 @@ public static class Watchdog
         else
         {
             UO.ClientPrint($"!!!!!!!!!!!!!!!", "Watchdog", item);
-            UO.ClientPrint($"!!!!! Found {ItemSpecs.TranslateToName(item)} !!!!!");
+            UO.ClientPrint($"!!!!! Found {Specs.TranslateToName(item)} !!!!!");
         }
     }
     
@@ -106,8 +95,7 @@ public static class Watchdog
     
         Cleanup();
         stopRequested = false;
-        UO.Server.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfo);
-        UO.Server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObject);
+        UO.Events.ItemEnteredView += HandleNewItem;
     
         while (!stopRequested)
         {

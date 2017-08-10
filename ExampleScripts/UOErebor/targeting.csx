@@ -1,4 +1,4 @@
-#load "ItemSpecs.csx"
+#load "Specs.csx"
 
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +10,11 @@ public static class Targeting
     private static uint? lastTarget;
     private static uint? previousTarget;
     
-    private static ItemSpec IgnoredTargets = new[] { ItemSpecs.Satan };    
+    private static MobileSpec IgnoredTargets = new[] { Specs.Satan };    
     
     public static void TargetNext()
     {
-        var potentialTargets = UO.Items.OnGround().MaxDistance(20)
+        var potentialTargets = UO.Mobiles.MaxDistance(20)
             .NotMatching(IgnoredTargets)
             .Where(i => i.Notoriety == Notoriety.Murderer)
             .OrderByDistance();
@@ -52,14 +52,16 @@ public static class Targeting
     {
         if (!lastTarget.HasValue)
             return;
-        var target = UO.Items[lastTarget.Value];
+        var target = UO.Mobiles[lastTarget.Value];
         if (target == null || target.GetDistance(UO.Me.Location) > 50)
             return;
     
         if (previousTarget != lastTarget)
         {
             previousTarget = lastTarget;
-            UO.Attack(target);
+            if (UO.TryAttack(target) != AttackResult.Accepted)
+                UO.ClientPrint($"Cannot attack {target}"); 
+            
             UO.Wait(50);
             UO.WarModeOff();
             UO.Wait(50);

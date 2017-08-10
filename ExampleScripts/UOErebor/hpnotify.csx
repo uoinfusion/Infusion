@@ -33,13 +33,13 @@ public static class HitPointNotifier
 
     internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
     {
-        var delta = args.UpdatedItem.CurrentHealth - args.OldHealth;
+        var delta = args.UpdatedMobile.CurrentHealth - args.OldHealth;
         if (delta != 0)
         {
             var color = delta > 0 ? Colors.Blue : Colors.Green;
-            UO.ClientPrint($"{delta}/{args.UpdatedItem.CurrentHealth}", "hpnotify",
-                args.UpdatedItem.Id,
-                    args.UpdatedItem.Type, SpeechType.Speech, color, log: false);
+            UO.ClientPrint($"{delta}/{args.UpdatedMobile.CurrentHealth}", "hpnotify",
+                args.UpdatedMobile.Id,
+                    args.UpdatedMobile.Type, SpeechType.Speech, color, log: false);
         }
     }
 }

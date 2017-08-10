@@ -1,4 +1,4 @@
-#load "ItemSpecs.csx"
+#load "Specs.csx"
 
 using System;
 using System.Linq;
@@ -8,13 +8,13 @@ using Infusion.Commands;
 
 public static class Looting
 {
-    public static ItemSpec UselessLoot { get; } = new[] { ItemSpecs.Torsos, ItemSpecs.Rocks, ItemSpecs.Corpse };
+    public static ItemSpec UselessLoot { get; } = new[] { Specs.Torsos, Specs.Rocks, Specs.Corpse };
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
-    public static ItemSpec OnGroundLoot { get; set; } = new[] { ItemSpecs.Gold, ItemSpecs.Regs, ItemSpecs.Gem, ItemSpecs.Bolt };
-    public static uint? LootContainerId { get; set; }
+    public static ItemSpec OnGroundLoot { get; set; } = new[] { Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt };
+    public static ObjectId? LootContainerId { get; set; }
 
     private static object alreadyLootedItemsLock = new object();
-    private static Dictionary<uint, Item> alreadyLootedItems = new Dictionary<uint, Item>();
+    private static Dictionary<ObjectId, Item> alreadyLootedItems = new Dictionary<ObjectId, Item>();
 
     static Looting()
     {
@@ -66,7 +66,7 @@ public static class Looting
     public static IEnumerable<Item> GetLootableCorpses()
     {
         var corpses = UO.Items
-            .Matching(ItemSpecs.Corpse)
+            .Matching(Specs.Corpse)
             .MaxDistance(20)
             .Where(x => !IsIgnored(x))
             .OrderByDistance().ToArray();
@@ -109,7 +109,8 @@ public static class Looting
         {
             int lootableItemsCount = UO.Items.InContainer(corpse)
                 .NotMatching(IgnoredLoot).Count();
-            UO.ClientPrint($"--{lootableItemsCount}--", "System", corpse.Id, corpse.Type, SpeechType.Speech, Colors.Green);
+            UO.ClientPrint($"--{lootableItemsCount}--", "System", corpse.Id, corpse.Type,
+                SpeechType.Speech, Colors.Green, log: false);
         }
     }
 
@@ -150,7 +151,7 @@ public static class Looting
 
         foreach (var item in itemsOnGround)
         {
-            if (!UO.MoveItem(item, LootContainer))
+            if (!UO.TryMoveItem(item, LootContainer))
             {
                 UO.ClientPrint("Cannot pickup item, cancelling ground loot");
                 break;
@@ -160,7 +161,7 @@ public static class Looting
 
     public static void Loot()
     {
-        var container = UO.ItemInfo();
+        var container = UO.AskForItem();
         if (container != null)
         {
             Loot(container);
@@ -186,8 +187,8 @@ public static class Looting
 
             if (!IgnoredLoot.Matches(itemToPickup))
             {
-                UO.ClientPrint($"Looting {ItemSpecs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
-                if (!UO.MoveItem(itemToPickup, LootContainer))
+                UO.ClientPrint($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
+                if (!UO.TryMoveItem(itemToPickup, LootContainer))
                 {
                     UO.ClientPrint("Cannot pickup an item, cancelling loot");
                     return;
@@ -202,7 +203,7 @@ public static class Looting
             }
             else
             {
-                UO.ClientPrint($"Ignoring {ItemSpecs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
+                UO.ClientPrint($"Ignoring {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
             }
         }
 
@@ -214,8 +215,7 @@ public static class Looting
     {
         UO.ClientPrint("Ripping");
         var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault() ?? UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
-        if (!UO.Use(ItemSpecs.Knives))
-            return;
+        UO.Use(Specs.Knives);
 
         UO.WaitForTarget();
         UO.Target(container);
@@ -223,7 +223,7 @@ public static class Looting
 
         if (itemInHand != null)
         {
-            UO.Wear(itemInHand, Layer.OneHandedWeapon);
+            UO.TryWear(itemInHand, Layer.OneHandedWeapon);
             UO.Wait(100);
         }
     }

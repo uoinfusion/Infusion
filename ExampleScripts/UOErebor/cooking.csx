@@ -1,4 +1,4 @@
-#load "ItemSpecs.csx"
+#load "Specs.csx"
 #load "Scripts.csx"
 
 using System;
@@ -49,7 +49,7 @@ public static class Cooking
     
     public static void Cook()
     {
-        var cookingPlace = UO.Items.Matching(ItemSpecs.CookingPlaces).OnGround().MaxDistance(2).First();
+        var cookingPlace = UO.Items.Matching(Specs.CookingPlaces).OnGround().MaxDistance(2).First();
     
         string cookingPlaceTile = null;
         if (cookingPlace == null)
@@ -63,17 +63,16 @@ public static class Cooking
             }
         }
     
-        var rawFood = UO.Items.Matching(ItemSpecs.RawFood).InContainer(UO.Me.BackPack).First();
+        var rawFood = UO.Items.Matching(Specs.RawFood).InContainer(UO.Me.BackPack).First();
         while (rawFood != null)
         {
             if (cookingPlace == null)
                 Cook(rawFood.Type, cookingPlaceTile);
             else
                 Cook(rawFood.Type, cookingPlace);
-            rawFood = UO.Items.Matching(ItemSpecs.RawFood).InContainer(UO.Me.BackPack).First();
+            rawFood = UO.Items.Matching(Specs.RawFood).InContainer(UO.Me.BackPack).First();
         }
     }
 }
 
 UO.RegisterCommand("cook", () => Cooking.Cook());
-

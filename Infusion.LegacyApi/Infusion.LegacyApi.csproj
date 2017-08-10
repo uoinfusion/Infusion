@@ -44,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>Properties\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedPacketsFilters.cs" />
     <Compile Include="CurrentHealthUpdatedArgs.cs" />

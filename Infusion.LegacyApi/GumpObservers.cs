@@ -153,7 +153,7 @@ namespace Infusion.LegacyApi
                 parser.Parse(CurrentGump);
 
                 var builder = new StringBuilder();
-                builder.AppendLine($"Id {CurrentGump.Id:X8}, GumpId {CurrentGump.GumpId:X8}");
+                builder.AppendLine($"Id {CurrentGump.Id}, GumpId {CurrentGump.GumpId}");
                 builder.AppendLine(CurrentGump.Commands);
                 builder.AppendLine("-----------------");
                 builder.AppendLine(processor.GetDescription());

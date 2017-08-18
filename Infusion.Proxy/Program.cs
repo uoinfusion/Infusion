@@ -37,7 +37,7 @@ namespace Infusion.Proxy
         private static readonly object serverStreamLock = new object();
         public static ILogger Diagnostic = NullLogger.Instance;
 
-        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(100);
+        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(1000);
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
@@ -224,11 +224,15 @@ namespace Infusion.Proxy
                     Thread.Yield();
                 }
             }
+            catch (IOException ioex) when (ioex.InnerException is SocketException socex && socex.SocketErrorCode == SocketError.ConnectionReset)
+            {
+                Console.Error("Connection to client lost.");
+                throw;
+            }
             catch (Exception ex)
             {
                 Console.Error(serverDiagnosticPullStream.Flush());
                 Console.Error(ex.ToString());
-                DumpPacketLog();
                 throw;
             }
             finally
@@ -326,7 +330,6 @@ namespace Infusion.Proxy
                         catch (EndOfStreamException ex)
                         {
                             Console.Error(ex.ToString());
-                            DumpPacketLog();
                             // just swallow this exception, wait for the next batch
                         }
                     }
@@ -337,7 +340,6 @@ namespace Infusion.Proxy
             {
                 Console.Error(serverDiagnosticPullStream.Flush());
                 Console.Error(ex.ToString());
-                DumpPacketLog();
                 throw;
             }
         }

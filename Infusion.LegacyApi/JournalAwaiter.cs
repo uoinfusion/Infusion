@@ -135,6 +135,8 @@ namespace Infusion.LegacyApi
         {
             if (journal != null)
             {
+                journalSource.NewMessageReceived += JournalEntriesOnNewMessageReceived;
+
                 foreach (var entry in journal.AfterLastAction())
                 {
                     KeyValuePair<string[], Action<JournalEntry>> pair =
@@ -146,8 +148,6 @@ namespace Infusion.LegacyApi
                         return;
                     }
                 }
-
-                journalSource.NewMessageReceived += JournalEntriesOnNewMessageReceived;
             }
 
             try

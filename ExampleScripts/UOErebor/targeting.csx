@@ -6,9 +6,9 @@ using Infusion.Packets;
 
 public static class Targeting
 {
-    private static HashSet<uint> alreadyTargeted = new HashSet<uint>();
-    private static uint? lastTarget;
-    private static uint? previousTarget;
+    private static HashSet<ObjectId> alreadyTargeted = new HashSet<ObjectId>();
+    private static ObjectId? lastTarget;
+    private static ObjectId? previousTarget;
     
     private static MobileSpec IgnoredTargets = new[] { Specs.Satan };    
     

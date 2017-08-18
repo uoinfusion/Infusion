@@ -8,6 +8,14 @@ using Infusion.Commands;
 
 public static class Looting
 {
+    // Create a "private" instance of journal for cooking. If you delete this journal it
+    // doesn't affect either UO.Journal or other instances of GameJournal so
+    // you can try looting and healing in parallel
+    // and you can still use journal.Delete method in both scripts at the same time.
+    // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
+    // Injection.
+    private static GameJournal journal = UO.CreateJournal();
+
     public static ItemSpec UselessLoot { get; } = new[] { Specs.Torsos, Specs.Rocks, Specs.Corpse };
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec OnGroundLoot { get; set; } = new[] { Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt };
@@ -170,8 +178,6 @@ public static class Looting
             UO.ClientPrint("no container for loot");
     }
 
-    private static GameJournal journal = UO.CreateJournal();
-
     public static void Loot(Item container)
     {
         var originalLocation = UO.Me.Location;
@@ -182,6 +188,11 @@ public static class Looting
 
         foreach (var itemToPickup in UO.Items.InContainer(container).ToArray())
         {
+            // If you are too far away from a looted body, then the game client might crash.
+            // Stop looting when the player moves to avoid it. 
+            // NOTE: Some older versions of Injection have the same problem but Injection 2015 seems
+            // immune to this problem. Maybe this can be fixed in Infusion itself by filtering
+            // out the Drag item response packets.
             if (originalLocation != UO.Me.Location)
                 throw new CommandInvocationException("Cancel looting, player has moved.");
 

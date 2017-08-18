@@ -1,5 +1,4 @@
 #load "Specs.csx"
-#load "Scripts.csx"
 
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,10 @@ using System.Linq;
 
 public static class Cooking
 {
+    // Create a "private" instance of journal for cooking. If you delete this journal it
+    // doesn't affect either UO.Journal or other instances of GameJournal.
+    // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
+    // Injection.
     private static GameJournal journal = UO.CreateJournal();
 
     public static void Cook(ModelId rawFoodType, string campfireTile)
@@ -21,8 +24,6 @@ public static class Cooking
     
             journal.WaitAny("Jidlo neni pozivatelne", "Mmm, smells good");
             UO.Wait(500);
-    
-            Scripts.Checks();
     
             rawFood = UO.Items.OfType(rawFoodType).InContainer(UO.Me.BackPack).First();
         }
@@ -40,8 +41,6 @@ public static class Cooking
     
             journal.WaitAny("Jidlo neni pozivatelne", "Mmm, smells good");
             UO.Wait(500);
-    
-            Scripts.Checks();
     
             rawFood = UO.Items.OfType(rawFoodType).InContainer(UO.Me.BackPack).First();
         }
@@ -75,4 +74,5 @@ public static class Cooking
     }
 }
 
+// Registering a ,cook command which executes Cook method without parameters.
 UO.RegisterCommand("cook", () => Cooking.Cook());

@@ -15,8 +15,6 @@ public static class HitPointNotifier
             UO.Events.HealthUpdated += OnHealthUpdated;
             
             enabled = true;
-
-            UO.ClientPrint("HP notification enabled");
         }
     }
 
@@ -27,8 +25,8 @@ public static class HitPointNotifier
             // The notification is disabled by unsubscribing the OnHealthUpdated method
             // from HealthUpdated event.
             UO.Events.HealthUpdated -= OnHealthUpdated;
+
             enabled = false;
-            UO.ClientPrint("HP notification disabled");
         }
     }
 

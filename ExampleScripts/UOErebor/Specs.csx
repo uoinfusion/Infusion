@@ -225,11 +225,50 @@ public static class Specs
     public static readonly ItemSpec Coconut = 0x1726;
     public static readonly ItemSpec Muffin = 0x09EA;
     public static readonly ItemSpec GrapeBunch = 0x09D1;
-    public static readonly ItemSpec Gourd = 0x0C66;
-    public static readonly ItemSpec WaterMelon = 0x0C5C;
+    public static readonly ItemSpec Gourd = new[] { 0x0C66, 0x0C64 };
+    public static readonly ItemSpec Watermelon = 0x0C5C;
     public static readonly ItemSpec HoneydewMelon = 0x0C74;
+    public static readonly ItemSpec JarOfHoney = 0x09EC;
+    public static readonly ItemSpec FrenchBread = 0x098C;
+    public static readonly ItemSpec Cake = 0x09E9;
+    public static readonly ItemSpec BakedPie = 0x1041;
+    public static readonly ItemSpec Pizza = 0x1040;
+    public static readonly ItemSpec Turnip = 0x0D39;
+    public static readonly ItemSpec Apple = 0x09D0;
+    public static readonly ItemSpec Peache = 0x09D2;
+    public static readonly ItemSpec Onion = 0x0C6D;
+    public static readonly ItemSpec Pear = 0x0994;
+    public static readonly ItemSpec LegOfLamb = 0x160A;
+    public static readonly ItemSpec Sausage = 0x09C0;
+    public static readonly ItemSpec EarOfCorn = 0x0C7F;
+    public static readonly ItemSpec Pumpkin = 0x0C6A;
+    public static readonly ItemSpec WheelOfCheese = 0x097E;
+    public static readonly ItemSpec Squash = 0x0C72;
+    public static readonly ItemSpec Canteloup = 0x0C79;
+    public static readonly ItemSpec BreadLoave = 0x103B;
+    public static readonly ItemSpec HeadOfCabbage = 0x0C7B;
+    public static readonly ItemSpec HeadOfLettuce = 0x0C70;
+    public static readonly ItemSpec Carrot = 0x0C77;
+    public static readonly ItemSpec Banana = 0x171F;
+    public static readonly ItemSpec SliceOfBacon = 0x0978;
+    public static readonly ItemSpec Lemon = 0x1728;
+    public static readonly ItemSpec Ham = 0x09C9;
+    public static readonly ItemSpec ChickenLeg = 0x1608;
+    public static readonly ItemSpec Limes = 0x172A;
+
     public static readonly ItemSpec RawFood = new[] { RawBird, RawFishSteak, RawRibs };
-    public static readonly ItemSpec Food = new[] { Ribs, CookedBird, BunchOfDates, Muffin, GrapeBunch, Gourd, WaterMelon, HoneydewMelon };
+    public static readonly ItemSpec Food = new[] { Ribs, CookedBird,
+        BunchOfDates, Muffin, GrapeBunch, Gourd, Watermelon, HoneydewMelon,
+        JarOfHoney, FrenchBread, Cake, BakedPie, Pizza, Turnip, Apple, Peache,
+        Onion, Pear, LegOfLamb, Sausage, EarOfCorn, Pumpkin, WheelOfCheese, Squash,
+        Canteloup, BreadLoave, HeadOfCabbage, HeadOfLettuce, Carrot, Banana,
+        SliceOfBacon, Lemon, Ham, ChickenLeg, Limes
+    };
+    public static readonly ItemSpec QuestFood = new[] { BunchOfDates, Muffin, GrapeBunch, Gourd, Watermelon, HoneydewMelon,
+        JarOfHoney, FrenchBread, Cake, BakedPie, Pizza, Turnip, Apple, Peache,
+        Onion, Pear, LegOfLamb, Sausage, EarOfCorn, Pumpkin, WheelOfCheese, Squash,
+        Canteloup, BreadLoave, HeadOfCabbage, HeadOfLettuce, Carrot, Banana,
+        SliceOfBacon, Lemon, Ham, ChickenLeg, Limes };
 
     // Doors
     public static readonly ItemSpec DoorSecretStone1 = new[] { 0x00e8, 0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00cb, 0x00cc, 0x00cd, 0x00ce, 0x00cf, 0x00d0, 0x00d1, 0x00d2, 0x00d3, 0x00d4, 0x00d5, 0x00d6, 0x00d7, 0x00d8, 0x00d9, 0x00da, 0x00db, 0x00dc, 0x00dd, 0x00de, 0x00df, 0x00e0, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7 };

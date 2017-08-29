@@ -1,4 +1,6 @@
-// You can use all commands registered in following files:
+// These scripts are specific for UOErebor shard (http://uoerebor.cz/)
+// and most likely they will not work at you shard. But you can use them
+// as a tutorial how to write your very own scripts.
 #load "UOErebor\Specs.csx"
 #load "UOErebor\hidding.csx"
 #load "UOErebor\hpnotify.csx"
@@ -6,11 +8,7 @@
 #load "UOErebor\targeting.csx"
 #load "UOErebor\watchdog.csx"
 
-// These scripts are specific for UOErebor shard (http://uoerebor.cz/)
-// and most likely they will not work at you shard. But you can use them
-// as a tutorial how to write your very own scripts. 
-
-// You can duplicate this file and have a specific configuration
+// You can duplicate this file to have a specific configuration
 // for each character.
 
 // Id of container you want to use as loot target.
@@ -24,9 +22,9 @@ Looting.LootContainerId = 0x40000000;
 // for UselessLoot) and items passed to Including method (Arrow, TightBoots, ...).
 Looting.IgnoredLoot = Looting.UselessLoot.Including(
     Specs.Arrow, Specs.TightBoots, Specs.Furs, Specs.RawRibs, Specs.HorseShoes);
-// If you want to loot even items specified in UselessLoot you can modify
+// If you want to loot items specified in UselessLoot you can modify
 // looting.csx script or you can omit the Looting.UselessLoot. For example
-// if you want just to ignore arrows and tight boots then you can use:
+// if you want to ignore just arrows and tight boots then you can use:
 // Looting.IgnoredLoot = new[] { Specs.Arrow, Specs.TightBoots };
 
 // Enable health (hit point) change notification by default. It means

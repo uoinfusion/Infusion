@@ -2,9 +2,15 @@
 // and most likely they will not work at you shard. But you can use them
 // as a tutorial how to write your very own scripts.
 #load "UOErebor\Specs.csx"
+#load "UOErebor\common.csx"
+#load "UOErebor\cooking.csx"
+#load "UOErebor\healing.csx"
 #load "UOErebor\hidding.csx"
 #load "UOErebor\hpnotify.csx"
+#load "UOErebor\items.csx"
 #load "UOErebor\looting.csx"
+#load "UOErebor\magery.csx"
+#load "UOErebor\meditation.csx"
 #load "UOErebor\targeting.csx"
 #load "UOErebor\watchdog.csx"
 

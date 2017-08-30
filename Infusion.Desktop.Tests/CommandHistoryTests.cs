@@ -40,6 +40,19 @@ namespace Infusion.Desktop.Tests
         }
 
         [TestMethod]
+        public void Doesnt_store_duplicate_command()
+        {
+            var history = new CommandHistory();
+
+            history.EnterCommand("command2");
+            history.EnterCommand("command1");
+            history.EnterCommand("command1");
+
+            history.GetOlder().Should().Be("command1");
+            history.GetOlder().Should().Be("command2");
+        }
+
+        [TestMethod]
         public void Moves_to_last_command_when_new_command_entered_regardless_prior_position_in_history()
         {
             var history = new CommandHistory();

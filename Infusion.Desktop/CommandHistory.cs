@@ -10,7 +10,7 @@ namespace Infusion.Desktop
     {
         private readonly int maxHistoryLength;
         private readonly Queue<string> history;
-        private int currentHistoryIndex;
+        private int currentHistoryIndex = 0;
 
         public CommandHistory(int maxHistoryLength = 128)
         {
@@ -23,9 +23,11 @@ namespace Infusion.Desktop
             if (history.Count == maxHistoryLength)
                 history.Dequeue();
 
-            history.Enqueue(command);
-
-            currentHistoryIndex = history.Count;
+            if (currentHistoryIndex < 1 || !history.Any() || history.ElementAt(currentHistoryIndex - 1) != command)
+            {
+                history.Enqueue(command);
+                currentHistoryIndex = history.Count;
+            }
         }
 
         public string GetOlder()

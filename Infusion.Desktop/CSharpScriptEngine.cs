@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -46,18 +47,9 @@ namespace Infusion.Desktop
 
         public async Task ExecuteScript(string scriptPath)
         {
-            scriptOutput.Info($"Loading script: {scriptPath}");
             string scriptText = File.ReadAllText(scriptPath);
-            string binDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
 
-            string scriptDirectory = Path.GetDirectoryName(scriptPath);
-            scriptOptions = scriptOptions.WithSourceResolver(
-                    ScriptSourceResolver.Default.WithSearchPaths(scriptDirectory))
-                .WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(scriptDirectory, binDirectory));
-
-            Directory.SetCurrentDirectory(scriptDirectory);
-
-            await Execute(scriptText, false);
+            await Execute(scriptText, scriptPath, true);
         }
 
         private static int submissionNumber = 0;
@@ -67,8 +59,18 @@ namespace Infusion.Desktop
             scriptState = null;
         }
 
-        public Task<object> Execute(string code, bool echo = true, CancellationTokenSource cancellationTokenSource = null)
+        public Task<object> Execute(string code, string filePath, bool fullFile = false, CancellationTokenSource cancellationTokenSource = null)
         {
+            string binDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
+
+            string scriptDirectory = Path.GetDirectoryName(filePath);
+            scriptOptions = scriptOptions.WithSourceResolver(
+                    ScriptSourceResolver.Default.WithSearchPaths(scriptDirectory))
+                .WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(scriptDirectory, binDirectory));
+
+            if (scriptDirectory != null)
+                Directory.SetCurrentDirectory(scriptDirectory);
+
             submissionNumber++;
             string commandName = $"submission{submissionNumber}";
 
@@ -78,11 +80,14 @@ namespace Infusion.Desktop
 
                 var command = new Command(commandName, () =>
                 {
-                    if (echo)
+                    if (fullFile)
+                        scriptOutput.Info($"Executing file {filePath}.");
+                    else
                         scriptOutput.Echo(code);
 
                     try
                     {
+                        var watch = Stopwatch.StartNew();
                         var previousState = scriptState;
                         scriptState = previousState == null
                             ? CSharpScript.RunAsync(code, scriptOptions, cancellationToken: cancellationTokenSource?.Token ?? default(CancellationToken))
@@ -98,7 +103,7 @@ namespace Infusion.Desktop
                             return;
                         }
 
-                        scriptOutput.Info("OK");
+                        scriptOutput.Info($"OK (in {watch.ElapsedMilliseconds} ms)");
                     }
                     catch (AggregateException ex)
                     {

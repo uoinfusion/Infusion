@@ -50,6 +50,7 @@
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedPacketsFilters.cs" />
     <Compile Include="CurrentHealthUpdatedArgs.cs" />
+    <Compile Include="EventHelper.cs" />
     <Compile Include="GameJournal.cs" />
     <Compile Include="GameObjectCollectionWrapper.cs" />
     <Compile Include="GumpObservers.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="ItemsObservers.cs" />
     <Compile Include="GameObjectSpec.cs" />
     <Compile Include="ItemSpecSpecificity.cs" />
+    <Compile Include="ItemUseRequestedArgs.cs" />
     <Compile Include="JournalAwaiter.cs" />
     <Compile Include="JournalEntriesExtensions.cs" />
     <Compile Include="JournalEntry.cs" />

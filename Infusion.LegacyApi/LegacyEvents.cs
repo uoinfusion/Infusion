@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Infusion.Packets;
 
 namespace Infusion.LegacyApi
@@ -6,11 +7,24 @@ namespace Infusion.LegacyApi
     public class LegacyEvents
     {
         private readonly ItemsObservers itemsObserver;
+        private readonly object speechReceivedLock = new object();
 
-        internal LegacyEvents(ItemsObservers itemsObserver)
+        internal LegacyEvents(ItemsObservers itemsObserver, JournalSource journalSource)
         {
             this.itemsObserver = itemsObserver;
+            journalSource.NewMessageReceived += JournalSourceOnNewMessageReceived;
         }
+
+        private void JournalSourceOnNewMessageReceived(object sender, JournalEntry journalEntry)
+        {
+            EventHelper.RaiseScriptEvent(SpeechReceived, () =>
+            {
+                lock (speechReceivedLock)
+                    SpeechReceived?.Invoke(this, journalEntry);
+            });
+        }
+
+        public event EventHandler<JournalEntry> SpeechReceived;
 
         public event EventHandler<CurrentHealthUpdatedArgs> HealthUpdated
         {
@@ -33,16 +47,6 @@ namespace Infusion.LegacyApi
         internal void ResetEvents()
         {
             itemsObserver.ResetEvents();
-        }
-    }
-
-    public struct ItemUseRequestedArgs
-    {
-        public ObjectId ItemId { get; }
-
-        public ItemUseRequestedArgs(ObjectId itemId)
-        {
-            ItemId = itemId;
         }
     }
 }

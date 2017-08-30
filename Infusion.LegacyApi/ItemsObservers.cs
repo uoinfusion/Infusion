@@ -72,9 +72,9 @@ namespace Infusion.LegacyApi
             var updatedItem = mobile.UpdateHealth(newHealth, newMaxHealth);
             gameObjects.UpdateObject(updatedItem);
 
-            if (oldHealth != newHealth && CurrentHealthUpdated != null)
+            if (oldHealth != newHealth)
             {
-                Task.Run(() =>
+                EventHelper.RaiseScriptEvent(CurrentHealthUpdated, () =>
                 {
                     CurrentHealthUpdated?.Invoke(this,
                         new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
@@ -197,9 +197,8 @@ namespace Infusion.LegacyApi
 
         private void OnItemEnteredView(Item item)
         {
-            if (ItemEnteredView != null)
-                Task.Run(() => { ItemEnteredView?.Invoke(this, new ItemEnteredViewArgs(item)); });
-            ;
+            EventHelper.RaiseScriptEvent(ItemEnteredView,
+                () => { ItemEnteredView?.Invoke(this, new ItemEnteredViewArgs(item)); });
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)

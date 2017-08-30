@@ -132,7 +132,7 @@ namespace Infusion.LegacyApi
 
             blockedPacketsFilters = new BlockedPacketsFilters(ultimaServer);
 
-            Events = new LegacyEvents(itemsObserver);
+            Events = new LegacyEvents(itemsObserver, journalSource);
 
             this.logger = logger;
             Server = ultimaServer;

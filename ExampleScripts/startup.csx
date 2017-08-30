@@ -1,9 +1,16 @@
 // These scripts are specific for UOErebor shard (http://uoerebor.cz/)
 // and most likely they will not work at you shard. But you can use them
 // as a tutorial how to write your very own scripts.
+
+// You don't need to load all these scripts for all characters. 
+// You can safely remove load of any script file you don't want to
+// use. Removing scripts may make script (re)loading faster.
 #load "UOErebor\Specs.csx"
 #load "UOErebor\common.csx"
 #load "UOErebor\cooking.csx"
+#load "UOErebor\craft.csx"
+#load "UOErebor\doors.csx"
+#load "UOErebor\eating.csx"
 #load "UOErebor\healing.csx"
 #load "UOErebor\hidding.csx"
 #load "UOErebor\hpnotify.csx"
@@ -11,7 +18,11 @@
 #load "UOErebor\looting.csx"
 #load "UOErebor\magery.csx"
 #load "UOErebor\meditation.csx"
+#load "UOErebor\selling.csx"
+#load "UOErebor\sheepshaving.csx"
+#load "UOErebor\tailoring.csx"
 #load "UOErebor\targeting.csx"
+#load "UOErebor\travelstone.csx"
 #load "UOErebor\watchdog.csx"
 
 // You can duplicate this file to have a specific configuration

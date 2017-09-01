@@ -20,6 +20,11 @@ public static class Items
     
     public static void MoveItems(IEnumerable<Item> items, ushort amount, Item targetContainer)
     {
+        MoveItems(items, amount, targetContainer.Id);
+    }
+    
+    public static void MoveItems(IEnumerable<Item> items, ushort amount, ObjectId targetContainerId)
+    {
         foreach (var item in items)
         {
             if (amount == 0)
@@ -27,12 +32,12 @@ public static class Items
     
             if (item.Amount <= amount)
             {
-                UO.TryMoveItem(item, targetContainer);
+                UO.TryMoveItem(item, targetContainerId);
                 amount -= item.Amount;
             }
             else
             {
-                UO.TryMoveItem(item, amount, targetContainer);
+                UO.TryMoveItem(item, amount, targetContainerId);
                 amount = 0;
             }
         }
@@ -161,7 +166,7 @@ public static class Items
         MoveItems(items, targetContainer);
     }
     
-        public static void PickupFromGround(ushort type)
+    public static void PickupFromGround(ushort type)
     {
         PickupFromGround((ModelId)type);
     }

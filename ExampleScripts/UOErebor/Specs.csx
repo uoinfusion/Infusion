@@ -100,11 +100,13 @@ public static class Specs
 
     // Potions
     public static readonly ItemSpec PotionKeg = 0x1AD6;
-    public static readonly ItemSpec NightsightKeg = new ItemSpec(0x1AD6, (Color)0x0980);
-
     public static readonly ItemSpec Bottle = 0x0F0E;
     public static readonly ItemSpec EmptyBottle = new ItemSpec(0x0F0E, (Color)0x0000);
-    public static readonly ItemSpec GreaterHealBottle = new ItemSpec(0x0F0E, (Color)0x0160);
+
+    public static readonly ItemSpec NightsightKeg = new ItemSpec(0x1AD6, (Color)0x0980);
+    public static readonly ItemSpec NightsighPoition = new ItemSpec(0x0F0E, (Color)0x0980);
+    public static readonly ItemSpec GreaterHealKeg = new ItemSpec(0x1AD6, (Color)0x0160);
+    public static readonly ItemSpec GreaterHealPotion = new ItemSpec(0x0F0E, (Color)0x0160);
 
     // Reagents
     public static readonly ItemSpec GraveDust = 0x0f8f;
@@ -365,6 +367,19 @@ public static class Specs
         }
 
         return item.Type.ToString();
+    }
+    
+    public static string TranslateToName(ItemSpec targetSpec)
+    {
+        foreach (var spec in itemSpecs.Value)
+        {
+            if (spec.Value == targetSpec)
+            {
+                return spec.Key;
+            }
+        }
+        
+        return null;
     }
 
     private static Dictionary<string, ItemSpec> GetItemSpecs() =>

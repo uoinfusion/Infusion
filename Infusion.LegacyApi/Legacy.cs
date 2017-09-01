@@ -158,20 +158,13 @@ namespace Infusion.LegacyApi
             cancellationToken.Value?.ThrowIfCancellationRequested();
         }
 
-        public void RequestStatus(Mobile item)
-        {
-            Server.RequestStatus(item.Id);
-        }
+        public void RequestStatus(Mobile item) => Server.RequestStatus(item.Id);
 
-        public void Use(GameObject item)
-        {
-            Use(item.Id);
-        }
+        public void Use(GameObject item) => Use(item.Id);
 
-        public void Click(GameObject item)
-        {
-            Server.Click(item.Id);
-        }
+        public void Click(GameObject obj) => Server.Click(obj.Id);
+
+        public void Click(ObjectId id) => Server.Click(id);
 
         public bool TryUse(ItemSpec spec)
         {
@@ -375,9 +368,19 @@ namespace Infusion.LegacyApi
 
         public void DropItem(Item item, Item targetContainer)
         {
+            DropItem(item.Id, targetContainer.Id);
+        }
+
+        internal void DropItem(Item item, ObjectId targetContainerId)
+        {
+            DropItem(item.Id, targetContainerId);
+        }
+
+        internal void DropItem(ObjectId itemId, ObjectId targetContainerId)
+        {
             CheckCancellation();
 
-            Server.DropItem(item.Id, targetContainer.Id);
+            Server.DropItem(itemId, targetContainerId);
         }
 
         public void DragItem(Item item)
@@ -394,12 +397,15 @@ namespace Infusion.LegacyApi
         }
 
         public bool TryMoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null)
-        {
-            return TryMoveItem(item, item.Amount, targetContainer, timeout, dropDelay);
-        }
+            TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainer.Id, timeout, dropDelay);
+
+        public bool TryMoveItem(Item item, ObjectId targetContainerId, TimeSpan? timeout = null,
+            TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainerId, timeout, dropDelay);
 
         public bool TryMoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+            TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainer.Id, timeout, dropDelay);
+
+        public bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
         {
             DragItem(item, amount);
@@ -409,7 +415,7 @@ namespace Infusion.LegacyApi
             if (dropDelay.HasValue)
                 Wait(dropDelay.Value);
 
-            DropItem(item, targetContainer);
+            DropItem(item, targetContainerId);
 
             return true;
         }

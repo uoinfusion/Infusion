@@ -84,8 +84,11 @@ namespace Infusion.LegacyApi
         public static void Use(GameObject item)
             => Current.Use(item);
 
-        public static void Click(GameObject item)
-            => Current.Click(item);
+        public static void Click(GameObject obj)
+            => Current.Click(obj);
+
+        public static void Click(ObjectId id)
+            => Current.Click(id);
 
         public static bool TryUse(ItemSpec spec)
             => Current.TryUse(spec);
@@ -150,6 +153,12 @@ namespace Infusion.LegacyApi
         public static void DropItem(Item item, Item targetContainer)
             => Current.DropItem(item, targetContainer);
 
+        public static void DropItem(Item item, ObjectId targetContainerId)
+            => Current.DropItem(item, targetContainerId);
+
+        public static void DropItem(ObjectId itemId, ObjectId targetContainerId)
+            => Current.DropItem(itemId, targetContainerId);
+
         public static void DragItem(Item item)
             => Current.DragItem(item);
 
@@ -158,11 +167,19 @@ namespace Infusion.LegacyApi
 
         public static bool TryMoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
-            => Current.TryMoveItem(item, targetContainer, timeout);
+            => Current.TryMoveItem(item, targetContainer, timeout, dropDelay);
+
+        public static bool TryMoveItem(Item item, ObjectId targetContainerId, TimeSpan? timeout = null,
+            TimeSpan? dropDelay = null)
+            => Current.TryMoveItem(item, targetContainerId, timeout, dropDelay);
 
         public static bool TryMoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
             => Current.TryMoveItem(item, amount, targetContainer, timeout, dropDelay);
+
+        public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, TimeSpan? timeout = null,
+            TimeSpan? dropDelay = null)
+            => Current.TryMoveItem(item, amount, targetContainerId, timeout, dropDelay);
 
         public static DragResult WaitForItemDragged(TimeSpan? timeout = null)
             => Current.WaitForItemDragged(timeout);

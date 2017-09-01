@@ -35,7 +35,9 @@ namespace Infusion.Desktop.Launcher
                             {
                                 string scriptFileName = Path.Combine(assemblyPath, @"..\scripts\startup.csx");
                                 if (File.Exists(scriptFileName))
-                                    defaultInitialScriptFileName = scriptFileName;
+                                {
+                                    defaultInitialScriptFileName = new FileInfo(scriptFileName).FullName;
+                                }
                             }
                         }
 

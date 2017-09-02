@@ -155,6 +155,7 @@
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
     <Compile Include="Packets\Server\PauseClientChoice.cs" />
     <Compile Include="Packets\Server\PauseClientPacket.cs" />
+    <Compile Include="Packets\Server\PersonalLightLevelPacket.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />

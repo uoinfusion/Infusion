@@ -48,7 +48,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AttackResult.cs" />
-    <Compile Include="BlockedPacketsFilters.cs" />
+    <Compile Include="BlockedClientPacketsFilters.cs" />
     <Compile Include="CurrentHealthUpdatedArgs.cs" />
     <Compile Include="EventHelper.cs" />
     <Compile Include="GameJournal.cs" />
@@ -68,6 +68,7 @@
     <Compile Include="JournalObservers.cs" />
     <Compile Include="JournalSource.cs" />
     <Compile Include="LegacyException.cs" />
+    <Compile Include="LightObserver.cs" />
     <Compile Include="MobileCollection.cs" />
     <Compile Include="MobileCollectionExtensions.cs" />
     <Compile Include="MobileSpec.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="UltimaMap.cs" />
     <Compile Include="WalkRequest.cs" />
     <Compile Include="WalkRequestQueue.cs" />
+    <Compile Include="WeatherObserver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infusion\Infusion.csproj">

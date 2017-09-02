@@ -87,6 +87,10 @@ namespace Infusion
                 packetHandler.Publish<DrawContainerPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.PauseClient.Id)
                 packetHandler.Publish<PauseClientPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.PersonalLightLevel.Id)
+                packetHandler.Publish<PersonalLightLevelPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.OverallLightLevel.Id)
+                packetHandler.Publish<OverallLightLevelPacket>(rawPacket);
 
             return rawPacket;
         }

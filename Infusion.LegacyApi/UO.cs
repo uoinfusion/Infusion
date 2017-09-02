@@ -1,25 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
-using Infusion.Logging;
-using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
     // ReSharper disable once InconsistentNaming
     public static class UO
     {
-        private static Legacy current;
-
-        private static Legacy Current => current;
-
-        public static void Initialize(Legacy current)
-        {
-            UO.current = current;
-        }
+        private static Legacy Current { get; set; }
 
         public static LegacyEvents Events => Current.Events;
 
@@ -44,6 +34,13 @@ namespace Infusion.LegacyApi
         public static Player Me => Current.Me;
 
         public static GameJournal Journal => Current.Journal;
+
+        public static IEnumerable<ObjectId> IgnoredObjects => Current.IgnoredItems;
+
+        public static void Initialize(Legacy current)
+        {
+            Current = current;
+        }
 
         public static void OpenContainer(Item container, TimeSpan? timeout = null)
             => Current.OpenContainer(container, timeout);
@@ -217,7 +214,6 @@ namespace Infusion.LegacyApi
         public static void WalkTo(ushort xloc, ushort yloc)
             => Current.WalkTo(xloc, yloc);
 
-
         public static bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
             => Current.TryWear(item, layer, timeout);
 
@@ -252,7 +248,8 @@ namespace Infusion.LegacyApi
         public static void CloseContainer(Item container)
             => Current.CloseContainer(container);
 
-        public static IEnumerable<ObjectId> IgnoredObjects => Current.IgnoredItems;
+        public static void ToggleLightFiltering() => Current.ToggleLightFiltering();
 
+        public static void ToggleWeatherFiltering() => Current.ToggleWeatherFiltering();
     }
 }

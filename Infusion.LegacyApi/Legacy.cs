@@ -5,26 +5,63 @@ using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
 using Infusion.Logging;
-using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
     public class Legacy
     {
-        private readonly ItemsObservers itemsObserver;
-        private readonly JournalObservers journalObservers;
-        private readonly BlockedPacketsFilters blockedPacketsFilters;
-        private readonly GumpObservers gumpObservers;
+        private readonly BlockedClientPacketsFilters blockedPacketsFilters;
 
         private readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
 
-        private readonly Targeting targeting;
+        private readonly GumpObservers gumpObservers;
+        private readonly ItemsObservers itemsObserver;
+        private readonly JournalObservers journalObservers;
 
         private readonly JournalSource journalSource;
-        private readonly PlayerObservers playerObservers;
+        private readonly LightObserver lightObserver;
 
         private readonly ILogger logger;
+        private readonly PlayerObservers playerObservers;
+
+        private readonly Targeting targeting;
+        private readonly WeatherObserver weatherObserver;
+
+        internal Legacy(Configuration configuration, CommandHandler commandHandler,
+            UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
+        {
+            Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
+                ultimaServer, this);
+            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
+            GameObjects = new GameObjectCollection(Me);
+            Items = new ItemCollection(GameObjects);
+            Mobiles = new MobileCollection(GameObjects);
+            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this);
+            Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
+            journalSource = new JournalSource();
+            Journal = new GameJournal(journalSource, this);
+            journalObservers = new JournalObservers(journalSource, ultimaServer);
+            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this);
+            playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
+            targeting = new Targeting(ultimaServer, ultimaClient, this);
+
+            blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
+            lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
+            weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
+
+            Events = new LegacyEvents(itemsObserver, journalSource);
+
+            this.logger = logger;
+            Server = ultimaServer;
+            Client = ultimaClient;
+
+            CommandHandler = commandHandler;
+            RegisterDefaultCommands();
+            CommandHandler.CancellationTokenCreated += (sender, token) => CancellationToken = token;
+
+            Configuration = configuration;
+        }
 
         public LegacyEvents Events { get; }
 
@@ -70,7 +107,8 @@ namespace Infusion.LegacyApi
         public Command RegisterCommand(string name, Action commandAction) => CommandHandler.RegisterCommand(name,
             commandAction);
 
-        public Command RegisterCommand(string name, Action<string> commandAction) => CommandHandler.RegisterCommand(name,
+        public Command RegisterCommand(string name, Action<string> commandAction) => CommandHandler.RegisterCommand(
+            name,
             commandAction);
 
         public void Alert(string message)
@@ -94,6 +132,8 @@ namespace Infusion.LegacyApi
                 "War mode off."));
             CommandHandler.RegisterCommand(new Command("terminate", Terminate,
                 "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("filter-light", ToggleLightFiltering));
+            CommandHandler.RegisterCommand(new Command("filter-weather", ToggleWeatherFiltering));
         }
 
         public GameJournal CreateJournal()
@@ -111,38 +151,6 @@ namespace Infusion.LegacyApi
         public Gump WaitForGump(TimeSpan? timeout = null)
         {
             return gumpObservers.WaitForGump(timeout);
-        }
-
-        internal Legacy(Configuration configuration, CommandHandler commandHandler,
-            UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
-        {
-            Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null, ultimaServer, this);
-            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
-            GameObjects = new GameObjectCollection(Me);
-            Items = new ItemCollection(GameObjects);
-            Mobiles = new MobileCollection(GameObjects);
-            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this);
-            Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
-            journalSource = new JournalSource();
-            Journal = new GameJournal(journalSource, this);
-            journalObservers = new JournalObservers(journalSource, ultimaServer);
-            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this);
-            playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
-            targeting = new Targeting(ultimaServer, ultimaClient, this);
-
-            blockedPacketsFilters = new BlockedPacketsFilters(ultimaServer);
-
-            Events = new LegacyEvents(itemsObserver, journalSource);
-
-            this.logger = logger;
-            Server = ultimaServer;
-            Client = ultimaClient;
-
-            CommandHandler = commandHandler;
-            RegisterDefaultCommands();
-            CommandHandler.CancellationTokenCreated += (sender, token) => CancellationToken = token;
-
-            Configuration = configuration;
         }
 
         public void Use(ObjectId objectId)
@@ -170,10 +178,13 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+            var item = Items.Matching(spec).OnLayer(Layer.OneHandedWeapon)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+                       ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.Matching(spec).InContainer(Me.BackPack).FirstOrDefault()
-                       ?? Items.Matching(spec).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
+                       ?? Items.Matching(spec).OnLayer(Layer.Backpack)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
             if (item != null)
             {
@@ -194,10 +205,13 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(type).InContainer(Me.BackPack).FirstOrDefault()
-                       ?? Items.OfType(type).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
+                       ?? Items.OfType(type).OnLayer(Layer.Backpack)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
             if (item != null)
             {
                 Use(item);
@@ -217,10 +231,13 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(types).InContainer(Me.BackPack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+            var item = Items.OfType(types).InContainer(Me.BackPack)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
+                       ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(types).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault()
-                       ?? Items.OfType(types).OnLayer(Layer.Backpack).FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
+                       ?? Items.OfType(types).OnLayer(Layer.Backpack)
+                           .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
             if (item != null)
             {
@@ -343,7 +360,7 @@ namespace Infusion.LegacyApi
         {
             var itemId = targeting.ItemIdInfo();
 
-            if (!GameObjects.TryGet(itemId, out GameObject obj))
+            if (!GameObjects.TryGet(itemId, out var obj))
                 return null;
 
             return obj as Item;
@@ -353,7 +370,7 @@ namespace Infusion.LegacyApi
         {
             var itemId = targeting.ItemIdInfo();
 
-            if (!GameObjects.TryGet(itemId, out GameObject obj))
+            if (!GameObjects.TryGet(itemId, out var obj))
                 return null;
 
             return obj as Mobile;
@@ -543,7 +560,7 @@ namespace Infusion.LegacyApi
         }
 
         public void ClientPrint(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type,
-            Color color,  bool log = true)
+            Color color, bool log = true)
         {
             Client.SendSpeech(message, name, itemId, itemModel, type, color);
             if (log)
@@ -569,6 +586,18 @@ namespace Infusion.LegacyApi
         public void CloseContainer(Item container)
         {
             Client.CloseContainer(container.Id);
+        }
+
+        public void ToggleLightFiltering()
+        {
+            lightObserver.ToggleLightFiltering();
+            ClientPrint(Configuration.FilterLightEnabled ? "Light filtering turned on" : "Light filtering turned off");
+        }
+
+        public void ToggleWeatherFiltering()
+        {
+            weatherObserver.ToggleWeatherFiltering();
+            ClientPrint(Configuration.FilterWeatherEnabled ? "Weather filtering turned on" : "Weather filtering turned off");
         }
     }
 }

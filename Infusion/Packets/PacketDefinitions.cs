@@ -280,11 +280,11 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<PauseClientPacket> PauseClient = new PacketDefinition<PauseClientPacket>(0x33,
             new StaticPacketLength(2), "PauseClient", packet => new PauseClientPacket());
 
-        public static readonly PacketDefinition PersonalLightLevel = new PacketDefinition(0x4E,
-            new StaticPacketLength(6), "PersonalLightLevel");
+        public static readonly PacketDefinition<PersonalLightLevelPacket> PersonalLightLevel = new PacketDefinition<PersonalLightLevelPacket>(0x4E,
+            new StaticPacketLength(6), "PersonalLightLevel", packet => new PersonalLightLevelPacket());
 
-        public static readonly PacketDefinition OverallLightLevel = new PacketDefinition(0x4F,
-            new StaticPacketLength(2), "OverallLightLevel");
+        public static readonly PacketDefinition<OverallLightLevelPacket> OverallLightLevel = new PacketDefinition<OverallLightLevelPacket>(0x4F,
+            new StaticPacketLength(2), "OverallLightLevel", packet => new OverallLightLevelPacket());
 
         public static readonly PacketDefinition RejectCharacterLogon = new PacketDefinition(0x53,
             new StaticPacketLength(2), "RejectCharacterLogon");

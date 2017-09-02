@@ -17,7 +17,7 @@ namespace Infusion
             this.packetSender = packetSender;
         }
 
-        private void Send(Packet rawPacket)
+        public void Send(Packet rawPacket)
         {
             packetSender(rawPacket);
         }

@@ -1,14 +1,10 @@
 ﻿using System;
+using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
     internal sealed class OverallLightLevelPacket : MaterializedPacket
     {
-        public override void Deserialize(Packet rawPacket)
-        {
-            throw new NotImplementedException();
-        }
-
         public byte Level { get; set; }
 
         public override Packet RawPacket
@@ -21,6 +17,14 @@ namespace Infusion.Packets.Server
 
                 return new Packet(PacketDefinitions.OverallLightLevel.Id, payload);
             }
+        }
+
+        public override void Deserialize(Packet rawPacket)
+        {
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+            reader.Skip(1);
+
+            Level = reader.ReadByte();
         }
     }
 }

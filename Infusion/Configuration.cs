@@ -95,6 +95,29 @@ namespace Infusion
             }
         }
 
+        private bool filterWeatherEnabled = true;
+
+        public bool FilterWeatherEnabled
+        {
+            get => filterWeatherEnabled;
+            set
+            {
+                filterWeatherEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private bool filterLightEnabled = true;
+        public bool FilterLightEnabled
+        {
+            get => filterLightEnabled;
+            set
+            {
+                filterLightEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

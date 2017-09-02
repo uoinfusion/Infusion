@@ -47,32 +47,34 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public Location3D PredictedLocation { get; set; }
+        public Location3D PredictedLocation { get; internal set; }
         internal Direction PredictedDirection { get; set; }
 
-        public Direction Direction { get; set; }
-        public MovementType MovementType { get; set; }
+        public Direction Direction { get; internal set; }
+        public MovementType MovementType { get; internal set; }
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
         public Item BackPack => legacyApi.GameObjects.OfType<Item>().FirstOrDefault(i => i.Type == backPackType && i.Layer == Layer.Backpack && i.ContainerId.HasValue && i.ContainerId == PlayerId);
         public Item BankBox => legacyApi.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
-        public Color Color { get; set; }
-        public ModelId BodyType { get; set; }
+        public Color Color { get; internal set; }
+        public ModelId BodyType { get; internal set; }
         public ushort CurrentHealth { get; set; }
-        public ushort MaxHealth { get; set; }
-        public ushort CurrentStamina { get; set; }
-        public ushort MaxStamina { get; set; }
-        public ushort CurrentMana { get; set; }
-        public ushort MaxMana { get; set; }
-        public ushort Weight { get; set; }
-        public ushort Dexterity { get; set; }
-        public ushort Strength { get; set; }
-        public ushort Intelligence { get; set; }
+        public ushort MaxHealth { get; internal set; }
+        public ushort CurrentStamina { get; internal set; }
+        public ushort MaxStamina { get; internal set; }
+        public ushort CurrentMana { get; internal set; }
+        public ushort MaxMana { get; internal set; }
+        public ushort Weight { get; internal set; }
+        public ushort Dexterity { get; internal set; }
+        public ushort Strength { get; internal set; }
+        public ushort Intelligence { get; internal set; }
 
         public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } =
             ImmutableDictionary<Skill, SkillValue>.Empty;
+
+        public byte LightLevel { get; internal set; }
 
         public event EventHandler<Location3D> LocationChanged;
 

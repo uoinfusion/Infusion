@@ -101,7 +101,8 @@ namespace Infusion.LegacyApi
         {
             Use(containerId);
 
-            itemsObserver.WaitForContainerOpened(timeout);
+            if (!itemsObserver.WaitForContainerOpened(timeout))
+                throw new LegacyException($"Cannot open container {containerId}");
         }
 
         public Command RegisterCommand(string name, Action commandAction) => CommandHandler.RegisterCommand(name,

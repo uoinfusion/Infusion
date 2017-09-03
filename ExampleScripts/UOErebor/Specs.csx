@@ -57,6 +57,7 @@ public static class Specs
     public static readonly ItemSpec Feathers = 0x1BD1;
     public static readonly ItemSpec PileOfHides = 0x1078;
     public static readonly ItemSpec Furs = new[] { 0x11F6, 0x11F4 };
+    public static readonly ItemSpec CutUpLeather = 0x1067;
     public static readonly ItemSpec BallsOfYarn = 0x0E1D;
     public static readonly ItemSpec PilesOfWool = 0x0DF8;
     public static readonly ItemSpec Cotton = 0x0C4F;

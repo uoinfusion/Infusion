@@ -91,12 +91,37 @@ public static class Looting
 
         if (corpse != null)
         {
-            Rip(corpse);
-            Loot(corpse);
-            if (corpses.Length - 1 > 0)
-                HighlightLootableCorpses(corpses.Except(new[] { corpse }));
+            Layer itemInHandLayer;
+            
+            var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
+            if (itemInHand == null)
+            {
+                itemInHand = UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
+                itemInHandLayer = Layer.TwoHandedWeapon;
+            }
             else
-                UO.ClientPrint($"No more corpses to loot remaining");
+                itemInHandLayer = Layer.OneHandedWeapon;
+
+            try
+            {
+                Rip(corpse);
+                Loot(corpse);
+                if (corpses.Length - 1 > 0)
+                    HighlightLootableCorpses(corpses.Except(new[] { corpse }));
+                else
+                    UO.ClientPrint($"No more corpses to loot remaining");
+            }
+            finally
+            {
+                // It seems that re-wearing an item directly
+                // after ripping a body and right before
+                // looting may crash the game client.
+                if (itemInHand != null)
+                {
+                    UO.TryWear(itemInHand, itemInHandLayer);
+                    UO.Wait(100);
+                }
+            }
         }
         else
         {
@@ -178,6 +203,15 @@ public static class Looting
             UO.ClientPrint("no container for loot");
     }
 
+    public static void Loot(ObjectId containerId)
+    {
+        var container = UO.Items[containerId];
+        if (container == null)
+            UO.ClientPrint($"Cannot find {containerId} container");
+
+        Loot(container);
+    }
+
     public static void Loot(Item container)
     {
         var originalLocation = UO.Me.Location;
@@ -188,14 +222,6 @@ public static class Looting
 
         foreach (var itemToPickup in UO.Items.InContainer(container).ToArray())
         {
-            // If you are too far away from a looted body, then the game client might crash.
-            // Stop looting when the player moves to avoid it. 
-            // NOTE: Some older versions of Injection have the same problem but Injection 2015 seems
-            // immune to this problem. Maybe this can be fixed in Infusion itself by filtering
-            // out the Drag item response packets.
-            if (originalLocation != UO.Me.Location)
-                throw new CommandInvocationException("Cancel looting, player has moved.");
-
             if (!IgnoredLoot.Matches(itemToPickup))
             {
                 UO.ClientPrint($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
@@ -225,18 +251,11 @@ public static class Looting
     public static void Rip(Item container)
     {
         UO.ClientPrint("Ripping");
-        var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault() ?? UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
         UO.Use(Specs.Knives);
 
         UO.WaitForTarget();
         UO.Target(container);
         journal.WaitAny("Rozrezal jsi mrtvolu.");
-
-        if (itemInHand != null)
-        {
-            UO.TryWear(itemInHand, Layer.OneHandedWeapon);
-            UO.Wait(100);
-        }
     }
 
 }

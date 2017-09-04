@@ -37,6 +37,9 @@ namespace Infusion.LegacyApi
         public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, GameObject container)
             => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
 
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId)
+            => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == containerId);
+
         public static IEnumerable<Item> OnGround(this IEnumerable<Item> items)
             => items.Where(i => i.IsOnGround);
 

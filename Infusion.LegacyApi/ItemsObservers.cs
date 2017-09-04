@@ -16,6 +16,7 @@ namespace Infusion.LegacyApi
 
         private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
+        private readonly ManualResetEvent cannotReachEvent = new ManualResetEvent(false);
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi)
@@ -36,7 +37,14 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
             serverPacketSubject.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
+            serverPacketSubject.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
             clientPacketSubject.Subscribe(PacketDefinitions.DoubleClick, HandleDoubleClick);
+        }
+
+        private void HandleClilocMessage(ClilocMessagePacket packet)
+        {
+            if (packet.MessageId == (MessageId) 0x0007A258) // Message "You cannot reach that."
+                cannotReachEvent.Set();
         }
 
         private void HandleDoubleClick(DoubleClickRequest request)
@@ -205,8 +213,7 @@ namespace Infusion.LegacyApi
         {
             gameObjects.AddItemRange(packet.Items);
 
-            var mobile = gameObjects[packet.Id] as Mobile;
-            if (mobile != null)
+            if (gameObjects[packet.Id] is Mobile mobile)
                 gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction, packet.MovementType,
                     packet.Notoriety));
             else
@@ -247,14 +254,17 @@ namespace Infusion.LegacyApi
             return dragResult;
         }
 
-        public void WaitForContainerOpened(TimeSpan? timeout)
+        public bool WaitForContainerOpened(TimeSpan? timeout)
         {
             var timeSpentWaiting = new TimeSpan();
             var sleepSpan = TimeSpan.FromMilliseconds(100);
 
             resumeClientReceivedEvent.Reset();
             drawContainerReceivedEvent.Reset();
-            while (!drawContainerReceivedEvent.WaitOne(sleepSpan))
+            cannotReachEvent.Reset();
+
+            int waitAnyResult;
+            while ((waitAnyResult = WaitHandle.WaitAny(new WaitHandle[] { drawContainerReceivedEvent, cannotReachEvent }, sleepSpan)) == WaitHandle.WaitTimeout)
             {
                 legacyApi.CheckCancellation();
 
@@ -265,6 +275,9 @@ namespace Infusion.LegacyApi
                         throw new TimeoutException();
                 }
             }
+
+            if (waitAnyResult == 1 /* index of cannotReachEvent */)
+                return false;
 
             while (!resumeClientReceivedEvent.WaitOne(sleepSpan))
             {
@@ -277,6 +290,8 @@ namespace Infusion.LegacyApi
                         throw new TimeoutException();
                 }
             }
+
+            return true;
         }
     }
 }

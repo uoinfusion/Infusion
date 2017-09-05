@@ -38,6 +38,12 @@ namespace Infusion.LegacyApi
             remove => itemsObserver.ItemEnteredView -= value;
         }
 
+        public event EventHandler<MobileEnteredViewArgs> MobileEnteredView
+        {
+            add => itemsObserver.MobileEnteredView += value;
+            remove => itemsObserver.MobileEnteredView -= value;
+        }
+
         public event EventHandler<ItemUseRequestedArgs> ItemUseRequested
         {
             add => itemsObserver.DoubleClickRequested += value;

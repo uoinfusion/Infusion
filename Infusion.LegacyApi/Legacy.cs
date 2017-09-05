@@ -87,8 +87,6 @@ namespace Infusion.LegacyApi
 
         public GameJournal Journal { get; }
 
-        public ISet<ObjectId> IgnoredItems { get; } = new HashSet<ObjectId>();
-
         internal UltimaServer Server { get; }
         internal UltimaClient Client { get; }
 
@@ -553,11 +551,6 @@ namespace Infusion.LegacyApi
         public void OpenDoor()
         {
             Server.OpenDoor();
-        }
-
-        public void Ignore(Item item)
-        {
-            IgnoredItems.Add(item.Id);
         }
 
         public void ClientPrint(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type,

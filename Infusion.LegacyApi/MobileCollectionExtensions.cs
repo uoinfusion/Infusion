@@ -18,12 +18,6 @@ namespace Infusion.LegacyApi
         public static IEnumerable<Mobile> MinDistance(this IEnumerable<Mobile> mobiles, ushort minDistance)
             => mobiles.Where(i => i.GetDistance(UO.Me.Location) >= minDistance);
 
-        public static IEnumerable<Mobile> NotIgnored(this IEnumerable<Mobile> mobiles) => mobiles.Where(x => !UO
-            .IgnoredObjects.Contains(x.Id));
-
-        public static IEnumerable<Mobile> Ignored(this IEnumerable<Mobile> mobiles) => mobiles.Where(x => UO
-            .IgnoredObjects.Contains(x.Id));
-
         public static IEnumerable<Mobile> Refresh(this IEnumerable<Mobile> mobiles)
             => mobiles.Select(i => UO.Mobiles[i.Id]).Where(i => i != null);
 

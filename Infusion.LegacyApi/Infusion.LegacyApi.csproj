@@ -71,6 +71,7 @@
     <Compile Include="LightObserver.cs" />
     <Compile Include="MobileCollection.cs" />
     <Compile Include="MobileCollectionExtensions.cs" />
+    <Compile Include="MobileEnteredViewArgs.cs" />
     <Compile Include="MobileSpec.cs" />
     <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />

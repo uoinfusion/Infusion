@@ -56,18 +56,16 @@ namespace Infusion.LegacyApi
 
         private void HandleStatusBarInfo(StatusBarInfoPacket packet)
         {
-            var mobile = gameObjects[packet.PlayerId] as Mobile;
-            if (mobile != null)
+            if (gameObjects[packet.PlayerId] is Mobile mobile)
             {
-                mobile = (Mobile)mobile.UpdateName(packet.PlayerName);
+                mobile = (Mobile)mobile.UpdateName(packet.PlayerName, packet.CanModifyName);
                 UpdateHealth(mobile, packet.CurrentHealth, packet.MaxHealth);
             }
         }
 
         private void UpdateHealth(ObjectId id, ushort newHealth, ushort newMaxHealth)
         {
-            var mobile = gameObjects[id] as Mobile;
-            if (mobile != null)
+            if (gameObjects[id] is Mobile mobile)
             {
                 UpdateHealth(mobile, newHealth, newMaxHealth);
             }
@@ -93,6 +91,7 @@ namespace Infusion.LegacyApi
         internal event EventHandler<CurrentHealthUpdatedArgs> CurrentHealthUpdated;
         internal event EventHandler<ItemUseRequestedArgs> DoubleClickRequested;
         internal event EventHandler<ItemEnteredViewArgs> ItemEnteredView;
+        internal event EventHandler<MobileEnteredViewArgs> MobileEnteredView;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -222,6 +221,12 @@ namespace Infusion.LegacyApi
                     packet.Direction, packet.MovementType,
                     packet.Notoriety));
             }
+        }
+
+        private void OnMobileEnteredView(Mobile mobile)
+        {
+            EventHelper.RaiseScriptEvent(MobileEnteredView,
+                () => { MobileEnteredView?.Invoke(this, new MobileEnteredViewArgs(mobile)); });
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

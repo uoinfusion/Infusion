@@ -1,4 +1,6 @@
 #load "Specs.csx"
+#load "ignore.csx"
+#load "equip.csx"
 
 using System;
 using System.Linq;
@@ -20,68 +22,20 @@ public static class Looting
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec OnGroundLoot { get; set; } = new[] { Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt };
     public static ObjectId? LootContainerId { get; set; }
-
-    private static object alreadyLootedItemsLock = new object();
-    private static Dictionary<ObjectId, Item> alreadyLootedItems = new Dictionary<ObjectId, Item>();
-
-    static Looting()
-    {
-        UO.Events.ItemEnteredView += OnItemEnteredView;
-    }
-
-    private static void OnItemEnteredView(object sender, ItemEnteredViewArgs args)
-    {
-        lock (alreadyLootedItemsLock)
-        {
-            if (alreadyLootedItems.TryGetValue(args.NewItem.Id, out Item item) &&
-                (item.Location != args.NewItem.Location || item.Type != args.NewItem.Type))
-            {
-                UO.ClientPrint($"Warning: removing ignored item, current item: {item}, new item: {args.NewItem}");
-                alreadyLootedItems.Remove(args.NewItem.Id);
-            }
-        }
-    }
-
-    private static void Ignore(Item item)
-    {
-        lock (alreadyLootedItemsLock)
-        {
-            alreadyLootedItems[item.Id] = item;
-        }
-    }
-
-    private static bool IsIgnored(Item item)
-    {
-        lock (alreadyLootedItemsLock)
-        {
-            if (alreadyLootedItems.TryGetValue(item.Id, out Item ignoredContainer))
-            {
-                if (ignoredContainer.Location != item.Location)
-                {
-                    UO.ClientPrint($"Warning: Ignored: {ignoredContainer}");
-                    UO.ClientPrint($"Found with same id: {item}");
-                    return false;
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-    }
-
+    
+    public static IgnoredItems ignoredItems = new IgnoredItems();
 
     public static IEnumerable<Item> GetLootableCorpses()
     {
         var corpses = UO.Items
             .Matching(Specs.Corpse)
             .MaxDistance(20)
-            .Where(x => !IsIgnored(x))
+            .Where(x => !ignoredItems.IsIgnored(x))
             .OrderByDistance().ToArray();
 
         return corpses;
     }
-
+    
     public static void RipAndLootNearest()
     {
         LootGround();
@@ -91,16 +45,7 @@ public static class Looting
 
         if (corpse != null)
         {
-            Layer itemInHandLayer;
-            
-            var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
-            if (itemInHand == null)
-            {
-                itemInHand = UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
-                itemInHandLayer = Layer.TwoHandedWeapon;
-            }
-            else
-                itemInHandLayer = Layer.OneHandedWeapon;
+            var handEquipment = Equip.GetHand();
 
             try
             {
@@ -113,14 +58,11 @@ public static class Looting
             }
             finally
             {
+            
                 // It seems that re-wearing an item directly
                 // after ripping a body and right before
                 // looting may crash the game client.
-                if (itemInHand != null)
-                {
-                    UO.TryWear(itemInHand, itemInHandLayer);
-                    UO.Wait(100);
-                }
+                Equip.Set(handEquipment);
             }
         }
         else
@@ -245,7 +187,7 @@ public static class Looting
         }
 
         UO.ClientPrint($"Looting finished, ignoring corpse {container.Id:X8}");
-        Looting.Ignore(container);
+        ignoredItems.Ignore(container);
     }
 
     public static void Rip(Item container)

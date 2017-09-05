@@ -21,6 +21,8 @@ namespace Infusion.Packets.Server
         public ushort Dexterity { get; private set; }
         public ushort Intelligence { get; private set; }
 
+        public bool CanModifyName { get; private set; }
+
         public override Packet RawPacket => rawPacket;
         public byte Status { get; private set; }
 
@@ -34,7 +36,7 @@ namespace Infusion.Packets.Server
             PlayerName = reader.ReadString(30);
             CurrentHealth = reader.ReadUShort();
             MaxHealth = reader.ReadUShort();
-            reader.ReadByte(); // name change flag
+            CanModifyName = reader.ReadBool();
             var validStats = reader.ReadByte(); // status flag / valid stats
 
             if (validStats == 0)

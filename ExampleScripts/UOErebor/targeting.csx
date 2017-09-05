@@ -12,14 +12,14 @@ public static class Targeting
     private static ObjectId? currentTarget;
     private static ObjectId? currentSelection;
     
-    public static MobileSpec IgnoredTargets = new[] { Specs.Satan };    
-    
     public static bool AutoTurnOffWarMode { get; set; } = false;
 
     private static IEnumerable<Mobile> GetTargets() =>
         UO.Mobiles.MaxDistance(20)
-                .NotMatching(IgnoredTargets)
-                .Where(i => i.Notoriety == Notoriety.Murderer)
+                // considering just murderers (red karma) and mobiles that are
+                // not player's pets/summons - player can change name of her/his
+                // pets/summons.
+                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanModifyName)
                 .OrderByDistance();
 
     public static void TargetNext()
@@ -160,6 +160,6 @@ public static class Targeting
     }
 }
 
-UO.RegisterCommand("targetnext", Targeting.TargetNext);
-UO.RegisterCommand("targetprev", Targeting.TargetPrev);
-UO.RegisterCommand("lasttarget", Targeting.TargetLast);
+UO.RegisterCommand("target-next", Targeting.TargetNext);
+UO.RegisterCommand("target-prev", Targeting.TargetPrev);
+UO.RegisterCommand("target-last", Targeting.TargetLast);

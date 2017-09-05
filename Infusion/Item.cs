@@ -27,8 +27,10 @@
 
         public override string ToString()
         {
+            string canModifyNameText = CanModifyName ? " (modifiable)" : string.Empty;
+
             return
-                $"Id: {Id}; Type: {Type}; Name: {Name}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId}; Layer: {Layer}";
+                $"Id: {Id}; Type: {Type}; Name: {Name}{canModifyNameText}; Amount: {Amount}; Location: {Location}; Color: {Color}; Container {ContainerId}; Layer: {Layer}";
         }
 
         protected override GameObject Duplicate()
@@ -40,6 +42,7 @@
                 ContainerId = ContainerId,
                 Layer = Layer,
                 Name = Name,
+                CanModifyName =  CanModifyName,
             };
         }
 

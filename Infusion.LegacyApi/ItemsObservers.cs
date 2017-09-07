@@ -80,11 +80,8 @@ namespace Infusion.LegacyApi
 
             if (oldHealth != newHealth)
             {
-                EventHelper.RaiseScriptEvent(CurrentHealthUpdated, () =>
-                {
-                    CurrentHealthUpdated?.Invoke(this,
-                        new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
-                });
+                CurrentHealthUpdated.RaiseScriptEvent(this,
+                    new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
             }
         }
 
@@ -204,8 +201,7 @@ namespace Infusion.LegacyApi
 
         private void OnItemEnteredView(Item item)
         {
-            EventHelper.RaiseScriptEvent(ItemEnteredView,
-                () => { ItemEnteredView?.Invoke(this, new ItemEnteredViewArgs(item)); });
+            ItemEnteredView.RaiseScriptEvent(this, new ItemEnteredViewArgs(item));
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
@@ -217,16 +213,17 @@ namespace Infusion.LegacyApi
                     packet.Notoriety));
             else
             {
-                gameObjects.AddObject(new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,
+                mobile = new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,
                     packet.Direction, packet.MovementType,
-                    packet.Notoriety));
+                    packet.Notoriety);
+                gameObjects.AddObject(mobile);
+                OnMobileEnteredView(mobile);
             }
         }
 
         private void OnMobileEnteredView(Mobile mobile)
         {
-            EventHelper.RaiseScriptEvent(MobileEnteredView,
-                () => { MobileEnteredView?.Invoke(this, new MobileEnteredViewArgs(mobile)); });
+            MobileEnteredView.RaiseScriptEvent(this, new MobileEnteredViewArgs(mobile));
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

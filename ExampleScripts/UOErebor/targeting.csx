@@ -1,4 +1,6 @@
 #load "Specs.csx"
+#load "common.csx"
+#load "tracker.csx"
 
 using System;
 using System.Collections.Generic;
@@ -14,12 +16,14 @@ public static class Targeting
     
     public static bool AutoTurnOffWarMode { get; set; } = false;
 
+    private static IMobileLookup Ignored { get; set; } = Tracker.MyPets;
+
     private static IEnumerable<Mobile> GetTargets() =>
         UO.Mobiles.MaxDistance(20)
                 // considering just murderers (red karma) and mobiles that are
                 // not player's pets/summons - player can change name of her/his
                 // pets/summons.
-                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanModifyName)
+                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanModifyName && !Ignored.Contains(i. Id))
                 .OrderByDistance();
 
     public static void TargetNext()

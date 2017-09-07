@@ -70,6 +70,9 @@ namespace Infusion.LegacyApi
         public static void RequestStatus(Mobile item)
             => Current.RequestStatus(item);
 
+        public static void RequestStatus(ObjectId id) 
+            => Current.RequestStatus(id);
+
         public static Item AskForItem()
             => Current.AskForItem();
 

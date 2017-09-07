@@ -17,11 +17,7 @@ namespace Infusion.LegacyApi
 
         private void JournalSourceOnNewMessageReceived(object sender, JournalEntry journalEntry)
         {
-            EventHelper.RaiseScriptEvent(SpeechReceived, () =>
-            {
-                lock (speechReceivedLock)
-                    SpeechReceived?.Invoke(this, journalEntry);
-            });
+            SpeechReceived.RaiseScriptEvent(this, journalEntry);
         }
 
         public event EventHandler<JournalEntry> SpeechReceived;

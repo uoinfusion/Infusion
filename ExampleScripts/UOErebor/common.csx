@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Infusion.LegacyApi;
 using Infusion;
 using Infusion.Commands;
@@ -28,6 +31,30 @@ public static class Common
         UO.Wait(waitMilliseconds);
         UO.Log("Waiting finished");
     }
+}
+
+class MobileLookupLinqWrapper : IMobileLookup
+{
+    private IEnumerable<Mobile> enumerable;
+
+    public MobileLookupLinqWrapper(IEnumerable<Mobile> enumerable)
+    {
+        this.enumerable = enumerable;
+    }
+
+    public Mobile this[ObjectId id] => enumerable.SingleOrDefault(x => x.Id == id);
+
+    public bool Contains(ObjectId id) => enumerable.Any(x => x.Id == id);
+
+    public IEnumerator<Mobile> GetEnumerator() => enumerable.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => enumerable.GetEnumerator();
+}
+
+public interface IMobileLookup : IEnumerable<Mobile>
+{
+    bool Contains(ObjectId id);
+    Mobile this[ObjectId id] { get; }
 }
 
 UO.RegisterCommand("wait", Common.WaitCommand);

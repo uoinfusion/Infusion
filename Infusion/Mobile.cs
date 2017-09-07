@@ -1,4 +1,6 @@
-﻿namespace Infusion
+﻿using System.Linq;
+
+namespace Infusion
 {
     public sealed class Mobile : GameObject
     {
@@ -68,7 +70,7 @@
 
         public override string ToString()
         {
-            string canModifyNameText = CanModifyName ? " (modifiable)" : string.Empty;
+            string canModifyNameText = CanModifyName? " (modifiable)" : string.Empty;
 
             return
                 $"Id: {Id}; Type: {Type}; Name: {Name}{canModifyNameText}; Location: {Location}; Color: {Color}; Orientation: {Orientation}; MovmentType: {CurrentMovementType} Notiriety: {Notoriety}";

@@ -166,6 +166,7 @@ namespace Infusion.LegacyApi
         }
 
         public void RequestStatus(Mobile item) => Server.RequestStatus(item.Id);
+        public void RequestStatus(ObjectId id) => Server.RequestStatus(id);
 
         public void Use(GameObject item) => Use(item.Id);
 

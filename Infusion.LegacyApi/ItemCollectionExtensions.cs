@@ -65,11 +65,5 @@ namespace Infusion.LegacyApi
 
         public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, ushort minDistance)
             => items.Where(i => i.GetDistance(UO.Me.Location) >= minDistance);
-
-        public static IEnumerable<Item> NotIgnored(this IEnumerable<Item> items) => items.Where(x => !UO.IgnoredObjects
-            .Contains(x.Id));
-
-        public static IEnumerable<Item> Ignored(this IEnumerable<Item> items) => items.Where(x => UO.IgnoredObjects
-            .Contains(x.Id));
     }
 }

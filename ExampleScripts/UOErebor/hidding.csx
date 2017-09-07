@@ -13,6 +13,8 @@ public static class Hidding
 
     public static void Hide()
     {
+        UO.WarModeOff();
+    
         var originalLocation = UO.Me.Location;
     
         bool hidden = false;
@@ -36,6 +38,11 @@ public static class Hidding
                 .When("Nepovedlo se ti schovat", () =>
                     // when hidding fails, do while loop continues
                     hidden = false)
+                .When("You are preoccupied with thoughts of battle.", () =>
+                {
+                    UO.WarModeOff();
+                    hidden = false;
+                })
                 // if server sends neither "Skryti se povedlo." nor "Nepovedlo se ti schovat"
                 // in one minute, then the script terminates with an TimoutException.
                 .WaitAny(TimeSpan.FromMinutes(1));

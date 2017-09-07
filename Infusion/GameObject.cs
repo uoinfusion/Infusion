@@ -14,14 +14,16 @@
         public ObjectId Id { get; }
 
         public string Name { get; protected set; }
+        public bool CanModifyName { get; protected set; }
 
         protected abstract GameObject Duplicate();
 
-        internal GameObject UpdateName(string name)
+        internal GameObject UpdateName(string name, bool canModifyName = false)
         {
             var updatedItem = Duplicate();
 
             updatedItem.Name = name;
+            updatedItem.CanModifyName = canModifyName;
 
             return updatedItem;
         }

@@ -186,5 +186,7 @@ namespace Infusion.IO
 
             return (direction, type);
         }
+
+        public bool ReadBool() => ReadByte() != 0;
     }
 }

@@ -17,11 +17,7 @@ namespace Infusion.LegacyApi
 
         private void JournalSourceOnNewMessageReceived(object sender, JournalEntry journalEntry)
         {
-            EventHelper.RaiseScriptEvent(SpeechReceived, () =>
-            {
-                lock (speechReceivedLock)
-                    SpeechReceived?.Invoke(this, journalEntry);
-            });
+            SpeechReceived.RaiseScriptEvent(this, journalEntry);
         }
 
         public event EventHandler<JournalEntry> SpeechReceived;
@@ -36,6 +32,12 @@ namespace Infusion.LegacyApi
         {
             add => itemsObserver.ItemEnteredView += value;
             remove => itemsObserver.ItemEnteredView -= value;
+        }
+
+        public event EventHandler<MobileEnteredViewArgs> MobileEnteredView
+        {
+            add => itemsObserver.MobileEnteredView += value;
+            remove => itemsObserver.MobileEnteredView -= value;
         }
 
         public event EventHandler<ItemUseRequestedArgs> ItemUseRequested

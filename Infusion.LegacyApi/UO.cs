@@ -35,8 +35,6 @@ namespace Infusion.LegacyApi
 
         public static GameJournal Journal => Current.Journal;
 
-        public static IEnumerable<ObjectId> IgnoredObjects => Current.IgnoredItems;
-
         public static void Initialize(Legacy current)
         {
             Current = current;
@@ -71,6 +69,9 @@ namespace Infusion.LegacyApi
 
         public static void RequestStatus(Mobile item)
             => Current.RequestStatus(item);
+
+        public static void RequestStatus(ObjectId id) 
+            => Current.RequestStatus(id);
 
         public static Item AskForItem()
             => Current.AskForItem();
@@ -228,9 +229,6 @@ namespace Infusion.LegacyApi
 
         public static void OpenDoor()
             => Current.OpenDoor();
-
-        public static void Ignore(Item item)
-            => Current.Ignore(item);
 
         public static void ClientPrint(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type,
             Color color, bool log = true)

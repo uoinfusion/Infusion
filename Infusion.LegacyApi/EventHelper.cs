@@ -8,10 +8,10 @@ namespace Infusion.LegacyApi
 {
     internal static class EventHelper
     {
-        public static void RaiseScriptEvent(Delegate eventDelegate, Action raiseAction)
+        public static void RaiseScriptEvent<T>(this Delegate eventDelegate, object sender, T args)
         {
             if (eventDelegate != null)
-                Task.Run(raiseAction);
+                Task.Run(() => eventDelegate.DynamicInvoke(sender, args));
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Spec_with_ModelId_and_Color_doesnt_match_same_ModelId()
+        public void Spec_with_ModelId_and_Color_doesnt_match_same_ModelId_different_Color()
         {
             var spec = new ItemSpec(0x4444, (Color)0x5555);
             spec.Matches(0x4444).Should().BeFalse();

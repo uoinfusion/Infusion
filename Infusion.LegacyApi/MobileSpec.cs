@@ -16,7 +16,7 @@ namespace Infusion.LegacyApi
             Color = color;
         }
 
-        public MobileSpec(params MobileSpec[] childSpecs)
+        internal MobileSpec(params MobileSpec[] childSpecs)
         {
             Specificity = ItemSpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;

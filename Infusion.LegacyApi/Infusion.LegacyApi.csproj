@@ -59,7 +59,7 @@
     <Compile Include="ItemCollectionExtensions.cs" />
     <Compile Include="ItemEnteredViewArgs.cs" />
     <Compile Include="ItemsObservers.cs" />
-    <Compile Include="GameObjectSpec.cs" />
+    <Compile Include="ItemSpec.cs" />
     <Compile Include="ItemSpecSpecificity.cs" />
     <Compile Include="ItemUseRequestedArgs.cs" />
     <Compile Include="JournalAwaiter.cs" />

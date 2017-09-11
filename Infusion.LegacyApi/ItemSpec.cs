@@ -16,7 +16,7 @@ namespace Infusion.LegacyApi
             Color = color;
         }
 
-        public ItemSpec(params ItemSpec[] childSpecs)
+        internal ItemSpec(params ItemSpec[] childSpecs)
         {
             Specificity = ItemSpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;

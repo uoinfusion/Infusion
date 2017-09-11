@@ -146,5 +146,11 @@ namespace Infusion.LegacyApi
         {
             Skills = Skills.SetItems(skillValues.Select(x => new KeyValuePair<Skill, SkillValue>(x.Skill, x)));
         }
+
+        public ushort GetDistance(Location3D location)
+            => Location.GetDistance(location);
+
+        public ushort GetDistance(GameObject obj)
+            => GetDistance(obj.Location);
     }
 }

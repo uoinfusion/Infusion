@@ -8,9 +8,12 @@ namespace Infusion.LegacyApi
         {
         }
 
-        public Mobile Refresh(Mobile item)
+        public Mobile Refresh(Mobile mobile)
         {
-            if (TryGet(item.Id, out Mobile newItemVersion))
+            if (mobile == null)
+                return null;
+
+            if (TryGet(mobile.Id, out Mobile newItemVersion))
                 return newItemVersion;
 
             return null;

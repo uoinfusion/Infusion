@@ -10,6 +10,9 @@ namespace Infusion.LegacyApi
 
         public Item Refresh(Item item)
         {
+            if (item == null)
+                return null;
+
             if (TryGet(item.Id, out Item newItemVersion))
                 return newItemVersion;
 

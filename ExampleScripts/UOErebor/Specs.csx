@@ -137,8 +137,9 @@ public static class Specs
     public static readonly ItemSpec PieceOfAmber = 0x0F25;
     public static readonly ItemSpec PigIron = 0x0F8A;
 
-    public static readonly ItemSpec Gem = new ItemSpec(new[] { 0x0f11, 0x0f10, 0x0f15, 0x0f0f, 0x0f25, 0x0f16, 0x0f18 })
-        .Including(Sapphire, Ruby, Diamond);
+    public static readonly ItemSpec UnknownGems = new[] { 0x0f11, 0x0f10, 0x0f15, 0x0f0f, 0x0f25, 0x0f16, 0x0f18 };
+    public static readonly ItemSpec Gem = new [] { UnknownGems, Sapphire, Ruby, Diamond };
+
     public static readonly ItemSpec Regs = new[]
     {
         BatWings, SulfurousAsh, BloodMoss, BlackPearl, Garlic, Mandrake,
@@ -265,13 +266,13 @@ public static class Specs
         JarOfHoney, FrenchBread, Cake, BakedPie, Pizza, Turnip, Apple, Peache,
         Onion, Pear, LegOfLamb, Sausage, EarOfCorn, Pumpkin, WheelOfCheese, Squash,
         Canteloup, BreadLoave, HeadOfCabbage, HeadOfLettuce, Carrot, Banana,
-        SliceOfBacon, Lemon, Ham, ChickenLeg, Limes
+        SliceOfBacon, Lemon, Ham, ChickenLeg, Limes, Coconut
     };
     public static readonly ItemSpec QuestFood = new[] { BunchOfDates, Muffin, GrapeBunch, Gourd, Watermelon, HoneydewMelon,
         JarOfHoney, FrenchBread, Cake, BakedPie, Pizza, Turnip, Apple, Peache,
         Onion, Pear, LegOfLamb, Sausage, EarOfCorn, Pumpkin, WheelOfCheese, Squash,
         Canteloup, BreadLoave, HeadOfCabbage, HeadOfLettuce, Carrot, Banana,
-        SliceOfBacon, Lemon, Ham, ChickenLeg, Limes };
+        SliceOfBacon, Lemon, Ham, ChickenLeg, Limes, Coconut };
 
     // Doors
     public static readonly ItemSpec DoorSecretStone1 = new[] { 0x00e8, 0x00c6, 0x00c7, 0x00c8, 0x00c9, 0x00ca, 0x00cb, 0x00cc, 0x00cd, 0x00ce, 0x00cf, 0x00d0, 0x00d1, 0x00d2, 0x00d3, 0x00d4, 0x00d5, 0x00d6, 0x00d7, 0x00d8, 0x00d9, 0x00da, 0x00db, 0x00dc, 0x00dd, 0x00de, 0x00df, 0x00e0, 0x00e1, 0x00e2, 0x00e3, 0x00e4, 0x00e5, 0x00e6, 0x00e7 };
@@ -334,6 +335,9 @@ public static class Specs
     // Monsters
     public static readonly MobileSpec Troll = new[] {0x0035, 0x0036};
     public static readonly MobileSpec Ghost = 0x03CA;
+    public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
+    public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
+    public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
 
     // Summons
     public static readonly MobileSpec Satan = 0x0310;

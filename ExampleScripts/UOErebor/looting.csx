@@ -36,6 +36,21 @@ public static class Looting
         return corpses;
     }
     
+    public static void RipAndLoot(Item corpse)
+    {
+        var handEquipment = Equip.GetHand();
+
+        try
+        {
+            Rip(corpse);
+            Loot(corpse);
+        }
+        finally
+        {
+            Equip.Set(handEquipment);
+        }
+    }
+    
     public static void RipAndLootNearest()
     {
         LootGround();

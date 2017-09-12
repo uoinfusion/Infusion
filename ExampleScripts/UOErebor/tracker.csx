@@ -28,9 +28,6 @@ public static class Tracker
     
     public static IMobileLookup MyPets { get; } = new MobileLookupLinqWrapper(
         UO.Mobiles.Matching(PetsSpec).Where(x => x.CanModifyName));
-        
-    public static IMobileLookup Enemies { get; } = new MobileLookupLinqWrapper(
-        UO.Mobiles.Where(m => m.Notoriety == Notoriety.Enemy || m.Notoriety == Notoriety.Murderer)); 
 }
 
 Tracker.Initialize();

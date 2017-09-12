@@ -51,7 +51,6 @@ public static class Light
         if (lightCheckJournal.Contains("Je spatne videt"))
         {
             lightCheckJournal.Delete();
-            MakeLight();
         }
     }
 }

@@ -20,8 +20,6 @@ public class IgnoredItems
             if (alreadyLootedItems.TryGetValue(args.NewItem.Id, out Item item) &&
                 ((Specs.Corpse.Matches(item) && item.Location != args.NewItem.Location) || item.Type != args.NewItem.Type))
             {
-                // TODO: log as a debug message
-                UO.ClientPrint($"Warning: removing ignored item, current item: {item}, new item: {args.NewItem}");
                 alreadyLootedItems.Remove(args.NewItem.Id);
             }
         }
@@ -40,16 +38,7 @@ public class IgnoredItems
         lock (alreadyLootedItemsLock)
         {
             if (alreadyLootedItems.TryGetValue(item.Id, out Item ignoredContainer))
-            {
-                if (ignoredContainer.Location != item.Location)
-                {
-                    UO.ClientPrint($"Warning: Ignored: {ignoredContainer}");
-                    UO.ClientPrint($"Found with same id: {item}");
-                    return false;
-                }
-
-                return true;
-            }
+                return ignoredContainer.Location == item.Location;
 
             return false;
         }

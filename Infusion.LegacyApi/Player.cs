@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using Infusion.Packets;
 using Infusion.Packets.Both;
-using Infusion.Packets.Client;
+using Infusion.Packets.Server;
 
 namespace Infusion.LegacyApi
 {
@@ -18,12 +17,15 @@ namespace Infusion.LegacyApi
         private static readonly TimeSpan timeBetweenRunningSteps = TimeSpan.FromMilliseconds(190);
         private static readonly TimeSpan timeBetweenWalkingSteps = TimeSpan.FromMilliseconds(400);
         private readonly Func<bool> hasMount;
-        private readonly UltimaServer server;
         private readonly Legacy legacyApi;
+        private readonly UltimaServer server;
 
         private readonly AutoResetEvent walkRequestDequeueEvent = new AutoResetEvent(false);
+        private readonly object walkRequestLock = new object();
 
         private Location3D location;
+
+        private int walkRequestRejectionsCount;
 
         internal Player(Func<bool> hasMount, UltimaServer server, Legacy legacyApi)
         {
@@ -47,7 +49,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public Location3D PredictedLocation { get; internal set; }
+        internal Location3D PredictedLocation { get; set; }
         internal Direction PredictedDirection { get; set; }
 
         public Direction Direction { get; internal set; }
@@ -55,7 +57,9 @@ namespace Infusion.LegacyApi
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();
 
-        public Item BackPack => legacyApi.GameObjects.OfType<Item>().FirstOrDefault(i => i.Type == backPackType && i.Layer == Layer.Backpack && i.ContainerId.HasValue && i.ContainerId == PlayerId);
+        public Item BackPack => legacyApi.GameObjects.OfType<Item>().FirstOrDefault(i =>
+            i.Type == backPackType && i.Layer == Layer.Backpack && i.ContainerId.HasValue && i.ContainerId == PlayerId);
+
         public Item BankBox => legacyApi.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
         public Color Color { get; internal set; }
@@ -77,11 +81,6 @@ namespace Infusion.LegacyApi
         public byte LightLevel { get; internal set; }
 
         public event EventHandler<Location3D> LocationChanged;
-
-        internal void ResetWalkRequestQueue()
-        {
-            WalkRequestQueue.Reset();
-        }
 
         internal void WaitToAvoidFastWalk(MovementType movementType)
         {
@@ -110,13 +109,20 @@ namespace Infusion.LegacyApi
             }
         }
 
-        internal void WaitWalkAcknowledged()
+        internal bool WaitWalkAcknowledged()
         {
+            int originalWalkRequestRejectionsCount;
+
+            lock (walkRequestLock)
+                originalWalkRequestRejectionsCount = walkRequestRejectionsCount;
+
             while (WalkRequestQueue.Count > MaxEnqueuedWalkRequests)
             {
                 legacyApi.CheckCancellation();
                 walkRequestDequeueEvent.WaitOne(200);
             }
+
+            return originalWalkRequestRejectionsCount == walkRequestRejectionsCount;
         }
 
         internal void OnWalkRequestDequeued(object sender, EventArgs e)
@@ -142,7 +148,7 @@ namespace Infusion.LegacyApi
             LocationChanged?.Invoke(this, e);
         }
 
-        public void UpdateSkills(IEnumerable<SkillValue> skillValues)
+        internal void UpdateSkills(IEnumerable<SkillValue> skillValues)
         {
             Skills = Skills.SetItems(skillValues.Select(x => new KeyValuePair<Skill, SkillValue>(x.Skill, x)));
         }
@@ -150,7 +156,31 @@ namespace Infusion.LegacyApi
         public ushort GetDistance(Location3D location)
             => Location.GetDistance(location);
 
+        public ushort GetDistance(Location2D location)
+            => Location.GetDistance((Location3D) location);
+
         public ushort GetDistance(GameObject obj)
             => GetDistance(obj.Location);
+
+        internal void RejectWalkRequest(CharMoveRejectionPacket packet)
+        {
+            lock (walkRequestLock)
+            {
+                Location = packet.Location;
+                PredictedLocation = packet.Location;
+                Direction = packet.Direction;
+                MovementType = packet.MovementType;
+                PredictedDirection = Direction;
+                CurrentSequenceKey = 0;
+                walkRequestRejectionsCount++;
+                WalkRequestQueue.Reset();
+                walkRequestDequeueEvent.Set();
+            }
+        }
+
+        public void ResetWalkRequestQueue()
+        {
+            WalkRequestQueue.Reset();
+        }
     }
 }

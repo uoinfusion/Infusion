@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
@@ -70,7 +69,7 @@ namespace Infusion.LegacyApi
         public static void RequestStatus(Mobile item)
             => Current.RequestStatus(item);
 
-        public static void RequestStatus(ObjectId id) 
+        public static void RequestStatus(ObjectId id)
             => Current.RequestStatus(id);
 
         public static Item AskForItem()
@@ -112,13 +111,7 @@ namespace Infusion.LegacyApi
         public static void Wait(TimeSpan span)
             => Current.Wait(span);
 
-        public static void WaitToAvoidFastWalk(MovementType movementType)
-            => Current.WaitToAvoidFastWalk(movementType);
-
-        public static void WaitWalkAcknowledged()
-            => Current.WaitWalkAcknowledged();
-
-        public static void Walk(Direction direction, MovementType movementType = MovementType.Walk)
+        public static bool Walk(Direction direction, MovementType movementType = MovementType.Walk)
             => Current.Walk(direction, movementType);
 
         public static void WarModeOn()
@@ -199,21 +192,6 @@ namespace Infusion.LegacyApi
 
         public static void CloseGump()
             => Current.CloseGump();
-
-        public static void StepToward(Location2D currentLocation, Location2D targetLocation)
-            => Current.StepToward(currentLocation, targetLocation);
-
-        public static void StepToward(GameObject gameObject)
-            => Current.StepToward(gameObject);
-
-        public static void StepToward(Location2D targetLocation)
-            => Current.StepToward(targetLocation);
-
-        public static void WalkTo(Location2D targetLocation)
-            => Current.WalkTo(targetLocation);
-
-        public static void WalkTo(ushort xloc, ushort yloc)
-            => Current.WalkTo(xloc, yloc);
 
         public static bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
             => Current.TryWear(item, layer, timeout);

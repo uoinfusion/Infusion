@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Infusion.Commands;
@@ -117,8 +116,6 @@ namespace Infusion.LegacyApi
 
         private void RegisterDefaultCommands()
         {
-            CommandHandler.RegisterCommand(new Command("walkto", parameters => WalkTo(parameters),
-                "Walks to the specified location.", "Example: ,walkto 1234 432"));
             CommandHandler.RegisterCommand(new Command("info", InfoCommand,
                 "Shows information about selected item or tile."));
             CommandHandler.RegisterCommand(new Command("lastgumpinfo", LastGumpInfo,
@@ -272,22 +269,26 @@ namespace Infusion.LegacyApi
             Wait((int) span.TotalMilliseconds);
         }
 
-        public void WaitToAvoidFastWalk(MovementType movementType)
+        private void WaitToAvoidFastWalk(MovementType movementType)
         {
             Me.WaitToAvoidFastWalk(movementType);
         }
 
-        public void WaitWalkAcknowledged()
+        private bool WaitWalkAcknowledged()
         {
             CheckCancellation();
-            Me.WaitWalkAcknowledged();
+            return Me.WaitWalkAcknowledged();
         }
 
-        public void Walk(Direction direction, MovementType movementType = MovementType.Walk)
+        public bool Walk(Direction direction, MovementType movementType = MovementType.Walk)
         {
             CheckCancellation();
 
+            if (UO.Me.Direction == direction)
+                WaitToAvoidFastWalk(MovementType.Run);
+
             Me.Walk(direction, movementType);
+            return WaitWalkAcknowledged();
         }
 
         public void WarModeOn()
@@ -473,51 +474,6 @@ namespace Infusion.LegacyApi
             gumpObservers.CloseGump();
         }
 
-        public void StepToward(Location2D currentLocation, Location2D targetLocation)
-        {
-            var walkVector = (targetLocation - currentLocation).Normalize();
-            if (walkVector != Vector.NullVector)
-            {
-                var movementType = Me.CurrentStamina > Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
-
-                var direction = walkVector.ToDirection();
-                if (Me.Direction == direction)
-                    WaitToAvoidFastWalk(movementType);
-
-                Walk(direction, movementType);
-                WaitWalkAcknowledged();
-            }
-        }
-
-        public void StepToward(GameObject gameObject)
-        {
-            StepToward(gameObject.Location);
-        }
-
-        public void StepToward(Location2D targetLocation)
-        {
-            StepToward(Me.Location, targetLocation);
-        }
-
-        public void WalkTo(Location2D targetLocation)
-        {
-            while (Me.Location != targetLocation)
-            {
-                StepToward(targetLocation);
-            }
-        }
-
-        public void WalkTo(ushort xloc, ushort yloc)
-        {
-            WalkTo(new Location2D(xloc, yloc));
-        }
-
-        internal void WalkTo(string parameters)
-        {
-            var parser = new CommandParameterParser(parameters);
-            WalkTo((ushort) parser.ParseInt(), (ushort) parser.ParseInt());
-        }
-
         public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
         {
             if (!TryWear(item, layer, timeout))
@@ -592,7 +548,9 @@ namespace Infusion.LegacyApi
         public void ToggleWeatherFiltering()
         {
             weatherObserver.ToggleWeatherFiltering();
-            ClientPrint(Configuration.FilterWeatherEnabled ? "Weather filtering turned on" : "Weather filtering turned off");
+            ClientPrint(Configuration.FilterWeatherEnabled
+                ? "Weather filtering turned on"
+                : "Weather filtering turned off");
         }
     }
 }

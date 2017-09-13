@@ -181,15 +181,7 @@ namespace Infusion.LegacyApi
 
         private void HandleCharMoveRejectionPacket(CharMoveRejectionPacket packet)
         {
-            player.Location = packet.Location;
-            player.PredictedLocation = packet.Location;
-            player.Direction = packet.Direction;
-            player.MovementType = packet.MovementType;
-            player.PredictedDirection = player.Direction;
-            player.CurrentSequenceKey = 0;
-            player.ResetWalkRequestQueue();
-
-            OnWalkRequestDequeued();
+            player.RejectWalkRequest(packet);
         }
 
         public event EventHandler WalkRequestDequeued;

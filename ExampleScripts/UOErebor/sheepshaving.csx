@@ -1,4 +1,5 @@
 #load "Specs.csx"
+#load "walking.csx"
 
 public static class SheepShaving
 {
@@ -10,7 +11,7 @@ public static class SheepShaving
         {
             while (sheep != null && sheep.GetDistance(UO.Me.Location) > 1)
             {
-                UO.StepToward(sheep);
+                Walking.StepToward(sheep);
                 sheep = UO.Mobiles.Refresh(sheep);
             }
             

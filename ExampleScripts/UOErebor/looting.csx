@@ -44,6 +44,7 @@ public static class Looting
         {
             Rip(corpse);
             Loot(corpse);
+            LootGround();
         }
         finally
         {
@@ -53,8 +54,6 @@ public static class Looting
     
     public static void RipAndLootNearest()
     {
-        LootGround();
-
         var corpses = GetLootableCorpses().ToArray();
         var corpse = corpses.MaxDistance(3).FirstOrDefault();
 
@@ -90,6 +89,8 @@ public static class Looting
             else
                 UO.ClientPrint("no corpse found");
         }
+        
+        LootGround();
     }
 
     public static void HighlightLootableCorpses(IEnumerable<Item> lootableCorpses)

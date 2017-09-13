@@ -337,6 +337,8 @@ public static class Specs
     public static readonly MobileSpec Ghost = 0x03CA;
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
+    public static readonly MobileSpec ElementalKamene = new MobileSpec(0x000E, (Color)0x0549);
+    
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
 
     // Summons

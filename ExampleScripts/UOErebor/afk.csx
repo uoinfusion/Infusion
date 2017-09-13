@@ -20,7 +20,7 @@ public static class Afk
     public static string[] AfkMessages { get; set; } =
     {
         "afk", "kontrola", "makro", "maker", "jsi t",
-        "byl jsi objeven", "gm", "halo", "lagr"
+        "gm", "halo", "lagr"
     };
     
     private static GameJournal afkCheckJournal = UO.CreateJournal();

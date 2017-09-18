@@ -12,6 +12,9 @@ public static class LightSources
     
     public static readonly LightSourceDelegate Potion = () =>
         MakeLightByUse(Specs.NightsighPoition);
+        
+    public static readonly LightSourceDelegate Spell = () =>
+        UO.CastSpell(Infusion.Spell.NightSight);
     
     private static void MakeLightByUse(ItemSpec spec)
     {
@@ -46,12 +49,18 @@ public static class Light
         PreferredLightSource();
     }
 
-    public static void Check()
+    public static bool Check()
     {
-        if (lightCheckJournal.Contains("Je spatne videt"))
+        if (IsLightNeeded)
         {
             lightCheckJournal.Delete();
             MakeLight();
+            return true;
         }
+        
+        return false;
     }
+    
+    public static bool IsLightNeeded 
+        => lightCheckJournal.Contains("Je spatne videt");
 }

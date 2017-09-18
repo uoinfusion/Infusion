@@ -126,7 +126,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Spec_with_type_and_color_is_most_specific()
+        public void Spec_with_type_and_color_is_more_specific_than_spec_with_type_and_with_subspecs()
         {
             var withSubspecs = new MobileSpec(0x1111).Including(new MobileSpec(0x2222), new MobileSpec(0x3333));
             var withType = new MobileSpec(0x2222);
@@ -134,6 +134,17 @@ namespace Infusion.LegacyApi.Tests
 
             withTypeAndColor.Specificity.Should().BeGreaterThan(withSubspecs.Specificity);
             withTypeAndColor.Specificity.Should().BeGreaterThan(withType.Specificity);
+        }
+
+        [TestMethod]
+        public void Spec_with_name_is_more_specific_than_Spec_with_type_and_with_type_and_color()
+        {
+            var withName = new MobileSpec("name");
+            var withTypeAndColor = new MobileSpec(0x3333, (Color)0x0010);
+            var withType = new MobileSpec(0x3333);
+
+            withName.Specificity.Should().BeGreaterThan(withTypeAndColor.Specificity);
+            withName.Specificity.Should().BeGreaterThan(withType.Specificity);
         }
     }
 }

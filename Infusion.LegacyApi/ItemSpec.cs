@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi
 
         public ItemSpec(ModelId type, Color? color = null)
         {
-            Specificity = color.HasValue ? ItemSpecSpecificity.TypeAndColor : ItemSpecSpecificity.Type;
+            Specificity = color.HasValue ? SpecSpecificity.TypeAndColor : SpecSpecificity.Type;
 
             Type = type;
             Color = color;
@@ -18,13 +18,13 @@ namespace Infusion.LegacyApi
 
         internal ItemSpec(params ItemSpec[] childSpecs)
         {
-            Specificity = ItemSpecSpecificity.CompositeSpecificity;
+            Specificity = SpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;
         }
 
         private ModelId? Type { get; }
         private Color? Color { get; }
-        public ItemSpecSpecificity Specificity { get; }
+        public SpecSpecificity Specificity { get; }
 
         public bool Matches(Item item)
         {

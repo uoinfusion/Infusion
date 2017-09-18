@@ -10,12 +10,14 @@ namespace Infusion.LegacyApi
 
         public MobileSpec(string name)
         {
+            Specificity = SpecSpecificity.Name;
             Name = name;
         }
 
         public MobileSpec(ModelId type, Color? color = null)
         {
-            Specificity = color.HasValue ? ItemSpecSpecificity.TypeAndColor : ItemSpecSpecificity.Type;
+            Specificity = !string.IsNullOrEmpty(Name) ? SpecSpecificity.Name : 
+                color.HasValue ? SpecSpecificity.TypeAndColor : SpecSpecificity.Type;
 
             Type = type;
             Color = color;
@@ -23,7 +25,7 @@ namespace Infusion.LegacyApi
 
         internal MobileSpec(params MobileSpec[] childSpecs)
         {
-            Specificity = ItemSpecSpecificity.CompositeSpecificity;
+            Specificity = SpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;
         }
 
@@ -31,7 +33,7 @@ namespace Infusion.LegacyApi
 
         private ModelId? Type { get; }
         private Color? Color { get; }
-        public ItemSpecSpecificity Specificity { get; }
+        public SpecSpecificity Specificity { get; }
 
         public bool Matches(Mobile mobile)
         {

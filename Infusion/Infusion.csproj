@@ -73,6 +73,7 @@
     <Compile Include="Commands\CommandSyntax.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="CursorId.cs" />
+    <Compile Include="Diagnostic\BinaryPacketFileParser.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="DragResult.cs" />
     <Compile Include="GameObject.cs" />
@@ -211,8 +212,6 @@
     <Compile Include="Packets\Server\SetWeatherPacket.cs" />
     <Compile Include="Packets\VariablePacketLength.cs" />
     <Compile Include="Packets\StaticPacketLength.cs" />
-    <Compile Include="Parsers\Processors\LumberjackingHarvestProcessor.cs" />
-    <Compile Include="Parsers\Processors\SkillIncreasedProcessor.cs" />
     <Compile Include="IWorldMap.cs" />
     <Compile Include="ServerPacketHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

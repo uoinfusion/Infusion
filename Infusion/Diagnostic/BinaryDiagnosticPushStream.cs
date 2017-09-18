@@ -6,6 +6,7 @@ namespace Infusion.Diagnostic
 {
     internal sealed class BinaryDiagnosticPushStream
     {
+        private readonly object flushLog = new object(); 
         private readonly IPushStream diagnosticOutputStream;
         private readonly BinaryPushStreamWriter writer;
 
@@ -23,23 +24,16 @@ namespace Infusion.Diagnostic
             diagnosticOutputStream.Dispose();
         }
 
-        public void Write(byte[] buffer, int offset, int count)
-        {
-            BaseStream.Write(buffer, offset, count);
-        }
-
-        public void WriteByte(byte value)
-        {
-            BaseStream.WriteByte(value);
-        }
-
         public IPushStream BaseStream { get; set; }
 
         public void DumpPacket(Packet packet, DiagnosticStreamDirection direction)
         {
-            writer.Write(DateTime.UtcNow.Ticks);
-            writer.Write((uint)direction);
-            writer.Write(packet.Payload, 0, packet.Length);
+            lock (flushLog)
+            {
+                writer.Write(DateTime.UtcNow.Ticks);
+                writer.Write((uint) direction);
+                writer.Write(packet.Payload, 0, packet.Length);
+            }
         }
 
         public void Finish()

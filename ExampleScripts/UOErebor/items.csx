@@ -181,6 +181,69 @@ public static class Items
             UO.Wait(250);
         }
     }
+    
+    public static void ItemsAmountAll()
+    {
+        ItemsAmountAll(false);
+    }
+
+    public static void ItemsAmountSub()
+    {
+        ItemsAmountAll(true);
+    }
+
+    private static void ItemsAmountAll(bool sub)
+    {
+        UO.ClientPrint("Select container");
+        var container = UO.AskForItem();
+        if (container == null)
+        {
+            UO.ClientPrint("Cancelled");
+            return;
+        }
+        
+        Dictionary<string, int> amounts = new Dictionary<string, int>();
+        ItemsAmountAll(container, amounts, sub);
+
+        string description = amounts
+            .OrderBy(x => x.Key)
+            .Select(x => $"{x.Key}: {x.Value}")
+            .Aggregate((l, r) => l + "\n" + r);
+        UO.Log(description);
+    }
+    
+    private static void ItemsAmountAll(Item container, Dictionary<string, int> amounts, bool sub)
+    {
+        var items = UO.Items.InContainer(container);
+        UO.Log($"Container: {container.Name}");
+        
+        foreach (var item in items)
+        {
+            if (string.IsNullOrEmpty(item.Name))
+            {
+                UO.Click(item);
+                UO.Wait(100);
+            }
+        }
+        
+        foreach (var item in items)
+        {
+            if (!string.IsNullOrEmpty(item.Name))
+            {
+                if (amounts.TryGetValue(item.Name, out int amount))
+                    amounts[item.Name] = amount + item.Amount;
+                else
+                    amounts[item.Name] = item.Amount;
+            }
+            else
+            {
+                UO.Log($"Warning: item without name {item}");
+            }
+            
+            if (sub)
+                ItemsAmountAll(item, amounts, sub);
+        }
+    }
 }
 
 UO.RegisterCommand("moveitems-same", Items.MoveSameItems);
@@ -189,3 +252,5 @@ UO.RegisterCommand("moveregs", Items.MoveRegs);
 UO.RegisterCommand("movefood", Items.MoveFood );
 UO.RegisterCommand("itemscount-same", Items.CountItemsSame);
 UO.RegisterCommand("itemsamount-same", Items.AmountItemsSame);
+UO.RegisterCommand("itemsamount-all", Items.ItemsAmountAll);
+UO.RegisterCommand("itemsamount-sub", Items.ItemsAmountSub);

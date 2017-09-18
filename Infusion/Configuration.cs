@@ -1,37 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Infusion
 {
     public sealed class Configuration : INotifyPropertyChanged
     {
+        internal HashSet<SoundId> FilteredSoundSet = new HashSet<SoundId>();
+
+        private bool filterLightEnabled = true;
+
+        private bool filterWeatherEnabled = true;
+        private bool hideWhenMinimized;
         private string[] ignoredWords = Array.Empty<string>();
-        private bool logToFileEnabled;
         private bool logPacketsToFileEnabled;
         private string logPath;
+        private bool logToFileEnabled;
         private bool showImportantToastNotification;
         private bool toastNotificationEnabled;
-        private bool hideWhenMinimized;
 
         public string[] IgnoredWords
         {
             get => ignoredWords;
             private set
             {
-                ignoredWords = value; 
+                ignoredWords = value;
                 OnPropertyChanged();
             }
-        }
-
-        public void SetIgnoredWords(IEnumerable<string> ignoredWords)
-        {
-            IgnoredWords = ignoredWords.ToArray();
         }
 
         public bool LogToFileEnabled
@@ -39,7 +36,7 @@ namespace Infusion
             get => logToFileEnabled;
             set
             {
-                logToFileEnabled = value; 
+                logToFileEnabled = value;
                 OnPropertyChanged();
             }
         }
@@ -52,7 +49,6 @@ namespace Infusion
                 logPacketsToFileEnabled = value;
                 OnPropertyChanged();
             }
-
         }
 
         public string LogPath
@@ -60,7 +56,7 @@ namespace Infusion
             get => logPath;
             set
             {
-                logPath = value; 
+                logPath = value;
                 OnPropertyChanged();
             }
         }
@@ -95,8 +91,6 @@ namespace Infusion
             }
         }
 
-        private bool filterWeatherEnabled = true;
-
         public bool FilterWeatherEnabled
         {
             get => filterWeatherEnabled;
@@ -107,7 +101,6 @@ namespace Infusion
             }
         }
 
-        private bool filterLightEnabled = true;
         public bool FilterLightEnabled
         {
             get => filterLightEnabled;
@@ -118,7 +111,22 @@ namespace Infusion
             }
         }
 
+        public SoundId[] FilteredSounds
+        {
+            get => FilteredSoundSet.ToArray();
+            set
+            {
+                FilteredSoundSet = value == null ? new HashSet<SoundId>() : new HashSet<SoundId>(value);
+                OnPropertyChanged();
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public void SetIgnoredWords(IEnumerable<string> ignoredWords)
+        {
+            IgnoredWords = ignoredWords.ToArray();
+        }
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {

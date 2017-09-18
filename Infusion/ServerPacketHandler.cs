@@ -91,6 +91,8 @@ namespace Infusion
                 packetHandler.Publish<PersonalLightLevelPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.OverallLightLevel.Id)
                 packetHandler.Publish<OverallLightLevelPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.PlaySoundEffect.Id)
+                packetHandler.Publish<PlaySoundEffectPacket>(rawPacket);
 
             return rawPacket;
         }

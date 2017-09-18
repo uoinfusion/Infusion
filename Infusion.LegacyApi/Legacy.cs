@@ -26,6 +26,7 @@ namespace Infusion.LegacyApi
 
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
+        private readonly SoundObserver soundObserver;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
@@ -48,8 +49,9 @@ namespace Infusion.LegacyApi
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
             lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
+            soundObserver = new SoundObserver(ultimaServer, configuration);
 
-            Events = new LegacyEvents(itemsObserver, journalSource);
+            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver);
 
             this.logger = logger;
             Server = ultimaServer;

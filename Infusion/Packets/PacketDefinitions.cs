@@ -289,8 +289,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition RejectCharacterLogon = new PacketDefinition(0x53,
             new StaticPacketLength(2), "RejectCharacterLogon");
 
-        public static readonly PacketDefinition PlaySoundEffect = new PacketDefinition(0x54,
-            new StaticPacketLength(12), "PlaySoundEffect");
+        public static readonly PacketDefinition<PlaySoundEffectPacket> PlaySoundEffect = new PacketDefinition<PlaySoundEffectPacket>(0x54,
+            new StaticPacketLength(12), "PlaySoundEffect", packet => new PlaySoundEffectPacket());
 
         public static readonly PacketDefinition LoginComplete = new PacketDefinition(0x55,
             new StaticPacketLength(1), "LoginComplete");

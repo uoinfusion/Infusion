@@ -157,6 +157,7 @@
     <Compile Include="Packets\Server\PauseClientChoice.cs" />
     <Compile Include="Packets\Server\PauseClientPacket.cs" />
     <Compile Include="Packets\Server\PersonalLightLevelPacket.cs" />
+    <Compile Include="Packets\Server\PlaySoundEffectPacket.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="IO\StreamPacketReader.cs" />
     <Compile Include="ServerConnectionStatus.cs" />
     <Compile Include="Skill.cs" />
+    <Compile Include="SoundId.cs" />
     <Compile Include="SpeechType.cs" />
     <Compile Include="Spell.cs" />
     <Compile Include="TextFilters\ContainsFilter.cs" />

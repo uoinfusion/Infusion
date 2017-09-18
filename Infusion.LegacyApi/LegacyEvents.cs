@@ -8,9 +8,11 @@ namespace Infusion.LegacyApi
     {
         private readonly ItemsObservers itemsObserver;
         private readonly object speechReceivedLock = new object();
+        private readonly SoundObserver soundObserver;
 
-        internal LegacyEvents(ItemsObservers itemsObserver, JournalSource journalSource)
+        internal LegacyEvents(ItemsObservers itemsObserver, JournalSource journalSource, SoundObserver soundObserver)
         {
+            this.soundObserver = soundObserver;
             this.itemsObserver = itemsObserver;
             journalSource.NewMessageReceived += JournalSourceOnNewMessageReceived;
         }
@@ -44,6 +46,12 @@ namespace Infusion.LegacyApi
         {
             add => itemsObserver.DoubleClickRequested += value;
             remove => itemsObserver.DoubleClickRequested -= value;
+        }
+
+        public event EventHandler<SoundEffectPlayedArgs> SoundEffectPlayed
+        {
+            add => soundObserver.SoundEffectPlayed += value;
+            remove => soundObserver.SoundEffectPlayed -= value;
         }
 
         internal void ResetEvents()

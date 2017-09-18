@@ -60,7 +60,6 @@
     <Compile Include="ItemEnteredViewArgs.cs" />
     <Compile Include="ItemsObservers.cs" />
     <Compile Include="ItemSpec.cs" />
-    <Compile Include="ItemSpecSpecificity.cs" />
     <Compile Include="ItemUseRequestedArgs.cs" />
     <Compile Include="JournalAwaiter.cs" />
     <Compile Include="JournalEntriesExtensions.cs" />
@@ -73,6 +72,9 @@
     <Compile Include="MobileCollectionExtensions.cs" />
     <Compile Include="MobileEnteredViewArgs.cs" />
     <Compile Include="MobileSpec.cs" />
+    <Compile Include="SoundEffectPlayedArgs.cs" />
+    <Compile Include="SoundObserver.cs" />
+    <Compile Include="SpecSpecificity.cs" />
     <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />
     <Compile Include="LegacyEvents.cs" />

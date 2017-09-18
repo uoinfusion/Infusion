@@ -38,6 +38,7 @@ stable on this shard and there is a lot of example scripts you can immediately s
 - Open bank using banker or house menu.
 - Using travel stones.
 - Damage notification.
+- Filtering sounds, overall light and weather effect.
 - Looting.
 - Chasing and shaving sheeps.
 - Easier item manipulation (moving food/regs only, moving the same type).

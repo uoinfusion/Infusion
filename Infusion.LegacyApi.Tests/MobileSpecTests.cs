@@ -8,12 +8,22 @@ namespace Infusion.LegacyApi.Tests
     public class MobileSpecTests
     {
         [TestMethod]
+        public void Speci_with_Name_matches_Mobile_with_same_Name()
+        {
+            var spec = new MobileSpec("TestName");
+            var mobile = new Mobile(new ObjectId(0), 0x4444, new Location3D(0, 0, 0));
+            mobile = (Mobile)mobile.UpdateName("TestName");
+
+            spec.Matches(mobile).Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Spec_with_ModelId_matches_Mobile_with_same_ModelId()
         {
             var spec = new MobileSpec(0x4444);
-            var movile = new Mobile(new ObjectId(0), 0x4444, new Location3D(0, 0, 0));
+            var mobile = new Mobile(new ObjectId(0), 0x4444, new Location3D(0, 0, 0));
 
-            spec.Matches(movile).Should().BeTrue();
+            spec.Matches(mobile).Should().BeTrue();
         }
 
         [TestMethod]

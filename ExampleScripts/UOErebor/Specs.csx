@@ -337,7 +337,19 @@ public static class Specs
     public static readonly MobileSpec Ghost = 0x03CA;
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
-    public static readonly MobileSpec ElementalKamene = new MobileSpec(0x000E, (Color)0x0549);
+    public static readonly MobileSpec ElementalKamene = new MobileSpec("Elemental Kamene");
+//    public static readonly MobileSpec ElementalKamene = new[]
+//    { 
+//        new MobileSpec(0x000E, (Color)0x0539),
+//        new MobileSpec(0x000E, (Color)0x0547),
+//        new MobileSpec(0x000E, (Color)0x0546),
+//        new MobileSpec(0x000E, (Color)0x0542),
+//        new MobileSpec(0x000E, (Color)0x0541),
+//        new MobileSpec(0x000E, (Color)0x0544),
+//        new MobileSpec(0x000E, (Color)0x0540),
+//        new MobileSpec(0x000E, (Color)0x053B),
+//        new MobileSpec(0x000E, (Color)0x053E),
+//    };
     
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
 
@@ -359,7 +371,7 @@ public static class Specs
         0x1CDF, 0x1CDE, 0x1CE6, 0x1CF0, 0x1CEA
     };
 
-    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363 };
+    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369 };
 
     private static Lazy<Dictionary<string, ItemSpec>> itemSpecs = new Lazy<Dictionary<string, ItemSpec>>(GetItemSpecs, true);
     private static Lazy<Dictionary<string, MobileSpec>> mobileSpecs = new Lazy<Dictionary<string, MobileSpec>>(GetMobileSpecs, true);

@@ -7,6 +7,7 @@ namespace Infusion.LegacyApi
         internal static readonly ItemSpecSpecificity CompositeSpecificity = new ItemSpecSpecificity(0, "Composite");
         internal static readonly ItemSpecSpecificity Type = new ItemSpecSpecificity(1, "Type");
         internal static readonly ItemSpecSpecificity TypeAndColor = new ItemSpecSpecificity(2, "Type and Color");
+        internal static readonly ItemSpecSpecificity Name = new ItemSpecSpecificity(3, "Name");
         private readonly string description;
 
         private readonly int value;

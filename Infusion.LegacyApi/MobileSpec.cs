@@ -8,6 +8,11 @@ namespace Infusion.LegacyApi
     {
         private readonly MobileSpec[] childSpecs;
 
+        public MobileSpec(string name)
+        {
+            Name = name;
+        }
+
         public MobileSpec(ModelId type, Color? color = null)
         {
             Specificity = color.HasValue ? ItemSpecSpecificity.TypeAndColor : ItemSpecSpecificity.Type;
@@ -22,16 +27,21 @@ namespace Infusion.LegacyApi
             this.childSpecs = childSpecs;
         }
 
+        private string Name { get; }
+
         private ModelId? Type { get; }
         private Color? Color { get; }
         public ItemSpecSpecificity Specificity { get; }
 
-        public bool Matches(Mobile item)
+        public bool Matches(Mobile mobile)
         {
             if (Type.HasValue)
-                return item.Type == Type && (!Color.HasValue || Color == item.Color);
+                return mobile.Type == Type && (!Color.HasValue || Color == mobile.Color);
             if (childSpecs != null && childSpecs.Length > 0)
-                return childSpecs.Any(s => s.Matches(item));
+                return childSpecs.Any(s => s.Matches(mobile));
+
+            if (Name != null)
+                return mobile.Name == Name;
 
             throw new NotImplementedException();
         }

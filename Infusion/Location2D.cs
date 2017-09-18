@@ -15,9 +15,8 @@ namespace Infusion
 
         public override bool Equals(object obj)
         {
-            if (obj is Location2D)
+            if (obj is Location2D otherLocation)
             {
-                var otherLocation = (Location2D) obj;
                 return Equals(otherLocation);
             }
 

@@ -15,9 +15,8 @@
 
         public override bool Equals(object obj)
         {
-            if (obj is ObjectId)
+            if (obj is ObjectId id)
             {
-                var id = (ObjectId)obj;
                 return Equals(id);
             }
 

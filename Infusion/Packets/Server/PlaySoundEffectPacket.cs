@@ -22,12 +22,8 @@ namespace Infusion.Packets.Server
 
             var x = reader.ReadUShort();
             var y = reader.ReadUShort();
-            var z = reader.ReadUShort();
-            if (z > byte.MaxValue)
-                throw new NotImplementedException(
-                    $"z coordinate of a sound is {z}. Only byte z coordinates implemented.");
 
-            Location = new Location3D(x, y, (byte) z);
+            Location = new Location3D(x, y, 0);
         }
     }
 }

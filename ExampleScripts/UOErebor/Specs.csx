@@ -111,7 +111,6 @@ public static class Specs
 
     // Reagents
     public static readonly ItemSpec GraveDust = 0x0f8f;
-    public static readonly ItemSpec Sapphire = 0x0f19;
     public static readonly ItemSpec Pumice = 0x0f8b;
     public static readonly ItemSpec Ruby = 0x0f13;
     public static readonly ItemSpec Diamond = 0x0f26;
@@ -136,9 +135,18 @@ public static class Specs
     public static readonly ItemSpec ExecutionersCap = 0x0F83;
     public static readonly ItemSpec PieceOfAmber = 0x0F25;
     public static readonly ItemSpec PigIron = 0x0F8A;
+    public static readonly ItemSpec Tourmaline = 0x0F18;
+    public static readonly ItemSpec Citrine = 0x0F15;
+    public static readonly ItemSpec Amethyst = 0x0F16;
+    public static readonly ItemSpec Emerald = 0x0F10;
+    public static readonly ItemSpec Sapphire = new[] { 0x0F11, 0x0f19 };
+    public static readonly ItemSpec StarSapphire = 0x0F0F;
 
-    public static readonly ItemSpec UnknownGems = new[] { 0x0f11, 0x0f10, 0x0f15, 0x0f0f, 0x0f25, 0x0f16, 0x0f18 };
-    public static readonly ItemSpec Gem = new [] { UnknownGems, Sapphire, Ruby, Diamond };
+    public static readonly ItemSpec Gem = new []
+    { 
+        Sapphire, Ruby, Diamond, Tourmaline, Citrine, Amethyst,
+        Emerald, Sapphire, StarSapphire
+     };
 
     public static readonly ItemSpec Regs = new[]
     {

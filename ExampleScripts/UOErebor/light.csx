@@ -14,7 +14,11 @@ public static class LightSources
         MakeLightByUse(Specs.NightsighPoition);
         
     public static readonly LightSourceDelegate Spell = () =>
+    {
         UO.CastSpell(Infusion.Spell.NightSight);
+        UO.WaitForTarget();
+        UO.Target(UO.Me);
+    };
     
     private static void MakeLightByUse(ItemSpec spec)
     {

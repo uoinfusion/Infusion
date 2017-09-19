@@ -2,7 +2,7 @@ public static class Meditation
 {
     public static void Meditate(int manaMinimum)
     {
-        UO.Log($"Meditating at least to ${manaMinimum}, current mana is {UO.Me.CurrentMana}");
+        UO.Log($"Meditating at least to {manaMinimum}, current mana is {UO.Me.CurrentMana}");
     
         UO.WarModeOff();
         UO.Wait(100);

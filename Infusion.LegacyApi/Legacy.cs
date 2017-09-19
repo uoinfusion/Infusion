@@ -27,6 +27,7 @@ namespace Infusion.LegacyApi
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
         private readonly SoundObserver soundObserver;
+        private readonly QuestArrowObserver questArrowObserver;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
@@ -50,8 +51,9 @@ namespace Infusion.LegacyApi
             lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
             soundObserver = new SoundObserver(ultimaServer, configuration);
+            questArrowObserver = new QuestArrowObserver(ultimaServer);
 
-            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver);
+            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, questArrowObserver);
 
             this.logger = logger;
             Server = ultimaServer;

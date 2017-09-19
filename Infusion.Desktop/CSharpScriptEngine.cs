@@ -64,12 +64,16 @@ namespace Infusion.Desktop
             string binDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
 
             string scriptDirectory = Path.GetDirectoryName(filePath);
-            scriptOptions = scriptOptions.WithSourceResolver(
-                    ScriptSourceResolver.Default.WithSearchPaths(scriptDirectory))
-                .WithMetadataResolver(ScriptMetadataResolver.Default.WithSearchPaths(scriptDirectory, binDirectory));
 
-            if (scriptDirectory != null)
-                Directory.SetCurrentDirectory(scriptDirectory);
+            scriptOptions = scriptOptions
+                .WithSourceResolver(ScriptSourceResolver.Default
+                    .WithSearchPaths(scriptDirectory)
+                    .WithBaseDirectory(scriptDirectory))
+                .WithMetadataResolver(ScriptMetadataResolver.Default
+                    .WithSearchPaths(scriptDirectory, binDirectory)
+                    .WithBaseDirectory(scriptDirectory));
+
+            Directory.SetCurrentDirectory(scriptDirectory);
 
             submissionNumber++;
             string commandName = $"submission{submissionNumber}";
@@ -128,3 +132,4 @@ namespace Infusion.Desktop
         }
     }
 }
+

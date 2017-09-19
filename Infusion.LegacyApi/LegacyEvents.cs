@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
     public class LegacyEvents
     {
         private readonly ItemsObservers itemsObserver;
-        private readonly object speechReceivedLock = new object();
+        private readonly QuestArrowObserver questArrowObserver;
         private readonly SoundObserver soundObserver;
 
-        internal LegacyEvents(ItemsObservers itemsObserver, JournalSource journalSource, SoundObserver soundObserver)
+        internal LegacyEvents(ItemsObservers itemsObserver, JournalSource journalSource, SoundObserver soundObserver,
+            QuestArrowObserver questArrowObserver)
         {
             this.soundObserver = soundObserver;
+            this.questArrowObserver = questArrowObserver;
             this.itemsObserver = itemsObserver;
             journalSource.NewMessageReceived += JournalSourceOnNewMessageReceived;
         }
@@ -23,6 +23,12 @@ namespace Infusion.LegacyApi
         }
 
         public event EventHandler<JournalEntry> SpeechReceived;
+
+        public event EventHandler<QuestArrowArgs> QuestArrowChanged
+        {
+            add => questArrowObserver.QuestArrowChanged += value;
+            remove => questArrowObserver.QuestArrowChanged -= value;
+        }
 
         public event EventHandler<CurrentHealthUpdatedArgs> HealthUpdated
         {

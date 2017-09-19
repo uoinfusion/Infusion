@@ -401,8 +401,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition EnableLockedClientFeatures = new PacketDefinition(0xB9,
             new StaticPacketLength(3), "EnableLockedClientFeatures");
 
-        public static readonly PacketDefinition QuestArrow = new PacketDefinition(0xBA,
-            new StaticPacketLength(6), "QuestArrow");
+        public static readonly PacketDefinition<QuestArrowPacket> QuestArrow = new PacketDefinition<QuestArrowPacket>(0xBA,
+            new StaticPacketLength(6), "QuestArrow", packet => new QuestArrowPacket());
 
         public static readonly PacketDefinition SeasonalInformation = new PacketDefinition(0xBC,
             new StaticPacketLength(3), "SeasonalInformation");

@@ -158,6 +158,7 @@
     <Compile Include="Packets\Server\PauseClientPacket.cs" />
     <Compile Include="Packets\Server\PersonalLightLevelPacket.cs" />
     <Compile Include="Packets\Server\PlaySoundEffectPacket.cs" />
+    <Compile Include="Packets\Server\QuestArrowPacket.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />

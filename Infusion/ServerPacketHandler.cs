@@ -93,6 +93,8 @@ namespace Infusion
                 packetHandler.Publish<OverallLightLevelPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.PlaySoundEffect.Id)
                 packetHandler.Publish<PlaySoundEffectPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.QuestArrow.Id)
+                packetHandler.Publish<QuestArrowPacket>(rawPacket);
 
             return rawPacket;
         }

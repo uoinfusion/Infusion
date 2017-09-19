@@ -88,6 +88,7 @@
     <Compile Include="Packets\Server\DrawObjectPacketTests.cs" />
     <Compile Include="Packets\Server\ObjectInfoPacketTests.cs" />
     <Compile Include="Packets\Server\PlaySoundEffectPacketTests.cs" />
+    <Compile Include="Packets\Server\QuestArrowPacketTests.cs" />
     <Compile Include="Packets\Server\SendGumpMenuDialogPacketTests.cs" />
     <Compile Include="Packets\Server\SendSpeechPacketTests.cs" />
     <Compile Include="Packets\Server\SpeechMessagePacketTests.cs" />

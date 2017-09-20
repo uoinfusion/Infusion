@@ -6,7 +6,7 @@ using System.Reflection;
 
 public static class Specs
 {
-    public static readonly ItemSpec Player = 0x0190;
+    public static readonly MobileSpec Player = new[] { 0x0190, 0x0191, 0x0192 };
     public static readonly ItemSpec RippadbleBody = 0x2006;
     public static readonly ItemSpec Corpse = 0x2006;
     public static readonly ItemSpec HorseShoes = 0x0FB6;

@@ -7,24 +7,58 @@ using System.Collections.Generic;
 using System.Linq;
 using Infusion.Packets;
 
+public delegate IEnumerable<Mobile> TargetingMode();
+
+public static class TargetingModes
+{
+    public static TargetingMode Pvm = () =>
+        UO.Mobiles.MaxDistance(20)
+                // considering just murderers (red karma) and mobiles that are
+                // not player's pets/summons - player can change name of her/his
+                // pets/summons.
+                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer && !i.CanModifyName && !Targeting.Ignored.Contains(i. Id))
+                .OrderByDistance();
+                
+    public static TargetingMode Pvp = () =>
+        UO.Mobiles.MaxDistance(20)
+                .Matching(Specs.Player)
+                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer && !Targeting.Ignored.Contains(i. Id))
+                .OrderByDistance();
+
+    public static TargetingMode PvpFriend = () =>
+        UO.Mobiles.MaxDistance(20)
+                .Matching(Specs.Player)
+                .Where(i => i.Id != UO.Me.PlayerId && !Targeting.Ignored.Contains(i. Id))
+                .OrderByDistance();
+}
+
 public static class Targeting
 {
     private static Stack<ObjectId> alreadyTargeted = new Stack<ObjectId>();
     private static ObjectId? selectedTarget;
     private static ObjectId? currentTarget;
     private static ObjectId? currentSelection;
-    
+
+    public static TargetingMode Mode { get; set; } = TargetingModes.Pvm;
+
     public static bool AutoTurnOffWarMode { get; set; } = false;
 
-    private static IMobileLookup Ignored { get; set; } = Tracker.MyPets;
+    public static IMobileLookup Ignored { get; set; } = Tracker.MyPets;
 
-    private static IEnumerable<Mobile> GetTargets() =>
-        UO.Mobiles.MaxDistance(20)
+    private static IEnumerable<Mobile> GetTargets()
+    {
+        if (Mode != null)
+            return Mode();
+        else
+        {
+            return UO.Mobiles.MaxDistance(20)
                 // considering just murderers (red karma) and mobiles that are
                 // not player's pets/summons - player can change name of her/his
                 // pets/summons.
                 .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanModifyName && !Ignored.Contains(i. Id))
                 .OrderByDistance();
+        }
+    }
 
     public static void TargetNext()
     {
@@ -167,3 +201,18 @@ public static class Targeting
 UO.RegisterCommand("target-next", Targeting.TargetNext);
 UO.RegisterCommand("target-prev", Targeting.TargetPrev);
 UO.RegisterCommand("target-last", Targeting.TargetLast);
+UO.RegisterCommand("target-pvm", () =>
+{
+    Targeting.Mode = TargetingModes.Pvm;
+    UO.ClientPrint("Pvm targeting");
+});
+UO.RegisterCommand("target-pvp", () =>
+{
+    Targeting.Mode = TargetingModes.Pvp;
+    UO.ClientPrint("Pvp targeting");
+});
+UO.RegisterCommand("target-pvpfriend", () => 
+{
+    Targeting.Mode = TargetingModes.PvpFriend;
+    UO.ClientPrint("Pvp with friends targeting");
+});

@@ -39,5 +39,8 @@ namespace Infusion.LegacyApi
                 return text;
             }
         }
+
+        public override string ToString()
+            => $"{Id}, {Created:MM/dd/yyyy HH:mm:ss:fffff}: {Text}";
     }
 }

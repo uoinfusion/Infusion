@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace Infusion.LegacyApi
@@ -8,8 +9,8 @@ namespace Infusion.LegacyApi
     public sealed class JournalAwaiter
     {
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-        private readonly JournalSource journalSource;
         private readonly GameJournal journal;
+        private readonly JournalSource journalSource;
         private readonly Func<CancellationToken?> tokenProvider;
 
         private readonly Dictionary<string[], Action<JournalEntry>> whenActions =
@@ -20,7 +21,8 @@ namespace Infusion.LegacyApi
 
         private Action timeoutAction;
 
-        internal JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalSource journalSource = null, GameJournal journal = null)
+        internal JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalSource journalSource = null,
+            GameJournal journal = null)
         {
             this.tokenProvider = tokenProvider;
             this.journalSource = journalSource;
@@ -30,7 +32,8 @@ namespace Infusion.LegacyApi
         internal void ReceiveJournalEntry(JournalEntry entry)
         {
             var keyValuePair =
-                whenActions.FirstOrDefault(pair => pair.Key.Any(awaitedWord => entry.Text.IndexOf(awaitedWord, StringComparison.OrdinalIgnoreCase) >= 0));
+                whenActions.FirstOrDefault(pair => pair.Key.Any(awaitedWord =>
+                    entry.Text.IndexOf(awaitedWord, StringComparison.OrdinalIgnoreCase) >= 0));
             if (keyValuePair.Key != null && keyValuePair.Value != null)
             {
                 receivedAction = keyValuePair.Value;
@@ -133,14 +136,23 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(TimeSpan? timeout = null)
         {
-            if (journal != null)
+            JournalEntry beforeWaitAny = null;
+            long? lastWaitEntryId = null;
+
+            if (journalSource != null)
             {
                 journalSource.NewMessageReceived += JournalEntriesOnNewMessageReceived;
+                beforeWaitAny = journalSource.LastOrDefault();
+            }
 
+            if (journal != null)
+            {
+                lastWaitEntryId = journal.LastWaitEntryId;
                 foreach (var entry in journal.AfterLastAction())
                 {
-                    KeyValuePair<string[], Action<JournalEntry>> pair =
-                        whenActions.FirstOrDefault(x => x.Key.Any(k => entry.Message.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0));
+                    var pair =
+                        whenActions.FirstOrDefault(x =>
+                            x.Key.Any(k => entry.Message.IndexOf(k, StringComparison.OrdinalIgnoreCase) >= 0));
                     if (pair.Value != null)
                     {
                         journal.NotifyWait();
@@ -158,7 +170,12 @@ namespace Infusion.LegacyApi
                     totalWaitingMillieseconds += 100;
                     if (timeout.HasValue && timeout.Value.TotalMilliseconds < totalWaitingMillieseconds)
                     {
-                        timeoutAction?.Invoke();
+                        if (timeoutAction != null)
+                            timeoutAction.Invoke();
+                        else
+                            throw new TimeoutException(BuildTimeoutDiagnosticInfo(beforeWaitAny, timeout,
+                                lastWaitEntryId));
+
                         return;
                     }
 
@@ -181,6 +198,42 @@ namespace Infusion.LegacyApi
                 if (journalSource != null)
                     journalSource.NewMessageReceived -= JournalEntriesOnNewMessageReceived;
             }
+        }
+
+        private string BuildTimeoutDiagnosticInfo(JournalEntry beforeWaitAny, TimeSpan? timeout, long? lastWaitEntryId)
+        {
+            var info = new StringBuilder();
+
+            info.AppendLine(timeout.HasValue ? $"Timeout after {timeout.Value}" : "Timeout after unspecified TimeSpan");
+            if (lastWaitEntryId.HasValue)
+                info.AppendLine($"Jurnal's LastWaitEntryId is {lastWaitEntryId.Value}");
+
+            if (beforeWaitAny != null)
+            {
+                info.AppendLine("Last journal entry before wait:");
+                info.AppendLine(beforeWaitAny.ToString());
+
+                var entriesAfterWait = journalSource?
+                    .Where(x => x.Id > beforeWaitAny.Id).ToArray();
+                if (entriesAfterWait != null && entriesAfterWait.Any())
+                {
+                    info.AppendLine("Journal entries after wait:");
+                    foreach (var entry in entriesAfterWait)
+                    {
+                        info.AppendLine(entry.ToString());
+                    }
+                }
+                else
+                {
+                    info.AppendLine("No journal entries after wait.");
+                }
+            }
+            else
+            {
+                info.AppendLine("No entry before wait");
+            }
+
+            return info.ToString();
         }
 
         private void JournalEntriesOnNewMessageReceived(object sender, JournalEntry journalEntry)

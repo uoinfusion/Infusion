@@ -124,14 +124,14 @@ namespace Infusion.LegacyApi
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 
-        private long lastWaitEntryId = 0;
+        internal long LastWaitEntryId { get; private set; } = 0;
 
         internal void NotifyWait()
         {
-            lastWaitEntryId = source.CurrentJournalEntryId;
+            LastWaitEntryId = source.CurrentJournalEntryId;
         }
 
         internal IEnumerable<JournalEntry> AfterLastAction() =>
-            source.AfterLastAction().Where(line => line.Id >= lastWaitEntryId);
+            source.AfterLastAction().Where(line => line.Id >= LastWaitEntryId);
     }
 }

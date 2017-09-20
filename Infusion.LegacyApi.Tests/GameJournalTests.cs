@@ -74,8 +74,8 @@ namespace Infusion.LegacyApi.Tests
             bool secondCheckExecuted = false;
 
             source.AddMessage("name", "message1", new ObjectId(0), 0);
-            journal.When("message1", () => { firstCheckExecuted = true; }).WaitAny(TimeSpan.FromMilliseconds(1));
-            journal.When("message1", () => { secondCheckExecuted = true; }).WaitAny(TimeSpan.FromMilliseconds(1));
+            journal.When("message1", () => { firstCheckExecuted = true; }).WhenTimeout(() => { }).WaitAny(TimeSpan.FromMilliseconds(1));
+            journal.When("message1", () => { secondCheckExecuted = true; }).WhenTimeout(() => { }).WaitAny(TimeSpan.FromMilliseconds(1));
 
             firstCheckExecuted.Should().BeTrue();
             secondCheckExecuted.Should().BeFalse();

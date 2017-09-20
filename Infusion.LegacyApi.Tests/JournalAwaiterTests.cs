@@ -155,9 +155,20 @@ namespace Infusion.LegacyApi.Tests
             var awaiter = new JournalAwaiter(() => cancellationTokenSource.Token);
 
             awaiter.WhenTimeout(() => executed = true)
-                .WaitAny(TimeSpan.FromMilliseconds(100));
+                .WaitAny(TimeSpan.FromMilliseconds(10));
 
             executed.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Throws_exception_When_awaiting_timeouts_and_no_timeout_action()
+        {
+            var source = new JournalSource();
+            var awaiter = new JournalAwaiter(() => cancellationTokenSource.Token, source);
+            source.AddMessage("name1", "message1", 0x12345, 0x1234);
+
+            ((Action) (() => awaiter.WaitAny(TimeSpan.FromMilliseconds(10))))
+                .ShouldThrow<TimeoutException>();
         }
     }
 }

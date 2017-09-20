@@ -30,7 +30,7 @@ namespace Infusion.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.Id.Should().Be((SoundId) 0x13E);
-            packet.Location.Should().Be(new Location3D(0x06A5, 0x04CB, 0x23));
+            packet.Location.Should().Be(new Location3D(0x06A5, 0x04CB, 0));
         }
     }
 }

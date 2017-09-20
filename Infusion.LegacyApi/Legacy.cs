@@ -23,11 +23,11 @@ namespace Infusion.LegacyApi
 
         private readonly ILogger logger;
         private readonly PlayerObservers playerObservers;
+        private readonly QuestArrowObserver questArrowObserver;
+        private readonly SoundObserver soundObserver;
 
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
-        private readonly SoundObserver soundObserver;
-        private readonly QuestArrowObserver questArrowObserver;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
@@ -65,6 +65,8 @@ namespace Infusion.LegacyApi
 
             Configuration = configuration;
         }
+
+        public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
         public LegacyEvents Events { get; }
 
@@ -431,7 +433,7 @@ namespace Infusion.LegacyApi
             TimeSpan? dropDelay = null)
         {
             DragItem(item, amount);
-            if (WaitForItemDragged(timeout) != DragResult.Success)
+            if (WaitForItemDragged(timeout ?? DefaultTimeout) != DragResult.Success)
                 return false;
 
             if (dropDelay.HasValue)
@@ -444,7 +446,7 @@ namespace Infusion.LegacyApi
 
         public DragResult WaitForItemDragged(TimeSpan? timeout = null)
         {
-            return itemsObserver.WaitForItemDragged(timeout);
+            return itemsObserver.WaitForItemDragged(timeout ?? DefaultTimeout);
         }
 
         public void Log(string message)
@@ -487,7 +489,7 @@ namespace Infusion.LegacyApi
         public bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
         {
             DragItem(item, 1);
-            if (WaitForItemDragged(timeout) != DragResult.Success)
+            if (WaitForItemDragged(timeout ?? DefaultTimeout) != DragResult.Success)
                 return false;
 
             Server.Wear(item.Id, layer, Me.PlayerId);

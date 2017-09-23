@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
 using System.Windows.Threading;
 using Infusion.Commands;
 using Infusion.Desktop.Launcher;
@@ -13,8 +11,6 @@ using Infusion.Desktop.Profiles;
 using Infusion.LegacyApi;
 using Infusion.Proxy;
 using Application = System.Windows.Application;
-using Brush = System.Windows.Media.Brush;
-using Brushes = System.Windows.Media.Brushes;
 
 namespace Infusion.Desktop
 {
@@ -45,10 +41,15 @@ namespace Infusion.Desktop
             };
 
 
-            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), "Reloads an initial script file."));
-            UO.CommandHandler.RegisterCommand(new Command("edit", () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Edit())), "Opens the script editor."));
-            UO.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)), "Loads a script file."));
-            UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls), "Clears console content."));
+            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()),
+                "Reloads an initial script file."));
+            UO.CommandHandler.RegisterCommand(new Command("edit",
+                () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action) (() => Edit())),
+                "Opens the script editor."));
+            UO.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)),
+                "Loads a script file."));
+            UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls),
+                "Clears console content."));
         }
 
         private void Cls()
@@ -59,6 +60,9 @@ namespace Infusion.Desktop
         private void Load(string scriptFileName)
         {
             this.scriptFileName = scriptFileName;
+            var scriptPath = Path.GetDirectoryName(scriptFileName);
+            _console.ScriptEngine.ScriptRootPath = scriptPath;
+
             Reload();
         }
 
@@ -74,14 +78,14 @@ namespace Infusion.Desktop
         {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
             {
-                string scriptPath = System.IO.Path.GetDirectoryName(scriptFileName);
-                _console.ScriptEngine.ScriptRootPath = scriptPath;
+                var scriptPath = Path.GetDirectoryName(scriptFileName);
 
                 var roslynPadWindow = new RoslynPad.MainWindow(_console.ScriptEngine, scriptPath);
                 roslynPadWindow.Show();
             }
             else
-                Program.Console.Error("Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
+                Program.Console.Error(
+                    "Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
         }
 
         private void Reload()
@@ -129,7 +133,7 @@ namespace Infusion.Desktop
 
         private void InfusionWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action)(() =>
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action) (() =>
             {
                 _console.Initialize();
 

@@ -118,13 +118,10 @@ namespace Infusion.Commands
                     if (!commands.TryGetValue(syntax.Name, out Command command))
                         throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
 
-                    if (!syntax.HasParameters)
-                    {
-                        throw new CommandInvocationException(
-                            $"No parameters for command specified {commandInvocationSyntax}");
-                    }
-
-                    invocator.Invoke(command, syntax.Parameters, cancellationTokenSource);
+                    if (command.AcceptsParameters)
+                        invocator.Invoke(command, syntax.Parameters, cancellationTokenSource);
+                    else
+                        throw new CommandInvocationException($"Command ,{command.Name} doesn't accept parameters.");
                 }
             }
             catch (CommandInvocationException ex)

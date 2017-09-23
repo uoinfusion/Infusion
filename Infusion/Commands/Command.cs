@@ -47,5 +47,8 @@ namespace Infusion.Commands
         {
             parameterizedCommandAction(parameters);
         }
+
+        internal bool AcceptsParameters
+            => parameterizedCommandAction != null;
     }
 }

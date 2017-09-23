@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedClientPacketsFilters.cs" />
+    <Compile Include="CommandRequestedArgs.cs" />
     <Compile Include="CurrentHealthUpdatedArgs.cs" />
     <Compile Include="EventHelper.cs" />
     <Compile Include="GameJournal.cs" />
@@ -77,6 +78,8 @@
     <Compile Include="SoundEffectPlayedArgs.cs" />
     <Compile Include="SoundObserver.cs" />
     <Compile Include="SpecSpecificity.cs" />
+    <Compile Include="SpeechRequestedArgs.cs" />
+    <Compile Include="SpeechRequestObserver.cs" />
     <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />
     <Compile Include="LegacyEvents.cs" />

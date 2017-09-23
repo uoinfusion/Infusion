@@ -71,6 +71,36 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
+        public void Does_not_invoke_parameterless_command_with_parameters()
+        {
+            bool executed = false;
+            var command = new TestCommand(commandHandler, ",testName", () => executed = true);
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",testName parameter1");
+            command.WaitForFinished();
+
+            executed.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Can_invoke_parametrized_command_without_parameters()
+        {
+            bool executed = false;
+            var finished = new AutoResetEvent(false);
+            commandHandler.RegisterCommand("testName", () =>
+            {
+                executed = true;
+                finished.Set();
+            });
+
+            commandHandler.Invoke(",testName");
+            finished.WaitOne(TimeSpan.FromMilliseconds(100));
+
+            executed.Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_return_registered_script_names()
         {
             commandHandler.RegisterCommand("testName", () => { });

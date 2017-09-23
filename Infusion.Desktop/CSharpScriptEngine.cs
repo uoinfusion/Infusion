@@ -73,7 +73,8 @@ namespace Infusion.Desktop
                     .WithSearchPaths(scriptDirectory, binDirectory)
                     .WithBaseDirectory(scriptDirectory));
 
-            Directory.SetCurrentDirectory(scriptDirectory);
+            if (!string.IsNullOrEmpty(ScriptRootPath))
+                Directory.SetCurrentDirectory(ScriptRootPath);
 
             submissionNumber++;
             string commandName = $"submission{submissionNumber}";

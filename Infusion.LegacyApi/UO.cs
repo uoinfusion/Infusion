@@ -34,7 +34,7 @@ namespace Infusion.LegacyApi
 
         public static GameJournal Journal => Current.Journal;
 
-        public static void Initialize(Legacy current)
+        internal static void Initialize(Legacy current)
         {
             Current = current;
         }

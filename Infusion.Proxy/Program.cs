@@ -72,10 +72,9 @@ namespace Infusion.Proxy
                 Console.Info(command.Name);
         }
 
-        public static void Initialize()
+        public static void Initialize(Action<CommandRequestedArgs> commandRequestedHandler)
         {
             commandHandler = new CommandHandler(Program.Console);
-            var commandObservers = new CommandHandlerObservers(clientPacketHandler, commandHandler);
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog,
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
                 executionMode: CommandExecutionMode.Direct));
@@ -84,6 +83,7 @@ namespace Infusion.Proxy
                 "Lists running commands"));
 
             var legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
+            legacyApi.Events.CommandRequested += (sender, e) => commandRequestedHandler(e);
             UO.Initialize(legacyApi);
         }
 

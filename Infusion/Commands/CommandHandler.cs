@@ -225,7 +225,7 @@ namespace Infusion.Commands
 
                 return help.ToString();
             }
-            return $"Unknown command 'commandName'";
+            return $"Unknown command '{commandName}'";
         }
     }
 }

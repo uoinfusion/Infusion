@@ -52,8 +52,9 @@ namespace Infusion.LegacyApi
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
             soundObserver = new SoundObserver(ultimaServer, configuration);
             questArrowObserver = new QuestArrowObserver(ultimaServer);
+            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, logger);
 
-            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, questArrowObserver);
+            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, questArrowObserver, speechRequestObserver);
 
             this.logger = logger;
             Server = ultimaServer;

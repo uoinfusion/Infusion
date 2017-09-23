@@ -41,13 +41,18 @@ namespace Infusion.Desktop
             Program.Console = new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration),
                 new FileLogger(Program.Configuration));
-            Program.Initialize();
+            Program.Initialize(HandleCommandRequest);
             DataContext = consoleContent;
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
 
             _inputBlock.Focus();
 
             Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
+        }
+
+        private void HandleCommandRequest(CommandRequestedArgs args)
+        {
+            OnCommandEntered(args.InvocationSyntax);
         }
 
         public CSharpScriptEngine ScriptEngine { get; }
@@ -59,8 +64,6 @@ namespace Infusion.Desktop
 
             // Border is the first child of first child of a ScrolldocumentViewer
             var firstChild = VisualTreeHelper.GetChild(flowDocumentScrollViewer, 0);
-            if (firstChild == null)
-                return null;
 
             var border = VisualTreeHelper.GetChild(firstChild, 0) as Decorator;
 
@@ -124,7 +127,11 @@ namespace Infusion.Desktop
         private void OnCommandEntered(string command)
         {
             if (UO.CommandHandler.IsInvocationSyntax(command))
+            {
+                if (command != ",cls")
+                    Program.Console.Debug(command);
                 UO.CommandHandler.Invoke(command);
+            }
             else
                 UO.Say(command);
         }

@@ -339,6 +339,7 @@ public static class Specs
     public static readonly MobileSpec Had = 0x0034;
     public static readonly MobileSpec Prase = 0x00CB;
     public static readonly MobileSpec SedyVlk = new [] {0x00E1, 0x03B3};
+    public static readonly MobileSpec SneznyLeopard = new MobileSpec(0x00D6, (Color)0x0482);
 
     // Monsters
     public static readonly MobileSpec Troll = new[] {0x0035, 0x0036};

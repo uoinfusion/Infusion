@@ -243,3 +243,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/ExampleScripts/UOErebor/Infusion.Scripts.UOErebor.Extensions.dll

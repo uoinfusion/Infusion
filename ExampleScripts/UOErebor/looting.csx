@@ -206,14 +206,27 @@ public static class Looting
         ignoredItems.Ignore(container);
     }
 
-    public static void Rip(Item container)
+    public static bool Rip(Item container)
     {
         UO.ClientPrint("Ripping");
         UO.Use(Specs.Knives);
 
         UO.WaitForTarget();
         UO.Target(container);
-        journal.WaitAny("Rozrezal jsi mrtvolu.");
+        
+        bool result = false;
+        
+        journal
+            .When("Rozrezal jsi mrtvolu.", () => result = true)
+            .When("Unexpected target info", () => 
+            {
+                UO.Log("Warning: unexpected target info when targeting a body");
+                UO.Log(container.ToString());
+                result = false;
+            })
+            .WaitAny();
+            
+        return true;
     }
 
 }

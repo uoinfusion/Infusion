@@ -1,6 +1,6 @@
 #load "Specs.csx"
 #load "common.csx"
-#load "tracker.csx"
+#load "pets.csx"
 
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ public static class Targeting
 
     public static bool AutoTurnOffWarMode { get; set; } = false;
 
-    public static IMobileLookup Ignored { get; set; } = Tracker.MyPets;
+    public static IMobileLookup Ignored { get; set; } = Pets.MyPets;
 
     private static IEnumerable<Mobile> GetTargets()
     {

@@ -75,14 +75,44 @@ namespace Infusion.LegacyApi
 
         internal void RemoveItem(ObjectId id)
         {
-            gameObjects = gameObjects.Remove(id);
+            if (gameObjects.TryGetValue(id, out GameObject gameObject))
+            {
+                gameObjects = gameObjects.Remove(id);
+                OnGameObjectRemoved(gameObject);
+            }
         }
+
+        private void OnGameObjectsRemoved(IEnumerable<GameObject> gameObjects)
+        {
+            var mobileLeftViewHandler = MobileLeftView;
+
+            if (mobileLeftViewHandler != null)
+            {
+                foreach (var obj in gameObjects)
+                {
+                    if (obj is Mobile mobile)
+                        OnGameObjectRemoved(mobile);
+                }
+            }
+        }
+
+        private void OnGameObjectRemoved(GameObject gameObject)
+        {
+            var mobileLeftViewHandler = MobileLeftView;
+            if (mobileLeftViewHandler != null && gameObject is Mobile mobile)
+            {
+                mobileLeftViewHandler.Invoke(this, mobile);
+            }
+        }
+
+        internal event EventHandler<Mobile> MobileLeftView;
 
         internal void PurgeUnreachableItems(Location2D referenceLocation, ushort reachableRange)
         {
-            var itemIdsOutOfRange =
-                gameObjects.Values.Where(obj => obj.GetDistance(referenceLocation) >= reachableRange && obj.IsOnGround).Select(i => i.Id).ToArray();
-            gameObjects = gameObjects.RemoveRange(itemIdsOutOfRange);
+            var itemsOutOfRange =
+                gameObjects.Values.Where(obj => obj.GetDistance(referenceLocation) >= reachableRange && obj.IsOnGround).ToArray();
+            OnGameObjectsRemoved(itemsOutOfRange);
+            gameObjects = gameObjects.RemoveRange(itemsOutOfRange.Select(x => x.Id));
 
             // to be perfectly correct, we would need to remove all nested orphaned containers as well, but this is good enough for now
             var orphanedItemIds =

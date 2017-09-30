@@ -29,6 +29,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             InitializeComponent();
             this.statusBarCollection.StatusBars.CollectionChanged += StatusBarsOnCollectionChanged;
 
+            this.Title = statusBarCollection.Title ?? "Infusion";
             CreateStatusControls(statusBarCollection.StatusBars);
         }
 
@@ -38,6 +39,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             {
                 var statusBarControl =
                     new StatusBarControl(statusBar);
+                statusBarControl.Clicked += (sender, bar) => statusBarCollection.OnMobileTargeted(statusBar.Id);
                 _panel.Children.Add(statusBarControl);
                 statusBarControl.Render();
             }

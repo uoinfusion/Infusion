@@ -6,5 +6,8 @@
              xmlns:local="clr-namespace:Infusion.Scripts.UOErebor.Extensions.StatusBars"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300" x:ClassModifier="internal">
-    <Image x:Name="_image" Stretch="None" />
+    <Button BorderThickness="0" Click="OnClick"  
+            Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+        <Image x:Name="_image" Stretch="None" />
+    </Button>
 </UserControl>

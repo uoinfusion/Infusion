@@ -10,11 +10,27 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
     {
         private StatusesWindow statusesWindow;
 
+        internal string Title { get; private set; }
+
+        public event EventHandler<ObjectId> MobileTargeted;
+
+        public Statuses(string title)
+        {
+            Title = title;
+        }
+
+        public int Count => StatusBars.Count;
+
         internal ObservableCollection<StatusBar> StatusBars { get; } = new ObservableCollection<StatusBar>();
 
         private bool NeedsReopen =>
             statusesWindow == null || PresentationSource.FromVisual(statusesWindow) == null ||
             !statusesWindow.IsVisible;
+
+        internal void OnMobileTargeted(ObjectId id)
+        {
+            MobileTargeted?.Invoke(this, id);
+        }
 
         public void Open()
         {
@@ -69,7 +85,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             if (statusBar != null)
             {
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    new Action(() => { StatusBars.Add(statusBar); }));
+                    new Action(() => { StatusBars.Remove(statusBar); }));
             }
         }
 

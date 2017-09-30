@@ -55,10 +55,16 @@ namespace Infusion.LegacyApi
             remove => itemsObserver.ItemEnteredView -= value;
         }
 
-        public event EventHandler<MobileEnteredViewArgs> MobileEnteredView
+        public event EventHandler<Mobile> MobileEnteredView
         {
             add => itemsObserver.MobileEnteredView += value;
             remove => itemsObserver.MobileEnteredView -= value;
+        }
+
+        public event EventHandler<Mobile> MobileLeftView
+        {
+            add => itemsObserver.MobileLeftView += value;
+            remove => itemsObserver.MobileLeftView -= value;
         }
 
         public event EventHandler<ItemUseRequestedArgs> ItemUseRequested
@@ -76,6 +82,9 @@ namespace Infusion.LegacyApi
         internal void ResetEvents()
         {
             itemsObserver.ResetEvents();
+            soundObserver.ResetEvents();
+            questArrowObserver.ResetEvents();
+            speechRequestObserver.ResetEvents();
         }
     }
 }

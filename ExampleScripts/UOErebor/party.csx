@@ -8,8 +8,14 @@ public static class Party
 
     static Party()
     {
-        statuses = new Statuses();
-        UO.Events.HealthUpdated += HandleHealthUpdated; 
+        statuses = new Statuses("Party");
+        UO.Events.HealthUpdated += HandleHealthUpdated;
+        statuses.MobileTargeted += (sender, id) =>
+        {
+            var target = UO.Mobiles[id];
+            if (target != null)
+                UO.Target(target);
+        };
     }
     
     private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
@@ -50,3 +56,4 @@ public static class Party
 
 UO.RegisterCommand("party-add", Party.Add);
 UO.RegisterCommand("party-remove", Party.Remove);
+UO.RegisterCommand("party-show", Party.ShowStatuses);

@@ -39,16 +39,24 @@ public static class Afk
  
     public static void Check()
     {
-        var afkAlertRequired = afkCheckJournal
-            .ByAnyName(AfkNames).Any();
-
-        afkAlertRequired |= afkCheckJournal.Contains(AfkMessages);
-
-        afkCheckJournal.Delete();
-
-        if (afkAlertRequired)
+        if (IsAfkAlertRequired)
         {
             Alert();
+        }
+    }
+
+    public static bool IsAfkAlertRequired
+    {
+        get
+        {
+            var afkAlertRequired = afkCheckJournal
+                .ByAnyName(AfkNames).Any();
+
+            afkAlertRequired |= afkCheckJournal.Contains(AfkMessages);
+
+            afkCheckJournal.Delete();
+        
+            return afkAlertRequired;
         }
     }
 

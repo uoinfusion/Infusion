@@ -22,6 +22,7 @@ namespace Infusion.LegacyApi
             Legacy legacyApi)
         {
             this.gameObjects = gameObjects;
+            this.gameObjects.MobileLeftView += (sender, mobile) => MobileLeftView.RaiseScriptEvent(this, mobile);
             this.legacyApi = legacyApi;
             serverPacketSubject.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
@@ -88,7 +89,8 @@ namespace Infusion.LegacyApi
         internal event EventHandler<CurrentHealthUpdatedArgs> CurrentHealthUpdated;
         internal event EventHandler<ItemUseRequestedArgs> DoubleClickRequested;
         internal event EventHandler<ItemEnteredViewArgs> ItemEnteredView;
-        internal event EventHandler<MobileEnteredViewArgs> MobileEnteredView;
+        internal event EventHandler<Mobile> MobileEnteredView;
+        internal event EventHandler<Mobile> MobileLeftView;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -147,6 +149,8 @@ namespace Infusion.LegacyApi
         {
             CurrentHealthUpdated = null;
             ItemEnteredView = null;
+            MobileLeftView = null;
+            MobileEnteredView = null;
         }
 
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
@@ -223,7 +227,7 @@ namespace Infusion.LegacyApi
 
         private void OnMobileEnteredView(Mobile mobile)
         {
-            MobileEnteredView.RaiseScriptEvent(this, new MobileEnteredViewArgs(mobile));
+            MobileEnteredView.RaiseScriptEvent(this, mobile);
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

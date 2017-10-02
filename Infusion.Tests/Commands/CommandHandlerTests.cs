@@ -16,6 +16,7 @@ namespace Infusion.Tests.Commands
     {
         private CommandHandler commandHandler;
         private CancellationToken cancellationToken;
+        private RingBufferLogger logger;
 
         private void DoSomeCancellableAction()
         {
@@ -26,7 +27,8 @@ namespace Infusion.Tests.Commands
         [TestInitialize]
         public void Initialize()
         {
-            commandHandler = new CommandHandler(new NullLogger());
+            logger = new RingBufferLogger(16);
+            commandHandler = new CommandHandler(logger);
             commandHandler.CancellationTokenCreated += (sender, token) => cancellationToken = token;
         }
 
@@ -274,6 +276,51 @@ namespace Infusion.Tests.Commands
             parentCommand.WaitForFinished().Should().BeTrue();
 
             commandHandler.RunningCommands.Should().BeEmpty();
+        }
+
+        [TestMethod]
+        public void Exception_thrown_from_nested_command_propagates_to_parent_command()
+        {
+            bool nestedCommandExecuted = false;
+            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () =>
+            {
+                nestedCommandExecuted = true;
+                throw new InvalidOperationException();
+            });
+            commandHandler.RegisterCommand(nestedCommand.Command);
+
+            bool exceptionThrownFromNestedCommand = false;
+            var parentCommand = new TestCommand(commandHandler, "parent", () =>
+            {
+                try
+                {
+                    commandHandler.Invoke(",nested");
+                }
+                catch (InvalidOperationException)
+                {
+                    exceptionThrownFromNestedCommand = true;
+                }
+            });
+            commandHandler.RegisterCommand(parentCommand.Command);
+
+            commandHandler.Invoke(",parent");
+
+            parentCommand.WaitForFinished();
+
+            nestedCommandExecuted.Should().BeTrue();
+            exceptionThrownFromNestedCommand.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Exception_is_handled_when_parent_command_throws_exception()
+        {
+            var parentCommand = new TestCommand(commandHandler, "parent", () => throw new InvalidOperationException("some exception message that is supposed to appear in the logger output"));
+            commandHandler.RegisterCommand(parentCommand.Command);
+            commandHandler.Invoke(",parent");
+
+            parentCommand.WaitForFinished();
+
+            logger.DumpToString().Should().Contain("some exception message that is supposed to appear in the logger output");
         }
 
         [TestMethod]

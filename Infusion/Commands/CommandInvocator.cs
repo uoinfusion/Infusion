@@ -68,7 +68,7 @@ namespace Infusion.Commands
                 }
                 catch (OperationCanceledException)
                 {
-                    logger.Info($"Command {command.Name} cancelled.");
+                    logger.Info($"Command '{command.Name}' cancelled.");
                 }
                 finally
                 {
@@ -94,11 +94,12 @@ namespace Infusion.Commands
                 }
                 catch (OperationCanceledException)
                 {
-                    logger.Info($"Command {command.Name} cancelled.");
+                    logger.Info($"Command '{command.Name}' cancelled.");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex.ToString());
+                    logger.Error($"Command '{command.Name}' threw exception:");
+                    logger.Info(ex.ToString());
                 }
                 finally
                 {

@@ -109,28 +109,24 @@ namespace Infusion.Commands
                 if (!syntax.HasParameters)
                 {
                     if (!commands.TryGetValue(syntax.Name, out Command command))
-                        throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
+                        throw new CommandInvocationException($"Unknown command name '{commandInvocationSyntax}'");
 
                     invocator.Invoke(command, cancellationTokenSource);
                 }
                 else
                 {
                     if (!commands.TryGetValue(syntax.Name, out Command command))
-                        throw new CommandInvocationException($"Unknown command name {commandInvocationSyntax}");
+                        throw new CommandInvocationException($"Unknown command name '{commandInvocationSyntax}'");
 
                     if (command.AcceptsParameters)
                         invocator.Invoke(command, syntax.Parameters, cancellationTokenSource);
                     else
-                        throw new CommandInvocationException($"Command ,{command.Name} doesn't accept parameters.");
+                        throw new CommandInvocationException($"Command '{command.Name}' doesn't accept parameters.");
                 }
             }
             catch (CommandInvocationException ex)
             {
                 logger.Error(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex.ToString());
             }
         }
 
@@ -139,7 +135,7 @@ namespace Infusion.Commands
             lock (runningCommandsLock)
             {
                 if (runningCommands.ContainsKey(command.Name))
-                    throw new CommandInvocationException($"Command {command.Name} is already running.");
+                    throw new CommandInvocationException($"Command '{command.Name}' is already running.");
             }
         }
 

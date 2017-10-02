@@ -36,7 +36,7 @@ public static class Pets
         {
             statuses.Update(args.UpdatedMobile);
         }
-        else if (args.UpdatedMobile.CanModifyName)
+        else if (args.UpdatedMobile.CanRename)
         {
             if (statuses.Count == 0)
             {
@@ -83,7 +83,7 @@ public static class Pets
     }
     
     public static IMobileLookup MyPets { get; } = new MobileLookupLinqWrapper(
-        UO.Mobiles.Matching(PetsSpec).Where(x => x.CanModifyName));
+        UO.Mobiles.Matching(PetsSpec).Where(x => x.CanRename));
         
     public static void Show() => statuses.Open();
 }

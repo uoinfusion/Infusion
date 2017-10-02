@@ -59,7 +59,7 @@ namespace Infusion.LegacyApi
         {
             if (gameObjects[packet.PlayerId] is Mobile mobile)
             {
-                mobile = (Mobile)mobile.UpdateName(packet.PlayerName, packet.CanModifyName);
+                mobile = (Mobile)mobile.UpdateName(packet.PlayerName, packet.CanRename);
                 UpdateHealth(mobile, packet.CurrentHealth, packet.MaxHealth);
             }
         }

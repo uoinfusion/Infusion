@@ -42,7 +42,7 @@ namespace Infusion
                 Orientation = Orientation,
                 Notoriety = Notoriety,
                 Name = Name,
-                CanModifyName = CanModifyName,
+                CanRename = CanRename,
             };
         }
 
@@ -70,7 +70,7 @@ namespace Infusion
 
         public override string ToString()
         {
-            string canModifyNameText = CanModifyName? " (modifiable)" : string.Empty;
+            string canModifyNameText = CanRename? " (modifiable)" : string.Empty;
 
             return
                 $"Id: {Id}; Type: {Type}; Name: {Name}{canModifyNameText}; Location: {Location}; Color: {Color}; Orientation: {Orientation}; MovmentType: {CurrentMovementType} Notiriety: {Notoriety}";

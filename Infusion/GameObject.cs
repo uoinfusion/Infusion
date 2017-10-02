@@ -14,7 +14,7 @@
         public ObjectId Id { get; }
 
         public string Name { get; protected set; }
-        public bool CanModifyName { get; protected set; }
+        public bool CanRename { get; protected set; }
 
         protected abstract GameObject Duplicate();
 
@@ -23,7 +23,7 @@
             var updatedItem = Duplicate();
 
             updatedItem.Name = name;
-            updatedItem.CanModifyName = canModifyName;
+            updatedItem.CanRename = canModifyName;
 
             return updatedItem;
         }

@@ -16,7 +16,7 @@ public static class TargetingModes
                 // considering just murderers (red karma) and mobiles that are
                 // not player's pets/summons - player can change name of her/his
                 // pets/summons.
-                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer && !i.CanModifyName && !Targeting.Ignored.Contains(i. Id))
+                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer && !i.CanRename && !Targeting.Ignored.Contains(i. Id))
                 .OrderByDistance();
                 
     public static TargetingMode Pvp = () =>
@@ -55,7 +55,7 @@ public static class Targeting
                 // considering just murderers (red karma) and mobiles that are
                 // not player's pets/summons - player can change name of her/his
                 // pets/summons.
-                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanModifyName && !Ignored.Contains(i. Id))
+                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanRename && !Ignored.Contains(i. Id))
                 .OrderByDistance();
         }
     }

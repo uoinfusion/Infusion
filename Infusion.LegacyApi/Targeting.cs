@@ -63,9 +63,9 @@ namespace Infusion.LegacyApi
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        var lastItem = legacyApi.GameObjects[lastItemIdInfo];
-                        lastTargetInfo = lastItem?.ToString() ??
-                                         $"{packet.ClickedOnId} {packet.ClickedOnType} {packet.ClickedOnType}";
+                        var lastObject = legacyApi.GameObjects[lastItemIdInfo];
+                        lastTargetInfo = lastObject?.ToString() ??
+                                         $"{packet.ClickedOnId} {packet.ClickedOnType}";
                         break;
                 }
 

@@ -16,7 +16,7 @@ public static class Meditation
     
     public static void Meditate()
     {
-        UO.Log($"Meditating, current mana is {UO.Me.CurrentMana}, maximum mana is {UO.Me.MaxMana}");
+        UO.Log($"Meditating to maximum mana {UO.Me.MaxMana}, current mana is {UO.Me.CurrentMana}");
         while (UO.Me.CurrentMana < UO.Me.MaxMana)
         {
             UO.UseSkill(Skill.Meditation);

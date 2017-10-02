@@ -19,6 +19,7 @@ public static class Pets
     {
         UO.Events.MobileEnteredView += HandleMobileEnteredView;
         UO.Events.MobileLeftView += HandleMobileLeftView;
+        UO.Events.MobileDeleted += HandleMobileLeftView;
 
         statuses = new Statuses("Pets");
         UO.Events.HealthUpdated += HandleHealthUpdated;

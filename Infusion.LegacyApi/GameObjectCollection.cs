@@ -3,14 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
     internal class GameObjectCollection : IEnumerable<GameObject>
     {
-        internal Player Player { get; }
-
         private ImmutableDictionary<ObjectId, GameObject> gameObjects = ImmutableDictionary<ObjectId, GameObject>.Empty;
 
         public GameObjectCollection(Player player)
@@ -18,11 +15,13 @@ namespace Infusion.LegacyApi
             Player = player;
         }
 
+        internal Player Player { get; }
+
         public GameObject this[ObjectId id]
         {
             get
             {
-                if (gameObjects.TryGetValue(id, out GameObject gameObject))
+                if (gameObjects.TryGetValue(id, out var gameObject))
                     return gameObject;
 
                 return null;
@@ -46,7 +45,7 @@ namespace Infusion.LegacyApi
 
         public GameObject Get(ObjectId id)
         {
-            if (gameObjects.TryGetValue(id, out GameObject gameObject))
+            if (gameObjects.TryGetValue(id, out var gameObject))
                 return gameObject;
 
             return null;
@@ -75,14 +74,14 @@ namespace Infusion.LegacyApi
 
         internal void RemoveItem(ObjectId id)
         {
-            if (gameObjects.TryGetValue(id, out GameObject gameObject))
+            if (gameObjects.TryGetValue(id, out var gameObject))
             {
                 gameObjects = gameObjects.Remove(id);
-                OnGameObjectRemoved(gameObject);
+                OnGameObjectDeleted(gameObject);
             }
         }
 
-        private void OnGameObjectsRemoved(IEnumerable<GameObject> gameObjects)
+        private void OnItemsLeftView(IEnumerable<GameObject> gameObjects)
         {
             var mobileLeftViewHandler = MobileLeftView;
 
@@ -91,32 +90,36 @@ namespace Infusion.LegacyApi
                 foreach (var obj in gameObjects)
                 {
                     if (obj is Mobile mobile)
-                        OnGameObjectRemoved(mobile);
+                        mobileLeftViewHandler.Invoke(this, mobile);
                 }
             }
         }
 
-        private void OnGameObjectRemoved(GameObject gameObject)
+        private void OnGameObjectDeleted(GameObject gameObject)
         {
-            var mobileLeftViewHandler = MobileLeftView;
-            if (mobileLeftViewHandler != null && gameObject is Mobile mobile)
+            var mobileDeletedHandler = MobileDeleted;
+            if (mobileDeletedHandler != null && gameObject is Mobile mobile)
             {
-                mobileLeftViewHandler.Invoke(this, mobile);
+                mobileDeletedHandler.Invoke(this, mobile);
             }
         }
 
         internal event EventHandler<Mobile> MobileLeftView;
+        internal event EventHandler<Mobile> MobileDeleted;
 
         internal void PurgeUnreachableItems(Location2D referenceLocation, ushort reachableRange)
         {
             var itemsOutOfRange =
-                gameObjects.Values.Where(obj => obj.GetDistance(referenceLocation) >= reachableRange && obj.IsOnGround).ToArray();
-            OnGameObjectsRemoved(itemsOutOfRange);
+                gameObjects.Values.Where(obj => obj.GetDistance(referenceLocation) >= reachableRange && obj.IsOnGround)
+                    .ToArray();
+            OnItemsLeftView(itemsOutOfRange);
             gameObjects = gameObjects.RemoveRange(itemsOutOfRange.Select(x => x.Id));
 
             // to be perfectly correct, we would need to remove all nested orphaned containers as well, but this is good enough for now
             var orphanedItemIds =
-                gameObjects.Values.OfType<Item>().Where(i => i.ContainerId.HasValue && i.ContainerId.Value != Player.PlayerId  && !gameObjects.ContainsKey(i.ContainerId.Value))
+                gameObjects.Values.OfType<Item>().Where(i =>
+                        i.ContainerId.HasValue && i.ContainerId.Value != Player.PlayerId &&
+                        !gameObjects.ContainsKey(i.ContainerId.Value))
                     .Select(i => i.Id);
 
             gameObjects = gameObjects.RemoveRange(orphanedItemIds);

@@ -23,6 +23,8 @@ namespace Infusion.LegacyApi
         {
             this.gameObjects = gameObjects;
             this.gameObjects.MobileLeftView += (sender, mobile) => MobileLeftView.RaiseScriptEvent(this, mobile);
+            this.gameObjects.MobileDeleted += (sender, mobile) => MobileDeleted.RaiseScriptEvent(this, mobile);
+
             this.legacyApi = legacyApi;
             serverPacketSubject.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
@@ -91,6 +93,7 @@ namespace Infusion.LegacyApi
         internal event EventHandler<ItemEnteredViewArgs> ItemEnteredView;
         internal event EventHandler<Mobile> MobileEnteredView;
         internal event EventHandler<Mobile> MobileLeftView;
+        internal event EventHandler<Mobile> MobileDeleted;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {

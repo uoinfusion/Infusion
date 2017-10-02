@@ -67,6 +67,12 @@ namespace Infusion.LegacyApi
             remove => itemsObserver.MobileLeftView -= value;
         }
 
+        public event EventHandler<Mobile> MobileDeleted
+        {
+            add => itemsObserver.MobileDeleted += value;
+            remove => itemsObserver.MobileDeleted -= value;
+        }
+
         public event EventHandler<ItemUseRequestedArgs> ItemUseRequested
         {
             add => itemsObserver.DoubleClickRequested += value;

@@ -39,5 +39,11 @@ namespace Infusion.LegacyApi
 
             return rawPacket;
         }
+
+        public void ResetEvents()
+        {
+            //SpeechRequested = null;
+            //CommandRequested = null;
+        }
     }
 }

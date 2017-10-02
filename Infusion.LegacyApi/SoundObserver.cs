@@ -41,5 +41,10 @@ namespace Infusion.LegacyApi
         }
 
         public event EventHandler<SoundEffectPlayedArgs> SoundEffectPlayed;
+
+        public void ResetEvents()
+        {
+            SoundEffectPlayed = null;
+        }
     }
 }

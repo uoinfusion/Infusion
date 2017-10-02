@@ -21,5 +21,10 @@ namespace Infusion.LegacyApi
         {
             QuestArrowChanged.RaiseScriptEvent(this, new QuestArrowArgs(packet.Active, packet.Location));   
         }
+
+        public void ResetEvents()
+        {
+            QuestArrowChanged = null;
+        }
     }
 }

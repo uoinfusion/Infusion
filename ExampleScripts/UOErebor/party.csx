@@ -10,12 +10,22 @@ public static class Party
     {
         statuses = new Statuses("Party");
         UO.Events.HealthUpdated += HandleHealthUpdated;
+        UO.Events.MobileEnteredView += HandleMobileEnteredView;
         statuses.MobileTargeted += (sender, id) =>
         {
             var target = UO.Mobiles[id];
             if (target != null)
                 UO.Target(target);
         };
+    }
+    
+    private static void HandleMobileEnteredView(object sender, Mobile mobile)
+    {
+        if (statuses.Contains(mobile))
+        {
+            UO.Log($"Requesting status of {mobile.Id}");
+            UO.RequestStatus(mobile);
+        }
     }
     
     private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedArgs args)

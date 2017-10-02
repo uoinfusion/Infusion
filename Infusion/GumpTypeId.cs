@@ -28,6 +28,6 @@
 
         public override int GetHashCode() => Value.GetHashCode();
 
-        public override string ToString() => Value.ToString("X8");
+        public override string ToString() => $"0x{Value:X8}";
     }
 }

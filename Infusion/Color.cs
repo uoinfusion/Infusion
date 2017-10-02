@@ -38,7 +38,7 @@
             return new Color(id);
         }
 
-        public override string ToString() => Id.ToString("X4");
+        public override string ToString() => $"0x{Id:X4}";
 
         public ushort Id { get; }
     }

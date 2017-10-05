@@ -41,13 +41,26 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
             serverPacketSubject.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
+            serverPacketSubject.Subscribe(PacketDefinitions.ClilocMessageAffix, HandleClilocMessageAffix);
             clientPacketSubject.Subscribe(PacketDefinitions.DoubleClick, HandleDoubleClick);
+        }
+
+        private void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
+        {
+            if (packet.MessageId == (MessageId)0x0007A258 || // Message "You cannot reach that."
+                packet.MessageId == (MessageId)0x0007A48C) // Message "You can't see that."
+            {
+                cannotReachEvent.Set();
+            }
         }
 
         private void HandleClilocMessage(ClilocMessagePacket packet)
         {
-            if (packet.MessageId == (MessageId) 0x0007A258) // Message "You cannot reach that."
+            if (packet.MessageId == (MessageId) 0x0007A258 || // Message "You cannot reach that."
+                packet.MessageId == (MessageId) 0x0007A48C) // Message "You can't see that."
+            {
                 cannotReachEvent.Set();
+            }
         }
 
         private void HandleDoubleClick(DoubleClickRequest request)
@@ -135,6 +148,9 @@ namespace Infusion.LegacyApi
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
         {
+            if (packet.PlayerId == legacyApi.Me.PlayerId)
+                return;
+
             if (gameObjects.TryGet(packet.PlayerId, out GameObject existingObject) &&
                 existingObject is Mobile existingMobile)
             {
@@ -178,6 +194,9 @@ namespace Infusion.LegacyApi
 
         private void HandleDeleteObjectPacket(DeleteObjectPacket packet)
         {
+            if (packet.Id == legacyApi.Me.PlayerId)
+                return;
+
             var itemId = DraggedItemId;
 
             if (itemId.HasValue && packet.Id == itemId.Value)
@@ -214,6 +233,9 @@ namespace Infusion.LegacyApi
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
         {
             gameObjects.AddItemRange(packet.Items);
+
+            if (packet.Id == legacyApi.Me.PlayerId)
+                return;
 
             if (gameObjects[packet.Id] is Mobile mobile)
                 gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction, packet.MovementType,

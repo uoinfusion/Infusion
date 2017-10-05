@@ -75,5 +75,15 @@ namespace Infusion
             return
                 $"Id: {Id}; Type: {Type}; Name: {Name}{canModifyNameText}; Location: {Location}; Color: {Color}; Orientation: {Orientation}; MovmentType: {CurrentMovementType} Notiriety: {Notoriety}";
         }
+
+        public GameObject UpdateLocation(Location3D location, Direction direction, MovementType movementType)
+        {
+            var updatedMobile = (Mobile) Duplicate();
+            updatedMobile.Location = location;
+            updatedMobile.Orientation = direction;
+            updatedMobile.CurrentMovementType = movementType;
+
+            return updatedMobile;
+        }
     }
 }

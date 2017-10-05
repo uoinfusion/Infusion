@@ -15,15 +15,17 @@ namespace Infusion.LegacyApi
         private readonly Player player;
         private readonly ILogger logger;
         private readonly Legacy legacyApi;
+        private readonly GameObjectCollection gameObjects;
         private bool discardNextClientAck;
 
-        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi)
+        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects)
         {
             this.client = client;
             this.server = server;
             this.player = player;
             this.logger = logger;
             this.legacyApi = legacyApi;
+            this.gameObjects = gameObjects;
 
             client.RegisterFilter(FilterClientPackets);
             client.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
@@ -37,6 +39,7 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.UpdateCurrentMana, HandleUpdateCurrentManaPacket);
             server.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
             server.Subscribe(PacketDefinitions.SendSkills, HandleSendSkillsPacket);
+            server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
         }
 
@@ -75,8 +78,7 @@ namespace Infusion.LegacyApi
         {
             if (packet.Values.Length == 1)
             {
-                SkillValue currentSkillValue;
-                if (player.Skills.TryGetValue(packet.Values[0].Skill, out currentSkillValue))
+                if (player.Skills.TryGetValue(packet.Values[0].Skill, out var currentSkillValue))
                 {
                     if (currentSkillValue.Value < packet.Values[0].Value)
                     {
@@ -104,6 +106,8 @@ namespace Infusion.LegacyApi
                 player.Intelligence = packet.Intelligence;
                 player.Dexterity = packet.Dexterity;
                 player.Strength = packet.Strength;
+
+                // spaghetti hack: gameObjects health is handled in ItemsObservers
             }
         }
 
@@ -129,6 +133,8 @@ namespace Infusion.LegacyApi
             {
                 player.CurrentHealth = packet.CurrentHealth;
                 player.MaxHealth = packet.MaxHealth;
+
+                // spaghetti hack: gameObjects health is handled in ItemsObservers
             }
         }
 
@@ -175,20 +181,69 @@ namespace Infusion.LegacyApi
                 player.Color = packet.Color;
                 player.BodyType = packet.BodyType;
 
+                if (gameObjects[packet.PlayerId] is Mobile mobile)
+                {
+                    gameObjects.UpdateObject(mobile.Update(packet.BodyType, packet.Location, packet.Color, packet.Direction,
+                        packet.MovementType, Notoriety.Friend));
+                }
+                else
+                {
+                    mobile = new Mobile(packet.PlayerId, packet.BodyType, packet.Location, packet.Color,
+                        packet.Direction, packet.MovementType,
+                        Notoriety.Friend);
+                    gameObjects.AddObject(mobile);
+                }
+
+
                 OnWalkRequestDequeued();
             }
         }
+
+        private void HandleDrawObjectPacket(DrawObjectPacket packet)
+        {
+            if (packet.Id == legacyApi.Me.PlayerId)
+            {
+
+
+                player.Location = packet.Location;
+                player.PredictedLocation = packet.Location;
+                player.Direction = packet.Direction;
+                player.PredictedDirection = packet.Direction;
+                player.MovementType = packet.MovementType;
+
+                player.Color = packet.Color;
+                player.BodyType = packet.Type;
+
+                player.ResetWalkRequestQueue();
+                player.CurrentSequenceKey = 0;
+                OnWalkRequestDequeued();
+
+                if (gameObjects[packet.Id] is Mobile mobile)
+                {
+                    gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction,
+                        packet.MovementType,
+                        packet.Notoriety));
+                }
+                else
+                {
+                    mobile = new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,
+                        packet.Direction, packet.MovementType,
+                        packet.Notoriety);
+                    gameObjects.AddObject(mobile);
+                }
+            }
+        }
+
 
         private void HandleCharMoveRejectionPacket(CharMoveRejectionPacket packet)
         {
             player.RejectWalkRequest(packet);
         }
 
-        public event EventHandler WalkRequestDequeued;
+        internal event EventHandler WalkRequestDequeued;
 
         private Packet? FilterServerPackets(Packet rawPacket)
         {
-            WalkRequest walkRequest;
             var discardCurrentPacket = false;
 
             if (rawPacket.Id != PacketDefinitions.CharacterMoveAck.Id)
@@ -196,7 +251,7 @@ namespace Infusion.LegacyApi
                 return rawPacket;
             }
 
-            if (player.WalkRequestQueue.TryDequeue(out walkRequest))
+            if (player.WalkRequestQueue.TryDequeue(out var walkRequest))
             {
                 try
                 {
@@ -213,7 +268,13 @@ namespace Infusion.LegacyApi
                     if (player.Direction != walkRequest.Direction)
                         player.Direction = walkRequest.Direction;
                     else
+                    {
                         player.Location = player.Location.LocationInDirection(walkRequest.Direction);
+                        if (gameObjects[player.PlayerId] is Mobile mobile)
+                        {
+                            gameObjects.UpdateObject(mobile.UpdateLocation(player.Location, player.Direction, player.MovementType));
+                        }
+                    }
 
                 }
                 finally

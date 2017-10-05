@@ -8,11 +8,15 @@ namespace Infusion.Diagnostic
     {
         private readonly Configuration configuration;
         private BinaryDiagnosticPushStream outputStream;
+        private readonly object providerLock = new object();
 
         public InfusionDiagnosticPushStreamProvider(Configuration configuration)
         {
             this.configuration = configuration;
         }
+
+        public ServerConnection ServerConnection { get; set; }
+        public UltimaClientConnection ClientConnection { get; set; }
 
         public void Dispose()
         {
@@ -21,27 +25,39 @@ namespace Infusion.Diagnostic
 
         public BinaryDiagnosticPushStream GetStream()
         {
-            if (outputStream == null && string.IsNullOrEmpty(configuration.LogPath) &&
-                !configuration.LogPacketsToFileEnabled)
+            lock (providerLock)
             {
-                return null;
-            }
-            if (outputStream != null && (string.IsNullOrEmpty(configuration.LogPath) ||
-                                         !configuration.LogPacketsToFileEnabled))
-            {
-                outputStream = null;
-                return null;
-            }
-            if (outputStream == null && !string.IsNullOrEmpty(configuration.LogPath) &&
-                configuration.LogPacketsToFileEnabled)
-            {
-                var fileName = Path.Combine(configuration.LogPath, $"{DateTime.UtcNow:yyyyMMdd-HH.mm.ss.ffff}.packets");
-                outputStream =
-                    new BinaryDiagnosticPushStream(
-                        new SynchronizedPushStream(new StreamToPushStreamAdapter(File.Create(fileName))));
-            }
+                // Packets may be interpreted differently
+                if (ServerConnection == null || ClientConnection == null ||
+                    ServerConnection.Status != ServerConnectionStatus.Game ||
+                    ClientConnection.Status != UltimaClientConnectionStatus.Game)
+                {
+                    return null;
+                }
 
-            return outputStream;
+                if (outputStream == null && string.IsNullOrEmpty(configuration.LogPath) &&
+                    !configuration.LogPacketsToFileEnabled)
+                {
+                    return null;
+                }
+                if (outputStream != null && (string.IsNullOrEmpty(configuration.LogPath) ||
+                                             !configuration.LogPacketsToFileEnabled))
+                {
+                    outputStream = null;
+                    return null;
+                }
+                if (outputStream == null && !string.IsNullOrEmpty(configuration.LogPath) &&
+                    configuration.LogPacketsToFileEnabled)
+                {
+                    var fileName = Path.Combine(configuration.LogPath,
+                        $"{DateTime.UtcNow:yyyyMMdd-HH.mm.ss.ffff}.packets");
+                    outputStream =
+                        new BinaryDiagnosticPushStream(
+                            new SynchronizedPushStream(new StreamToPushStreamAdapter(File.OpenWrite(fileName))));
+                }
+
+                return outputStream;
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Infusion.Diagnostic
                                     packetDirection = PacketDirection.ProxyClient;
                                     break;
                                 default:
-                                    throw new NotImplementedException($"Unknown binary packet direction: {binaryDirection}");
+                                    throw new NotImplementedException($"Unknown binnary packet direction: {((int)binaryDirection):X8} at position {stream.Position}");
                             }
 
                             var packet = Parsers.PacketLogParser.ParsePacket(pullStream);

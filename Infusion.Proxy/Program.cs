@@ -202,6 +202,9 @@ namespace Infusion.Proxy
                     new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)));
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
 
+            diagnosticProvider.ClientConnection = clientConnection;
+            diagnosticProvider.ServerConnection = serverConnection;
+
             Task.Run(() => ServerLoop());
 
             try

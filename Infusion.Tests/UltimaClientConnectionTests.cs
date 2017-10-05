@@ -12,7 +12,7 @@ namespace Infusion.Tests
     public class UltimaClientConnectionTests
     {
         [TestMethod]
-        public void Can_receive_tree_packets_in_one_batch()
+        public void Can_receive_three_packets_in_one_batch()
         {
             var inputStream = new TestPullStream(new List<byte[]>
             {

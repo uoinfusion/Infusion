@@ -36,20 +36,30 @@ public static class Looting
         return corpses;
     }
     
+    private static Equipment previousEquipment;
+    
     public static void RipAndLoot(Item corpse)
     {
         var handEquipment = Equip.GetHand();
+        if (handEquipment.Id != previousEquipment.Id)
+        {
+            UO.Log($"Previous equipment: {previousEquipment}");
+            UO.Log($"Current equipment: {handEquipment}");            
+            previousEquipment = handEquipment;
+        }
 
         try
         {
             Rip(corpse);
             Loot(corpse);
-            LootGround();
         }
-        finally
+        catch (Exception ex)
         {
-            Equip.Set(handEquipment);
+            UO.Log($"Cannot loot corpse: {ex.Message}");
         }
+ 
+        Equip.Set(handEquipment);
+        LootGround();
     }
     
     public static void RipAndLootNearest()
@@ -60,6 +70,12 @@ public static class Looting
         if (corpse != null)
         {
             var handEquipment = Equip.GetHand();
+            if (handEquipment.Id != previousEquipment.Id)
+            {
+                UO.Log($"Previous equipment: {previousEquipment}");
+                UO.Log($"Current equipment: {handEquipment}");            
+                previousEquipment = handEquipment;
+            }
 
             try
             {
@@ -70,9 +86,12 @@ public static class Looting
                 else
                     UO.ClientPrint($"No more corpses to loot remaining");
             }
+            catch (Exception ex)
+            {
+                UO.Log($"Cannot loot corpse: {ex.Message}");
+            }
             finally
             {
-            
                 // It seems that re-wearing an item directly
                 // after ripping a body and right before
                 // looting may crash the game client.

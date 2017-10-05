@@ -54,4 +54,6 @@ public struct Equipment
 
     public ObjectId Id { get; }
     public Layer Layer { get; }
+
+    public override string ToString() => $"{Id}, {Layer}";
 }

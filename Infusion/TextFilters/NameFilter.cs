@@ -31,7 +31,8 @@ namespace Infusion.TextFilters
                             return true;
                     }
 
-                    speechIndex++;
+                    if (text[speechIndex] == ' ')
+                        speechIndex++;
                 }
 
                 for (int i = 0; i < colonIndex; i++)

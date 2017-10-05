@@ -13,6 +13,12 @@ namespace Infusion.Tests.TextFilters
     public class NameFilterTests
     {
         [TestMethod]
+        public void Can_pass_message_starting_with_number_that_is_not_ammount()
+        {
+            new NameFilter().IsPassing("Haikonen: 6+").Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_filter_out_name_containing_space()
         {
             // Space is intentionally missing at the end of message, it seems that Sphere 0.99 trims space from the message

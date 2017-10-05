@@ -1,5 +1,11 @@
+#load "targeting.csx"
+
+using System;
+
 public static class HitPointNotifier
 {
+    public static HitPointNotificationPrinter Mode = HitPointNotificationModes.AboveAllMobiles;
+
     private static bool enabled;
 
     public static void Enable()
@@ -33,30 +39,76 @@ public static class HitPointNotifier
     public static void Toggle()
     {
         if (enabled)
+        {
             Disable();
+            UO.Log("HP notification disabled");
+        }
         else
+        {
             Enable();
+            UO.Log("HP notification enabled");
+        }
     }
 
     internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
     {
-        // Event arguments contain reference to the updated mobile, so you can
-        // have any information about the updated mobile, not only the current health
-        // (args.UpdatedMobile.CurrentHealth). Arguments contain original health value
-        // (args.OldHealth), so you can easilly calculate the delta value:
+        Mode.Print(args);
+    }
+}
+
+public static class HitPointNotificationModes
+{
+    public static HitPointNotificationPrinter AboveAllMobiles { get; }
+        = new HitPointNotificationPrinter((delta, mobile) =>
+        {
+            var currentHealthText = mobile.Id == UO.Me.PlayerId ?
+                mobile.CurrentHealth.ToString() :
+                $"{mobile.CurrentHealth} %";
+        
+            UO.ClientPrint($"{delta}/{currentHealthText}", "hpnotify",
+            mobile.Id, mobile.Type, SpeechType.Speech, Colors.Green, log: false);        
+        });
+     
+     public static HitPointNotificationPrinter OwnAndTargetAbovePlayer { get; }
+        = new HitPointNotificationPrinter((delta, mobile) =>
+        {     
+            var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
+            if (mobile.Id == Targeting.CurrentTarget)
+            {
+                if (!string.IsNullOrEmpty(mobile.Name))
+                {
+                    UO.ClientPrint($"{mobile.Name}: {deltaText}/{mobile.CurrentHealth} %",
+                        "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
+                        Colors.Green, log: false);
+                }
+                
+            }
+            else if (mobile.Id == UO.Me.PlayerId)
+            {
+                UO.ClientPrint($"{deltaText}/{mobile.CurrentHealth}",
+                    "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
+                    Colors.Red, log: false);                
+            }
+        });
+}
+
+public class HitPointNotificationPrinter
+{
+    private Action<int, Mobile> printAction;
+
+    public HitPointNotificationPrinter(Action<int, Mobile> printAction)
+    {
+        this.printAction = printAction;
+    }
+    
+    public void Print(CurrentHealthUpdatedArgs args)
+    {
+        if (args.OldHealth == 0 && args.UpdatedMobile.CurrentHealth == args.UpdatedMobile.MaxHealth)
+            return;
+    
         var delta = args.UpdatedMobile.CurrentHealth - args.OldHealth;
-
-        // NOTE: delta cannot be 0 at this point, otherwise Infusion doesn't call the event handler.
-        var color = delta > 0 ? Colors.Blue : Colors.Green;
-
-        // This defines the text that will the mobile say:
-        // $"{delta}/{args.UpdatedMobile.CurrentHealth}"
-        // For more information about string formating in C# see
-        // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/interpolated-strings
-        // Important parameter value is args.UpdatedMobile.Id it defines who says the text.
-        UO.ClientPrint($"{delta}/{args.UpdatedMobile.CurrentHealth}", "hpnotify",
-            args.UpdatedMobile.Id,
-                args.UpdatedMobile.Type, SpeechType.Speech, color, log: false);
+        
+        printAction(delta, args.UpdatedMobile);
     }
 }
 

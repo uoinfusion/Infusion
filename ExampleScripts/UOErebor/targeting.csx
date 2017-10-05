@@ -36,8 +36,8 @@ public static class Targeting
 {
     private static Stack<ObjectId> alreadyTargeted = new Stack<ObjectId>();
     private static ObjectId? selectedTarget;
-    private static ObjectId? currentTarget;
-    private static ObjectId? currentSelection;
+
+    public static ObjectId? CurrentTarget { get; private set; }
 
     public static TargetingMode Mode { get; set; } = TargetingModes.Pvm;
 
@@ -170,10 +170,10 @@ public static class Targeting
         if (target == null)
             return;
     
-        if (currentTarget != selectedTarget)
+        if (CurrentTarget != selectedTarget)
         {
             // When we are targeting a target for the first time:
-            currentTarget = selectedTarget;
+            CurrentTarget = selectedTarget;
 
             // We want to force the game client to display a status bar 
             // of the new target. Attacking the new target seems

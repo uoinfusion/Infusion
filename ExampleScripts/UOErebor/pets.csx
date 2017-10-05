@@ -2,6 +2,7 @@
 
 #load "Specs.csx"
 #load "common.csx"
+#load "RequestStatusQueue.csx"
 
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,17 @@ using Infusion.Scripts.UOErebor.Extensions.StatusBars;
 public static class Pets
 {
     private static readonly Statuses statuses;
+    private static bool enabled;
+    private static readonly RequestStatusQueue requestStatusQueue = new RequestStatusQueue();
 
     public static MobileSpec PetsSpec = new[] { Specs.NecroSummons }; 
 
+    public static IMobileLookup MyPets { get; } = new MobileLookupLinqWrapper(
+        UO.Mobiles.Matching(PetsSpec).Where(x => x.CanRename));
+
     static Pets()
     {
-        UO.Events.MobileEnteredView += HandleMobileEnteredView;
-        UO.Events.MobileLeftView += HandleMobileLeftView;
-        UO.Events.MobileDeleted += HandleMobileLeftView;
-
         statuses = new Statuses("Pets");
-        UO.Events.HealthUpdated += HandleHealthUpdated;
         statuses.MobileTargeted += (sender, id) =>
         {
             var target = UO.Mobiles[id];
@@ -31,6 +32,57 @@ public static class Pets
         };
     }
     
+    public static void Enable()
+    {
+        if (!enabled)
+        {
+            UO.Events.MobileEnteredView += HandleMobileEnteredView;
+            UO.Events.MobileLeftView += HandleMobileLeftView;
+            UO.Events.MobileDeleted += HandleMobileLeftView;
+            UO.Events.HealthUpdated += HandleHealthUpdated;
+
+            statuses.Clear();
+            enabled = true;
+
+            AddMyPets();
+            if (statuses.Count > 0)
+                statuses.Open();
+
+            requestStatusQueue.StartProcessing();
+        }
+    }
+    
+    public static void Disable()
+    {
+        if (enabled)
+        {
+            UO.Events.MobileEnteredView += HandleMobileEnteredView;
+            UO.Events.MobileLeftView += HandleMobileLeftView;
+            UO.Events.MobileDeleted += HandleMobileLeftView;
+            UO.Events.HealthUpdated += HandleHealthUpdated;
+
+            statuses.Close();
+
+            requestStatusQueue.StopProcessing();
+            
+            enabled = false;
+        }
+    }
+
+    private static void AddMyPets()
+    {
+        foreach (var potentialPet in UO.Mobiles.Matching(PetsSpec))
+        {
+            if (!potentialPet.CanRename)
+                requestStatusQueue.RequestStatus(potentialPet.Id);
+        }
+    
+        foreach (var pet in MyPets)
+        {
+            statuses.Add(pet, StatusBarType.Pet);
+        }
+    }
+
     private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
     {
         if (statuses.Contains(args.UpdatedMobile))
@@ -40,37 +92,17 @@ public static class Pets
         else if (args.UpdatedMobile.CanRename)
         {
             if (statuses.Count == 0)
-            {
-                foreach (var pet in MyPets)
-                {
-                    statuses.Add(pet, StatusBarType.Pet);
-                }
-            }
+                AddMyPets();
 
             statuses.Add(args.UpdatedMobile, StatusBarType.Pet);
         }
     }
     
-    private static Dictionary<ObjectId, DateTime> statusRequests = new Dictionary<ObjectId, DateTime>();
-   
     private static void HandleMobileEnteredView(object sender, Mobile mobile)
     {
         if (PetsSpec.Matches(mobile))
         {
-            lock (statusRequests)
-            {
-                var now = DateTime.UtcNow;
-                if (statusRequests.TryGetValue(mobile.Id, out DateTime lastRequestTime))
-                {
-                    if (now - lastRequestTime < TimeSpan.FromSeconds(1))
-                        return;
-                }
-                
-                UO.Log($"Requesting status of {mobile.Id}");
-                UO.RequestStatus(mobile);
-                
-                statusRequests[mobile.Id] = now;
-            }
+            requestStatusQueue.RequestStatus(mobile.Id);
         }
     }
     
@@ -81,12 +113,13 @@ public static class Pets
             UO.Log($"Pet left view: {mobile}");
             statuses.Remove(mobile);
         }
-    }
-    
-    public static IMobileLookup MyPets { get; } = new MobileLookupLinqWrapper(
-        UO.Mobiles.Matching(PetsSpec).Where(x => x.CanRename));
+    }    
         
     public static void Show() => statuses.Open();
 }
 
 UO.RegisterCommand("pets-show", Pets.Show);
+UO.RegisterCommand("pets-enable", Pets.Enable);
+UO.RegisterCommand("pets-disable", Pets.Disable);
+
+

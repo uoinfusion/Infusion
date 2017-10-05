@@ -1,16 +1,19 @@
 #r "Infusion.Scripts.UOErebor.Extensions.dll"
+#load "RequestStatusQueue.csx"
 
+using System;
 using Infusion.Scripts.UOErebor.Extensions.StatusBars;
 
 public static class Party
 {
     private static readonly Statuses statuses;
+    private static readonly RequestStatusQueue requestStatusQueue =
+        new RequestStatusQueue();
 
     static Party()
     {
+        requestStatusQueue.OneRequestInterval = TimeSpan.FromMilliseconds(500);
         statuses = new Statuses("Party");
-        UO.Events.HealthUpdated += HandleHealthUpdated;
-        UO.Events.MobileEnteredView += HandleMobileEnteredView;
         statuses.MobileTargeted += (sender, id) =>
         {
             var target = UO.Mobiles[id];
@@ -19,12 +22,28 @@ public static class Party
         };
     }
     
+    public static void Enable()
+    {
+        if (statuses.Count > 0)
+            statuses.Open();
+        UO.Events.HealthUpdated += HandleHealthUpdated;
+        UO.Events.MobileEnteredView += HandleMobileEnteredView;
+        requestStatusQueue.StartProcessing();
+    }
+    
+    public static void Disable()
+    {
+        statuses.Close();
+        UO.Events.HealthUpdated -= HandleHealthUpdated;
+        UO.Events.MobileEnteredView -= HandleMobileEnteredView;
+        requestStatusQueue.StopProcessing();
+    }
+    
     private static void HandleMobileEnteredView(object sender, Mobile mobile)
     {
         if (statuses.Contains(mobile))
         {
-            UO.Log($"Requesting status of {mobile.Id}");
-            UO.RequestStatus(mobile);
+            requestStatusQueue.RequestStatus(mobile.Id);
         }
     }
     
@@ -64,6 +83,8 @@ public static class Party
     }
 }
 
+UO.RegisterCommand("party-enable", Party.Enable);
+UO.RegisterCommand("party-disable", Party.Disable);
 UO.RegisterCommand("party-add", Party.Add);
 UO.RegisterCommand("party-remove", Party.Remove);
 UO.RegisterCommand("party-show", Party.ShowStatuses);

@@ -32,6 +32,14 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             MobileTargeted?.Invoke(this, id);
         }
 
+        public void Clear()
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                StatusBars.Clear();
+            }));
+        }
+
         public void Open()
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
@@ -43,6 +51,14 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
                     statusesWindow = new StatusesWindow(this);
 
                 statusesWindow.Show();
+            }));
+        }
+
+        public void Close()
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                statusesWindow?.Close();
             }));
         }
 

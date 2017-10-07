@@ -34,13 +34,14 @@ for you.
 We develop, test and regularly use Infusion in game on highly customized shard [UOErebor](http://uoerebor.cz/) (Czech only). Which means that Infusion is pretty
 stable on this shard and there is a lot of example scripts you can immediately start using:
 
+- Display status bar of your friends in an external window. These status bars never disappear so you always see how many HP your friends have.
 - Targeting red karma only, skipping own summon/pets.
+- Damage notification.
 - Open bank using banker or house menu.
 - Using travel stones.
-- Damage notification.
 - Filtering sounds, overall light and weather effect.
 - Looting.
-- Chasing and shaving sheeps.
+- Chasing and shaving sheep.
 - Easier item manipulation (moving food/regs only, moving the same type).
 - Predefined names for many item types/color combinations (spell scrolls, food, regs, tools, resources, doors and many others).
 

@@ -1,6 +1,6 @@
 // These scripts are specific for UOErebor shard (http://uoerebor.cz/)
-// and most likely they will not work at you shard. But you can use them
-// as a tutorial how to write your very own scripts.
+// and most likely they will not work on other shards. In any case you can
+// use them as a tutorial how to write your very own scripts.
 
 // You don't have to load all these scripts for all characters. 
 // You can safely remove load of any script file you don't want to
@@ -10,6 +10,7 @@
 #load "UOErebor\banking.csx"
 #load "UOErebor\common.csx"
 #load "UOErebor\cooking.csx"
+#load "UOErebor\combattext.csx"
 #load "UOErebor\craft.csx"
 #load "UOErebor\doors.csx"
 #load "UOErebor\eating.csx"
@@ -21,8 +22,12 @@
 #load "UOErebor\looting.csx"
 #load "UOErebor\magery.csx"
 #load "UOErebor\meditation.csx"
+#load "UOErebor\party.csx"
+#load "UOErebor\pets.csx"
+#load "UOErebor\questarrow.csx"
 #load "UOErebor\selling.csx"
 #load "UOErebor\sheepshaving.csx"
+#load "UOErebor\sounds.csx"
 #load "UOErebor\tailoring.csx"
 #load "UOErebor\targeting.csx"
 #load "UOErebor\travelstone.csx"
@@ -37,7 +42,7 @@
 
 // Feel free to remove all these comments and following section
 // to make the file more readable and less chatty at startup.
-// It is here just as an introduction to Infusion scripting.
+// It is here just as a brief introduction to Infusion.
 UO.Log("\nWrite ,help and press enter if you want get information about all available commands.\n" +
 "Write ,edit and press enter to open the built-in script editor.\n\n" +
 "Your character says text that you enter on command line and that doesn't start with a comma.\n\n" +
@@ -50,14 +55,6 @@ UO.Log("\nWrite ,help and press enter if you want get information about all avai
     "https://github.com/uoinfusion/Infusion/wiki."
 );
 
-
-// Game client ignores light level changes, so you are not bothered by dark in the night.
-// You can set this to false if you want to enjoy darkness during night.
-UO.Configuration.FilterLightEnabled = true;
-
-// Game client ignores weather changes, so you are not bothered by rain or snow animation.
-// You can set this to true if you want to enjoy rain and snow.
-UO.Configuration.FilterWeatherEnabled = true;
 
 // Id of container you want to use as loot target.
 // If there is no container with such id in the game then
@@ -76,7 +73,6 @@ Looting.IgnoredLoot = Looting.UselessLoot.Including(
 // Looting.IgnoredLoot = new[] { Specs.Arrow, Specs.TightBoots };
 
 
-
 // You can use ,target-next ,target-prev and ,target-last command to use
 // smarter targeting.
 // Targeting script may turn on war mode. If you play characters like
@@ -86,10 +82,22 @@ Targeting.AutoTurnOffWarMode = false;
 // But if you play characters like mage, necro or cleric,
 // you don't want to have war mode on - so it would be nice to turn
 // war mode off after targeting a mobile.
-// You may want to uncomment the next line >>>>
+// You may want to uncomment the next line:
 // Targeting.AutoTurnOffWarMode = true;
 
+// Sets targeting mode to Pvm, which means that you target
+// monsters and player with red karma.
+Targeting.Mode = TargetingModes.Pvm;
 
+// If you want play Pvp you don't care about monsters. You
+// can uncomment next line (or invoke ,target-pvp command) and you target
+// players with red karma, no monsters:
+// Targeting.Mode = TargetingModes.Pvp;
+
+// If you want train Pvp with your friends, you want target all players
+// event when they have good karma. If you uncomment next line (or invoke ,target-pvpfriend)
+// you target players regardless their karma (no monsters):
+// Targeting.Mode = TargetingModes.PvpFriend;
 
 
 // Enable health (hit point) change notification by default. It means
@@ -100,10 +108,10 @@ HitPointNotifier.Enable();
 // or change it to:
 // HitPointNotifier.Disable();
 
+// This mode notifies about hit point changes of all mobiles on the screen.
+// It displays the notification above specific mobile head.
+HitPointNotifier.Mode = HitPointNotificationModes.AboveAllMobiles;
 
-
-
-// TODO: which scripts are using light source? (currently none of public example scripts)
 // You can choose a light source. If you call Light.Check() and
 // you need create or renew light, then script makes light using
 // PreferredLightSource.
@@ -113,4 +121,40 @@ Light.PreferredLightSource = LightSources.Torch; // uses torch to make light
 //Light.PreferredLightSource = LightSources.Potion; // uses nightsight potion to make light
 
 
+// Start quest arrow tracking. The script prints a message when
+// a new quest arrow appears.
+// You can call QuestArrow.Info() (or ,questarrow-info) to get information about
+// an active quest arrow.
+QuestArrow.Start();
+// If you want to stop quest arrow tracking, then you can remove previous line
+// or uncomment the following line:
+// QuestArrow.Stop();
 
+
+// This script redirects messages from journal over your head, so you can
+// notice them more easilly.
+CombatText.Redirections = new[]
+{
+    new CombatTextRedirection("Kouzlo se nezdarilo.", Colors.Blue),
+    new CombatTextRedirection("Nevidis na cil.", Colors.Blue),
+};
+CombatText.Enable();
+
+
+// Game client ignores light level changes, so you are not bothered by dark in the night.
+// You can set this to false if you want to enjoy darkness during night.
+UO.Configuration.FilterLightEnabled = true;
+
+// Game client ignores weather changes, so you are not bothered by rain or snow animation.
+// You can set this to true if you want to enjoy rain and snow.
+UO.Configuration.FilterWeatherEnabled = true;
+
+// You can select sounds that you don't want to hear. For example you can
+// filter out sounds of your backyard (dog barking and horse neighing):
+UO.Configuration.FilteredSounds = new[]
+{
+    Sounds.Horse1,Sounds.Horse2, Sounds.Horse3, Sounds.Horse4, Sounds.Horse5,
+    Sounds.Dog1, Sounds.Dog2, Sounds.Dog3, Sounds.Dog4, Sounds.Dog5    
+};
+// Uncoment following line if you want to hear all sounds:
+// UO.Configuration.FilteredSounds = null;

@@ -1,10 +1,11 @@
 #load "targeting.csx"
 
 using System;
+using Infusion;
 
 public static class HitPointNotifier
 {
-    public static HitPointNotificationPrinter Mode = HitPointNotificationModes.AboveAllMobiles;
+    public static IPrintHitPointNotification Mode = HitPointNotificationModes.AboveAllMobiles;
 
     private static bool enabled;
 
@@ -52,64 +53,92 @@ public static class HitPointNotifier
 
     internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
     {
-        Mode.Print(args);
+        if (args.OldHealth == 0 && args.UpdatedMobile.CurrentHealth == args.UpdatedMobile.MaxHealth)
+           return;
+    
+        var delta = args.UpdatedMobile.CurrentHealth - args.OldHealth;
+
+        Mode.Print(delta, args.UpdatedMobile);
     }
 }
+
+public interface IPrintHitPointNotification
+{
+    void Print(int delta, Mobile updatedMobile);
+}
+
+public class OwnAndTargetAbovePlayerNotificationPrinter : IPrintHitPointNotification
+{
+    public Color MeColor { get; set; } = Colors.Green;
+    public Color OthersColor { get; set; } = Colors.Red;
+
+    public void Print(int delta, Mobile mobile)
+    {
+        var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
+        if (mobile.Id == Targeting.CurrentTarget)
+        {
+            if (!string.IsNullOrEmpty(mobile.Name))
+            {
+                UO.ClientPrint($"{mobile.Name}: {deltaText}/{mobile.CurrentHealth} %",
+                    "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
+                    OthersColor, log: false);
+            }
+            
+        }
+        else if (mobile.Id == UO.Me.PlayerId)
+        {
+            UO.ClientPrint($"{deltaText}/{mobile.CurrentHealth}",
+                "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
+                MeColor, log: false);                
+        }
+    }
+}
+
+public class AboveAllMobilesNotificationPrinter : IPrintHitPointNotification
+{
+    public Color EnemyColor { get; set; } = Colors.Red;
+    public Color FriendColor { get; set; } = Colors.LightBlue;
+    public Color MyColor { get; set; } = Colors.Green;
+    public Color PetsColor { get; set; } = Colors.Green;
+
+    public void Print(int delta, Mobile mobile)
+    {
+        Color textColor;
+        
+        if (mobile.Id == UO.Me.PlayerId)
+        {
+            textColor = MyColor;
+        }
+        else if (mobile.CanRename && Pets.MyPets.Contains(mobile.Id))
+        {
+            textColor = PetsColor;
+        }
+        else if (mobile.Notoriety == Notoriety.Friend)
+        {
+            textColor = FriendColor;
+        }
+        else
+        {
+            textColor = EnemyColor;
+        }
+        
+    
+        var currentHealthText = mobile.Id == UO.Me.PlayerId ?
+            mobile.CurrentHealth.ToString() :
+            $"{mobile.CurrentHealth} %";
+    
+        UO.ClientPrint($"{delta}/{currentHealthText}", "hpnotify",
+        mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: false);        
+    }
+}
+
 
 public static class HitPointNotificationModes
 {
-    public static HitPointNotificationPrinter AboveAllMobiles { get; }
-        = new HitPointNotificationPrinter((delta, mobile) =>
-        {
-            var currentHealthText = mobile.Id == UO.Me.PlayerId ?
-                mobile.CurrentHealth.ToString() :
-                $"{mobile.CurrentHealth} %";
-        
-            UO.ClientPrint($"{delta}/{currentHealthText}", "hpnotify",
-            mobile.Id, mobile.Type, SpeechType.Speech, Colors.Green, log: false);        
-        });
-     
-     public static HitPointNotificationPrinter OwnAndTargetAbovePlayer { get; }
-        = new HitPointNotificationPrinter((delta, mobile) =>
-        {     
-            var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
-            if (mobile.Id == Targeting.CurrentTarget)
-            {
-                if (!string.IsNullOrEmpty(mobile.Name))
-                {
-                    UO.ClientPrint($"{mobile.Name}: {deltaText}/{mobile.CurrentHealth} %",
-                        "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
-                        Colors.Green, log: false);
-                }
-                
-            }
-            else if (mobile.Id == UO.Me.PlayerId)
-            {
-                UO.ClientPrint($"{deltaText}/{mobile.CurrentHealth}",
-                    "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
-                    Colors.Red, log: false);                
-            }
-        });
-}
-
-public class HitPointNotificationPrinter
-{
-    private Action<int, Mobile> printAction;
-
-    public HitPointNotificationPrinter(Action<int, Mobile> printAction)
-    {
-        this.printAction = printAction;
-    }
-    
-    public void Print(CurrentHealthUpdatedArgs args)
-    {
-        if (args.OldHealth == 0 && args.UpdatedMobile.CurrentHealth == args.UpdatedMobile.MaxHealth)
-            return;
-    
-        var delta = args.UpdatedMobile.CurrentHealth - args.OldHealth;
-        
-        printAction(delta, args.UpdatedMobile);
-    }
+    public static AboveAllMobilesNotificationPrinter AboveAllMobiles { get; } =
+        new AboveAllMobilesNotificationPrinter();
+    public static OwnAndTargetAbovePlayerNotificationPrinter OwnAndTargetAbovePlayer { get; } =
+        new OwnAndTargetAbovePlayerNotificationPrinter();
 }
 
 UO.RegisterCommand("hpnotify", HitPointNotifier.Toggle);

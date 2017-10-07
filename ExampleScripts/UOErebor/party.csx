@@ -20,25 +20,13 @@ public static class Party
             if (target != null)
                 UO.Target(target);
         };
-    }
-    
-    public static void Enable()
-    {
-        if (statuses.Count > 0)
-            statuses.Open();
+
         UO.Events.HealthUpdated += HandleHealthUpdated;
         UO.Events.MobileEnteredView += HandleMobileEnteredView;
+
         requestStatusQueue.StartProcessing();
     }
-    
-    public static void Disable()
-    {
-        statuses.Close();
-        UO.Events.HealthUpdated -= HandleHealthUpdated;
-        UO.Events.MobileEnteredView -= HandleMobileEnteredView;
-        requestStatusQueue.StopProcessing();
-    }
-    
+        
     private static void HandleMobileEnteredView(object sender, Mobile mobile)
     {
         if (statuses.Contains(mobile))
@@ -83,8 +71,6 @@ public static class Party
     }
 }
 
-UO.RegisterCommand("party-enable", Party.Enable);
-UO.RegisterCommand("party-disable", Party.Disable);
 UO.RegisterCommand("party-add", Party.Add);
 UO.RegisterCommand("party-remove", Party.Remove);
 UO.RegisterCommand("party-show", Party.ShowStatuses);

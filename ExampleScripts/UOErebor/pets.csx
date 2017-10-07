@@ -30,25 +30,25 @@ public static class Pets
             if (target != null)
                 UO.Target(target);
         };
+        
+        UO.Events.MobileEnteredView += HandleMobileEnteredView;
+        UO.Events.MobileLeftView += HandleMobileLeftView;
+        UO.Events.MobileDeleted += HandleMobileLeftView;
+        UO.Events.HealthUpdated += HandleHealthUpdated;
+
+        requestStatusQueue.StartProcessing();
     }
     
     public static void Enable()
     {
         if (!enabled)
         {
-            UO.Events.MobileEnteredView += HandleMobileEnteredView;
-            UO.Events.MobileLeftView += HandleMobileLeftView;
-            UO.Events.MobileDeleted += HandleMobileLeftView;
-            UO.Events.HealthUpdated += HandleHealthUpdated;
-
             statuses.Clear();
             enabled = true;
 
             AddMyPets();
             if (statuses.Count > 0)
                 statuses.Open();
-
-            requestStatusQueue.StartProcessing();
         }
     }
     
@@ -56,15 +56,7 @@ public static class Pets
     {
         if (enabled)
         {
-            UO.Events.MobileEnteredView += HandleMobileEnteredView;
-            UO.Events.MobileLeftView += HandleMobileLeftView;
-            UO.Events.MobileDeleted += HandleMobileLeftView;
-            UO.Events.HealthUpdated += HandleHealthUpdated;
-
             statuses.Close();
-
-            requestStatusQueue.StopProcessing();
-            
             enabled = false;
         }
     }
@@ -85,16 +77,19 @@ public static class Pets
 
     private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
     {
-        if (statuses.Contains(args.UpdatedMobile))
+        if (enabled)
         {
-            statuses.Update(args.UpdatedMobile);
-        }
-        else if (args.UpdatedMobile.CanRename)
-        {
-            if (statuses.Count == 0)
-                AddMyPets();
-
-            statuses.Add(args.UpdatedMobile, StatusBarType.Pet);
+            if (statuses.Contains(args.UpdatedMobile))
+            {
+                statuses.Update(args.UpdatedMobile);
+            }
+            else if (args.UpdatedMobile.CanRename)
+            {
+                if (statuses.Count == 0)
+                    AddMyPets();
+    
+                statuses.Add(args.UpdatedMobile, StatusBarType.Pet);
+            }
         }
     }
     
@@ -108,10 +103,13 @@ public static class Pets
     
     private static void HandleMobileLeftView(object sender, Mobile mobile)
     {
-        if (PetsSpec.Matches(mobile) && statuses.Contains(mobile))
+        if (enabled)
         {
-            UO.Log($"Pet left view: {mobile}");
-            statuses.Remove(mobile);
+            if (PetsSpec.Matches(mobile) && statuses.Contains(mobile))
+            {
+                UO.Log($"Pet left view: {mobile}");
+                statuses.Remove(mobile);
+            }
         }
     }    
         

@@ -16,6 +16,8 @@ public static class Meditation
     
     public static void Meditate()
     {
+        UO.WarModeOff();
+
         UO.Log($"Meditating to maximum mana {UO.Me.MaxMana}, current mana is {UO.Me.CurrentMana}");
         while (UO.Me.CurrentMana < UO.Me.MaxMana)
         {

@@ -81,10 +81,17 @@ namespace Infusion.Proxy
             commandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
             commandHandler.RegisterCommand(new Command("list", ListRunningCommands,
                 "Lists running commands"));
+            commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, "Shows proxy latency."));
 
             var legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
             legacyApi.Events.CommandRequested += (sender, e) => commandRequestedHandler(e);
             UO.Initialize(legacyApi);
+        }
+
+        private static void PrintProxyLatency()
+        {
+            Console.Info($"Client latency:\n{clientProxyLatencyMeter}");
+            Console.Info($"Server latency:\n{serverProxyLatencyMeter}");
         }
 
 
@@ -282,27 +289,29 @@ namespace Infusion.Proxy
 
         private static void ServerConnectionOnPacketReceived(object sender, Packet rawPacket)
         {
-            try
-            {
-                var handledPacket = serverPacketHandler.HandlePacket(rawPacket);
-                if (!handledPacket.HasValue)
-                    return;
+            Packet? handledPacket = null;
 
-                rawPacket = handledPacket.Value;
-            }
-            catch (PacketMaterializationException ex)
+            serverProxyLatencyMeter.Measure(rawPacket, () =>
             {
-                // just log exception and continue, do not interrupt proxy
-                Console.Error(ex.ToString());
-                DumpPacketLog();
-            }
-            catch (Exception ex)
-            {
-                // just log exception and continue, do not interrupt proxy
-                Console.Error(ex.ToString());
-            }
+                try
+                {
+                    handledPacket = serverPacketHandler.HandlePacket(rawPacket);
+                }
+                catch (PacketMaterializationException ex)
+                {
+                    // just log exception and continue, do not interrupt proxy
+                    Console.Error(ex.ToString());
+                    DumpPacketLog();
+                }
+                catch (Exception ex)
+                {
+                    // just log exception and continue, do not interrupt proxy
+                    Console.Error(ex.ToString());
+                }
+            });
 
-            SendToClient(rawPacket);
+            if (handledPacket != null)
+                SendToClient(handledPacket.Value);
         }
 
         private static void ServerLoop()
@@ -379,27 +388,32 @@ namespace Infusion.Proxy
             }
         }
 
+        private static readonly LatencyMeter clientProxyLatencyMeter = new LatencyMeter();
+        private static readonly LatencyMeter serverProxyLatencyMeter = new LatencyMeter();
+
         private static void ClientConnectionOnPacketReceived(object sender, Packet rawPacket)
         {
-            try
-            {
-                var handledPacket = clientPacketHandler.HandlePacket(rawPacket);
-                if (!handledPacket.HasValue)
-                    return;
+            Packet? handledPacket = null;
 
-                rawPacket = handledPacket.Value;
-            }
-            catch (PacketMaterializationException ex)
+            clientProxyLatencyMeter.Measure(rawPacket, () =>
             {
-                Console.Error(ex.ToString());
-                DumpPacketLog();
-            }
-            catch (Exception ex)
-            {
-                Print(ex.ToString());
-            }
+                try
+                {
+                    handledPacket = clientPacketHandler.HandlePacket(rawPacket);
+                }
+                catch (PacketMaterializationException ex)
+                {
+                    Console.Error(ex.ToString());
+                    DumpPacketLog();
+                }
+                catch (Exception ex)
+                {
+                    Print(ex.ToString());
+                }
+            });
 
-            SendToServer(rawPacket);
+            if (handledPacket != null)
+                SendToServer(handledPacket.Value);
         }
     }
 }

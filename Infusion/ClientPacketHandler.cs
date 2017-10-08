@@ -47,6 +47,8 @@ namespace Infusion
                 packetHandler.Publish<GumpMenuSelectionRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.DoubleClick.Id)
                 packetHandler.Publish<DoubleClickRequest>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.RequestSkills.Id)
+                packetHandler.Publish<SkillRequest>(rawPacket);
 
             return rawPacket;
         }

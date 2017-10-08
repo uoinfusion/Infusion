@@ -16,9 +16,10 @@ namespace Infusion.LegacyApi
         private readonly ILogger logger;
         private readonly Legacy legacyApi;
         private readonly GameObjectCollection gameObjects;
+        private readonly LegacyEvents legacyEvents;
         private bool discardNextClientAck;
 
-        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects)
+        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects, LegacyEvents legacyEvents)
         {
             this.client = client;
             this.server = server;
@@ -26,6 +27,7 @@ namespace Infusion.LegacyApi
             this.logger = logger;
             this.legacyApi = legacyApi;
             this.gameObjects = gameObjects;
+            this.legacyEvents = legacyEvents;
 
             client.RegisterFilter(FilterClientPackets);
             client.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
@@ -41,6 +43,14 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.SendSkills, HandleSendSkillsPacket);
             server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
+
+            client.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
+        }
+
+        private void HandleRequestSkills(SkillRequest packet)
+        {
+            if (packet.Skill.HasValue)
+                legacyEvents.OnSkillRequested(packet.Skill.Value);
         }
 
         private ObjectId acceptedAttackTargedId;

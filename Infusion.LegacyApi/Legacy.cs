@@ -43,8 +43,6 @@ namespace Infusion.LegacyApi
             journalSource = new JournalSource();
             Journal = new GameJournal(journalSource, this);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
-            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects);
-            playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
             targeting = new Targeting(ultimaServer, ultimaClient, this);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
@@ -55,6 +53,8 @@ namespace Infusion.LegacyApi
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, logger);
 
             Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, questArrowObserver, speechRequestObserver);
+            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, Events);
+            playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
 
             this.logger = logger;
             Server = ultimaServer;
@@ -510,6 +510,7 @@ namespace Infusion.LegacyApi
             journalSource.NotifyLastAction();
 
             Server.UseSkill(skill);
+            Events.OnSkillRequested(skill);
         }
 
         public void OpenDoor()

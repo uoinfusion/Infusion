@@ -4,31 +4,31 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    internal sealed class SkillRequest
+    internal sealed class SkillRequest : MaterializedPacket
     {
         private static readonly Dictionary<Skill, string> skills = new Dictionary<Skill, string>
         {
-            {Skill.Anatomy, "1 0"},
-            {Skill.AnimalLore, "2 0"},
-            {Skill.ItemIdentification, "3 0"},
-            {Skill.ArmsLore, "4 0"},
-            {Skill.Begging, "6 0"},
-            {Skill.Peacemaking, "9 0"},
-            {Skill.Cartography, "12 0"},
-            {Skill.DetectingHidden, "14 0"},
-            {Skill.DiscordanceEnticement, "15 0"},
-            {Skill.EvaluateIntelligence, "16 0"},
-            {Skill.ForensicEvaluation, "19 0"},
-            {Skill.Hiding, "21 0"},
-            {Skill.Provocation, "22 0"},
-            {Skill.Inscription, "23 0"},
-            {Skill.Poisoning, "30 0"},
-            {Skill.SpiritSpeak, "32 0"},
-            {Skill.Stealing, "33 0"},
-            {Skill.AnimalTaming, "35 0"},
-            {Skill.TasteIdentification, "36 0"},
-            {Skill.Tracking, "38 0"},
-            {Skill.Meditation, "46 0"}
+            {Infusion.Skill.Anatomy, "1 0"},
+            {Infusion.Skill.AnimalLore, "2 0"},
+            {Infusion.Skill.ItemIdentification, "3 0"},
+            {Infusion.Skill.ArmsLore, "4 0"},
+            {Infusion.Skill.Begging, "6 0"},
+            {Infusion.Skill.Peacemaking, "9 0"},
+            {Infusion.Skill.Cartography, "12 0"},
+            {Infusion.Skill.DetectingHidden, "14 0"},
+            {Infusion.Skill.DiscordanceEnticement, "15 0"},
+            {Infusion.Skill.EvaluateIntelligence, "16 0"},
+            {Infusion.Skill.ForensicEvaluation, "19 0"},
+            {Infusion.Skill.Hiding, "21 0"},
+            {Infusion.Skill.Provocation, "22 0"},
+            {Infusion.Skill.Inscription, "23 0"},
+            {Infusion.Skill.Poisoning, "30 0"},
+            {Infusion.Skill.SpiritSpeak, "32 0"},
+            {Infusion.Skill.Stealing, "33 0"},
+            {Infusion.Skill.AnimalTaming, "35 0"},
+            {Infusion.Skill.TasteIdentification, "36 0"},
+            {Infusion.Skill.Tracking, "38 0"},
+            {Infusion.Skill.Meditation, "46 0"}
         };
 
         private static readonly Dictionary<Spell, string> spells = new Dictionary<Spell, string>
@@ -112,13 +112,15 @@ namespace Infusion.Packets.Client
             else
                 writer.WriteString(action);
 
-            RawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
+            rawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
         }
 
         public SkillRequest(Skill skill)
         {
             if (!skills.TryGetValue(skill, out string skillString))
                 throw new InvalidOperationException($"Cannot request {skill}");
+
+            Skill = skill;
 
             var packetLength = (ushort) (5 + skillString.Length);
             var payload = new byte[packetLength];
@@ -130,7 +132,13 @@ namespace Infusion.Packets.Client
             writer.WriteString(skillString);
             writer.WriteByte(0x00);
 
-            RawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
+            rawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
+        }
+
+        private Packet rawPacket;
+
+        public SkillRequest()
+        {
         }
 
         public SkillRequest(Spell spell)
@@ -147,9 +155,38 @@ namespace Infusion.Packets.Client
             writer.WriteString(spellString);
             writer.WriteByte(0x00);
 
-            RawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
+            rawPacket = new Packet(PacketDefinitions.RequestSkills.Id, payload);
         }
 
-        public Packet RawPacket { get; }
+        public override void Deserialize(Packet rawPacket)
+        {
+            this.rawPacket = rawPacket;
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+
+            reader.Skip(3);
+            byte type = reader.ReadByte();
+
+            if (type == 0x24)
+            {
+                string skillText = reader.ReadNullTerminatedString();
+
+                bool skillFound = false;
+                foreach (var pair in skills)
+                {
+                    if (skillText.Equals(pair.Value))
+                    {
+                        Skill = pair.Key;
+                        skillFound = true;
+                        break;
+                    }
+                }
+                if (!skillFound)
+                    throw new NotImplementedException($"Unknown skill text: {skillText ?? "null"}");
+            }
+        }
+
+        public Skill? Skill { get; private set; }
+
+        public override Packet RawPacket => rawPacket;
     }
 }

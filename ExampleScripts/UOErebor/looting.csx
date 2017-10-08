@@ -22,6 +22,7 @@ public static class Looting
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec OnGroundLoot { get; set; } = new[] { Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt };
     public static ObjectId? LootContainerId { get; set; }
+    public static ItemSpec KnivesSpec { get; set; } = Specs.Knives;
     
     public static IgnoredItems ignoredItems = new IgnoredItems();
 
@@ -36,17 +37,28 @@ public static class Looting
         return corpses;
     }
     
-    private static Equipment previousEquipment;
+    private static Equipment? previousEquipment;
     
     public static void RipAndLoot(Item corpse)
     {
         var handEquipment = Equip.GetHand();
-        if (handEquipment.Id != previousEquipment.Id)
+        var handEquipmentItem = UO.Items[handEquipment.Id];
+        if (handEquipmentItem != null)
         {
-            UO.Log($"Previous equipment: {previousEquipment}");
-            UO.Log($"Current equipment: {handEquipment}");            
-            previousEquipment = handEquipment;
+            if (!KnivesSpec.Matches(handEquipmentItem))
+            {
+                if (!previousEquipment.HasValue || handEquipment.Id != previousEquipment.Value.Id)
+                {
+                    UO.Log($"Previous equipment: {previousEquipment?.ToString() ?? "null"}");
+                    UO.Log($"Current equipment: {handEquipment}");            
+                    previousEquipment = handEquipment;
+                }
+            }
+            else
+                UO.Log("Holding knife, will not requip");
         }
+        else
+            UO.Log("Cannot find equipment item.");
 
         try
         {
@@ -58,7 +70,8 @@ public static class Looting
             UO.Log($"Cannot loot corpse: {ex.Message}");
         }
  
-        Equip.Set(handEquipment);
+        if (previousEquipment.HasValue)
+            Equip.Set(previousEquipment.Value);
         LootGround();
     }
     
@@ -70,12 +83,23 @@ public static class Looting
         if (corpse != null)
         {
             var handEquipment = Equip.GetHand();
-            if (handEquipment.Id != previousEquipment.Id)
+            var handEquipmentItem = UO.Items[handEquipment.Id];
+            if (handEquipmentItem != null)
             {
-                UO.Log($"Previous equipment: {previousEquipment}");
-                UO.Log($"Current equipment: {handEquipment}");            
-                previousEquipment = handEquipment;
+                if (!KnivesSpec.Matches(handEquipmentItem))
+                {
+                    if (!previousEquipment.HasValue || handEquipment.Id != previousEquipment.Value.Id)
+                    {
+                        UO.Log($"Previous equipment: {previousEquipment?.ToString() ?? "null"}");
+                        UO.Log($"Current equipment: {handEquipment}");            
+                        previousEquipment = handEquipment;
+                    }
+                }
+                else
+                    UO.Log("Holding knife, will not requip");
             }
+            else
+                UO.Log("Cannot find equipment item.");
 
             try
             {
@@ -95,7 +119,8 @@ public static class Looting
                 // It seems that re-wearing an item directly
                 // after ripping a body and right before
                 // looting may crash the game client.
-                Equip.Set(handEquipment);
+                if (previousEquipment.HasValue)
+                    Equip.Set(previousEquipment.Value);
             }
         }
         else
@@ -228,7 +253,11 @@ public static class Looting
     public static bool Rip(Item container)
     {
         UO.ClientPrint("Ripping");
-        UO.Use(Specs.Knives);
+        if (!UO.TryUse(KnivesSpec))
+        {
+            UO.Alert("Cannot find any knife");
+            return false;
+        }
 
         UO.WaitForTarget();
         UO.Target(container);

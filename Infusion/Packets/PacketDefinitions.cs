@@ -41,8 +41,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition SingleClick = new PacketDefinition(0x09,
             new StaticPacketLength(5), "SingleClick");
 
-        public static readonly PacketDefinition RequestSkills = new PacketDefinition(0x12,
-            new VariablePacketLength(), "RequestSkills");
+        public static readonly PacketDefinition<SkillRequest> RequestSkills = new PacketDefinition<SkillRequest>(0x12,
+            new VariablePacketLength(), "RequestSkills", packet => new SkillRequest());
 
         public static readonly PacketDefinition DropWearItem = new PacketDefinition(0x13,
             new StaticPacketLength(10), "DropWearItem");

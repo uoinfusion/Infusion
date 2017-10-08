@@ -85,6 +85,13 @@ namespace Infusion.LegacyApi
             remove => soundObserver.SoundEffectPlayed -= value;
         }
 
+        public event EventHandler<Skill> SkillRequested;
+
+        internal void OnSkillRequested(Skill skill)
+        {
+            SkillRequested?.Invoke(this, skill);
+        }
+
         internal void ResetEvents()
         {
             itemsObserver.ResetEvents();

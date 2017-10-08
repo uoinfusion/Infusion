@@ -1,3 +1,5 @@
+#load "timers.csx"
+
 using System;
 using System.Linq;
 

@@ -11,6 +11,7 @@
 #load "UOErebor\common.csx"
 #load "UOErebor\cooking.csx"
 #load "UOErebor\combattext.csx"
+#load "UOErebor\countdowns.csx"
 #load "UOErebor\craft.csx"
 #load "UOErebor\doors.csx"
 #load "UOErebor\eating.csx"
@@ -34,6 +35,8 @@
 #load "UOErebor\walking.csx"
 #load "UOErebor\watchdog.csx"
 #load "UOErebor\tracker.csx"
+
+using System;
 
 // You can duplicate this file to have a specific configuration
 // for each character.
@@ -111,6 +114,21 @@ HitPointNotifier.Enable();
 // This mode notifies about hit point changes of all mobiles on the screen.
 // It displays the notification above specific mobile head.
 HitPointNotifier.Mode = HitPointNotificationModes.AboveAllMobiles;
+
+// You can configure color of hit point change notification text:
+HitPointNotificationModes.AboveAllMobiles.EnemyColor = Colors.Red;
+HitPointNotificationModes.AboveAllMobiles.FriendColor = Colors.LightBlue;
+HitPointNotificationModes.AboveAllMobiles.PetsColor = Colors.Green;
+HitPointNotificationModes.AboveAllMobiles.MyColor = Colors.Green;
+
+
+// Spell countdowns shows when a spell cast will be finished.
+Countdowns.AddSpellCountdown("Beleg Ruin Kel", TimeSpan.FromMilliseconds(2500), Colors.Purple);
+// Skill use countdowns shows when a skill use attempt will be finished.
+Countdowns.AddSkillCountdown(Skill.Hiding, TimeSpan.FromMilliseconds(2500), Colors.Purple);
+// You have to enable countdowns before script displays anything.
+Countdowns.Enable();
+
 
 // You can choose a light source. If you call Light.Check() and
 // you need create or renew light, then script makes light using

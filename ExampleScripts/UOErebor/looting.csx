@@ -22,6 +22,7 @@ public static class Looting
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec OnGroundLoot { get; set; } = new[] { Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt };
     public static ObjectId? LootContainerId { get; set; }
+    public static ItemSpec LootContainerSpec { get; set; }
     public static ItemSpec KnivesSpec { get; set; } = Specs.Knives;
     
     public static IgnoredItems ignoredItems = new IgnoredItems();
@@ -69,10 +70,15 @@ public static class Looting
         {
             UO.Log($"Cannot loot corpse: {ex.Message}");
         }
- 
+
         if (previousEquipment.HasValue)
+        {
+            UO.Wait(100);
             Equip.Set(previousEquipment.Value);
-        LootGround();
+            UO.Wait(100);
+        }
+
+        LootGround(); 
     }
     
     public static void RipAndLootNearest()
@@ -120,7 +126,11 @@ public static class Looting
                 // after ripping a body and right before
                 // looting may crash the game client.
                 if (previousEquipment.HasValue)
+                {
+                    UO.Wait(100);
                     Equip.Set(previousEquipment.Value);
+                    UO.Wait(100);
+                }
             }
         }
         else
@@ -132,8 +142,8 @@ public static class Looting
             }
             else
                 UO.ClientPrint("no corpse found");
-        }
-        
+        }        
+
         LootGround();
     }
 
@@ -176,7 +186,36 @@ public static class Looting
         }
     }
 
-    public static Item LootContainer => LootContainerId.HasValue ? UO.Items[LootContainerId.Value] ?? UO.Me.BackPack : UO.Me.BackPack;
+    private static Item lootContainer;
+    
+    public static Item LootContainer
+    {
+        get
+        {
+            if (lootContainer == null || UO.Items.Refresh(lootContainer) == null)
+            {
+                if (LootContainerId.HasValue)
+                {
+                    lootContainer = UO.Items[LootContainerId.Value];
+                }
+                
+                if (lootContainer == null && LootContainerSpec != null)
+                {
+                    lootContainer = UO.Items
+                        .InContainer(UO.Me.BackPack)
+                        .Matching(LootContainerSpec)
+                        .FirstOrDefault();
+                }
+                
+                if (lootContainer == null)
+                {
+                    lootContainer = UO.Me.BackPack;
+                }
+            }
+            
+            return lootContainer;
+        }
+    }
 
     public static void LootGround()
     {

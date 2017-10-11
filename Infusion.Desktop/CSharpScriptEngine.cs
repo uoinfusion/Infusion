@@ -26,7 +26,7 @@ namespace Infusion.Desktop
 
         public string ScriptRootPath
         {
-            get { return scriptRootPath; }
+            get => scriptRootPath;
             set
             {
                 scriptRootPath = value;
@@ -42,6 +42,7 @@ namespace Infusion.Desktop
                 .WithImports("Infusion", "Infusion.LegacyApi", "Infusion.Gumps")
                 .WithReferences(
                 Assembly.Load("Infusion"),
+                Assembly.Load("System.Collections.Immutable"),
                 Assembly.Load("Infusion.LegacyApi"));
         }
 

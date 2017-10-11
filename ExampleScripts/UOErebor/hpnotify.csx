@@ -2,6 +2,7 @@
 
 using System;
 using Infusion;
+using Infusion.LegacyApi;
 
 public static class HitPointNotifier
 {
@@ -53,13 +54,24 @@ public static class HitPointNotifier
 
     internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
     {
-        if (args.OldHealth == 0 && args.UpdatedMobile.CurrentHealth == args.UpdatedMobile.MaxHealth)
+        if (IsFirstStatusBarUpdate(args))
            return;
+           
+        // It seems like Sphere adds HP disregardig maximum HP. Then Sphere sends another
+        // update packet which adjust HP to maximum value.
+        if (IsHealingOverMaximumUpdate(args))
+            return;
     
         var delta = args.UpdatedMobile.CurrentHealth - args.OldHealth;
 
         Mode.Print(delta, args.UpdatedMobile);
     }
+
+    private static bool IsHealingOverMaximumUpdate(CurrentHealthUpdatedArgs args) =>
+        args.UpdatedMobile.Id == UO.Me.PlayerId && args.UpdatedMobile.CurrentHealth > args.UpdatedMobile.MaxHealth;    
+
+    private static bool IsFirstStatusBarUpdate(CurrentHealthUpdatedArgs args) =>
+        args.OldHealth == 0 && args.UpdatedMobile.CurrentHealth == args.UpdatedMobile.MaxHealth;
 }
 
 public interface IPrintHitPointNotification
@@ -69,8 +81,8 @@ public interface IPrintHitPointNotification
 
 public class OwnAndTargetAbovePlayerNotificationPrinter : IPrintHitPointNotification
 {
-    public Color MeColor { get; set; } = Colors.Green;
-    public Color OthersColor { get; set; } = Colors.Red;
+    public Color MeColor { get; set; } = Colors.LightBlue;
+    public Color OthersColor { get; set; } = Colors.Green;
 
     public void Print(int delta, Mobile mobile)
     {
@@ -96,13 +108,15 @@ public class OwnAndTargetAbovePlayerNotificationPrinter : IPrintHitPointNotifica
 
 public class AboveAllMobilesNotificationPrinter : IPrintHitPointNotification
 {
-    public Color EnemyColor { get; set; } = Colors.Red;
-    public Color FriendColor { get; set; } = Colors.LightBlue;
-    public Color MyColor { get; set; } = Colors.Green;
-    public Color PetsColor { get; set; } = Colors.Green;
+    public Color EnemyColor { get; set; } = Colors.Green;
+    public Color FriendColor { get; set; } = Colors.Blue;
+    public Color MyColor { get; set; } = Colors.LightBlue;
+    public Color PetsColor { get; set; } = Colors.Blue;
 
     public void Print(int delta, Mobile mobile)
     {
+        var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
+
         Color textColor;
         
         if (mobile.Id == UO.Me.PlayerId)
@@ -127,7 +141,7 @@ public class AboveAllMobilesNotificationPrinter : IPrintHitPointNotification
             mobile.CurrentHealth.ToString() :
             $"{mobile.CurrentHealth} %";
     
-        UO.ClientPrint($"{delta}/{currentHealthText}", "hpnotify",
+        UO.ClientPrint($"{deltaText}/{currentHealthText}", "hpnotify",
         mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: false);        
     }
 }

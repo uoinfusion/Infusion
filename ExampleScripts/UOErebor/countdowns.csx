@@ -1,3 +1,4 @@
+#load "Specs.csx"
 #load "timers.csx"
 
 using System;
@@ -7,7 +8,7 @@ using Infusion.LegacyApi;
 
 public static class Countdowns
 {
-    private struct SpeechCountdown
+    private class SpeechCountdown
     {
         public string TriggerText { get; }
         public string Name { get; }
@@ -23,7 +24,7 @@ public static class Countdowns
         }
     }
     
-    private struct SkillCountdown
+    private class SkillCountdown
     {
         public Skill Skill { get; }
         public TimeSpan Timeout { get; }
@@ -36,21 +37,84 @@ public static class Countdowns
             Color = color;
         }
     }
+    
+    private class PotionCountdown
+    {
+        public ItemSpec BottleSpec { get; }
+        public string Command { get; }
+        public TimeSpan Timeout { get; }
+        public Color Color { get; }
+        
+        public PotionCountdown(ItemSpec bottleSpec, string command, TimeSpan timeout, Color color)
+        {
+            this.BottleSpec = bottleSpec;
+            this.Command = command;
+            this.Timeout = timeout;
+            this.Color = color;
+        }
+    }
 
     private static object speechReceivedCountdownsLock = new object();
     private static List<SpeechCountdown> speechReceivedCountdowns = new List<SpeechCountdown>();
+
     private static object skillRequestedCountdownsLock = new object();
     private static List<SkillCountdown> skillRequestedCountdowns = new List<SkillCountdown>();
+
+    private static object potionCountdownsLock = new object();
+    private static List<PotionCountdown> potionCountdowns = new List<PotionCountdown>();
     
     private static bool enabled = false;    
 
     static Countdowns()
     {
         UO.Events.SpeechReceived += (sender, args) => HandleSpeechReceived(args);
-        UO.Events.SkillRequested += (sender, args) => HandlSkillRequested(args);
+        UO.Events.SkillRequested += (sender, args) => HandleSkillRequested(args);
+        UO.Events.SpeechRequested += (sender, args) => HandleSpeechRequested(args);
+        UO.Events.ItemUseRequested += (sender, args) => HandleItemUseRequested(args);
     }
 
-    private static void HandlSkillRequested(Skill skill)
+    private static void HandleItemUseRequested(ItemUseRequestedArgs args)
+    {
+        if (!enabled)
+            return;
+    
+        var bottle = UO.Items[args.ItemId];
+        if (bottle == null || !Specs.Bottle.Matches(bottle))
+            return;
+    
+        lock (potionCountdownsLock)
+        {
+            foreach (var countdown in potionCountdowns)
+            {
+                UO.Log(countdown.Command);
+                if (countdown.BottleSpec.Matches(bottle))
+                {
+                    Timers.AddTimer(countdown.Timeout, "potion", countdown.Color);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void HandleSpeechRequested(SpeechRequestedArgs args)
+    {
+        if (!enabled)
+            return;
+
+        lock (potionCountdownsLock)
+        {
+            foreach (var countdown in potionCountdowns)
+            {
+                if (args.Message != null && args.Message.Equals(countdown.Command, StringComparison.OrdinalIgnoreCase))
+                {
+                    Timers.AddTimer(countdown.Timeout, "potion", countdown.Color);
+                    break;
+                }
+            }
+        }
+    }
+
+    private static void HandleSkillRequested(Skill skill)
     {
         if (!enabled)
             return;
@@ -110,6 +174,14 @@ public static class Countdowns
         }
     }
     
+    public static void AddPotionCountdown(string command, ItemSpec bottleSpec, TimeSpan timeout, Color color)
+    {
+        lock (potionCountdownsLock)
+        {
+            potionCountdowns.Add(new PotionCountdown(bottleSpec, command, timeout, color));
+        }
+    }
+    
     public static void Enable()
     {
         enabled = true;
@@ -123,3 +195,5 @@ public static class Countdowns
 
 UO.RegisterCommand("countdowns-enable", Countdowns.Enable);
 UO.RegisterCommand("countdowns-disable", Countdowns.Disable);
+
+Countdowns.AddPotionCountdown(".potionheal", Specs.AnyHealPotion, TimeSpan.FromSeconds(20), Colors.Purple);

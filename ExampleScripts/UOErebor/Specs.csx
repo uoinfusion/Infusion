@@ -380,18 +380,6 @@ public static class Specs
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
     public static readonly MobileSpec ElementalKamene = new MobileSpec("Elemental Kamene");
-//    public static readonly MobileSpec ElementalKamene = new[]
-//    { 
-//        new MobileSpec(0x000E, (Color)0x0539),
-//        new MobileSpec(0x000E, (Color)0x0547),
-//        new MobileSpec(0x000E, (Color)0x0546),
-//        new MobileSpec(0x000E, (Color)0x0542),
-//        new MobileSpec(0x000E, (Color)0x0541),
-//        new MobileSpec(0x000E, (Color)0x0544),
-//        new MobileSpec(0x000E, (Color)0x0540),
-//        new MobileSpec(0x000E, (Color)0x053B),
-//        new MobileSpec(0x000E, (Color)0x053E),
-//    };
     
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
 
@@ -412,6 +400,12 @@ public static class Specs
         0x1DA0, 0x1CE7, 0x1CE2, 0x1CEC, 0x1CE8, 0x1CE0, 0x1CDD, 0x1CE5, 0x1CE1, 0x1DA4, 0x1CED,
         0x1CDF, 0x1CDE, 0x1CE6, 0x1CF0, 0x1CEA
     };
+
+    // Special
+    // Hair items are not visible in game client but, looting script sees them and tries to loot
+    // them and of course it cannot.
+    public static readonly ItemSpec HairLong = 0x203B;
+    public static readonly ItemSpec HairShort = 0x203C;
 
     public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369 };
 

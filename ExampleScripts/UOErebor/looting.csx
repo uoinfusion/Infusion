@@ -18,9 +18,19 @@ public static class Looting
     // Injection.
     private static GameJournal journal = UO.CreateJournal();
 
-    public static ItemSpec UselessLoot { get; } = new[] { Specs.Torsos, Specs.Rocks, Specs.Corpse };
+    public static ItemSpec UselessLoot { get; } = new[]
+    {
+        Specs.Torsos, Specs.Rocks, Specs.Corpse,
+        // ignoring some "invisible" items
+        Specs.HairLong, Specs.HairShort
+    };
+
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
-    public static ItemSpec OnGroundLoot { get; set; } = new[] { Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt };
+    public static ItemSpec OnGroundLoot { get; set; } = new[]
+    {
+        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt
+    };
+
     public static ObjectId? LootContainerId { get; set; }
     public static ItemSpec LootContainerSpec { get; set; }
     public static ItemSpec KnivesSpec { get; set; } = Specs.Knives;
@@ -78,7 +88,7 @@ public static class Looting
             UO.Wait(100);
         }
 
-        LootGround(); 
+        LootGround();
     }
     
     public static void RipAndLootNearest()

@@ -105,9 +105,42 @@ public static class Specs
     public static readonly ItemSpec EmptyBottle = new ItemSpec(0x0F0E, (Color)0x0000);
 
     public static readonly ItemSpec NightsightKeg = new ItemSpec(0x1AD6, (Color)0x0980);
-    public static readonly ItemSpec NightsighPoition = new ItemSpec(0x0F0E, (Color)0x0980);
     public static readonly ItemSpec GreaterHealKeg = new ItemSpec(0x1AD6, (Color)0x0160);
+    
+    public static readonly ItemSpec NightsighPoition = new ItemSpec(0x0F0E, (Color)0x0980);
+    public static readonly ItemSpec DispellExplosionPotion = new ItemSpec(0x0F0E, (Color)0x0993);
+    public static readonly ItemSpec LesserExplosionPotion = new ItemSpec(0x0F0E, (Color)0x00E2);
+    public static readonly ItemSpec ExplosionPotion = new ItemSpec(0x0F0E, (Color)0x001E);
+    public static readonly ItemSpec GreaterExplosionPotion = new ItemSpec(0x0F0E, (Color)0x0017);
+    public static readonly ItemSpec LavaPotion = new ItemSpec(0x0F0E, (Color)0x00DE);
+    public static readonly ItemSpec LesserAgilityPotion = new ItemSpec(0x0F0E, (Color)0x0006);
+    public static readonly ItemSpec AgilityPotion = new ItemSpec(0x0F0E, (Color)0x0005);
+    public static readonly ItemSpec GreaterAgilityPotion = new ItemSpec(0x0F0E, (Color)0x00CF);
+    public static readonly ItemSpec LesserCurePotion = new ItemSpec(0x0F0E, (Color)0x002D);
+    public static readonly ItemSpec CurePotion = new ItemSpec(0x0F0E, (Color)0x002B);
+    public static readonly ItemSpec GreaterCurePotion = new ItemSpec(0x0F0E, (Color)0x008E);
+    public static readonly ItemSpec LesserHealPotion = new ItemSpec(0x0F0E, (Color)0x0100);
+    public static readonly ItemSpec HealPotion = new ItemSpec(0x0F0E, (Color)0x0099);
     public static readonly ItemSpec GreaterHealPotion = new ItemSpec(0x0F0E, (Color)0x0160);
+    public static readonly ItemSpec AnyHealPotion = new[] { LesserHealPotion, HealPotion, GreaterHealPotion };
+    public static readonly ItemSpec LesserRefreshPotion = new ItemSpec(0x0F0E, (Color)0x0029);
+    public static readonly ItemSpec RefreshPotion = new ItemSpec(0x0F0E, (Color)0x0027);
+    public static readonly ItemSpec GreaterRefreshPotion = new ItemSpec(0x0F0E, (Color)0x00ED);
+    public static readonly ItemSpec LesserStrengthPotion = new ItemSpec(0x0F0E, (Color)0x0835);
+    public static readonly ItemSpec StrengthPotion = new ItemSpec(0x0F0E, (Color)0x0388);
+    public static readonly ItemSpec GreaterStrengthPotion = new ItemSpec(0x0F0E, (Color)0x076B);
+    public static readonly ItemSpec InvisibilityPotion = new ItemSpec(0x0F0E, (Color)0x0447);
+    public static readonly ItemSpec LesserClevernessPotion = new ItemSpec(0x0F0E, (Color)0x06C2);
+    public static readonly ItemSpec ClevernessPotion = new ItemSpec(0x0F0E, (Color)0x073E);
+    public static readonly ItemSpec GreaterClevernessPotion = new ItemSpec(0x0F0E, (Color)0x047D);
+    public static readonly ItemSpec StoneskinPotion = new ItemSpec(0x0F0E, (Color)0x0999);
+    public static readonly ItemSpec MobilityPotion = new ItemSpec(0x0F0E, (Color)0x000F);
+    public static readonly ItemSpec LesserEnergyPotion = new ItemSpec(0x0F0E, (Color)0x0060);
+    public static readonly ItemSpec EnergyPotion = new ItemSpec(0x0F0E, (Color)0x005D);
+    public static readonly ItemSpec GreaterEnergyPotion = new ItemSpec(0x0F0E, (Color)0x005C);
+    public static readonly ItemSpec ReflectionPotion = new ItemSpec(0x0F0E, (Color)0x0985);
+    public static readonly ItemSpec ReactivePotion = new ItemSpec(0x0F0E, (Color)0x0A82);
+    public static readonly ItemSpec ShieldPotion = new ItemSpec(0x0F0E, (Color)0x0059);
 
     // Reagents
     public static readonly ItemSpec GraveDust = 0x0f8f;

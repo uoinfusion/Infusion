@@ -49,7 +49,7 @@ namespace Infusion.Proxy
         {
             return $"Overall: {OverallMeasurement}" + Environment.NewLine +
                    PerPacketMeasurement
-                       .OrderByDescending(x => x.Value.LatencyMax)
+                       .OrderByDescending(x => x.Value.LatencyAvg)
                        .Select(x => $"{x.Key:X2}: {x.Value}")
                        .Aggregate((l, r) => l + Environment.NewLine + r);
         }

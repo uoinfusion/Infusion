@@ -196,4 +196,4 @@ public static class Countdowns
 UO.RegisterCommand("countdowns-enable", Countdowns.Enable);
 UO.RegisterCommand("countdowns-disable", Countdowns.Disable);
 
-Countdowns.AddPotionCountdown(".potionheal", Specs.AnyHealPotion, TimeSpan.FromSeconds(20), Colors.Purple);
+Countdowns.AddPotionCountdown(".potionheal", Specs.HealPotions, TimeSpan.FromSeconds(20), Colors.Purple);

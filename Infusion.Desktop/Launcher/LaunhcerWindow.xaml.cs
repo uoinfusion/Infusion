@@ -92,12 +92,12 @@ namespace Infusion.Desktop.Launcher
             if (aggregateException != null)
             {
                 message =
-                    aggregateException.InnerExceptions.Select(x => x.Message)
+                    aggregateException.InnerExceptions.Select(x => x.ToString())
                         .Aggregate((l, r) => l + Environment.NewLine + r);
             }
             else
             {
-                message = exception.Message;
+                message = exception.ToString();
             }
 
             ShowError(message);

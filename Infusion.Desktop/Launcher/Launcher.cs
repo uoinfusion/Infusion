@@ -35,6 +35,20 @@ namespace Infusion.Desktop.Launcher
                     UltimaConfiguration.SetPassword(options.EncryptPassword());
 
                 string ultimaExecutablePath = Path.Combine(Files.RootDir, "NoCryptClient.exe");
+                if (!File.Exists(ultimaExecutablePath))
+                {
+                    Program.Console.Error($"File {ultimaExecutablePath} doesn't exist.");
+                    Program.Console.Info(
+                        "Infusion requires that you use a client without encryption. If your Ultima Online server allows using Third Dawn (3.x) clients, " +
+                        "you can download a client without encryption: https://ulozto.cz/!9w2rZmJfmcvA/client306m-patches-zip. \n\n" +
+                        @"The zip file contains NoCryptClient.exe. Copy it to your Ultima Online installation folder (typically c:\Program Files\Ultima Online 2D)." +
+                        "\n\n" +
+                        "You can read more about how to setup Infusion properly: https://github.com/uoinfusion/Infusion/wiki/Getting-started." + "\n");
+
+                    return;
+                }
+
+                Program.Console.Info($"Staring {ultimaExecutablePath}");
 
                 Process.Start(ultimaExecutablePath);
 

@@ -22,7 +22,7 @@ public static class Looting
     {
         Specs.Torsos, Specs.Rocks, Specs.Corpse,
         // ignoring some "invisible" items
-        Specs.HairLong, Specs.HairShort
+        Specs.Hairs
     };
 
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;

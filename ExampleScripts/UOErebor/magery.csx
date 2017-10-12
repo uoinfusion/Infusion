@@ -1,4 +1,5 @@
 #load "Specs.csx"
+#load "light.csx"
 #load "meditation.csx"
 
 using System;
@@ -33,6 +34,7 @@ public static class Magery
                 if (recallHomeJournal.Contains("Kouzlo se nezdarilo"))
                 {
                     failed = true;
+                    Light.Check();
                     break;
                 }
                 if (recallHomeJournal.Contains("You don't know that spell."))
@@ -83,7 +85,7 @@ public static class Magery
     {
         if (!uint.TryParse(parameters, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint runeId))
         {
-            UO.Alert("Expecting hexadecimal id of rune.");
+            UO.Alert("Expecting hexadecimal id of a rune.");
             return;
         }
         

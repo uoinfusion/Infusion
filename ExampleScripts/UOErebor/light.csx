@@ -3,21 +3,22 @@
 using System;
 using Infusion.Commands;
 
-public delegate void LightSourceDelegate();
+public delegate void LightSource();
 
 public static class LightSources
 {
-    public static readonly LightSourceDelegate Torch = () =>
+    public static readonly LightSource Torch = () =>
         MakeLightByUse(Specs.Torch);
     
-    public static readonly LightSourceDelegate Potion = () =>
+    public static readonly LightSource Potion = () =>
         MakeLightByUse(Specs.NightsighPoition);
         
-    public static readonly LightSourceDelegate Spell = () =>
+    public static readonly LightSource Spell = () =>
     {
         UO.CastSpell(Infusion.Spell.NightSight);
         UO.WaitForTarget();
         UO.Target(UO.Me);
+        UO.Wait(2000);
     };
     
     private static void MakeLightByUse(ItemSpec spec)
@@ -38,7 +39,7 @@ public static class Light
 {
     private static GameJournal lightCheckJournal = UO.CreateJournal();
 
-    public static LightSourceDelegate PreferredLightSource { get; set; } = LightSources.Torch;
+    public static LightSource PreferredLightSource { get; set; } = LightSources.Torch;
 
     public static void MakeLight()
     {

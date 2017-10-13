@@ -52,7 +52,7 @@ public static class HitPointNotifier
         }
     }
 
-    internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
+    internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
     {
         if (IsFirstStatusBarUpdate(args))
            return;
@@ -67,10 +67,10 @@ public static class HitPointNotifier
         Mode.Print(delta, args.UpdatedMobile);
     }
 
-    private static bool IsHealingOverMaximumUpdate(CurrentHealthUpdatedArgs args) =>
+    private static bool IsHealingOverMaximumUpdate(CurrentHealthUpdatedEvent args) =>
         args.UpdatedMobile.Id == UO.Me.PlayerId && args.UpdatedMobile.CurrentHealth > args.UpdatedMobile.MaxHealth;    
 
-    private static bool IsFirstStatusBarUpdate(CurrentHealthUpdatedArgs args) =>
+    private static bool IsFirstStatusBarUpdate(CurrentHealthUpdatedEvent args) =>
         args.OldHealth == 0 && args.UpdatedMobile.CurrentHealth == args.UpdatedMobile.MaxHealth;
 }
 

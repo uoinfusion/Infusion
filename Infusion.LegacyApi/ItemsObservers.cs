@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Infusion.LegacyApi.Events;
 using Infusion.Packets;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
@@ -65,7 +66,7 @@ namespace Infusion.LegacyApi
 
         private void HandleDoubleClick(DoubleClickRequest request)
         {
-            DoubleClickRequested?.Invoke(this, new ItemUseRequestedArgs(request.ItemId));
+            DoubleClickRequested?.Invoke(this, new ItemUseRequestedEvent(request.ItemId));
         }
 
         public ObjectId? DraggedItemId { get; set; }
@@ -97,13 +98,13 @@ namespace Infusion.LegacyApi
             if (oldHealth != newHealth)
             {
                 CurrentHealthUpdated.RaiseScriptEvent(this,
-                    new CurrentHealthUpdatedArgs(updatedItem, oldHealth));
+                    new CurrentHealthUpdatedEvent(updatedItem, oldHealth));
             }
         }
 
-        internal event EventHandler<CurrentHealthUpdatedArgs> CurrentHealthUpdated;
-        internal event EventHandler<ItemUseRequestedArgs> DoubleClickRequested;
-        internal event EventHandler<ItemEnteredViewArgs> ItemEnteredView;
+        internal event EventHandler<CurrentHealthUpdatedEvent> CurrentHealthUpdated;
+        internal event EventHandler<ItemUseRequestedEvent> DoubleClickRequested;
+        internal event EventHandler<ItemEnteredViewEvent> ItemEnteredView;
         internal event EventHandler<Mobile> MobileEnteredView;
         internal event EventHandler<Mobile> MobileLeftView;
         internal event EventHandler<Mobile> MobileDeleted;
@@ -227,7 +228,7 @@ namespace Infusion.LegacyApi
 
         private void OnItemEnteredView(Item item)
         {
-            ItemEnteredView.RaiseScriptEvent(this, new ItemEnteredViewArgs(item));
+            ItemEnteredView.RaiseScriptEvent(this, new ItemEnteredViewEvent(item));
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)

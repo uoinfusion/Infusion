@@ -1,7 +1,7 @@
 public class TwoStateAbility
 {
     public bool? IsTurnedOn { get; private set; }
-    private GameJournal abilityJournal = UO.CreateJournal();
+    private SpeechJournal abilityJournal = UO.CreateJournal();
     
     public string TurnedOffMessage { get; }
     public string TurnedOnMessage { get; }

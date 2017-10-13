@@ -1,4 +1,5 @@
 ﻿using System;
+using Infusion.LegacyApi.Events;
 
 namespace Infusion.LegacyApi
 {
@@ -25,31 +26,31 @@ namespace Infusion.LegacyApi
         }
 
         public event EventHandler<JournalEntry> SpeechReceived;
-        public event EventHandler<SpeechRequestedArgs> SpeechRequested
+        public event EventHandler<SpeechRequestedEvent> SpeechRequested
         {
             add => speechRequestObserver.SpeechRequested += value;
             remove => speechRequestObserver.SpeechRequested -= value;
         }
 
-        public event EventHandler<CommandRequestedArgs> CommandRequested
+        public event EventHandler<CommandRequestedEvent> CommandRequested
         {
             add => speechRequestObserver.CommandRequested += value;
             remove => speechRequestObserver.CommandRequested -= value;
         }
 
-        public event EventHandler<QuestArrowArgs> QuestArrowChanged
+        public event EventHandler<QuestArrowEvent> QuestArrowChanged
         {
             add => questArrowObserver.QuestArrowChanged += value;
             remove => questArrowObserver.QuestArrowChanged -= value;
         }
 
-        public event EventHandler<CurrentHealthUpdatedArgs> HealthUpdated
+        public event EventHandler<CurrentHealthUpdatedEvent> HealthUpdated
         {
             add => itemsObserver.CurrentHealthUpdated += value;
             remove => itemsObserver.CurrentHealthUpdated -= value;
         }
 
-        public event EventHandler<ItemEnteredViewArgs> ItemEnteredView
+        public event EventHandler<ItemEnteredViewEvent> ItemEnteredView
         {
             add => itemsObserver.ItemEnteredView += value;
             remove => itemsObserver.ItemEnteredView -= value;
@@ -73,13 +74,13 @@ namespace Infusion.LegacyApi
             remove => itemsObserver.MobileDeleted -= value;
         }
 
-        public event EventHandler<ItemUseRequestedArgs> ItemUseRequested
+        public event EventHandler<ItemUseRequestedEvent> ItemUseRequested
         {
             add => itemsObserver.DoubleClickRequested += value;
             remove => itemsObserver.DoubleClickRequested -= value;
         }
 
-        public event EventHandler<SoundEffectPlayedArgs> SoundEffectPlayed
+        public event EventHandler<SoundEffectPlayedEvent> SoundEffectPlayed
         {
             add => soundObserver.SoundEffectPlayed += value;
             remove => soundObserver.SoundEffectPlayed -= value;

@@ -7,10 +7,10 @@ using System.Linq;
 public static class Cooking
 {
     // Create a "private" instance of journal for cooking. If you delete this journal it
-    // doesn't affect either UO.Journal or other instances of GameJournal.
+    // doesn't affect either UO.Journal or other instances of SpeechJournal.
     // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
     // Injection.
-    private static GameJournal journal = UO.CreateJournal();
+    private static SpeechJournal journal = UO.CreateJournal();
 
     public static void Cook(ModelId rawFoodType, string campfireTile)
     {

@@ -6,13 +6,13 @@ using System.Threading;
 
 namespace Infusion.LegacyApi
 {
-    public sealed class GameJournal : IEnumerable<JournalEntry>
+    public sealed class SpeechJournal : IEnumerable<JournalEntry>
     {
         private readonly JournalSource source;
         private readonly Legacy legacyApi;
         private long journalEntryStartId;
 
-        internal GameJournal(JournalSource source, Legacy legacyApi)
+        internal SpeechJournal(JournalSource source, Legacy legacyApi)
         {
             this.source = source;
             this.legacyApi = legacyApi;

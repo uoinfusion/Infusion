@@ -75,7 +75,7 @@ public static class Pets
         }
     }
 
-    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
+    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
     {
         if (enabled)
         {

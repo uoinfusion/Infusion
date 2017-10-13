@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Infusion.LegacyApi.Events;
 using Infusion.Packets;
 using Infusion.Packets.Server;
 
@@ -10,7 +11,7 @@ namespace Infusion.LegacyApi
 {
     internal sealed class QuestArrowObserver
     {
-        public event EventHandler<QuestArrowArgs> QuestArrowChanged;
+        public event EventHandler<QuestArrowEvent> QuestArrowChanged;
 
         public QuestArrowObserver(IServerPacketSubject serverPacketSubject)
         {
@@ -19,7 +20,7 @@ namespace Infusion.LegacyApi
 
         private void HandleQuestArrow(QuestArrowPacket packet)
         {
-            QuestArrowChanged.RaiseScriptEvent(this, new QuestArrowArgs(packet.Active, packet.Location));   
+            QuestArrowChanged.RaiseScriptEvent(this, new QuestArrowEvent(packet.Active, packet.Location));   
         }
 
         public void ResetEvents()

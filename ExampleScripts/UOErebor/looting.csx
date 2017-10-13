@@ -11,12 +11,12 @@ using Infusion.Commands;
 public static class Looting
 {
     // Create a "private" instance of journal for cooking. If you delete this journal it
-    // doesn't affect either UO.Journal or other instances of GameJournal so
+    // doesn't affect either UO.Journal or other instances of SpeechJournal so
     // you can try looting and healing in parallel
     // and you can still use journal.Delete method in both scripts at the same time.
     // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
     // Injection.
-    private static GameJournal journal = UO.CreateJournal();
+    private static SpeechJournal journal = UO.CreateJournal();
 
     public static ItemSpec UselessLoot { get; } = new[]
     {

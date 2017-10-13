@@ -13,7 +13,7 @@ public class IgnoredItems
         UO.Events.ItemEnteredView += OnItemEnteredView;
     }
     
-    private void OnItemEnteredView(object sender, ItemEnteredViewArgs args)
+    private void OnItemEnteredView(object sender, ItemEnteredViewEvent args)
     {
         lock (alreadyLootedItemsLock)
         {

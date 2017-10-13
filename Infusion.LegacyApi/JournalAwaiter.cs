@@ -9,7 +9,7 @@ namespace Infusion.LegacyApi
     public sealed class JournalAwaiter
     {
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-        private readonly GameJournal journal;
+        private readonly SpeechJournal journal;
         private readonly JournalSource journalSource;
         private readonly Func<CancellationToken?> tokenProvider;
 
@@ -22,7 +22,7 @@ namespace Infusion.LegacyApi
         private Action timeoutAction;
 
         internal JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalSource journalSource = null,
-            GameJournal journal = null)
+            SpeechJournal journal = null)
         {
             this.tokenProvider = tokenProvider;
             this.journalSource = journalSource;

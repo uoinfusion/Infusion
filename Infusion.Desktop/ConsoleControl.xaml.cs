@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Infusion.Commands;
 using Infusion.LegacyApi;
+using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Proxy;
 
@@ -50,9 +51,9 @@ namespace Infusion.Desktop
             Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
         }
 
-        private void HandleCommandRequest(CommandRequestedArgs args)
+        private void HandleCommandRequest(CommandRequestedEvent @event)
         {
-            OnCommandEntered(args.InvocationSyntax);
+            OnCommandEntered(@event.InvocationSyntax);
         }
 
         public CSharpScriptEngine ScriptEngine { get; }

@@ -13,7 +13,7 @@ public static class Magery
         UO.Say(".recallhome");
     }
 
-    private static GameJournal recallHomeJournal = UO.CreateJournal();
+    private static SpeechJournal recallHomeJournal = UO.CreateJournal();
 
     public static void Recall(Action castRecallAction)
     {

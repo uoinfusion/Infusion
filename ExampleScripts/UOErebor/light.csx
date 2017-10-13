@@ -37,7 +37,7 @@ public static class LightSources
 
 public static class Light
 {
-    private static GameJournal lightCheckJournal = UO.CreateJournal();
+    private static SpeechJournal lightCheckJournal = UO.CreateJournal();
 
     public static LightSource PreferredLightSource { get; set; } = LightSources.Torch;
 

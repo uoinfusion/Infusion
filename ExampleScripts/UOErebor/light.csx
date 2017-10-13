@@ -66,6 +66,14 @@ public static class Light
         return false;
     }
     
-    public static bool IsLightNeeded 
-        => lightCheckJournal.Contains("Je spatne videt");
+    public static bool IsLightNeeded
+    {
+        get
+        {
+            bool result = lightCheckJournal.Contains("Je spatne videt");
+            lightCheckJournal.Delete();
+            
+            return result;
+        }
+    }
 }

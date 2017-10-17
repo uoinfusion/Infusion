@@ -14,19 +14,29 @@ namespace Infusion.LegacyApi
         private readonly GameObjectCollection gameObjects;
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private readonly Legacy legacyApi;
+        private readonly EventJournalSource eventJournalSource;
 
         private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
         private readonly ManualResetEvent cannotReachEvent = new ManualResetEvent(false);
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
-            Legacy legacyApi)
+            Legacy legacyApi, EventJournalSource eventJournalSource)
         {
             this.gameObjects = gameObjects;
-            this.gameObjects.MobileLeftView += (sender, mobile) => MobileLeftView.RaiseScriptEvent(this, mobile);
-            this.gameObjects.MobileDeleted += (sender, mobile) => MobileDeleted.RaiseScriptEvent(this, mobile);
+            this.gameObjects.MobileLeftView += (sender, mobile) =>
+            {
+                eventJournalSource.Publish(new MobileLeftViewEvent(mobile));
+                MobileLeftView.RaiseScriptEvent(this, mobile);
+            };
+            this.gameObjects.MobileDeleted += (sender, mobile) =>
+            {
+
+                MobileDeleted.RaiseScriptEvent(this, mobile);
+            };
 
             this.legacyApi = legacyApi;
+            this.eventJournalSource = eventJournalSource;
             serverPacketSubject.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
             serverPacketSubject.Subscribe(PacketDefinitions.AddItemToContainer, HandleAddItemToContainer);
@@ -66,7 +76,9 @@ namespace Infusion.LegacyApi
 
         private void HandleDoubleClick(DoubleClickRequest request)
         {
-            DoubleClickRequested?.Invoke(this, new ItemUseRequestedEvent(request.ItemId));
+            var ev = new ItemUseRequestedEvent(request.ItemId);
+            eventJournalSource.Publish(ev);
+            DoubleClickRequested?.Invoke(this, ev);
         }
 
         public ObjectId? DraggedItemId { get; set; }
@@ -97,8 +109,9 @@ namespace Infusion.LegacyApi
 
             if (oldHealth != newHealth)
             {
-                CurrentHealthUpdated.RaiseScriptEvent(this,
-                    new CurrentHealthUpdatedEvent(updatedItem, oldHealth));
+                var ev = new CurrentHealthUpdatedEvent(updatedItem, oldHealth);
+                eventJournalSource.Publish(ev);
+                CurrentHealthUpdated.RaiseScriptEvent(this, ev);
             }
         }
 
@@ -228,7 +241,9 @@ namespace Infusion.LegacyApi
 
         private void OnItemEnteredView(Item item)
         {
-            ItemEnteredView.RaiseScriptEvent(this, new ItemEnteredViewEvent(item));
+            var ev = new ItemEnteredViewEvent(item);
+            eventJournalSource.Publish(ev);
+            ItemEnteredView.RaiseScriptEvent(this, ev);
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
@@ -253,6 +268,7 @@ namespace Infusion.LegacyApi
 
         private void OnMobileEnteredView(Mobile mobile)
         {
+            eventJournalSource.Publish(new MobileEnteredViewEvent(mobile));
             MobileEnteredView.RaiseScriptEvent(this, mobile);
         }
 

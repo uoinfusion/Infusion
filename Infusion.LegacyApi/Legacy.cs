@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 
 namespace Infusion.LegacyApi
@@ -28,6 +29,7 @@ namespace Infusion.LegacyApi
 
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
+        private readonly EventJournalSource eventJournalSource;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
@@ -38,7 +40,8 @@ namespace Infusion.LegacyApi
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
-            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this);
+            eventJournalSource = new EventJournalSource();
+            itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this, eventJournalSource);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
             Journal = new SpeechJournal(journalSource, this);
@@ -48,11 +51,11 @@ namespace Infusion.LegacyApi
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
             lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
-            soundObserver = new SoundObserver(ultimaServer, configuration);
-            questArrowObserver = new QuestArrowObserver(ultimaServer);
-            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, logger);
+            soundObserver = new SoundObserver(ultimaServer, configuration, eventJournalSource);
+            questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
+            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, logger, eventJournalSource);
 
-            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, questArrowObserver, speechRequestObserver);
+            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, speechRequestObserver, eventJournalSource);
             playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, Events);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
 
@@ -139,10 +142,8 @@ namespace Infusion.LegacyApi
             CommandHandler.RegisterCommand(new Command("filter-weather", ToggleWeatherFiltering));
         }
 
-        public SpeechJournal CreateJournal()
-        {
-            return new SpeechJournal(journalSource, this);
-        }
+        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, this);
+        public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, () => CancellationToken);
 
         public void Say(string message)
         {

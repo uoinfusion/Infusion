@@ -1,6 +1,6 @@
 ﻿namespace Infusion.LegacyApi.Events
 {
-    public struct CurrentHealthUpdatedEvent
+    public sealed class CurrentHealthUpdatedEvent : IEvent
     {
         internal CurrentHealthUpdatedEvent(Mobile updatedMobile, ushort oldHealth)
         {

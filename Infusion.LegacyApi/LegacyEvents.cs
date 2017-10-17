@@ -6,22 +6,23 @@ namespace Infusion.LegacyApi
     public class LegacyEvents
     {
         private readonly ItemsObservers itemsObserver;
-        private readonly QuestArrowObserver questArrowObserver;
         private readonly SpeechRequestObserver speechRequestObserver;
+        private readonly EventJournalSource eventJournalSource;
         private readonly SoundObserver soundObserver;
 
         internal LegacyEvents(ItemsObservers itemsObserver, JournalSource journalSource, SoundObserver soundObserver,
-            QuestArrowObserver questArrowObserver, SpeechRequestObserver speechRequestObserver)
+            SpeechRequestObserver speechRequestObserver, EventJournalSource eventJournalSource)
         {
             this.soundObserver = soundObserver;
-            this.questArrowObserver = questArrowObserver;
             this.speechRequestObserver = speechRequestObserver;
+            this.eventJournalSource = eventJournalSource;
             this.itemsObserver = itemsObserver;
             journalSource.NewMessageReceived += JournalSourceOnNewMessageReceived;
         }
 
         private void JournalSourceOnNewMessageReceived(object sender, JournalEntry journalEntry)
         {
+            eventJournalSource.Publish(new SpeechReceivedEvent(journalEntry));
             SpeechReceived.RaiseScriptEvent(this, journalEntry);
         }
 
@@ -36,12 +37,6 @@ namespace Infusion.LegacyApi
         {
             add => speechRequestObserver.CommandRequested += value;
             remove => speechRequestObserver.CommandRequested -= value;
-        }
-
-        public event EventHandler<QuestArrowEvent> QuestArrowChanged
-        {
-            add => questArrowObserver.QuestArrowChanged += value;
-            remove => questArrowObserver.QuestArrowChanged -= value;
         }
 
         public event EventHandler<CurrentHealthUpdatedEvent> HealthUpdated
@@ -90,6 +85,7 @@ namespace Infusion.LegacyApi
 
         internal void OnSkillRequested(Skill skill)
         {
+            eventJournalSource.Publish(new SkillRequestedEvent(skill));
             SkillRequested?.Invoke(this, skill);
         }
 
@@ -97,7 +93,6 @@ namespace Infusion.LegacyApi
         {
             itemsObserver.ResetEvents();
             soundObserver.ResetEvents();
-            questArrowObserver.ResetEvents();
             speechRequestObserver.ResetEvents();
         }
     }

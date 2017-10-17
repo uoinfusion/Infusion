@@ -23,7 +23,7 @@ public static class Afk
         "gm", "halo", "lagr"
     };
     
-    private static SpeechJournal afkCheckJournal = UO.CreateJournal();
+    private static SpeechJournal afkCheckJournal = UO.CreateSpeechJournal();
  
     public static IDisposable Start()
     {

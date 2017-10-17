@@ -12,10 +12,12 @@ namespace Infusion.LegacyApi
     internal sealed class SoundObserver
     {
         private readonly Configuration configuration;
+        private readonly IEventJournalSource eventJournalSource;
 
-        public SoundObserver(IServerPacketSubject serverPacketHandler, Configuration configuration)
+        public SoundObserver(IServerPacketSubject serverPacketHandler, Configuration configuration, IEventJournalSource eventJournalSource)
         {
             this.configuration = configuration;
+            this.eventJournalSource = eventJournalSource;
             serverPacketHandler.RegisterFilter(FilterBlockedSounds);
         }
 
@@ -23,19 +25,14 @@ namespace Infusion.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.PlaySoundEffect.Id)
             {
-                PlaySoundEffectPacket packet = null;
-                var soundEffectPlayedHandler = SoundEffectPlayed;
+                PlaySoundEffectPacket packet = PacketDefinitionRegistry.Materialize<PlaySoundEffectPacket>(rawPacket);
 
-                if (configuration.FilteredSoundSet.Any() || soundEffectPlayedHandler != null)
-                    packet = PacketDefinitionRegistry.Materialize<PlaySoundEffectPacket>(rawPacket);
+                var ev = new SoundEffectPlayedEvent(packet.Id, packet.Location);
+                eventJournalSource.Publish(ev);
+                SoundEffectPlayed?.Invoke(this, ev);
 
-                if (packet != null)
-                {
-                    soundEffectPlayedHandler?.Invoke(this, new SoundEffectPlayedEvent(packet.Id, packet.Location));
-
-                    if (configuration.FilteredSoundSet.Contains(packet.Id))
-                        return null;
-                }
+                if (configuration.FilteredSoundSet.Contains(packet.Id))
+                    return null;
             }
 
             return rawPacket;

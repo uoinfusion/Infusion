@@ -1,10 +1,10 @@
 ﻿namespace Infusion.LegacyApi.Events
 {
-    public struct ItemUseRequestedEvent
+    public sealed class ItemUseRequestedEvent : IEvent
     {
         public ObjectId ItemId { get; }
 
-        public ItemUseRequestedEvent(ObjectId itemId)
+        internal ItemUseRequestedEvent(ObjectId itemId)
         {
             ItemId = itemId;
         }

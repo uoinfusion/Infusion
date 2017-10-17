@@ -33,7 +33,7 @@ namespace Infusion.Commands
             {
                 Command[] result;
 
-                lock (runningCommands)
+                lock (runningCommandsLock)
                 {
                     result = runningCommands.Values.Select(x => x.Command).ToArray();
                 }

@@ -54,8 +54,11 @@ namespace Infusion.LegacyApi
         public static void Alert(string message)
             => Current.Alert(message);
 
-        public static SpeechJournal CreateJournal()
-            => Current.CreateJournal();
+        public static SpeechJournal CreateSpeechJournal()
+            => Current.CreateSpeechJournal();
+
+        public static EventJournal CreateEventJournal()
+            => Current.CreateEventJournal();
 
         public static void Say(string message)
             => Current.Say(message);

@@ -9,7 +9,7 @@ public static class Hidding
     // and you can still use journal.Delete method in both scripts at the same time.
     // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
     // Injection.
-    private static SpeechJournal hiddingJournal = UO.CreateJournal();
+    private static SpeechJournal hiddingJournal = UO.CreateSpeechJournal();
 
     public static void Hide()
     {

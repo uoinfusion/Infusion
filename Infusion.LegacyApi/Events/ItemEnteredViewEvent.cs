@@ -1,6 +1,6 @@
 ﻿namespace Infusion.LegacyApi.Events
 {
-    public struct ItemEnteredViewEvent
+    public sealed class ItemEnteredViewEvent : IEvent
     {
         internal ItemEnteredViewEvent(Item newItem)
         {

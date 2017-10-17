@@ -10,7 +10,7 @@ public static class Cooking
     // doesn't affect either UO.Journal or other instances of SpeechJournal.
     // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
     // Injection.
-    private static SpeechJournal journal = UO.CreateJournal();
+    private static SpeechJournal journal = UO.CreateSpeechJournal();
 
     public static void Cook(ModelId rawFoodType, string campfireTile)
     {

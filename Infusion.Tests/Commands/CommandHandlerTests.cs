@@ -80,7 +80,6 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand(command.Command);
 
             commandHandler.Invoke(",testName parameter1");
-            command.WaitForFinished();
 
             executed.Should().BeFalse();
         }
@@ -162,10 +161,9 @@ namespace Infusion.Tests.Commands
         [TestMethod]
         public void Can_remove_finished_command_from_list()
         {
-            var finishedCommand = new TestCommand("finished_cmd");
+            var finishedCommand = new TestCommand(commandHandler, "finished_cmd", () =>{ });
             commandHandler.RegisterCommand(finishedCommand.Command);
             commandHandler.Invoke(",finished_cmd");
-            finishedCommand.WaitForInitialization();
             finishedCommand.Finish();
             finishedCommand.WaitForFinished();
 
@@ -303,6 +301,8 @@ namespace Infusion.Tests.Commands
             });
             commandHandler.RegisterCommand(parentCommand.Command);
 
+            nestedCommand.Finish();
+            parentCommand.Finish();
             commandHandler.Invoke(",parent");
 
             parentCommand.WaitForFinished();
@@ -488,10 +488,9 @@ namespace Infusion.Tests.Commands
 
             // ReSharper disable once MethodSupportsCancellation
             Task.Run(() => commandHandler.Invoke(",cmd1", cancellationTokenSource));
-            command.WaitForAdditionalAction();
 
-            cancellationTokenSource.Cancel();
             command.Finish();
+            cancellationTokenSource.Cancel();
 
             command.WaitForFinished().Should().BeTrue();
             commandHandler.RunningCommands.Should().BeEmpty();

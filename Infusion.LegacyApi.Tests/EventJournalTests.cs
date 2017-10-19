@@ -33,7 +33,7 @@ namespace Infusion.LegacyApi.Tests
                     .WaitAny();
             });
 
-            Thread.Sleep(10);
+            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
 
             source.Publish(new QuestArrowEvent(true, new Location2D(123, 321)));
 
@@ -71,7 +71,7 @@ namespace Infusion.LegacyApi.Tests
                         .WaitAny();
                 });
 
-                Thread.Sleep(10);
+                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
 
                 source.Publish(new SpeechRequestedEvent("some message"));
 
@@ -84,13 +84,119 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void When_awaiting_Then_executes_only_once_when_action_of_event_received_first()
+        public void First_unconditional_when_is_executed()
+        {
+            bool conditionalWhenExecuted = false;
+            bool unconditionalWhenExecuted = false;
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+
+            var task = Task.Run(() =>
+            {
+                journal
+                    .When<SpeechRequestedEvent>(e =>
+                    {
+                        unconditionalWhenExecuted = true;
+                    })
+                    .When<SpeechRequestedEvent>(e =>
+                    {
+                        // another unconditional when, that cannot be executed
+                    })
+                    .When<SpeechRequestedEvent>(e => e.Message == "I handle this message", e =>
+                    {
+                        conditionalWhenExecuted = true;
+                    })
+                    .WaitAny();
+            });
+
+            journal.AwaitingStarted.WaitOne(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            source.Publish(new SpeechRequestedEvent("I handle this message"));
+
+            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            conditionalWhenExecuted.Should().BeFalse();
+            unconditionalWhenExecuted.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void First_satisfied_conditional_when_is_executed()
+        {
+            bool conditionalWhenExecuted = false;
+            bool notSatisfiedConditionalWhen = false;
+            bool unconditionalWhenExecuted = false;
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+
+            var task = Task.Run(() =>
+            {
+                journal
+                    .When<SpeechRequestedEvent>(e => e.Message == "I don't handle this message", e =>
+                    {
+                        notSatisfiedConditionalWhen = true;
+                    })
+                    .When<SpeechRequestedEvent>(e => e.Message == "I handle this message", e =>
+                    {
+                        conditionalWhenExecuted = true;
+                    })
+                    .When<SpeechRequestedEvent>(e =>
+                    {
+                        unconditionalWhenExecuted = true;
+                    })
+                    .WaitAny();
+            });
+
+            journal.AwaitingStarted.WaitOne(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            source.Publish(new SpeechRequestedEvent("something else than I refuse this message"));
+
+            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            unconditionalWhenExecuted.Should().BeTrue();
+            conditionalWhenExecuted.Should().BeFalse();
+            notSatisfiedConditionalWhen.Should().BeFalse();
+        }
+
+
+        [TestMethod]
+        public void When_can_refuse_to_handle_message()
+        {
+            bool conditionalWhenExecuted = false;
+            bool unconditionalWhenExecuted = false;
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+
+            var task = Task.Run(() =>
+            {
+                journal
+                    .When<SpeechRequestedEvent>(e => e.Message == "I refuse this message", e =>
+                    {
+                        conditionalWhenExecuted = true;
+                    })
+                    .When<SpeechRequestedEvent>(e =>
+                    {
+                        unconditionalWhenExecuted = true;
+                    })
+                    .WaitAny();
+            });
+
+            journal.AwaitingStarted.WaitOne(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            source.Publish(new SpeechRequestedEvent("something else than I refuse this message"));
+
+            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+
+            conditionalWhenExecuted.Should().BeFalse();
+            unconditionalWhenExecuted.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void When_WaitAny_Then_executes_only_once_when_action_of_event_received_first()
         {
             ConcurrencyTester.Run(() =>
             {
                 var source = new TestEventJournalSource();
                 var journal = new EventJournal(source);
-                var executedEvent = new AutoResetEvent(false);
                 SpeechRequestedEvent receivedSpeech = null;
 
                 var task = Task.Run(() =>
@@ -99,12 +205,11 @@ namespace Infusion.LegacyApi.Tests
                         .When<SpeechRequestedEvent>(e =>
                         {
                             receivedSpeech = e;
-                            executedEvent.Set();
                         })
                         .WaitAny();
                 });
 
-                Thread.Sleep(10);
+                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
 
                 var questArrowEvent = new SpeechRequestedEvent("first message");
                 source.Publish(questArrowEvent);
@@ -112,10 +217,10 @@ namespace Infusion.LegacyApi.Tests
                 var speechEvent = new SpeechRequestedEvent("second message");
                 source.Publish(speechEvent);
 
-                source.SignaleEventReceived(questArrowEvent);
-                source.SignaleEventReceived(speechEvent);
+                source.SignalEventReceived(questArrowEvent);
+                source.SignalEventReceived(speechEvent);
 
-                executedEvent.WaitOne(100).Should().BeTrue();
+                task.Wait(100).Should().BeTrue();
 
                 receivedSpeech.Should().NotBeNull();
                 receivedSpeech.Message.Should().Be("first message");
@@ -172,29 +277,35 @@ namespace Infusion.LegacyApi.Tests
         [TestMethod]
         public void Can_cancel_awaiting()
         {
-            var initializedEvent = new AutoResetEvent(false);
-            var source = new EventJournalSource();
-            var cancellationTokenSource = new CancellationTokenSource();
-            var journal = new EventJournal(source, () => cancellationTokenSource.Token);
-
-            var task = Task.Run(() =>
+            ConcurrencyTester.Run(() =>
             {
-                Action action = () =>
+                var initializedEvent = new AutoResetEvent(false);
+                var source = new EventJournalSource();
+                var cancellationTokenSource = new CancellationTokenSource();
+                var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+
+                var task = Task.Run(() =>
                 {
-                    initializedEvent.Set();
-                    journal
-                        .When<QuestArrowEvent>(e => { })
-                        .WaitAny();
-                };
+                    Action action = () =>
+                    {
+                        initializedEvent.Set();
+                        journal
+                            .When<QuestArrowEvent>(e => { })
+                            .WaitAny();
+                    };
 
-                action.ShouldThrow<OperationCanceledException>();
+                    action.ShouldThrow<OperationCanceledException>();
+                });
+
+                initializedEvent.WaitOne(100).Should()
+                    .BeTrue("awaiting should start immediatelly, false means a timeout");
+                Thread.Yield();
+
+                cancellationTokenSource.Cancel();
+
+                task.Wait(TimeSpan.FromMilliseconds(100)).Should()
+                    .BeTrue("false means timeout - tested task was not executed in time");
             });
-
-            initializedEvent.WaitOne(100).Should().BeTrue("awaiting should start immediatelly, false means a timeout");
-
-            cancellationTokenSource.Cancel();
-
-            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue("false means timeout - tested task was not executed in time");
         }
 
         [TestMethod]
@@ -202,7 +313,6 @@ namespace Infusion.LegacyApi.Tests
         {
             ConcurrencyTester.Run(() =>
             {
-                var initializedEvent = new AutoResetEvent(false);
                 var finishedEvent = new AutoResetEvent(false);
                 int whenExecutedCount = 0;
                 var source = new EventJournalSource();
@@ -214,7 +324,6 @@ namespace Infusion.LegacyApi.Tests
                 {
                     Action testedAction = () =>
                     {
-                        initializedEvent.Set();
                         journal
                             .When<SpeechRequestedEvent>(e =>
                             {
@@ -229,9 +338,7 @@ namespace Infusion.LegacyApi.Tests
                     testedAction.ShouldThrow<OperationCanceledException>();
                 });
 
-                initializedEvent.WaitOne(100).Should()
-                    .BeTrue("task with HandleIncomming should start immediatelly, false means a suspicious timeout");
-                Thread.Sleep(1);
+                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
 
                 source.Publish(new SpeechRequestedEvent("message1"));
                 source.Publish(new SpeechRequestedEvent("message2"));
@@ -262,7 +369,7 @@ namespace Infusion.LegacyApi.Tests
         public IEnumerable<OrderedEvent> Events => source.Events;
         public EventId LastEventId => source.LastEventId;
 
-        public void SignaleEventReceived(IEvent ev)
+        public void SignalEventReceived(IEvent ev)
         {
             NewEventReceived?.Invoke(this, ev);
         }

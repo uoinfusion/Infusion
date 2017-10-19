@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Infusion.LegacyApi.Events;
 
@@ -7,49 +8,74 @@ namespace Infusion.LegacyApi
 {
     public class EventJournalAwaiter
     {
-        private readonly IEventJournalSource source;
+        private readonly AutoResetEvent awaitingStartedEvent;
+
         private readonly Func<CancellationToken?> cancellationTokenProvider;
-        private readonly Dictionary<Type,  Delegate> whenActions = new Dictionary<Type, Delegate>();
         private readonly ManualResetEvent eventReceivedEvent = new ManualResetEvent(false);
         private readonly object eventReceivedLock = new object();
-        private Queue<Tuple<Delegate, IEvent>> eventQueue;
 
-        private Delegate whenActionToExecute;
+        private readonly Dictionary<Type, List<EventSubscription>> eventSubscriptions =
+            new Dictionary<Type, List<EventSubscription>>();
+
+        private Queue<Tuple<Delegate, IEvent>> eventQueue;
         private IEvent receivedEvent;
 
-        internal EventJournalAwaiter(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider)
+        private Delegate whenActionToExecute;
+
+        internal EventJournalAwaiter(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider,
+            AutoResetEvent awaitingStartedEvent)
         {
-            this.source = source;
             this.cancellationTokenProvider = cancellationTokenProvider;
+            this.awaitingStartedEvent = awaitingStartedEvent;
             source.NewEventReceived += HandleNewEvent;
         }
 
         private void HandleNewEvent(object sender, IEvent ev)
         {
-            if (whenActions.TryGetValue(ev.GetType(), out var whenDelegate))
+            if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
             {
+                var subscription =
+                    subscriptionsList.FirstOrDefault(x => x.Predicate == null || (bool) x.Predicate.DynamicInvoke(ev));
+                if (subscription == null)
+                    return;
+
                 lock (eventReceivedLock)
                 {
-                    if (whenDelegate == null)
-                        return;
+                    eventQueue?.Enqueue(new Tuple<Delegate, IEvent>(subscription.WhenAction, ev));
 
-                    eventQueue?.Enqueue(new Tuple<Delegate, IEvent>(whenDelegate, ev));
-
-                    whenActionToExecute = whenDelegate;
-                    receivedEvent = ev;
+                    if (whenActionToExecute == null)
+                    {
+                        whenActionToExecute = subscription.WhenAction;
+                        receivedEvent = ev;
+                    }
                 }
                 eventReceivedEvent.Set();
             }
         }
 
+        internal EventJournalAwaiter When<T>(Func<T, bool> whenPredicate, Action<T> whenAction) where T : IEvent
+        {
+            if (!eventSubscriptions.TryGetValue(typeof(T), out var subscriptionList))
+            {
+                subscriptionList = new List<EventSubscription>();
+                eventSubscriptions.Add(typeof(T), subscriptionList);
+            }
+
+            subscriptionList.Add(new EventSubscription(whenPredicate, whenAction));
+
+            return this;
+        }
+
         public void WaitAny(TimeSpan? timeout = null)
         {
-            var totalWaitingMillieseconds = 0;
+            var startedTime = DateTime.UtcNow;
 
-            while (!eventReceivedEvent.WaitOne(100))
+            awaitingStartedEvent.Set();
+
+            while (!eventReceivedEvent.WaitOne(25))
             {
-                totalWaitingMillieseconds += 100;
-                if (timeout.HasValue && timeout.Value.TotalMilliseconds < totalWaitingMillieseconds)
+                var elapsed = DateTime.UtcNow - startedTime;
+                if (timeout.HasValue && timeout.Value < elapsed)
                     throw new TimeoutException();
 
                 if (cancellationTokenProvider != null)
@@ -58,9 +84,6 @@ namespace Infusion.LegacyApi
                     token?.ThrowIfCancellationRequested();
                 }
             }
-
-            if (!eventReceivedEvent.WaitOne((int) (timeout?.TotalMilliseconds ?? -1)))
-                throw new TimeoutException();
 
             Delegate whenAction;
             IEvent ev;
@@ -80,7 +103,13 @@ namespace Infusion.LegacyApi
 
         public EventJournalAwaiter When<T>(Action<T> action)
         {
-            whenActions[typeof(T)] = action;
+            if (!eventSubscriptions.TryGetValue(typeof(T), out var subscriptionList))
+            {
+                subscriptionList = new List<EventSubscription>();
+                eventSubscriptions.Add(typeof(T), subscriptionList);
+            }
+
+            subscriptionList.Add(new EventSubscription(null, action));
 
             return this;
         }
@@ -93,6 +122,8 @@ namespace Infusion.LegacyApi
                 {
                     eventQueue = new Queue<Tuple<Delegate, IEvent>>();
                 }
+
+                awaitingStartedEvent.Set();
 
                 while (true)
                 {
@@ -132,6 +163,18 @@ namespace Infusion.LegacyApi
                     eventQueue = null;
                 }
             }
+        }
+
+        private class EventSubscription
+        {
+            public EventSubscription(Delegate predicate, Delegate whenAction)
+            {
+                Predicate = predicate;
+                WhenAction = whenAction;
+            }
+
+            public Delegate WhenAction { get; }
+            public Delegate Predicate { get; }
         }
     }
 }

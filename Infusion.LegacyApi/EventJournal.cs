@@ -13,6 +13,8 @@ namespace Infusion.LegacyApi
         private readonly Func<CancellationToken?> cancellationTokenProvider;
         private readonly EventId journalStartEventId;
 
+        internal AutoResetEvent AwaitingStarted { get; } = new AutoResetEvent(false);
+
         internal EventJournal(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider = null)
         {
             this.source = source;
@@ -20,10 +22,11 @@ namespace Infusion.LegacyApi
             journalStartEventId = source.LastEventId;
         }
 
-        public EventJournalAwaiter When<T>(Action<T> whenAction) where T : IEvent
-        {
-            return new EventJournalAwaiter(source, cancellationTokenProvider).When(whenAction);
-        }
+        public EventJournalAwaiter When<T>(Action<T> whenAction) where T : IEvent =>
+            new EventJournalAwaiter(source, cancellationTokenProvider, AwaitingStarted).When(whenAction);
+
+        public EventJournalAwaiter When<T>(Func<T, bool> acceptEventPredicate, Action<T> whenAction) where T : IEvent =>
+            new EventJournalAwaiter(source, cancellationTokenProvider, AwaitingStarted).When(acceptEventPredicate, whenAction);
 
         public IEnumerator<IEvent> GetEnumerator() => source.Events.Where(e => e.Id > journalStartEventId).Select(e => e.Event).GetEnumerator();
 

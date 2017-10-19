@@ -12,6 +12,7 @@ namespace Infusion.LegacyApi
         private readonly Dictionary<Type,  Delegate> whenActions = new Dictionary<Type, Delegate>();
         private readonly ManualResetEvent eventReceivedEvent = new ManualResetEvent(false);
         private readonly object eventReceivedLock = new object();
+        private Queue<Tuple<Delegate, IEvent>> eventQueue;
 
         private Delegate whenActionToExecute;
         private IEvent receivedEvent;
@@ -29,8 +30,10 @@ namespace Infusion.LegacyApi
             {
                 lock (eventReceivedLock)
                 {
-                    if (whenActionToExecute != null)
+                    if (whenDelegate == null)
                         return;
+
+                    eventQueue?.Enqueue(new Tuple<Delegate, IEvent>(whenDelegate, ev));
 
                     whenActionToExecute = whenDelegate;
                     receivedEvent = ev;
@@ -80,6 +83,55 @@ namespace Infusion.LegacyApi
             whenActions[typeof(T)] = action;
 
             return this;
+        }
+
+        public void HandleIncomming()
+        {
+            try
+            {
+                lock (eventReceivedLock)
+                {
+                    eventQueue = new Queue<Tuple<Delegate, IEvent>>();
+                }
+
+                while (true)
+                {
+                    if (eventReceivedEvent.WaitOne(100))
+                    {
+                        Tuple<Delegate, IEvent>[] eventTuples = null;
+
+                        lock (eventReceivedLock)
+                        {
+                            if (eventQueue.Count > 0)
+                            {
+                                eventTuples = eventQueue.ToArray();
+                                eventQueue.Clear();
+                            }
+                        }
+
+                        if (eventTuples != null)
+                        {
+                            foreach (var eventTuple in eventTuples)
+                            {
+                                eventTuple.Item1.DynamicInvoke(eventTuple.Item2);
+                            }
+                        }
+                    }
+
+                    if (cancellationTokenProvider != null)
+                    {
+                        var token = cancellationTokenProvider();
+                        token?.ThrowIfCancellationRequested();
+                    }
+                }
+            }
+            finally
+            {
+                lock (eventReceivedLock)
+                {
+                    eventQueue = null;
+                }
+            }
         }
     }
 }

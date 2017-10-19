@@ -4,9 +4,12 @@ using Infusion.LegacyApi;
 public static class QuestArrow
 {
     private static Location2D? currentArrowLocation;
+    private static EventJournal journal = UO.CreateEventJournal();
     
-    public static EventJournalAwaiter CreateHandler(EventJournal eventJournal) =>
-        eventJournal.When<QuestArrowEvent>(HandleQuestChange);
+    public static void Run() =>
+        journal
+            .When<QuestArrowEvent>(HandleQuestChange)
+            .HandleIncomming();
 
     private static void HandleQuestChange(QuestArrowEvent e)
     {
@@ -39,4 +42,4 @@ public static class QuestArrow
 }
 
 UO.RegisterCommand("questarrow-last", QuestArrow.Last);
-UO.RegisterHandler("questarrow", QuestArrow.CreateHandler);
+UO.RegisterCommand("questarrow", QuestArrow.Run);

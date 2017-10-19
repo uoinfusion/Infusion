@@ -172,7 +172,7 @@ namespace Infusion.LegacyApi.Tests
         [TestMethod]
         public void Can_cancel_awaiting()
         {
-            AutoResetEvent initializedEvent = new AutoResetEvent(false);
+            var initializedEvent = new AutoResetEvent(false);
             var source = new EventJournalSource();
             var cancellationTokenSource = new CancellationTokenSource();
             var journal = new EventJournal(source, () => cancellationTokenSource.Token);
@@ -195,6 +195,57 @@ namespace Infusion.LegacyApi.Tests
             cancellationTokenSource.Cancel();
 
             task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue("false means timeout - tested task was not executed in time");
+        }
+
+        [TestMethod]
+        public void Can_handle_incomming_events()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var initializedEvent = new AutoResetEvent(false);
+                var finishedEvent = new AutoResetEvent(false);
+                int whenExecutedCount = 0;
+                var source = new EventJournalSource();
+                var cancellationTokenSource = new CancellationTokenSource();
+                var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+                var resultBuilder = new StringBuilder();
+
+                var task = Task.Run(() =>
+                {
+                    Action testedAction = () =>
+                    {
+                        initializedEvent.Set();
+                        journal
+                            .When<SpeechRequestedEvent>(e =>
+                            {
+                                resultBuilder.Append(e.Message);
+                                whenExecutedCount++;
+                                if (whenExecutedCount >= 3)
+                                    finishedEvent.Set();
+                            })
+                            .HandleIncomming();
+                    };
+
+                    testedAction.ShouldThrow<OperationCanceledException>();
+                });
+
+                initializedEvent.WaitOne(100).Should()
+                    .BeTrue("task with HandleIncomming should start immediatelly, false means a suspicious timeout");
+                Thread.Sleep(1);
+
+                source.Publish(new SpeechRequestedEvent("message1"));
+                source.Publish(new SpeechRequestedEvent("message2"));
+                source.Publish(new SpeechRequestedEvent("message3"));
+
+                finishedEvent.WaitOne(TimeSpan.FromMilliseconds(100)).Should()
+                    .BeTrue("the test didn't finished in time");
+
+                cancellationTokenSource.Cancel();
+                task.Wait(TimeSpan.FromMilliseconds(100)).Should()
+                    .BeTrue("false means timeout - tested task was not executed in time");
+
+                resultBuilder.ToString().Should().Be("message1message2message3");
+            });
         }
     }
 

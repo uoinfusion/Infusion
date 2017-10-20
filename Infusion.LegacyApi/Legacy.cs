@@ -119,6 +119,14 @@ namespace Infusion.LegacyApi
             name,
             commandAction);
 
+        public Command RegisterBackgroundCommand(string name, Action commandAction)
+        {
+            var command = new Command(name, commandAction, string.Empty, string.Empty, CommandExecutionMode.Background);
+            CommandHandler.RegisterCommand(command);
+
+            return command;
+        }
+
         public void Alert(string message)
         {
             logger.Critical(message);

@@ -513,6 +513,44 @@ namespace Infusion.Tests.Commands
             command.Finish();
         }
 
+        [TestMethod]
+        public void Non_specific_Terminate_does_not_terminate_background_commands()
+        {
+            var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
+            {
+                DoSomeCancellableAction();
+            });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",backgroundcmd");
+            command.WaitForInitialization();
+            command.Finish();
+            commandHandler.Terminate();
+
+            command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
+                .BeFalse("background command should still run after non-specific terminate");
+            commandHandler.RunningCommands.Select(x => x.Name).Should().Contain("backgroundcmd");
+        }
+
+        [TestMethod]
+        public void Specific_Terminate_terminates_background_command()
+        {
+            var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
+            {
+                DoSomeCancellableAction();
+            });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",backgroundcmd");
+            command.WaitForInitialization();
+            command.Finish();
+            commandHandler.Terminate("backgroundcmd");
+
+            command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
+                .BeTrue("background command didn't finish");
+            commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("backgroundcmd");
+        }
+
         private sealed class TestCommand
         {
             private readonly Action additionalAction;

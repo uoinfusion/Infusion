@@ -1,4 +1,5 @@
 using System;
+using Infusion.Commands;
 using Infusion.LegacyApi;
 
 public static class QuestArrow
@@ -41,5 +42,5 @@ public static class QuestArrow
     }
 }
 
+UO.RegisterBackgroundCommand("questarrow", QuestArrow.Run);
 UO.RegisterCommand("questarrow-last", QuestArrow.Last);
-UO.RegisterCommand("questarrow", QuestArrow.Run);

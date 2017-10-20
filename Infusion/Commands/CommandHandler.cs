@@ -161,13 +161,13 @@ namespace Infusion.Commands
             }
         }
 
-        public void Terminate()
+        public void Terminate(bool force = false)
         {
             IEnumerable<CommandInvocation> invocations;
 
             lock (runningCommandsLock)
             {
-                invocations = runningCommands.Values;
+                invocations = runningCommands.Values.Where(x => force || x.Mode != CommandExecutionMode.Background);
             }
 
             foreach (var invocation in invocations)

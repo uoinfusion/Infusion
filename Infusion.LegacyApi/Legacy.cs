@@ -35,7 +35,7 @@ namespace Infusion.LegacyApi
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
-                ultimaServer, this);
+                ultimaServer, this, eventJournalSource);
             gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
@@ -120,6 +120,14 @@ namespace Infusion.LegacyApi
             commandAction);
 
         public Command RegisterBackgroundCommand(string name, Action commandAction)
+        {
+            var command = new Command(name, commandAction, string.Empty, string.Empty, CommandExecutionMode.Background);
+            CommandHandler.RegisterCommand(command);
+
+            return command;
+        }
+
+        public Command RegisterBackgroundCommand(string name, Action<string> commandAction)
         {
             var command = new Command(name, commandAction, string.Empty, string.Empty, CommandExecutionMode.Background);
             CommandHandler.RegisterCommand(command);

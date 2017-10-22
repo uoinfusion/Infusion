@@ -159,6 +159,21 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
+        public void Can_tell_whether_a_command_is_running()
+        {
+            var command1 = new TestCommand("cmd1");
+            commandHandler.RegisterCommand(command1.Command);
+            commandHandler.Invoke(",cmd1");
+
+            command1.WaitForInitialization();
+
+            commandHandler.IsCommandRunning("cmd1").Should().BeTrue("cmd1 command is running");
+            commandHandler.IsCommandRunning("cmd2").Should().BeFalse("cmd2 command is not running");
+
+            command1.Finish();
+        }
+
+        [TestMethod]
         public void Can_remove_finished_command_from_list()
         {
             var finishedCommand = new TestCommand(commandHandler, "finished_cmd", () =>{ });

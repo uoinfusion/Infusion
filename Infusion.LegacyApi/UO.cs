@@ -51,6 +51,9 @@ namespace Infusion.LegacyApi
         public static Command RegisterBackgroundCommand(string name, Action commandAction)
             => Current.RegisterBackgroundCommand(name, commandAction);
 
+        public static Command RegisterBackgroundCommand(string name, Action<string> commandAction)
+            => Current.RegisterBackgroundCommand(name, commandAction);
+
         public static Command RegisterCommand(string name, Action<string> commandAction)
             => Current.RegisterCommand(name, commandAction);
 

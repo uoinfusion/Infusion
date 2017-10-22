@@ -5,7 +5,6 @@ using System;
 
 public static class Potions
 {
-    private static bool countdownEnabled;
     private static Countdown cooldownCountdown; 
     
     public static readonly TimeSpan SlowCooldown = TimeSpan.FromSeconds(20);
@@ -23,17 +22,35 @@ public static class Potions
     {
         HealLesserPotion, HealPotion, HealGreaterPotion,
     };
-
-    static Potions()
+    
+    public static void Enable()
     {
-        UO.Events.ItemUseRequested += (sender, args) => HandleItemUseRequested(args);
+        UO.CommandHandler.Invoke(",potions");
     }
     
-    private static void HandleItemUseRequested(ItemUseRequestedArgs args)
+    public static void Disable()
     {
-        if (!countdownEnabled)
-            return;
+        UO.CommandHandler.Terminate("potions");
+    }
     
+    public static void Toggle()
+    {
+        if (UO.CommandHandler.IsCommandRunning(""))
+            Disable();
+        else
+            Enable();
+    }
+
+    public static void Run()
+    {
+        var journal = UO.CreateEventJournal();
+        
+        journal.When<ItemUseRequestedEvent>(HandleItemUseRequested)
+            .HandleIncomming();
+    }
+
+    private static void HandleItemUseRequested(ItemUseRequestedEvent args)
+    {
         var bottle = UO.Items[args.ItemId];
         if (bottle == null || !Specs.Bottle.Matches(bottle))
             return;
@@ -65,3 +82,8 @@ public class Potion
         this.Duration = duration;
     }
 }
+
+UO.RegisterBackgroundCommand("potions", Potions.Run);
+UO.RegisterCommand("potions-enable", Potions.Enable);
+UO.RegisterCommand("potions-disable", Potions.Disable);
+UO.RegisterCommand("potions-toggle", Potions.Toggle);

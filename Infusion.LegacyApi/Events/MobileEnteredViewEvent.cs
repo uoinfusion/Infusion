@@ -8,11 +8,11 @@ namespace Infusion.LegacyApi.Events
 {
     public class MobileEnteredViewEvent : IEvent
     {
-        private readonly Mobile mobile;
+        public Mobile Mobile { get; }
 
         internal MobileEnteredViewEvent(Mobile mobile)
         {
-            this.mobile = mobile;
+            this.Mobile = mobile;
         }
     }
 }

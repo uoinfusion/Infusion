@@ -31,12 +31,18 @@ public static class Pets
                 UO.Target(target);
         };
         
-        UO.Events.MobileEnteredView += HandleMobileEnteredView;
-        UO.Events.MobileLeftView += HandleMobileLeftView;
-        UO.Events.MobileDeleted += HandleMobileLeftView;
-        UO.Events.HealthUpdated += HandleHealthUpdated;
-
         requestStatusQueue.StartProcessing();
+    }
+    
+    public static void Run()
+    {
+        var journal = UO.CreateEventJournal();
+        journal
+            .When<MobileEnteredViewEvent>(e => HandleMobileEnteredView(e.Mobile))
+            .When<MobileLeftViewEvent>(e => HandleMobileLeftView(e.Mobile))
+            .When<MobileDeletedEvent>(e => HandleMobileLeftView(e.Mobile))
+            .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
+            .HandleIncomming();
     }
     
     public static void Enable()
@@ -75,7 +81,7 @@ public static class Pets
         }
     }
 
-    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
+    private static void HandleHealthUpdated(CurrentHealthUpdatedEvent args)
     {
         if (enabled)
         {
@@ -93,7 +99,7 @@ public static class Pets
         }
     }
     
-    private static void HandleMobileEnteredView(object sender, Mobile mobile)
+    private static void HandleMobileEnteredView(Mobile mobile)
     {
         if (PetsSpec.Matches(mobile))
         {
@@ -101,7 +107,7 @@ public static class Pets
         }
     }
     
-    private static void HandleMobileLeftView(object sender, Mobile mobile)
+    private static void HandleMobileLeftView(Mobile mobile)
     {
         if (enabled)
         {

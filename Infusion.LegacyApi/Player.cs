@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
+using Infusion.LegacyApi.Events;
 using Infusion.Packets.Both;
 using Infusion.Packets.Server;
 
@@ -18,6 +19,7 @@ namespace Infusion.LegacyApi
         private static readonly TimeSpan timeBetweenWalkingSteps = TimeSpan.FromMilliseconds(400);
         private readonly Func<bool> hasMount;
         private readonly Legacy legacyApi;
+        private readonly EventJournalSource eventJournalSource;
         private readonly UltimaServer server;
 
         private readonly AutoResetEvent walkRequestDequeueEvent = new AutoResetEvent(false);
@@ -27,11 +29,12 @@ namespace Infusion.LegacyApi
 
         private int walkRequestRejectionsCount;
 
-        internal Player(Func<bool> hasMount, UltimaServer server, Legacy legacyApi)
+        internal Player(Func<bool> hasMount, UltimaServer server, Legacy legacyApi, EventJournalSource eventJournalSource)
         {
             this.hasMount = hasMount;
             this.server = server;
             this.legacyApi = legacyApi;
+            this.eventJournalSource = eventJournalSource;
         }
 
         public ObjectId PlayerId { get; set; }
@@ -43,8 +46,10 @@ namespace Infusion.LegacyApi
             {
                 if (location != value)
                 {
+                    var oldValue = location;
                     location = value;
                     OnLocationChanged(value);
+                    eventJournalSource.Publish(new PlayerLocationChangedEvent(value, oldValue));
                 }
             }
         }
@@ -80,7 +85,7 @@ namespace Infusion.LegacyApi
 
         public byte LightLevel { get; internal set; }
 
-        public event EventHandler<Location3D> LocationChanged;
+        internal event EventHandler<Location3D> LocationChanged;
 
         internal void WaitToAvoidFastWalk(MovementType movementType)
         {

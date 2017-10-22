@@ -11,7 +11,7 @@ namespace Infusion.LegacyApi
         private readonly AutoResetEvent awaitingStartedEvent;
 
         private readonly Func<CancellationToken?> cancellationTokenProvider;
-        private readonly ManualResetEvent eventReceivedEvent = new ManualResetEvent(false);
+        private readonly AutoResetEvent eventReceivedEvent = new AutoResetEvent(false);
         private readonly object eventReceivedLock = new object();
 
         private readonly Dictionary<Type, List<EventSubscription>> eventSubscriptions =

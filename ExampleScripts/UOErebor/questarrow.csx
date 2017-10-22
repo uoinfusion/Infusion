@@ -40,7 +40,19 @@ public static class QuestArrow
     {
         UO.ClientPrint(CurrentQuestDescription);
     }
+    
+    public static void Disable()
+    {
+        UO.CommandHandler.Terminate("questarrow");
+    }
+    
+    public static void Enable()
+    {
+        UO.CommandHandler.Invoke(",questarrow");
+    }
 }
 
 UO.RegisterBackgroundCommand("questarrow", QuestArrow.Run);
+UO.RegisterCommand("questarrow-enable", QuestArrow.Enable);
+UO.RegisterCommand("questarrow-disable", QuestArrow.Disable);
 UO.RegisterCommand("questarrow-last", QuestArrow.Last);

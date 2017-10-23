@@ -94,7 +94,6 @@ namespace Infusion.Proxy
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, "Shows proxy latency."));
 
             var legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
-            legacyApi.Events.CommandRequested += (sender, e) => commandRequestedHandler(e);
             UO.Initialize(legacyApi);
         }
 

@@ -94,7 +94,6 @@
     <Compile Include="SpeechRequestObserver.cs" />
     <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />
-    <Compile Include="LegacyEvents.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="PlayerObservers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

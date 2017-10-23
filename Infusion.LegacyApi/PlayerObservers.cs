@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Both;
@@ -16,10 +17,10 @@ namespace Infusion.LegacyApi
         private readonly ILogger logger;
         private readonly Legacy legacyApi;
         private readonly GameObjectCollection gameObjects;
-        private readonly LegacyEvents legacyEvents;
+        private readonly EventJournalSource eventJournalSource;
         private bool discardNextClientAck;
 
-        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects, LegacyEvents legacyEvents)
+        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource)
         {
             this.client = client;
             this.server = server;
@@ -27,7 +28,7 @@ namespace Infusion.LegacyApi
             this.logger = logger;
             this.legacyApi = legacyApi;
             this.gameObjects = gameObjects;
-            this.legacyEvents = legacyEvents;
+            this.eventJournalSource = eventJournalSource;
 
             client.RegisterFilter(FilterClientPackets);
             client.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
@@ -50,7 +51,7 @@ namespace Infusion.LegacyApi
         private void HandleRequestSkills(SkillRequest packet)
         {
             if (packet.Skill.HasValue)
-                legacyEvents.OnSkillRequested(packet.Skill.Value);
+                eventJournalSource.Publish(new SkillRequestedEvent(packet.Skill.Value));
         }
 
         private ObjectId acceptedAttackTargedId;

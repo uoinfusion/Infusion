@@ -55,8 +55,7 @@ namespace Infusion.LegacyApi
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, logger, eventJournalSource);
 
-            Events = new LegacyEvents(itemsObserver, journalSource, soundObserver, speechRequestObserver, eventJournalSource);
-            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, Events);
+            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, eventJournalSource);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
 
             this.logger = logger;
@@ -71,8 +70,6 @@ namespace Infusion.LegacyApi
         }
 
         public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
-
-        public LegacyEvents Events { get; }
 
         public Configuration Configuration { get; }
 
@@ -527,7 +524,7 @@ namespace Infusion.LegacyApi
             journalSource.NotifyLastAction();
 
             Server.UseSkill(skill);
-            Events.OnSkillRequested(skill);
+            eventJournalSource.Publish(new SkillRequestedEvent(skill));
         }
 
         public void OpenDoor()

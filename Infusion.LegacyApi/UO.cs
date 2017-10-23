@@ -10,8 +10,6 @@ namespace Infusion.LegacyApi
     {
         private static Legacy Current { get; set; }
 
-        public static LegacyEvents Events => Current.Events;
-
         public static Configuration Configuration => Current.Configuration;
 
         public static Gump CurrentGump => Current.CurrentGump;

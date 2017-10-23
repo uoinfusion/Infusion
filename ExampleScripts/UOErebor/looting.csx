@@ -196,31 +196,31 @@ public static class Looting
         }
     }
 
-    private static Item lootContainer;
-    
     public static Item LootContainer
     {
         get
         {
-            if (lootContainer == null || UO.Items.Refresh(lootContainer) == null)
+            Item lootContainer = null;
+        
+            UO.Log("checking new loot container");
+            if (LootContainerId.HasValue)
             {
-                if (LootContainerId.HasValue)
-                {
-                    lootContainer = UO.Items[LootContainerId.Value];
-                }
-                
-                if (lootContainer == null && LootContainerSpec != null)
-                {
-                    lootContainer = UO.Items
-                        .InContainer(UO.Me.BackPack)
-                        .Matching(LootContainerSpec)
-                        .FirstOrDefault();
-                }
-                
-                if (lootContainer == null)
-                {
-                    lootContainer = UO.Me.BackPack;
-                }
+                lootContainer = UO.Items[LootContainerId.Value];
+            }
+            
+            if (lootContainer == null && LootContainerSpec != null)
+            {
+                UO.Log("No LootContainerId or container found");
+                lootContainer = UO.Items
+                    .InContainer(UO.Me.BackPack)
+                    .Matching(LootContainerSpec)
+                    .FirstOrDefault();
+            }
+            
+            if (lootContainer == null)
+            {
+                UO.Log("No spec container found, using backpack");
+                lootContainer = UO.Me.BackPack;
             }
             
             return lootContainer;

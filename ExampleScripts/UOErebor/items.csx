@@ -30,6 +30,7 @@ public static class Items
             if (amount == 0)
                 break;
     
+            UO.ClientPrint($"Moving item {Specs.TranslateToName(item)}");
             if (item.Amount <= amount)
             {
                 UO.TryMoveItem(item, targetContainerId);
@@ -85,6 +86,8 @@ public static class Items
         
         var items = UO.Items.InContainer(sourceContainer).Matching(spec);
         MoveItems(items, targetContainer);
+        
+        UO.ClientPrint("Moving finished");
     }
     
     public static void MoveFood()

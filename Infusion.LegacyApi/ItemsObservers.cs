@@ -27,12 +27,10 @@ namespace Infusion.LegacyApi
             this.gameObjects.MobileLeftView += (sender, mobile) =>
             {
                 eventJournalSource.Publish(new MobileLeftViewEvent(mobile));
-                MobileLeftView.RaiseScriptEvent(this, mobile);
             };
             this.gameObjects.MobileDeleted += (sender, mobile) =>
             {
-
-                MobileDeleted.RaiseScriptEvent(this, mobile);
+                eventJournalSource.Publish(new MobileLeftViewEvent(mobile));
             };
 
             this.legacyApi = legacyApi;
@@ -76,9 +74,7 @@ namespace Infusion.LegacyApi
 
         private void HandleDoubleClick(DoubleClickRequest request)
         {
-            var ev = new ItemUseRequestedEvent(request.ItemId);
-            eventJournalSource.Publish(ev);
-            DoubleClickRequested?.Invoke(this, ev);
+            eventJournalSource.Publish(new ItemUseRequestedEvent(request.ItemId));
         }
 
         public ObjectId? DraggedItemId { get; set; }
@@ -109,18 +105,9 @@ namespace Infusion.LegacyApi
 
             if (oldHealth != newHealth)
             {
-                var ev = new CurrentHealthUpdatedEvent(updatedItem, oldHealth);
-                eventJournalSource.Publish(ev);
-                CurrentHealthUpdated.RaiseScriptEvent(this, ev);
+                eventJournalSource.Publish(new CurrentHealthUpdatedEvent(updatedItem, oldHealth));
             }
         }
-
-        internal event EventHandler<CurrentHealthUpdatedEvent> CurrentHealthUpdated;
-        internal event EventHandler<ItemUseRequestedEvent> DoubleClickRequested;
-        internal event EventHandler<ItemEnteredViewEvent> ItemEnteredView;
-        internal event EventHandler<Mobile> MobileEnteredView;
-        internal event EventHandler<Mobile> MobileLeftView;
-        internal event EventHandler<Mobile> MobileDeleted;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -178,14 +165,6 @@ namespace Infusion.LegacyApi
             }
         }
 
-        internal void ResetEvents()
-        {
-            CurrentHealthUpdated = null;
-            ItemEnteredView = null;
-            MobileLeftView = null;
-            MobileEnteredView = null;
-        }
-
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
         {
             if (gameObjects.TryGet(packet.ItemId, out GameObject existingObject) && existingObject is Item existingItem)
@@ -241,9 +220,7 @@ namespace Infusion.LegacyApi
 
         private void OnItemEnteredView(Item item)
         {
-            var ev = new ItemEnteredViewEvent(item);
-            eventJournalSource.Publish(ev);
-            ItemEnteredView.RaiseScriptEvent(this, ev);
+            eventJournalSource.Publish(new ItemEnteredViewEvent(item));
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
@@ -269,7 +246,6 @@ namespace Infusion.LegacyApi
         private void OnMobileEnteredView(Mobile mobile)
         {
             eventJournalSource.Publish(new MobileEnteredViewEvent(mobile));
-            MobileEnteredView.RaiseScriptEvent(this, mobile);
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

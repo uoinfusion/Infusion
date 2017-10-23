@@ -42,18 +42,16 @@ namespace Infusion.Desktop
             Program.Console = new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration),
                 new FileLogger(Program.Configuration));
-            Program.Initialize(HandleCommandRequest);
+            var commandHandler = new CommandHandler(Program.Console);
+
+            Program.Initialize(commandHandler);
             DataContext = consoleContent;
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
 
             _inputBlock.Focus();
 
-            Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
-        }
-
-        private void HandleCommandRequest(CommandRequestedEvent @event)
-        {
-            OnCommandEntered(@event.InvocationSyntax);
+            if (Application.Current.MainWindow != null)
+                Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
         }
 
         public CSharpScriptEngine ScriptEngine { get; }

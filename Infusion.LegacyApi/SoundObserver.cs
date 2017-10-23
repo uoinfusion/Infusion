@@ -29,20 +29,12 @@ namespace Infusion.LegacyApi
 
                 var ev = new SoundEffectPlayedEvent(packet.Id, packet.Location);
                 eventJournalSource.Publish(ev);
-                SoundEffectPlayed?.Invoke(this, ev);
 
                 if (configuration.FilteredSoundSet.Contains(packet.Id))
                     return null;
             }
 
             return rawPacket;
-        }
-
-        public event EventHandler<SoundEffectPlayedEvent> SoundEffectPlayed;
-
-        public void ResetEvents()
-        {
-            SoundEffectPlayed = null;
         }
     }
 }

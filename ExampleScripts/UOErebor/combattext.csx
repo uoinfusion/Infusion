@@ -10,7 +10,7 @@ public static class CombatText
         var journal = UO.CreateEventJournal();
         
         journal.When<SpeechReceivedEvent>(e => OnSpeechReceived(e.Speech))
-            .HandleIncomming();
+            .Incomming();
     }
     
     public static void Enable()

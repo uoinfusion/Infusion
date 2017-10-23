@@ -46,7 +46,7 @@ public static class Potions
         var journal = UO.CreateEventJournal();
         
         journal.When<ItemUseRequestedEvent>(HandleItemUseRequested)
-            .HandleIncomming();
+            .Incomming();
     }
 
     private static void HandleItemUseRequested(ItemUseRequestedEvent args)

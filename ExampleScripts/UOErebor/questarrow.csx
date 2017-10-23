@@ -10,7 +10,7 @@ public static class QuestArrow
     public static void Run() =>
         journal
             .When<QuestArrowEvent>(HandleQuestChange)
-            .HandleIncomming();
+            .Incomming();
 
     private static void HandleQuestChange(QuestArrowEvent e)
     {

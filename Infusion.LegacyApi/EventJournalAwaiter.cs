@@ -8,9 +8,8 @@ namespace Infusion.LegacyApi
 {
     public class EventJournalAwaiter
     {
-        private readonly AutoResetEvent awaitingStartedEvent;
-
         private readonly Func<CancellationToken?> cancellationTokenProvider;
+        private readonly EventJournal journal;
         private readonly AutoResetEvent eventReceivedEvent = new AutoResetEvent(false);
         private readonly object eventReceivedLock = new object();
 
@@ -23,10 +22,10 @@ namespace Infusion.LegacyApi
         private Delegate whenActionToExecute;
 
         internal EventJournalAwaiter(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider,
-            AutoResetEvent awaitingStartedEvent)
+            EventJournal journal)
         {
             this.cancellationTokenProvider = cancellationTokenProvider;
-            this.awaitingStartedEvent = awaitingStartedEvent;
+            this.journal = journal;
             source.NewEventReceived += HandleNewEvent;
         }
 
@@ -70,9 +69,9 @@ namespace Infusion.LegacyApi
         {
             var startedTime = DateTime.UtcNow;
 
-            awaitingStartedEvent.Set();
+            journal.AwaitingStarted.Set();
 
-            while (!eventReceivedEvent.WaitOne(25))
+            while (!eventReceivedEvent.WaitOne(10))
             {
                 var elapsed = DateTime.UtcNow - startedTime;
                 if (timeout.HasValue && timeout.Value < elapsed)
@@ -114,7 +113,7 @@ namespace Infusion.LegacyApi
             return this;
         }
 
-        public void HandleIncomming()
+        public void Incomming()
         {
             try
             {
@@ -123,11 +122,11 @@ namespace Infusion.LegacyApi
                     eventQueue = new Queue<Tuple<Delegate, IEvent>>();
                 }
 
-                awaitingStartedEvent.Set();
+                journal.AwaitingStarted.Set();
 
                 while (true)
                 {
-                    if (eventReceivedEvent.WaitOne(100))
+                    if (eventReceivedEvent.WaitOne(10))
                     {
                         Tuple<Delegate, IEvent>[] eventTuples = null;
 
@@ -163,6 +162,24 @@ namespace Infusion.LegacyApi
                     eventQueue = null;
                 }
             }
+        }
+
+        public void All()
+        {
+            var lastProcessedEventId = journal.LastEventId;
+
+            journal.AwaitingStarted.Set();
+
+            foreach (var ev in journal.OrderedEvents.Where(e => e.Id <= lastProcessedEventId))
+            {
+                if (eventSubscriptions.TryGetValue(ev.Event.GetType(), out var subscriptionsList))
+                {
+                    foreach (var subscription in subscriptionsList)
+                        subscription.WhenAction.DynamicInvoke(ev.Event);
+                }
+            }
+
+            journal.JournalStartEventId = lastProcessedEventId;
         }
 
         private class EventSubscription

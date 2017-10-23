@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using Infusion.LegacyApi.Events;
 
@@ -9,7 +11,7 @@ namespace Infusion.LegacyApi
     {
         private const int MaxEventCount = 2048;
 
-        private readonly Queue<OrderedEvent> events = new Queue<OrderedEvent>();
+        private ImmutableQueue<OrderedEvent> events = ImmutableQueue<OrderedEvent>.Empty;
         private readonly object sourceLock = new object();
         private int counter;
         public event EventHandler<IEvent> NewEventReceived;
@@ -33,11 +35,11 @@ namespace Infusion.LegacyApi
             lock (sourceLock)
             {
                 var id = GenerateId();
-                events.Enqueue(new OrderedEvent(id, ev));
+                events = events.Enqueue(new OrderedEvent(id, ev));
                 LastEventId = id;
 
-                if (events.Count > MaxEventCount)
-                    events.Dequeue();
+                if (events.Count() > MaxEventCount)
+                    events = events.Dequeue();
             }
 
             NewEventReceived?.Invoke(this, ev);

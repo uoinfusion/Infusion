@@ -13,7 +13,7 @@ public static class HitPointNotifier
         var journal = UO.CreateEventJournal();
 
         journal.When<CurrentHealthUpdatedEvent>(OnHealthUpdated)
-            .HandleIncomming();
+            .Incomming();
     }
     
     public static void Enable()

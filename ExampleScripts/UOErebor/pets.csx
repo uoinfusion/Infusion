@@ -42,7 +42,7 @@ public static class Pets
             .When<MobileLeftViewEvent>(e => HandleMobileLeftView(e.Mobile))
             .When<MobileDeletedEvent>(e => HandleMobileLeftView(e.Mobile))
             .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
-            .HandleIncomming();
+            .Incomming();
     }
     
     public static void Enable()

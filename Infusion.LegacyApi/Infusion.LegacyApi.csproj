@@ -51,7 +51,6 @@
     <Compile Include="BlockedClientPacketsFilters.cs" />
     <Compile Include="Events\CommandRequestedEvent.cs" />
     <Compile Include="Events\CurrentHealthUpdatedEvent.cs" />
-    <Compile Include="EventHelper.cs" />
     <Compile Include="Events\EventId.cs" />
     <Compile Include="EventJournal.cs" />
     <Compile Include="EventJournalAwaiter.cs" />

@@ -10,19 +10,14 @@ namespace Infusion.LegacyApi
     internal sealed class SpeechRequestObserver
     {
         private readonly CommandHandler commandHandler;
-        private readonly ILogger logger;
         private readonly IEventJournalSource eventSource;
 
-        public SpeechRequestObserver(UltimaClient clientPacketHandler, CommandHandler commandHandler, ILogger logger, IEventJournalSource eventSource)
+        public SpeechRequestObserver(UltimaClient clientPacketHandler, CommandHandler commandHandler, IEventJournalSource eventSource)
         {
             this.commandHandler = commandHandler;
-            this.logger = logger;
             this.eventSource = eventSource;
             clientPacketHandler.RegisterFilter(FilterClientSpeech);
         }
-
-        public event EventHandler<SpeechRequestedEvent> SpeechRequested;
-        public event EventHandler<CommandRequestedEvent> CommandRequested;
 
         private Packet? FilterClientSpeech(Packet rawPacket)
         {
@@ -32,25 +27,16 @@ namespace Infusion.LegacyApi
                 var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
                 if (commandHandler.IsInvocationSyntax(packet.Text))
                 {
-                    var commandEvent = new CommandRequestedEvent(packet.Text);
-                    eventSource.Publish(commandEvent);
-                    CommandRequested?.Invoke(this, commandEvent);
+                    commandHandler.Invoke(packet.Text);
+                    eventSource.Publish(new CommandRequestedEvent(packet.Text));
 
                     return null;
                 }
 
-                var speechEvent = new SpeechRequestedEvent(packet.Text);
-                eventSource.Publish(speechEvent);
-                SpeechRequested?.Invoke(this, speechEvent);
+                eventSource.Publish(new SpeechRequestedEvent(packet.Text));
             }
 
             return rawPacket;
-        }
-
-        public void ResetEvents()
-        {
-            //SpeechRequested = null;
-            //CommandRequested = null;
         }
     }
 }

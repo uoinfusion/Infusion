@@ -48,7 +48,7 @@ public static class Party
         journal
             .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
             .When<MobileEnteredViewEvent>(HandleMobileEnteredView)
-            .HandleIncomming();
+            .Incomming();
     }
         
     private static void HandleMobileEnteredView(MobileEnteredViewEvent ev)

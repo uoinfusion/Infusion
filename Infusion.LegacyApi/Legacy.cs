@@ -34,13 +34,13 @@ namespace Infusion.LegacyApi
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
+            eventJournalSource = new EventJournalSource();
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
                 ultimaServer, this, eventJournalSource);
             gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
-            eventJournalSource = new EventJournalSource();
             itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this, eventJournalSource);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
@@ -53,7 +53,7 @@ namespace Infusion.LegacyApi
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
             soundObserver = new SoundObserver(ultimaServer, configuration, eventJournalSource);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
-            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, logger, eventJournalSource);
+            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource);
 
             playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, eventJournalSource);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;

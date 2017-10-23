@@ -332,7 +332,7 @@ namespace Infusion.LegacyApi.Tests
                                 if (whenExecutedCount >= 3)
                                     finishedEvent.Set();
                             })
-                            .HandleIncomming();
+                            .Incomming();
                     };
 
                     testedAction.ShouldThrow<OperationCanceledException>();
@@ -353,6 +353,149 @@ namespace Infusion.LegacyApi.Tests
 
                 resultBuilder.ToString().Should().Be("message1message2message3");
             });
+        }
+
+        [TestMethod]
+        public void Can_handle_all_unprocessed_events()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            bool speechRequestedEventHandled = false;
+            bool questArrowEventHandled = false;
+
+            source.Publish(new SpeechRequestedEvent("some text"));
+            source.Publish(new QuestArrowEvent(true, new Location2D(123, 321)));
+
+            journal
+                .When<SpeechRequestedEvent>(e => speechRequestedEventHandled = true)
+                .When<QuestArrowEvent>(e => questArrowEventHandled = true)
+                .All();
+
+            speechRequestedEventHandled.Should().BeTrue();
+            questArrowEventHandled.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Can_handle_all_unprocessed_events_with_multiple_subscriptions_to_one_event()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            bool firstHandlerInvoked = false;
+            bool secondHandlerInvoked = false;
+
+            source.Publish(new SpeechRequestedEvent("some text"));
+
+            journal
+                .When<SpeechRequestedEvent>(e => firstHandlerInvoked = true)
+                .When<SpeechRequestedEvent>(e => secondHandlerInvoked = true)
+                .All();
+
+            firstHandlerInvoked.Should().BeTrue();
+            secondHandlerInvoked.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Doesnt_handle_processed_events_again()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            bool handlerInvoked = false;
+
+            source.Publish(new SpeechRequestedEvent("some text"));
+
+            journal
+                .When<SpeechRequestedEvent>(e => handlerInvoked = true)
+                .All();
+
+            handlerInvoked.Should().BeTrue();
+
+            handlerInvoked = false;
+            journal
+                .When<SpeechRequestedEvent>(e => handlerInvoked = true)
+                .All();
+
+            handlerInvoked.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Can_handle_all_unprocessed_events_multiple_times()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            bool handlerInvoked = false;
+
+            source.Publish(new SpeechRequestedEvent("some text"));
+
+            journal
+                .When<SpeechRequestedEvent>(e => handlerInvoked = true)
+                .All();
+
+            handlerInvoked.Should().BeTrue();
+
+            handlerInvoked = false;
+            source.Publish(new SpeechRequestedEvent("some text"));
+            journal
+                .When<SpeechRequestedEvent>(e => handlerInvoked = true)
+                .All();
+
+            handlerInvoked.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Can_handle_event_published_during_handling_all_unprocessed_events()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var source = new EventJournalSource();
+                var journal = new EventJournal(source);
+                bool handlerInvoked = false;
+                var waitInsideEventHandler = new AutoResetEvent(false);
+
+                source.Publish(new SpeechRequestedEvent("some text"));
+
+                var task = Task.Run(() =>
+                {
+                    journal
+                        .When<SpeechRequestedEvent>(e =>
+                        {
+                            waitInsideEventHandler.WaitOne();
+                        })
+                        .All();
+                });
+
+                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+
+                source.Publish(new SpeechRequestedEvent("other text"));
+                waitInsideEventHandler.Set();
+                task.Wait(100).Should().BeTrue();
+
+                journal
+                    .When<SpeechRequestedEvent>(e => handlerInvoked = true)
+                    .All();
+
+                handlerInvoked.Should().BeTrue();
+            });
+        }
+
+        [TestMethod]
+        public void Can_delete_journal_and_handle_next_event()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+
+            bool eventBeforeDeleteHandled = false;
+            bool eventAfterDeleteHandled = false;
+
+            source.Publish(new SpeechRequestedEvent("event that should be deleted"));
+            journal.Delete();
+            source.Publish(new QuestArrowEvent(true, new Location2D(123, 321)));
+
+            journal.When<SpeechRequestedEvent>(e => eventBeforeDeleteHandled = true)
+                .When<QuestArrowEvent>(e => eventAfterDeleteHandled = true)
+                .All();
+
+            eventBeforeDeleteHandled.Should().BeFalse();
+            eventAfterDeleteHandled.Should().BeTrue();
         }
     }
 

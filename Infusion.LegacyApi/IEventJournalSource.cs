@@ -10,5 +10,7 @@ namespace Infusion.LegacyApi
         void Publish(IEvent ev);
         IEnumerable<OrderedEvent> Events { get; }
         EventId LastEventId { get; }
+        int MaximumCapacity { get; }
+        void GetherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId);
     }
 }

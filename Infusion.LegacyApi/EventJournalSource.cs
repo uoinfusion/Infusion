@@ -11,38 +11,52 @@ namespace Infusion.LegacyApi
     {
         private const int MaxEventCount = 2048;
 
-        private ImmutableQueue<OrderedEvent> events = ImmutableQueue<OrderedEvent>.Empty;
+        private readonly LinkedList<OrderedEvent> events = new LinkedList<OrderedEvent>();
         private readonly object sourceLock = new object();
         private int counter;
         public event EventHandler<IEvent> NewEventReceived;
 
         public void Publish(IEvent ev)
         {
-            OnNewEventReceived(ev);
+            lock (sourceLock)
+            {
+                var id = GenerateId();
+                events.AddLast(new OrderedEvent(id, ev));
+                LastEventId = id;
+                counter++;
+
+                if (counter >= MaxEventCount)
+                {
+                    events.RemoveFirst();
+                    counter--;
+                }
+            }
+
+            NewEventReceived?.Invoke(this, ev);
         }
 
         // ReSharper disable once InconsistentlySynchronizedField
         public IEnumerable<OrderedEvent> Events => events;
 
         public EventId LastEventId { get; private set; }
+        public int MaximumCapacity => MaxEventCount;
 
-        private EventId GenerateId() =>
-            new EventId(Interlocked.Increment(ref counter));
-
-
-        private void OnNewEventReceived(IEvent ev)
+        public void GetherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
         {
             lock (sourceLock)
             {
-                var id = GenerateId();
-                events = events.Enqueue(new OrderedEvent(id, ev));
-                LastEventId = id;
+                foreach (var ev in events)
+                {
+                    if (ev.Id > maxEventId)
+                        return;
 
-                if (events.Count() > MaxEventCount)
-                    events = events.Dequeue();
+                    if (ev.Id > minEventId)
+                        targetCollection.Add(ev.Event);
+                }
             }
-
-            NewEventReceived?.Invoke(this, ev);
         }
+
+        private EventId GenerateId() =>
+            new EventId(Interlocked.Increment(ref counter));
     }
 }

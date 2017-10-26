@@ -4,11 +4,11 @@ public static class Craft
     {
         UO.Say(".vigour");
         UO.Journal
-            .When("Nyni jsi schopen nalezt lepsi materialy...", () => { })
+            .When("Nyni jsi schopen nalezt lepsi materialy.", () => { })
             .When("Jsi zpatky v normalnim stavu.", () =>
             {
                 UO.Say(".vigour");
-                UO.Journal.WaitAny("Nyni jsi schopen nalezt lepsi materialy...",
+                UO.Journal.WaitAny("Nyni jsi schopen nalezt lepsi materialy.",
                     "Jsi zpatky v normalnim stavu.");
             })
             .WaitAny();
@@ -18,10 +18,10 @@ public static class Craft
     {
         UO.Say(".vigour");
         UO.Journal
-            .When("Nyni jsi schopen nalezt lepsi materialy...", () =>
+            .When("Nyni jsi schopen nalezt lepsi materialy.", () =>
             {
                 UO.Say(".vigour");
-                UO.Journal.WaitAny("Nyni jsi schopen nalezt lepsi materialy...");
+                UO.Journal.WaitAny("Nyni jsi schopen nalezt lepsi materialy.");
             })
             .When("Jsi zpatky v normalnim stavu.", () => { })
             .WaitAny();

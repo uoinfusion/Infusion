@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Infusion.LegacyApi.Events;
@@ -16,7 +17,9 @@ namespace Infusion.LegacyApi
         private readonly Dictionary<Type, List<EventSubscription>> eventSubscriptions =
             new Dictionary<Type, List<EventSubscription>>();
 
-        private Queue<Tuple<Delegate, IEvent>> eventQueue;
+        private readonly List<IEvent> preallocatedAllEvents;
+
+        private Queue<Tuple<Delegate, IEvent>> incommingEventQueue;
         private IEvent receivedEvent;
 
         private Delegate whenActionToExecute;
@@ -27,6 +30,12 @@ namespace Infusion.LegacyApi
             this.cancellationTokenProvider = cancellationTokenProvider;
             this.journal = journal;
             source.NewEventReceived += HandleNewEvent;
+            preallocatedAllEvents = new List<IEvent>(source.MaximumCapacity);
+        }
+
+        public void ClearSubscriptions()
+        {
+            eventSubscriptions.Clear();
         }
 
         private void HandleNewEvent(object sender, IEvent ev)
@@ -40,7 +49,7 @@ namespace Infusion.LegacyApi
 
                 lock (eventReceivedLock)
                 {
-                    eventQueue?.Enqueue(new Tuple<Delegate, IEvent>(subscription.WhenAction, ev));
+                    incommingEventQueue?.Enqueue(new Tuple<Delegate, IEvent>(subscription.WhenAction, ev));
 
                     if (whenActionToExecute == null)
                     {
@@ -119,7 +128,7 @@ namespace Infusion.LegacyApi
             {
                 lock (eventReceivedLock)
                 {
-                    eventQueue = new Queue<Tuple<Delegate, IEvent>>();
+                    incommingEventQueue = new Queue<Tuple<Delegate, IEvent>>();
                 }
 
                 journal.AwaitingStarted.Set();
@@ -132,10 +141,10 @@ namespace Infusion.LegacyApi
 
                         lock (eventReceivedLock)
                         {
-                            if (eventQueue.Count > 0)
+                            if (incommingEventQueue.Count > 0)
                             {
-                                eventTuples = eventQueue.ToArray();
-                                eventQueue.Clear();
+                                eventTuples = incommingEventQueue.ToArray();
+                                incommingEventQueue.Clear();
                             }
                         }
 
@@ -159,7 +168,7 @@ namespace Infusion.LegacyApi
             {
                 lock (eventReceivedLock)
                 {
-                    eventQueue = null;
+                    incommingEventQueue = null;
                 }
             }
         }
@@ -169,13 +178,19 @@ namespace Infusion.LegacyApi
             var lastProcessedEventId = journal.LastEventId;
 
             journal.AwaitingStarted.Set();
+            preallocatedAllEvents.Clear();
 
-            foreach (var ev in journal.OrderedEvents.Where(e => e.Id <= lastProcessedEventId))
+            journal.GatherEvents(preallocatedAllEvents, lastProcessedEventId);
+
+            foreach (var ev in preallocatedAllEvents)
             {
-                if (eventSubscriptions.TryGetValue(ev.Event.GetType(), out var subscriptionsList))
+                if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
                 {
                     foreach (var subscription in subscriptionsList)
-                        subscription.WhenAction.DynamicInvoke(ev.Event);
+                    {
+                        if (subscription.Predicate == null || (bool)subscription.Predicate.DynamicInvoke(ev))
+                            subscription.WhenAction.DynamicInvoke(ev);
+                    }
                 }
             }
 
@@ -193,5 +208,6 @@ namespace Infusion.LegacyApi
             public Delegate WhenAction { get; }
             public Delegate Predicate { get; }
         }
+
     }
 }

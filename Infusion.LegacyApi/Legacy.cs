@@ -44,6 +44,8 @@ namespace Infusion.LegacyApi
             itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this, eventJournalSource);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
+            journalSource.NewMessageReceived +=
+                (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(journalSource, this);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
             targeting = new Targeting(ultimaServer, ultimaClient, this);

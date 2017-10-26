@@ -395,7 +395,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Doesnt_handle_processed_events_again()
+        public void All_event_handling_doesnt_handle_handled_events()
         {
             var source = new EventJournalSource();
             var journal = new EventJournal(source);
@@ -418,7 +418,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Can_handle_all_unprocessed_events_multiple_times()
+        public void All_event_handling_can_be_invoked_multiple()
         {
             var source = new EventJournalSource();
             var journal = new EventJournal(source);
@@ -439,6 +439,25 @@ namespace Infusion.LegacyApi.Tests
                 .All();
 
             handlerInvoked.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void All_events_handling_respects_when_predicate()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            bool handlerWithFalsePredicate = false;
+            bool handlerWithTruePredicate = false;
+
+            source.Publish(new SpeechRequestedEvent("some text"));
+
+            journal
+                .When<SpeechRequestedEvent>(e => e.Message == "something else", e => handlerWithFalsePredicate = true)
+                .When<SpeechRequestedEvent>(e => e.Message == "some text", e => handlerWithTruePredicate = true)
+                .All();
+
+            handlerWithFalsePredicate.Should().BeFalse();
+            handlerWithTruePredicate.Should().BeTrue();
         }
 
         [TestMethod]
@@ -478,7 +497,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Can_delete_journal_and_handle_next_event()
+        public void Can_delete_journal_and_All_handles_next_event()
         {
             var source = new EventJournalSource();
             var journal = new EventJournal(source);
@@ -511,6 +530,18 @@ namespace Infusion.LegacyApi.Tests
 
         public IEnumerable<OrderedEvent> Events => source.Events;
         public EventId LastEventId => source.LastEventId;
+        public int MaximumCapacity => 128;
+        public void GetherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
+        {
+            foreach (var ev in Events)
+            {
+                if (ev.Id > maxEventId)
+                    return;
+
+                if (ev.Id >= minEventId)
+                    targetCollection.Add(ev.Event);
+            }
+        }
 
         public void SignalEventReceived(IEvent ev)
         {

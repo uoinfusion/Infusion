@@ -9,5 +9,6 @@ using System.Runtime.InteropServices;
 [assembly: Guid("28a5cece-9e74-4524-9dfd-238ed4df12ba")]
 
 [assembly: InternalsVisibleTo("Infusion.LegacyApi.Tests")]
+[assembly: InternalsVisibleTo("Infusion.LegacyApi.Benchmarks")]
 [assembly: InternalsVisibleTo("Infusion.Desktop")]
 [assembly: InternalsVisibleTo("Infusion.Proxy")]

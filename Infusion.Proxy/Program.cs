@@ -84,6 +84,7 @@ namespace Infusion.Proxy
 
         public static void Initialize(CommandHandler commandHandler)
         {
+            Program.commandHandler = commandHandler;
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog,
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
                 executionMode: CommandExecutionMode.Direct));

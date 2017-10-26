@@ -33,7 +33,7 @@ namespace Infusion.Commands
             {
                 Command[] result;
 
-                lock (runningCommands)
+                lock (runningCommandsLock)
                 {
                     result = runningCommands.Values.Select(x => x.Command).ToArray();
                 }
@@ -42,11 +42,11 @@ namespace Infusion.Commands
             }
         }
 
-        public event EventHandler<CommandInvocation> RunningCommandAdded;
-        public event EventHandler<CommandInvocation> RunningCommandRemoved;
-        public event EventHandler<CancellationToken> CancellationTokenCreated;
+        internal event EventHandler<CommandInvocation> RunningCommandAdded;
+        internal event EventHandler<CommandInvocation> RunningCommandRemoved;
+        internal event EventHandler<CancellationToken> CancellationTokenCreated;
 
-        public void OnCancellationTokenCreated(CancellationToken token)
+        internal void OnCancellationTokenCreated(CancellationToken token)
         {
             CancellationTokenCreated?.Invoke(this, token);
         }
@@ -161,13 +161,13 @@ namespace Infusion.Commands
             }
         }
 
-        public void Terminate()
+        public void Terminate(bool force = false)
         {
             IEnumerable<CommandInvocation> invocations;
 
             lock (runningCommandsLock)
             {
-                invocations = runningCommands.Values;
+                invocations = runningCommands.Values.Where(x => force || x.Mode != CommandExecutionMode.Background);
             }
 
             foreach (var invocation in invocations)
@@ -223,5 +223,8 @@ namespace Infusion.Commands
             }
             return $"Unknown command '{commandName}'";
         }
+
+        public bool IsCommandRunning(string commandName) => 
+            RunningCommands.Any(x => x.Name.Equals(commandName, StringComparison.Ordinal));
     }
 }

@@ -11,21 +11,18 @@ namespace Infusion.LegacyApi
 {
     internal sealed class QuestArrowObserver
     {
-        public event EventHandler<QuestArrowEvent> QuestArrowChanged;
+        private readonly IEventJournalSource eventJournalSource;
 
-        public QuestArrowObserver(IServerPacketSubject serverPacketSubject)
+        public QuestArrowObserver(IServerPacketSubject serverPacketSubject, IEventJournalSource eventJournalSource)
         {
+            this.eventJournalSource = eventJournalSource;
             serverPacketSubject.Subscribe(PacketDefinitions.QuestArrow, HandleQuestArrow);
         }
 
         private void HandleQuestArrow(QuestArrowPacket packet)
         {
-            QuestArrowChanged.RaiseScriptEvent(this, new QuestArrowEvent(packet.Active, packet.Location));   
-        }
-
-        public void ResetEvents()
-        {
-            QuestArrowChanged = null;
+            var questArrowEvent = new QuestArrowEvent(packet.Active, packet.Location);
+            eventJournalSource.Publish(questArrowEvent);
         }
     }
 }

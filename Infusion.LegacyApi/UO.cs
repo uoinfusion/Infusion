@@ -10,8 +10,6 @@ namespace Infusion.LegacyApi
     {
         private static Legacy Current { get; set; }
 
-        public static LegacyEvents Events => Current.Events;
-
         public static Configuration Configuration => Current.Configuration;
 
         public static Gump CurrentGump => Current.CurrentGump;
@@ -48,14 +46,23 @@ namespace Infusion.LegacyApi
         public static Command RegisterCommand(string name, Action commandAction)
             => Current.RegisterCommand(name, commandAction);
 
+        public static Command RegisterBackgroundCommand(string name, Action commandAction)
+            => Current.RegisterBackgroundCommand(name, commandAction);
+
+        public static Command RegisterBackgroundCommand(string name, Action<string> commandAction)
+            => Current.RegisterBackgroundCommand(name, commandAction);
+
         public static Command RegisterCommand(string name, Action<string> commandAction)
             => Current.RegisterCommand(name, commandAction);
 
         public static void Alert(string message)
             => Current.Alert(message);
 
-        public static SpeechJournal CreateJournal()
-            => Current.CreateJournal();
+        public static SpeechJournal CreateSpeechJournal()
+            => Current.CreateSpeechJournal();
+
+        public static EventJournal CreateEventJournal()
+            => Current.CreateEventJournal();
 
         public static void Say(string message)
             => Current.Say(message);

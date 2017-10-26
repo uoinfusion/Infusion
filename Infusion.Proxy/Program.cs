@@ -19,6 +19,8 @@ namespace Infusion.Proxy
 {
     public static class Program
     {
+        private const string ListCommandName = "list";
+
         public static Configuration Configuration { get; } = new Configuration();
 
         private static readonly ServerPacketHandler serverPacketHandler = new ServerPacketHandler();
@@ -70,22 +72,28 @@ namespace Infusion.Proxy
         private static void ListRunningCommands()
         {
             foreach (var command in commandHandler.RunningCommands)
-                Console.Info(command.Name);
+            {
+                if (command.Name == ListCommandName)
+                    continue;
+
+                Console.Info(command.ExecutionMode == CommandExecutionMode.Background
+                    ? $"{command.Name} (background)"
+                    : command.Name);
+            }
         }
 
-        public static void Initialize(Action<CommandRequestedEvent> commandRequestedHandler)
+        public static void Initialize(CommandHandler commandHandler)
         {
-            commandHandler = new CommandHandler(Program.Console);
+            Program.commandHandler = commandHandler;
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog,
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
                 executionMode: CommandExecutionMode.Direct));
             commandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
-            commandHandler.RegisterCommand(new Command("list", ListRunningCommands,
+            commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands,
                 "Lists running commands"));
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, "Shows proxy latency."));
 
             var legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
-            legacyApi.Events.CommandRequested += (sender, e) => commandRequestedHandler(e);
             UO.Initialize(legacyApi);
         }
 

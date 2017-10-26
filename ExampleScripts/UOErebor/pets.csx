@@ -13,7 +13,6 @@ using Infusion.Scripts.UOErebor.Extensions.StatusBars;
 public static class Pets
 {
     private static readonly Statuses statuses;
-    private static bool enabled;
     private static readonly RequestStatusQueue requestStatusQueue = new RequestStatusQueue();
 
     public static MobileSpec PetsSpec = new[] { Specs.NecroSummons }; 
@@ -31,20 +30,26 @@ public static class Pets
                 UO.Target(target);
         };
         
-        UO.Events.MobileEnteredView += HandleMobileEnteredView;
-        UO.Events.MobileLeftView += HandleMobileLeftView;
-        UO.Events.MobileDeleted += HandleMobileLeftView;
-        UO.Events.HealthUpdated += HandleHealthUpdated;
-
         requestStatusQueue.StartProcessing();
+    }
+    
+    public static void Run()
+    {
+        var journal = UO.CreateEventJournal();
+        journal
+            .When<MobileEnteredViewEvent>(e => HandleMobileEnteredView(e.Mobile))
+            .When<MobileLeftViewEvent>(e => HandleMobileLeftView(e.Mobile))
+            .When<MobileDeletedEvent>(e => HandleMobileLeftView(e.Mobile))
+            .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
+            .Incomming();
     }
     
     public static void Enable()
     {
-        if (!enabled)
+        if (!UO.CommandHandler.IsCommandRunning("pets"))
         {
+            UO.CommandHandler.Invoke(",pets");
             statuses.Clear();
-            enabled = true;
 
             AddMyPets();
             if (statuses.Count > 0)
@@ -54,10 +59,10 @@ public static class Pets
     
     public static void Disable()
     {
-        if (enabled)
+        if (UO.CommandHandler.IsCommandRunning("pets"))
         {
+            UO.CommandHandler.Terminate("pets");
             statuses.Close();
-            enabled = false;
         }
     }
 
@@ -75,25 +80,22 @@ public static class Pets
         }
     }
 
-    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
+    private static void HandleHealthUpdated(CurrentHealthUpdatedEvent args)
     {
-        if (enabled)
+        if (statuses.Contains(args.UpdatedMobile))
         {
-            if (statuses.Contains(args.UpdatedMobile))
-            {
-                statuses.Update(args.UpdatedMobile);
-            }
-            else if (args.UpdatedMobile.CanRename)
-            {
-                if (statuses.Count == 0)
-                    AddMyPets();
-    
-                statuses.Add(args.UpdatedMobile, StatusBarType.Pet);
-            }
+            statuses.Update(args.UpdatedMobile);
+        }
+        else if (args.UpdatedMobile.CanRename)
+        {
+            if (statuses.Count == 0)
+                AddMyPets();
+
+            statuses.Add(args.UpdatedMobile, StatusBarType.Pet);
         }
     }
     
-    private static void HandleMobileEnteredView(object sender, Mobile mobile)
+    private static void HandleMobileEnteredView(Mobile mobile)
     {
         if (PetsSpec.Matches(mobile))
         {
@@ -101,21 +103,19 @@ public static class Pets
         }
     }
     
-    private static void HandleMobileLeftView(object sender, Mobile mobile)
+    private static void HandleMobileLeftView(Mobile mobile)
     {
-        if (enabled)
+        if (PetsSpec.Matches(mobile) && statuses.Contains(mobile))
         {
-            if (PetsSpec.Matches(mobile) && statuses.Contains(mobile))
-            {
-                UO.Log($"Pet left view: {mobile}");
-                statuses.Remove(mobile);
-            }
+            UO.Log($"Pet left view: {mobile}");
+            statuses.Remove(mobile);
         }
     }    
         
     public static void Show() => statuses.Open();
 }
 
+UO.RegisterBackgroundCommand("pets", Pets.Run);
 UO.RegisterCommand("pets-show", Pets.Show);
 UO.RegisterCommand("pets-enable", Pets.Enable);
 UO.RegisterCommand("pets-disable", Pets.Disable);

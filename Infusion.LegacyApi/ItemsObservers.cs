@@ -14,19 +14,27 @@ namespace Infusion.LegacyApi
         private readonly GameObjectCollection gameObjects;
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private readonly Legacy legacyApi;
+        private readonly EventJournalSource eventJournalSource;
 
         private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
         private readonly ManualResetEvent cannotReachEvent = new ManualResetEvent(false);
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
-            Legacy legacyApi)
+            Legacy legacyApi, EventJournalSource eventJournalSource)
         {
             this.gameObjects = gameObjects;
-            this.gameObjects.MobileLeftView += (sender, mobile) => MobileLeftView.RaiseScriptEvent(this, mobile);
-            this.gameObjects.MobileDeleted += (sender, mobile) => MobileDeleted.RaiseScriptEvent(this, mobile);
+            this.gameObjects.MobileLeftView += (sender, mobile) =>
+            {
+                eventJournalSource.Publish(new MobileLeftViewEvent(mobile));
+            };
+            this.gameObjects.MobileDeleted += (sender, mobile) =>
+            {
+                eventJournalSource.Publish(new MobileLeftViewEvent(mobile));
+            };
 
             this.legacyApi = legacyApi;
+            this.eventJournalSource = eventJournalSource;
             serverPacketSubject.Subscribe(PacketDefinitions.AddMultipleItemsInContainer,
                 HandleAddMultipleItemsInContainer);
             serverPacketSubject.Subscribe(PacketDefinitions.AddItemToContainer, HandleAddItemToContainer);
@@ -66,7 +74,7 @@ namespace Infusion.LegacyApi
 
         private void HandleDoubleClick(DoubleClickRequest request)
         {
-            DoubleClickRequested?.Invoke(this, new ItemUseRequestedEvent(request.ItemId));
+            eventJournalSource.Publish(new ItemUseRequestedEvent(request.ItemId));
         }
 
         public ObjectId? DraggedItemId { get; set; }
@@ -97,17 +105,9 @@ namespace Infusion.LegacyApi
 
             if (oldHealth != newHealth)
             {
-                CurrentHealthUpdated.RaiseScriptEvent(this,
-                    new CurrentHealthUpdatedEvent(updatedItem, oldHealth));
+                eventJournalSource.Publish(new CurrentHealthUpdatedEvent(updatedItem, oldHealth));
             }
         }
-
-        internal event EventHandler<CurrentHealthUpdatedEvent> CurrentHealthUpdated;
-        internal event EventHandler<ItemUseRequestedEvent> DoubleClickRequested;
-        internal event EventHandler<ItemEnteredViewEvent> ItemEnteredView;
-        internal event EventHandler<Mobile> MobileEnteredView;
-        internal event EventHandler<Mobile> MobileLeftView;
-        internal event EventHandler<Mobile> MobileDeleted;
 
         private void HandleSendSpeechPacket(SendSpeechPacket packet)
         {
@@ -165,14 +165,6 @@ namespace Infusion.LegacyApi
             }
         }
 
-        internal void ResetEvents()
-        {
-            CurrentHealthUpdated = null;
-            ItemEnteredView = null;
-            MobileLeftView = null;
-            MobileEnteredView = null;
-        }
-
         private void HandleAddItemToContainer(AddItemToContainerPacket packet)
         {
             if (gameObjects.TryGet(packet.ItemId, out GameObject existingObject) && existingObject is Item existingItem)
@@ -228,7 +220,7 @@ namespace Infusion.LegacyApi
 
         private void OnItemEnteredView(Item item)
         {
-            ItemEnteredView.RaiseScriptEvent(this, new ItemEnteredViewEvent(item));
+            eventJournalSource.Publish(new ItemEnteredViewEvent(item));
         }
 
         private void HandleDrawObjectPacket(DrawObjectPacket packet)
@@ -253,7 +245,7 @@ namespace Infusion.LegacyApi
 
         private void OnMobileEnteredView(Mobile mobile)
         {
-            MobileEnteredView.RaiseScriptEvent(this, mobile);
+            eventJournalSource.Publish(new MobileEnteredViewEvent(mobile));
         }
 
         public void OnPlayerPositionChanged(object sender, Location3D e)

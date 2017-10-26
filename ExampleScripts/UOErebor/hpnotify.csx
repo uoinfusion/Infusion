@@ -8,51 +8,33 @@ public static class HitPointNotifier
 {
     public static IPrintHitPointNotification Mode = HitPointNotificationModes.AboveAllMobiles;
 
-    private static bool enabled;
+    public static void Run()
+    {
+        var journal = UO.CreateEventJournal();
 
+        journal.When<CurrentHealthUpdatedEvent>(OnHealthUpdated)
+            .Incomming();
+    }
+    
     public static void Enable()
     {
-        // if notification is already enabled then do nothing
-        if (!enabled)
-        {
-            // This installs OnHealthUpdated subscribes to HealthUpdated event.
-            // It means that Infusion calls OnHealthUpdated method every time when
-            // server updates health (hit points) of any mobile including the player.            
-            // See https://docs.microsoft.com/en-us/dotnet/standard/events/ for
-            // more information about events in C#.
-            UO.Events.HealthUpdated += OnHealthUpdated;
-            
-            enabled = true;
-        }
+        UO.CommandHandler.Invoke(",hpnotify");
     }
-
+    
     public static void Disable()
     {
-        if (enabled)
-        {
-            // The notification is disabled by unsubscribing the OnHealthUpdated method
-            // from HealthUpdated event.
-            UO.Events.HealthUpdated -= OnHealthUpdated;
-
-            enabled = false;
-        }
+        UO.CommandHandler.Terminate("hpnotify");
     }
 
     public static void Toggle()
     {
-        if (enabled)
-        {
+        if (UO.CommandHandler.IsCommandRunning("hpnotify-toggle"))
             Disable();
-            UO.Log("HP notification disabled");
-        }
         else
-        {
             Enable();
-            UO.Log("HP notification enabled");
-        }
     }
 
-    internal static void OnHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
+    private static void OnHealthUpdated(CurrentHealthUpdatedEvent args)
     {
         if (IsFirstStatusBarUpdate(args))
            return;
@@ -155,4 +137,7 @@ public static class HitPointNotificationModes
         new OwnAndTargetAbovePlayerNotificationPrinter();
 }
 
-UO.RegisterCommand("hpnotify", HitPointNotifier.Toggle);
+UO.RegisterBackgroundCommand("hpnotify", HitPointNotifier.Run);
+UO.RegisterCommand("hpnotify-toggle", HitPointNotifier.Toggle);
+UO.RegisterCommand("hpnotify-enable", HitPointNotifier.Enable);
+UO.RegisterCommand("hpnotify-disable", HitPointNotifier.Disable)

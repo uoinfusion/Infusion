@@ -1,22 +1,18 @@
 using System;
+using Infusion.Commands;
 using Infusion.LegacyApi;
 
 public static class QuestArrow
 {
-    private static bool enabled = false;
     private static Location2D? currentArrowLocation;
+    private static EventJournal journal = UO.CreateEventJournal();
+    
+    public static void Run() =>
+        journal
+            .When<QuestArrowEvent>(HandleQuestChange)
+            .Incomming();
 
-    static QuestArrow()
-    {
-        UO.Events.QuestArrowChanged += HandleQuestChange;
-    }
-
-    public static void Start()
-    {
-        enabled = true;
-    }
-
-    private static void HandleQuestChange(object sender, QuestArrowEvent e)
+    private static void HandleQuestChange(QuestArrowEvent e)
     {
         string message;
     
@@ -31,8 +27,7 @@ public static class QuestArrow
             currentArrowLocation = null;
         }
         
-        if (enabled)
-            UO.ClientPrint(message);
+        UO.ClientPrint(message);
     }
 
     private static string CurrentQuestDescription =>
@@ -40,17 +35,24 @@ public static class QuestArrow
             $"New quest active, target location: {currentArrowLocation.Value}" :
             "no quest active";
 
-    public static void Stop()
-    {
-        enabled = false;
-    }
     
-    public static void Info()
+    public static void Last()
     {
         UO.ClientPrint(CurrentQuestDescription);
     }
+    
+    public static void Disable()
+    {
+        UO.CommandHandler.Terminate("questarrow");
+    }
+    
+    public static void Enable()
+    {
+        UO.CommandHandler.Invoke(",questarrow");
+    }
 }
 
-UO.RegisterCommand("questarrow-info", QuestArrow.Info);
-UO.RegisterCommand("questarrow-start", QuestArrow.Start);
-UO.RegisterCommand("questarrow-stop", QuestArrow.Stop);
+UO.RegisterBackgroundCommand("questarrow", QuestArrow.Run);
+UO.RegisterCommand("questarrow-enable", QuestArrow.Enable);
+UO.RegisterCommand("questarrow-disable", QuestArrow.Disable);
+UO.RegisterCommand("questarrow-last", QuestArrow.Last);

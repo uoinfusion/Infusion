@@ -99,8 +99,7 @@ namespace Infusion.Desktop
         {
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
             {
-                UO.Events.ResetEvents();
-                UO.CommandHandler.Terminate();
+                UO.CommandHandler.Terminate(true);
                 _console.ScriptEngine.Reset();
                 await _console.ScriptEngine.ExecuteScript(scriptFileName);
             }

@@ -21,25 +21,49 @@ public static class Party
                 UO.Target(target);
         };
 
-        UO.Events.HealthUpdated += HandleHealthUpdated;
-        UO.Events.MobileEnteredView += HandleMobileEnteredView;
-
         requestStatusQueue.StartProcessing();
     }
-        
-    private static void HandleMobileEnteredView(object sender, Mobile mobile)
+    
+    public static void Enable()
     {
-        if (statuses.Contains(mobile))
+        UO.CommandHandler.Invoke(",party");
+    }
+    
+    public static void Disable()
+    {
+        UO.CommandHandler.Terminate("party");
+    }
+    
+    public static void Toggle()
+    {
+        if (UO.CommandHandler.IsCommandRunning("party"))
+            Disable();
+        else
+            Enable();
+    }
+    
+    public static void Run()
+    {
+        var journal = UO.CreateEventJournal();
+        journal
+            .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
+            .When<MobileEnteredViewEvent>(HandleMobileEnteredView)
+            .Incomming();
+    }
+        
+    private static void HandleMobileEnteredView(MobileEnteredViewEvent ev)
+    {
+        if (statuses.Contains(ev.Mobile))
         {
-            requestStatusQueue.RequestStatus(mobile.Id);
+            requestStatusQueue.RequestStatus(ev.Mobile.Id);
         }
     }
     
-    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
+    private static void HandleHealthUpdated(CurrentHealthUpdatedEvent ev)
     {
-        if (statuses.Contains(args.UpdatedMobile))
+        if (statuses.Contains(ev.UpdatedMobile))
         {
-            statuses.Update(args.UpdatedMobile);
+            statuses.Update(ev.UpdatedMobile);
         }
     }
     
@@ -71,6 +95,10 @@ public static class Party
     }
 }
 
+UO.RegisterBackgroundCommand("party", Party.Run);
+UO.RegisterCommand("party-enable",Party.Enable);
+UO.RegisterCommand("party-disable", Party.Disable);
+UO.RegisterCommand("party-toggle", Party.Toggle);
 UO.RegisterCommand("party-add", Party.Add);
 UO.RegisterCommand("party-remove", Party.Remove);
 UO.RegisterCommand("party-show", Party.ShowStatuses);

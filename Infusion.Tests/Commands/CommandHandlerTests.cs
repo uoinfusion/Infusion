@@ -80,7 +80,6 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand(command.Command);
 
             commandHandler.Invoke(",testName parameter1");
-            command.WaitForFinished();
 
             executed.Should().BeFalse();
         }
@@ -160,12 +159,26 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
+        public void Can_tell_whether_a_command_is_running()
+        {
+            var command1 = new TestCommand("cmd1");
+            commandHandler.RegisterCommand(command1.Command);
+            commandHandler.Invoke(",cmd1");
+
+            command1.WaitForInitialization();
+
+            commandHandler.IsCommandRunning("cmd1").Should().BeTrue("cmd1 command is running");
+            commandHandler.IsCommandRunning("cmd2").Should().BeFalse("cmd2 command is not running");
+
+            command1.Finish();
+        }
+
+        [TestMethod]
         public void Can_remove_finished_command_from_list()
         {
-            var finishedCommand = new TestCommand("finished_cmd");
+            var finishedCommand = new TestCommand(commandHandler, "finished_cmd", () =>{ });
             commandHandler.RegisterCommand(finishedCommand.Command);
             commandHandler.Invoke(",finished_cmd");
-            finishedCommand.WaitForInitialization();
             finishedCommand.Finish();
             finishedCommand.WaitForFinished();
 
@@ -303,6 +316,8 @@ namespace Infusion.Tests.Commands
             });
             commandHandler.RegisterCommand(parentCommand.Command);
 
+            nestedCommand.Finish();
+            parentCommand.Finish();
             commandHandler.Invoke(",parent");
 
             parentCommand.WaitForFinished();
@@ -488,10 +503,9 @@ namespace Infusion.Tests.Commands
 
             // ReSharper disable once MethodSupportsCancellation
             Task.Run(() => commandHandler.Invoke(",cmd1", cancellationTokenSource));
-            command.WaitForAdditionalAction();
 
-            cancellationTokenSource.Cancel();
             command.Finish();
+            cancellationTokenSource.Cancel();
 
             command.WaitForFinished().Should().BeTrue();
             commandHandler.RunningCommands.Should().BeEmpty();
@@ -512,6 +526,44 @@ namespace Infusion.Tests.Commands
             commandHandler.CommandNames.Should().Contain("cmd1", "Direct command without custom cancellation token cannot be terminated, to support special commands like ,terminate.");
 
             command.Finish();
+        }
+
+        [TestMethod]
+        public void Non_specific_Terminate_does_not_terminate_background_commands()
+        {
+            var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
+            {
+                DoSomeCancellableAction();
+            });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",backgroundcmd");
+            command.WaitForInitialization();
+            command.Finish();
+            commandHandler.Terminate();
+
+            command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
+                .BeFalse("background command should still run after non-specific terminate");
+            commandHandler.RunningCommands.Select(x => x.Name).Should().Contain("backgroundcmd");
+        }
+
+        [TestMethod]
+        public void Specific_Terminate_terminates_background_command()
+        {
+            var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
+            {
+                DoSomeCancellableAction();
+            });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",backgroundcmd");
+            command.WaitForInitialization();
+            command.Finish();
+            commandHandler.Terminate("backgroundcmd");
+
+            command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
+                .BeTrue("background command didn't finish");
+            commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("backgroundcmd");
         }
 
         private sealed class TestCommand

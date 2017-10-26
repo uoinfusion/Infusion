@@ -5,39 +5,25 @@ public static class CombatText
     public static CombatTextRedirection[] Redirections { get; set; } = { };
     private static bool enabled = false;
 
-    public static void Enable()
+    public static void Run()
     {
-        if (!enabled)
-        {
-            UO.Events.SpeechReceived += OnSpeechReceived;
-            enabled = true;
-        }
-    }
-
-    public static void Disable()
-    {
-        if (enabled)
-        {
-            UO.Events.SpeechReceived -= OnSpeechReceived;
-            enabled = false;
-        }
+        var journal = UO.CreateEventJournal();
+        
+        journal.When<SpeechReceivedEvent>(e => OnSpeechReceived(e.Speech))
+            .Incomming();
     }
     
-    public static void Toggle()
+    public static void Enable()
     {
-        if (!enabled)
-        {
-            Enable();
-            UO.Log("Combat text enabled");
-        }
-        else
-        {
-            Disable();
-            UO.Log("Combat text disabled");
-        }
+        UO.CommandHandler.Invoke(",combattext");
+    }
+    
+    public static void Disable()
+    {
+        UO.CommandHandler.Terminate("combattext");
     }
 
-    private static void OnSpeechReceived(object sender, JournalEntry entry)
+    private static void OnSpeechReceived(JournalEntry entry)
     {
         foreach (var redirection in Redirections)
         {
@@ -62,6 +48,6 @@ public class CombatTextRedirection
     }
 }
 
+UO.RegisterBackgroundCommand("combattext", CombatText.Run);
 UO.RegisterCommand("combattext-enable", CombatText.Enable);
 UO.RegisterCommand("combattext-disable", CombatText.Disable);
-UO.RegisterCommand("combattext-toggle", CombatText.Toggle);

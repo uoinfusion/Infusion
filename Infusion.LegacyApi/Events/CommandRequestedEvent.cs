@@ -1,12 +1,12 @@
 ﻿namespace Infusion.LegacyApi.Events
 {
-    public struct CommandRequestedEvent
+    public sealed class CommandRequestedEvent : IEvent
     {
-        public string InvocationSyntax { get; }
-
-        public CommandRequestedEvent(string invocationSyntax)
+        internal CommandRequestedEvent(string invocationSyntax)
         {
             InvocationSyntax = invocationSyntax;
         }
+
+        public string InvocationSyntax { get; }
     }
 }

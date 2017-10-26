@@ -10,17 +10,14 @@ namespace Infusion.LegacyApi
     internal sealed class SpeechRequestObserver
     {
         private readonly CommandHandler commandHandler;
-        private readonly ILogger logger;
+        private readonly IEventJournalSource eventSource;
 
-        public SpeechRequestObserver(UltimaClient clientPacketHandler, CommandHandler commandHandler, ILogger logger)
+        public SpeechRequestObserver(UltimaClient clientPacketHandler, CommandHandler commandHandler, IEventJournalSource eventSource)
         {
             this.commandHandler = commandHandler;
-            this.logger = logger;
+            this.eventSource = eventSource;
             clientPacketHandler.RegisterFilter(FilterClientSpeech);
         }
-
-        public event EventHandler<SpeechRequestedEvent> SpeechRequested;
-        public event EventHandler<CommandRequestedEvent> CommandRequested;
 
         private Packet? FilterClientSpeech(Packet rawPacket)
         {
@@ -30,21 +27,16 @@ namespace Infusion.LegacyApi
                 var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
                 if (commandHandler.IsInvocationSyntax(packet.Text))
                 {
-                    CommandRequested?.Invoke(this, new CommandRequestedEvent(packet.Text));
+                    commandHandler.Invoke(packet.Text);
+                    eventSource.Publish(new CommandRequestedEvent(packet.Text));
 
                     return null;
                 }
 
-                SpeechRequested?.Invoke(this, new SpeechRequestedEvent());
+                eventSource.Publish(new SpeechRequestedEvent(packet.Text));
             }
 
             return rawPacket;
-        }
-
-        public void ResetEvents()
-        {
-            //SpeechRequested = null;
-            //CommandRequested = null;
         }
     }
 }

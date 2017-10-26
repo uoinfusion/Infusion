@@ -45,6 +45,7 @@ namespace Infusion.Commands
                             Task.Run(() => NonNestedAction(action, parameters, command, cancellationTokenSource));
                         break;
                     case CommandExecutionMode.AlwaysParallel:
+                    case CommandExecutionMode.Background:
                         Task.Run(() => NonNestedAction(action, parameters, command, cancellationTokenSource));
                         break;
                     default:

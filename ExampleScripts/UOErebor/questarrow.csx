@@ -16,7 +16,7 @@ public static class QuestArrow
         enabled = true;
     }
 
-    private static void HandleQuestChange(object sender, QuestArrowArgs e)
+    private static void HandleQuestChange(object sender, QuestArrowEvent e)
     {
         string message;
     

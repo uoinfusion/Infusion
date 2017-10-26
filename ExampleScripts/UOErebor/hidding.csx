@@ -4,12 +4,12 @@ using System.Linq;
 public static class Hidding
 {
     // Create a "private" instance of journal for cooking. If you delete this journal it
-    // doesn't affect either UO.Journal or other instances of GameJournal so
+    // doesn't affect either UO.Journal or other instances of SpeechJournal so
     // you can try hidding and healing in parallel (use bandage, target self, start hidding)
     // and you can still use journal.Delete method in both scripts at the same time.
     // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
     // Injection.
-    private static GameJournal hiddingJournal = UO.CreateJournal();
+    private static SpeechJournal hiddingJournal = UO.CreateJournal();
 
     public static void Hide()
     {

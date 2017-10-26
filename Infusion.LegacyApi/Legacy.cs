@@ -41,7 +41,7 @@ namespace Infusion.LegacyApi
             itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
-            Journal = new GameJournal(journalSource, this);
+            Journal = new SpeechJournal(journalSource, this);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
             targeting = new Targeting(ultimaServer, ultimaClient, this);
 
@@ -91,7 +91,7 @@ namespace Infusion.LegacyApi
 
         public Player Me { get; }
 
-        public GameJournal Journal { get; }
+        public SpeechJournal Journal { get; }
 
         internal UltimaServer Server { get; }
         internal UltimaClient Client { get; }
@@ -139,9 +139,9 @@ namespace Infusion.LegacyApi
             CommandHandler.RegisterCommand(new Command("filter-weather", ToggleWeatherFiltering));
         }
 
-        public GameJournal CreateJournal()
+        public SpeechJournal CreateJournal()
         {
-            return new GameJournal(journalSource, this);
+            return new SpeechJournal(journalSource, this);
         }
 
         public void Say(string message)

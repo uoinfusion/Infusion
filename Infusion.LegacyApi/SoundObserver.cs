@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Infusion.LegacyApi.Events;
 using Infusion.Packets;
 using Infusion.Packets.Server;
 
@@ -30,7 +31,7 @@ namespace Infusion.LegacyApi
 
                 if (packet != null)
                 {
-                    soundEffectPlayedHandler?.Invoke(this, new SoundEffectPlayedArgs(packet.Id, packet.Location));
+                    soundEffectPlayedHandler?.Invoke(this, new SoundEffectPlayedEvent(packet.Id, packet.Location));
 
                     if (configuration.FilteredSoundSet.Contains(packet.Id))
                         return null;
@@ -40,7 +41,7 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        public event EventHandler<SoundEffectPlayedArgs> SoundEffectPlayed;
+        public event EventHandler<SoundEffectPlayedEvent> SoundEffectPlayed;
 
         public void ResetEvents()
         {

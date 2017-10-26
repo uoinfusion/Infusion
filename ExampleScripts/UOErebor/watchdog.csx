@@ -59,7 +59,7 @@ public static class Watchdog
         DequeueNotifications();
     }
     
-    private static void HandleNewItem(object sender, ItemEnteredViewArgs args)
+    private static void HandleNewItem(object sender, ItemEnteredViewEvent args)
     {
         if (WatchedItemSpecs.Any(s => s.Matches(args.NewItem)))
             EnqueueNotification(args.NewItem.Id);

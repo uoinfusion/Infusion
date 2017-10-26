@@ -1,11 +1,11 @@
-﻿namespace Infusion.LegacyApi
+﻿namespace Infusion.LegacyApi.Events
 {
-    public struct SoundEffectPlayedArgs
+    public struct SoundEffectPlayedEvent
     {
         public Location3D Location { get; }
         public SoundId Id { get; }
 
-        public SoundEffectPlayedArgs(SoundId soundId, Location3D location)
+        public SoundEffectPlayedEvent(SoundId soundId, Location3D location)
         {
             Id = soundId;
             Location = location;

@@ -1,10 +1,8 @@
-﻿using Infusion.Packets;
-
-namespace Infusion.LegacyApi
+﻿namespace Infusion.LegacyApi.Events
 {
-    public struct CurrentHealthUpdatedArgs
+    public struct CurrentHealthUpdatedEvent
     {
-        internal CurrentHealthUpdatedArgs(Mobile updatedMobile, ushort oldHealth)
+        internal CurrentHealthUpdatedEvent(Mobile updatedMobile, ushort oldHealth)
         {
             UpdatedMobile = updatedMobile;
             OldHealth = oldHealth;

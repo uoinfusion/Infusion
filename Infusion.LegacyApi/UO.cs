@@ -32,7 +32,7 @@ namespace Infusion.LegacyApi
 
         public static Player Me => Current.Me;
 
-        public static GameJournal Journal => Current.Journal;
+        public static SpeechJournal Journal => Current.Journal;
 
         internal static void Initialize(Legacy current)
         {
@@ -54,7 +54,7 @@ namespace Infusion.LegacyApi
         public static void Alert(string message)
             => Current.Alert(message);
 
-        public static GameJournal CreateJournal()
+        public static SpeechJournal CreateJournal()
             => Current.CreateJournal();
 
         public static void Say(string message)

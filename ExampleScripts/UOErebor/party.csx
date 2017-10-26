@@ -35,7 +35,7 @@ public static class Party
         }
     }
     
-    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedArgs args)
+    private static void HandleHealthUpdated(object sender, CurrentHealthUpdatedEvent args)
     {
         if (statuses.Contains(args.UpdatedMobile))
         {

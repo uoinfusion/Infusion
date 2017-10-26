@@ -1,11 +1,11 @@
-﻿namespace Infusion.LegacyApi
+﻿namespace Infusion.LegacyApi.Events
 {
-    public struct QuestArrowArgs
+    public struct QuestArrowEvent
     {
         public bool Active { get; }
         public Location2D Location { get; }
 
-        public QuestArrowArgs(bool active, Location2D location)
+        public QuestArrowEvent(bool active, Location2D location)
         {
             Active = active;
             Location = location;

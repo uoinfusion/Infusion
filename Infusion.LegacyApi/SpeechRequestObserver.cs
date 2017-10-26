@@ -1,5 +1,6 @@
 ﻿using System;
 using Infusion.Commands;
+using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Client;
@@ -18,8 +19,8 @@ namespace Infusion.LegacyApi
             clientPacketHandler.RegisterFilter(FilterClientSpeech);
         }
 
-        public event EventHandler<SpeechRequestedArgs> SpeechRequested;
-        public event EventHandler<CommandRequestedArgs> CommandRequested;
+        public event EventHandler<SpeechRequestedEvent> SpeechRequested;
+        public event EventHandler<CommandRequestedEvent> CommandRequested;
 
         private Packet? FilterClientSpeech(Packet rawPacket)
         {
@@ -29,12 +30,12 @@ namespace Infusion.LegacyApi
                 var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
                 if (commandHandler.IsInvocationSyntax(packet.Text))
                 {
-                    CommandRequested?.Invoke(this, new CommandRequestedArgs(packet.Text));
+                    CommandRequested?.Invoke(this, new CommandRequestedEvent(packet.Text));
 
                     return null;
                 }
 
-                SpeechRequested?.Invoke(this, new SpeechRequestedArgs());
+                SpeechRequested?.Invoke(this, new SpeechRequestedEvent());
             }
 
             return rawPacket;

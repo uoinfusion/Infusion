@@ -9,6 +9,7 @@ using Infusion.Commands;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.LegacyApi;
+using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Server;
@@ -72,7 +73,7 @@ namespace Infusion.Proxy
                 Console.Info(command.Name);
         }
 
-        public static void Initialize(Action<CommandRequestedArgs> commandRequestedHandler)
+        public static void Initialize(Action<CommandRequestedEvent> commandRequestedHandler)
         {
             commandHandler = new CommandHandler(Program.Console);
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog,

@@ -2,6 +2,7 @@
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Events;
 
 namespace Infusion.LegacyApi
 {
@@ -13,6 +14,8 @@ namespace Infusion.LegacyApi
         public static Configuration Configuration => Current.Configuration;
 
         public static Gump CurrentGump => Current.CurrentGump;
+
+        public static UltimaClient Client => Current.Client;
 
         public static CancellationToken? CancellationToken
         {
@@ -133,6 +136,9 @@ namespace Infusion.LegacyApi
         public static void TargetTile(string tileInfo)
             => Current.TargetTile(tileInfo);
 
+        public static void Target(TargetInfo targetInfo)
+            => Current.Target(targetInfo);
+
         public static void Target(GameObject item)
             => Current.Target(item);
 
@@ -142,7 +148,7 @@ namespace Infusion.LegacyApi
         public static void Terminate(string parameters)
             => Current.Terminate(parameters);
 
-        public static string Info()
+        public static TargetInfo? Info()
             => Current.Info();
 
         public static void WaitForTarget()
@@ -227,9 +233,6 @@ namespace Infusion.LegacyApi
 
         public static void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)
             => Current.ClientPrint(message, name, onBehalfItem, log);
-
-        public static void CloseContainer(Item container)
-            => Current.CloseContainer(container);
 
         public static void ToggleLightFiltering() => Current.ToggleLightFiltering();
 

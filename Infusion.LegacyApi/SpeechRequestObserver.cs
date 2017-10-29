@@ -12,11 +12,11 @@ namespace Infusion.LegacyApi
         private readonly CommandHandler commandHandler;
         private readonly IEventJournalSource eventSource;
 
-        public SpeechRequestObserver(UltimaClient clientPacketHandler, CommandHandler commandHandler, IEventJournalSource eventSource)
+        public SpeechRequestObserver(IClientPacketSubject clientPacketSubject, CommandHandler commandHandler, IEventJournalSource eventSource)
         {
             this.commandHandler = commandHandler;
             this.eventSource = eventSource;
-            clientPacketHandler.RegisterFilter(FilterClientSpeech);
+            clientPacketSubject.RegisterFilter(FilterClientSpeech);
         }
 
         private Packet? FilterClientSpeech(Packet rawPacket)

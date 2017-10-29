@@ -91,6 +91,8 @@
     <Compile Include="SpecSpecificity.cs" />
     <Compile Include="Events\SpeechRequestedEvent.cs" />
     <Compile Include="SpeechRequestObserver.cs" />
+    <Compile Include="TargetInfo.cs" />
+    <Compile Include="TargetType.cs" />
     <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />
     <Compile Include="Player.cs" />

@@ -96,7 +96,7 @@ namespace Infusion.LegacyApi
         public SpeechJournal Journal { get; }
 
         internal UltimaServer Server { get; }
-        internal UltimaClient Client { get; }
+        public UltimaClient Client { get; }
 
         public void OpenContainer(Item container, TimeSpan? timeout = null)
         {
@@ -337,6 +337,14 @@ namespace Infusion.LegacyApi
             targeting.TargetTile(tileInfo);
         }
 
+        public void Target(TargetInfo targetInfo)
+        {
+            CheckCancellation();
+
+            journalSource.NotifyLastAction();
+            targeting.Target(targetInfo);
+        }
+
         public void Target(GameObject item)
         {
             CheckCancellation();
@@ -369,15 +377,27 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public string Info()
-        {
-            return targeting.Info();
-        }
+        public TargetInfo? Info() => targeting.Info();
 
         private void InfoCommand()
         {
             var info = Info();
-            ClientPrint(!string.IsNullOrEmpty(info) ? info : "Targeting cancelled.");
+            if (info.HasValue)
+            {
+                if (info.Value.Id.HasValue)
+                {
+                    var lastObject = GameObjects[info.Value.Id.Value];
+                    if (lastObject != null)
+                    {
+                        ClientPrint(lastObject.ToString());
+                        return;
+                    }
+                }
+
+                ClientPrint(info.Value.ToString());
+            }
+            else
+                ClientPrint("Targeting cancelled.");
         }
 
         public Item AskForItem()
@@ -556,11 +576,6 @@ namespace Infusion.LegacyApi
         public void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)
         {
             ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026, log);
-        }
-
-        public void CloseContainer(Item container)
-        {
-            Client.CloseContainer(container.Id);
         }
 
         public void ToggleLightFiltering()

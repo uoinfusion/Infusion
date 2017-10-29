@@ -6,35 +6,33 @@ using Infusion.Packets.Server;
 
 namespace Infusion
 {
-    internal sealed class UltimaClient : IClientPacketSubject
+    public sealed class UltimaClient : IClientPacketSubject
     {
         private readonly IClientPacketSubject packetSubject;
         private readonly Action<Packet> packetSender;
 
-        public UltimaClient(IClientPacketSubject packetSubject, Action<Packet> packetSender)
+        internal UltimaClient(IClientPacketSubject packetSubject, Action<Packet> packetSender)
         {
             this.packetSubject = packetSubject;
             this.packetSender = packetSender;
         }
 
-        public void Send(Packet rawPacket)
+        internal void Send(Packet rawPacket)
         {
             packetSender(rawPacket);
         }
 
-        public void RegisterFilter(Func<Packet, Packet?> filter)
+        void IClientPacketSubject.RegisterFilter(Func<Packet, Packet?> filter)
         {
             packetSubject.RegisterFilter(filter);
         }
 
-        public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
-            where TPacket : MaterializedPacket
+        void IClientPacketSubject.Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
         {
             packetSubject.Subscribe(definition, observer);
         }
 
-        public void Unsubscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
-            where TPacket : MaterializedPacket
+        void IClientPacketSubject.Unsubscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
         {
             packetSubject.Unsubscribe(definition, observer);
         }
@@ -62,7 +60,7 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        public void CloseGump(GumpInstanceId gumpId)
+        internal void CloseGump(GumpInstanceId gumpId)
         {
             Send(new CloseGenericGumpPacket(gumpId).RawPacket);
         }
@@ -91,6 +89,27 @@ namespace Infusion
             var cancelRequest = new TargetLocationRequest(lastCursorId, itemId, CursorType.Cancel, location,
                 type);
             Send(cancelRequest.RawPacket);
+        }
+
+        public void ObjectInfo(ObjectId id, ModelId type, Location3D location)
+        {
+            var packet = new ObjectInfoPacket(id, type, location);
+            Send(packet.RawPacket);
+        }
+
+        public Item CreatePhantom(ObjectId id, ModelId modelId, Location3D location)
+        {
+            var item = new Item(id, modelId, 1, location, null, null, null);
+
+            ObjectInfo(id, modelId, location);
+
+            return item;
+        }
+
+        public void DeleteItem(ObjectId id)
+        {
+            var packet = new DeleteObjectPacket(id);
+            Send(packet.RawPacket);
         }
     }
 }

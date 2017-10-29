@@ -30,8 +30,9 @@ namespace Infusion.LegacyApi
             this.gameObjects = gameObjects;
             this.eventJournalSource = eventJournalSource;
 
-            client.RegisterFilter(FilterClientPackets);
-            client.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
+            IClientPacketSubject clientPacketSubject = client;
+            clientPacketSubject.RegisterFilter(FilterClientPackets);
+            clientPacketSubject.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
 
             server.RegisterFilter(FilterServerPackets);
             server.Subscribe(PacketDefinitions.CharacterLocaleAndBody, HandleCharLocaleAndBodyPacket);
@@ -45,7 +46,7 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
 
-            client.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
+            clientPacketSubject.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
         }
 
         private void HandleRequestSkills(SkillRequest packet)

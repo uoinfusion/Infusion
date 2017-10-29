@@ -16,6 +16,30 @@ namespace Infusion.Packets.Server
 
         public Direction Facing { get; private set; }
 
+        public ObjectInfoPacket()
+        {            
+        }
+
+        public ObjectInfoPacket(ObjectId id, ModelId type, Location3D location)
+        {
+            Id = id;
+            Type = type;
+            Location = location;
+
+            var payload = new byte[15];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte) PacketDefinitions.ObjectInfo.Id);
+            writer.WriteUShort(15);
+            writer.WriteId(id);
+            writer.WriteModelId(type);
+            writer.WriteUShort(location.X);
+            writer.WriteUShort(location.Y);
+            writer.WriteByte(location.Z);
+
+            rawPacket = new Packet(PacketDefinitions.ObjectInfo.Id, payload);
+        }
+
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;

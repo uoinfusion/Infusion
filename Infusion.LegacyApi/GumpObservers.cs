@@ -24,8 +24,10 @@ namespace Infusion.LegacyApi
             this.client = client;
             this.legacy = legacy;
             server.RegisterFilter(FilterSendGumpMenuDialog);
-            client.RegisterFilter(FilterGumpMenuSelection);
-            client.Subscribe(PacketDefinitions.GumpMenuSelection, GumpMenuSelectionRequest);
+
+            IClientPacketSubject clientPacketSubject = client;
+            clientPacketSubject.RegisterFilter(FilterGumpMenuSelection);
+            clientPacketSubject.Subscribe(PacketDefinitions.GumpMenuSelection, GumpMenuSelectionRequest);
         }
 
         public Gump CurrentGump { get; private set; }

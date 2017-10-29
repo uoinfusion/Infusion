@@ -17,7 +17,7 @@ namespace Infusion.LegacyApi
         private CursorId lastCursorId = new CursorId(0x00000025);
         private ObjectId lastItemIdInfo;
 
-        private string lastTargetInfo;
+        private TargetInfo? lastTargetInfo;
         private ModelId lastTypeInfo;
 
         public Targeting(UltimaServer server, UltimaClient client, Legacy legacyApi)
@@ -26,7 +26,10 @@ namespace Infusion.LegacyApi
             this.client = client;
             this.legacyApi = legacyApi;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
-            client.RegisterFilter(FilterClientTargetCursorPacket);
+
+
+            IClientPacketSubject clientPacketSubject = client;
+            clientPacketSubject.RegisterFilter(FilterClientTargetCursorPacket);
         }
 
         private void HanldeServerTargetCursorPacket(TargetCursorPacket packet)
@@ -57,15 +60,12 @@ namespace Infusion.LegacyApi
                 switch (packet.CursorTarget)
                 {
                     case CursorTarget.Location:
-                        lastTargetInfo =
-                            $"{packet.ClickedOnType.Value} {packet.Location.X} {packet.Location.Y} {packet.Location.Z}";
+                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Tile, packet.ClickedOnType.Value, null);
                         break;
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        var lastObject = legacyApi.GameObjects[lastItemIdInfo];
-                        lastTargetInfo = lastObject?.ToString() ??
-                                         $"{packet.ClickedOnId} {packet.ClickedOnType}";
+                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Item, packet.ClickedOnType, packet.ClickedOnId);
                         break;
                 }
 
@@ -85,8 +85,9 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public string Info()
+        public TargetInfo? Info()
         {
+            lastTargetInfo = null;
             receivedTargetInfoEvent.Reset();
 
             client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
@@ -140,6 +141,24 @@ namespace Infusion.LegacyApi
         public void TargetTile(ushort xloc, ushort yloc, byte zloc, ModelId tileType)
         {
             TargetTile(new Location3D(xloc, yloc, zloc), tileType);
+        }
+
+        public void Target(TargetInfo targetInfo)
+        {
+            switch (targetInfo.Type)
+            {
+                case TargetType.Item:
+                    if (targetInfo.Id.HasValue)
+                    {
+                        Target(targetInfo.Id.Value, targetInfo.ModelId, targetInfo.Location);
+                    }
+                    return;
+                case TargetType.Tile:
+                    TargetTile(targetInfo.Location.X, targetInfo.Location.Y, targetInfo.Location.Z, targetInfo.ModelId);
+                    return;
+                default:
+                    throw new NotSupportedException($"TartetType {targetInfo.Type} not supported.");
+            }
         }
 
         public void Target(Player player)

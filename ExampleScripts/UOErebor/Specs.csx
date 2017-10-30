@@ -424,17 +424,18 @@ public static class Specs
     // Special
     // Hair items are not visible in game client but, looting script sees them and tries to loot
     // them and of course it cannot.
-    public static readonly ItemSpec HairLong = 0x203B;
-    public static readonly ItemSpec HairShort = 0x203C;
+    public static readonly ItemSpec HairLong = 0x203C;
+    public static readonly ItemSpec HairShort = 0x203B;
     public static readonly ItemSpec HairPageBoy = 0x2045;
     public static readonly ItemSpec HairBuns = 0x2046;
     public static readonly ItemSpec HairAfro = 0x2047;
     public static readonly ItemSpec HairReceding = 0x2048;
     public static readonly ItemSpec HairPigtails = 0x2049;
+    public static readonly ItemSpec HairPonytail = 0x203D;
     public static readonly ItemSpec Hairs = new[]
     {
         HairLong, HairShort, HairPageBoy, HairBuns, HairAfro,
-        HairReceding, HairPigtails
+        HairReceding, HairPigtails, HairPonytail
     };
 
     public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369 };

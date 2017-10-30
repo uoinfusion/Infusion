@@ -97,6 +97,7 @@ namespace Infusion.LegacyApi
 
         internal UltimaServer Server { get; }
         public UltimaClient Client { get; }
+        public IUltimaClientWindow ClientWindow { get; internal set; }
 
         public void OpenContainer(Item container, TimeSpan? timeout = null)
         {

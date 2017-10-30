@@ -50,7 +50,14 @@ namespace Infusion.Desktop.Launcher
 
                 Program.Console.Info($"Staring {ultimaExecutablePath}");
 
-                Process.Start(ultimaExecutablePath);
+                var ultimaClientProcess = Process.Start(ultimaExecutablePath);
+                if (ultimaClientProcess == null)
+                {
+                    Program.Console.Error($"Cannot start {ultimaExecutablePath}.");
+                    return;
+                }
+
+                Program.SetClientWindowHandle(ultimaClientProcess);
 
                 InterProcessCommunication.StartReceiving();
             });

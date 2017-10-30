@@ -17,6 +17,9 @@ namespace Infusion.LegacyApi
 
         public static UltimaClient Client => Current.Client;
 
+        public static IUltimaClientWindow ClientWindow => Current.ClientWindow;
+
+
         public static CancellationToken? CancellationToken
         {
             get => Current.CancellationToken;

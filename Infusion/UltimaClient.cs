@@ -91,17 +91,17 @@ namespace Infusion
             Send(cancelRequest.RawPacket);
         }
 
-        public void ObjectInfo(ObjectId id, ModelId type, Location3D location)
+        public void ObjectInfo(ObjectId id, ModelId type, Location3D location, Color? color)
         {
-            var packet = new ObjectInfoPacket(id, type, location);
+            var packet = new ObjectInfoPacket(id, type, location, color);
             Send(packet.RawPacket);
         }
 
-        public Item CreatePhantom(ObjectId id, ModelId modelId, Location3D location)
+        public Item CreatePhantom(ObjectId id, ModelId modelId, Location3D location, Color? color)
         {
-            var item = new Item(id, modelId, 1, location, null, null, null);
+            var item = new Item(id, modelId, 1, location, color, null, null);
 
-            ObjectInfo(id, modelId, location);
+            ObjectInfo(id, modelId, location, color);
 
             return item;
         }

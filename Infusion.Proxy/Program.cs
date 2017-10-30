@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -82,6 +83,8 @@ namespace Infusion.Proxy
             }
         }
 
+        private static Legacy legacyApi;
+
         public static void Initialize(CommandHandler commandHandler)
         {
             Program.commandHandler = commandHandler;
@@ -93,7 +96,7 @@ namespace Infusion.Proxy
                 "Lists running commands"));
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, "Shows proxy latency."));
 
-            var legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
+            legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
             UO.Initialize(legacyApi);
         }
 
@@ -423,6 +426,11 @@ namespace Infusion.Proxy
 
             if (handledPacket != null)
                 SendToServer(handledPacket.Value);
+        }
+
+        public static void SetClientWindowHandle(Process ultimaClientProcess)
+        {
+            legacyApi.ClientWindow = new LocalUltimaClientWindow(ultimaClientProcess);
         }
     }
 }

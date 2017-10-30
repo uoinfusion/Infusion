@@ -61,6 +61,8 @@
     <Compile Include="Events\MobileDeletedEvent.cs" />
     <Compile Include="Events\MobileLeftViewEvent.cs" />
     <Compile Include="Events\MobileEnteredViewEvent.cs" />
+    <Compile Include="IUltimaClientWindow.cs" />
+    <Compile Include="LocalUltimaClientWindow.cs" />
     <Compile Include="OrderedEvent.cs" />
     <Compile Include="Events\SkillRequestedEvent.cs" />
     <Compile Include="Events\SpeechReceivedEvent.cs" />

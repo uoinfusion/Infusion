@@ -20,6 +20,7 @@ namespace Infusion.Packets.Server
         public ushort Strength { get; private set; }
         public ushort Dexterity { get; private set; }
         public ushort Intelligence { get; private set; }
+        public ushort Armor { get; private set; }
 
         public bool CanRename { get; private set; }
 
@@ -54,7 +55,7 @@ namespace Infusion.Packets.Server
             CurrentMana = reader.ReadUShort();
             MaxMana = reader.ReadUShort();
             Gold = reader.ReadUInt();
-            reader.ReadUShort();
+            Armor = reader.ReadUShort();
             Weight = reader.ReadUShort();
         }
     }

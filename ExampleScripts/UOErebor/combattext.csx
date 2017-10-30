@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 public static class CombatText
 {
-    public static CombatTextRedirection[] Redirections { get; set; } = { };
+    private static List<CombatTextRedirection> redirections = new List<CombatTextRedirection>();
     private static bool enabled = false;
 
     public static void Run()
@@ -22,10 +23,15 @@ public static class CombatText
     {
         UO.CommandHandler.Terminate("combattext");
     }
+    
+    public static void Add(string text, Color color)
+    {
+        redirections.Add(new CombatTextRedirection(text, color));
+    }
 
     private static void OnSpeechReceived(JournalEntry entry)
     {
-        foreach (var redirection in Redirections)
+        foreach (var redirection in redirections)
         {
             if (entry.Text.IndexOf(redirection.Text, 0, StringComparison.OrdinalIgnoreCase) >= 0)
             {
@@ -34,17 +40,17 @@ public static class CombatText
             }
         }
     }
-}
 
-public class CombatTextRedirection
-{
-    public string Text { get; }
-    public Color Color { get; }
-    
-    public CombatTextRedirection(string text, Color color)
+    private class CombatTextRedirection
     {
-        Text = text;
-        Color = color;
+        public string Text { get; }
+        public Color Color { get; }
+        
+        public CombatTextRedirection(string text, Color color)
+        {
+            Text = text;
+            Color = color;
+        }
     }
 }
 

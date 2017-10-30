@@ -1,3 +1,5 @@
+#load "colors.csx"
+
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -10,11 +12,27 @@ public static class Phantoms
     public static EventJournal journal = UO.CreateEventJournal();
 
     public static ModelId WalkableType { get; set; } = 0x0E21;
-    public static ModelId BlockingType { get; set; } = 0x1368;
+    public static Color? WalkableColor { get; set; } = null;
+    public static ModelId BlockingType { get; set; } = 0x1363;
+    public static Color? BlockingColor { get; set; } = null;
     
     private const int previousLocationsCapacity = 32;
     private static Location3D? locationBeforeJump;
     private static Queue<Location3D> previousLocations = new Queue<Location3D>(previousLocationsCapacity);
+    
+    public static Color? CurrentColor
+    {
+        get => currentColor;
+        set
+        {
+            currentColor = value;
+        
+            foreach (var phantom in phantoms)
+            {
+                phantom.Color = currentColor;
+            }
+        }
+    }
     
     public static ModelId CurrentType
     {
@@ -29,6 +47,7 @@ public static class Phantoms
         }
     }
     
+    private static Color? currentColor = null;
     private static ModelId currentType = BlockingType;
     private static string currentFileName;
     
@@ -163,7 +182,7 @@ public static class Phantoms
 
     public static void AddPhantom(Location3D location)
     {
-        var phantom = new Phantom(location, currentType);
+        var phantom = new Phantom(location, currentType, currentColor);
         phantoms.Add(phantom);
         phantom.UpdateVisibility(UO.Me.Location);
     }
@@ -188,7 +207,19 @@ public static class Phantoms
         }
 
         Save();
-    }    
+    }
+
+    public static void MakeWalkable()
+    {    
+        Phantoms.CurrentType = Phantoms.WalkableType;
+        Phantoms.CurrentColor = Phantoms.WalkableColor;
+    }
+    
+    public static void MakeBlocking()
+    {
+        Phantoms.CurrentType = Phantoms.BlockingType;
+        Phantoms.CurrentColor = Phantoms.BlockingColor;
+    }
     
     private static void HandlePlayerMove(PlayerLocationChangedEvent ev)
     {
@@ -218,6 +249,21 @@ public static class Phantoms
         public Location3D Location { get; }
         public ObjectId? Id { get; set; }
         private ModelId type;
+        private Color? color;
+        
+        public Color? Color
+        {
+            get => this.color;
+            set
+            {
+                if (color != value)
+                {
+                    color = value;
+                    Show();
+                }
+            }
+        }
+        
         public ModelId Type
         {
             get => this.type;
@@ -231,10 +277,11 @@ public static class Phantoms
             }
         }
         
-        public Phantom(Location3D location, ModelId type)
+        public Phantom(Location3D location, ModelId type, Color? color)
         {
             this.type = type;
             Location = location;
+            Color = color;
         }
         
         public void UpdateVisibility(Location3D viewCenter)
@@ -271,7 +318,7 @@ public static class Phantoms
                 UO.Client.DeleteItem(Id.Value);
             }
         
-            UO.Client.CreatePhantom(Id.Value, Type, Location);
+            UO.Client.CreatePhantom(Id.Value, Type, Location, color);
         }
     }    
 }
@@ -288,7 +335,7 @@ UO.RegisterCommand("phantoms-addjump", Phantoms.AddPhantomAtLastJump);
 UO.RegisterCommand("phantoms-save", fileName => Phantoms.Save(fileName));
 UO.RegisterCommand("phantoms-load", fileName => Phantoms.Load(fileName));
 UO.RegisterCommand("phantoms-refresh", Phantoms.RefreshAll);
-UO.RegisterCommand("phantoms-blocking", () => Phantoms.CurrentType = Phantoms.BlockingType);
-UO.RegisterCommand("phantoms-walkable", () => Phantoms.CurrentType = Phantoms.WalkableType);
+UO.RegisterCommand("phantoms-blocking", Phantoms.MakeBlocking);
+UO.RegisterCommand("phantoms-walkable", Phantoms.MakeWalkable);
 UO.RegisterCommand("phantoms-add", Phantoms.AddPhantomCommand);
 UO.RegisterCommand("phantoms-remove", Phantoms.RemovePhantomCommand);

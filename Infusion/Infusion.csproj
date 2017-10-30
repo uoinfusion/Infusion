@@ -59,7 +59,6 @@
     </Compile>
     <Compile Include="ClientPacketHandler.cs" />
     <Compile Include="Color.cs" />
-    <Compile Include="Colors.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandAutocompleter.cs" />
     <Compile Include="Commands\CommandAutocompletion.cs" />

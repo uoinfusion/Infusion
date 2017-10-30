@@ -1,3 +1,4 @@
+#load "colors.csx"
 #load "Specs.csx"
 #load "common.csx"
 #load "pets.csx"
@@ -162,13 +163,42 @@ public static class Targeting
         selectedTarget = target.Id;
     }
     
+    public static void AttackLast()
+    {
+        if (!selectedTarget.HasValue)
+        {
+            UO.ClientPrint("No selected target", "targeting", UO.Me);
+            return;
+        }
+        
+        var target = UO.Mobiles[selectedTarget.Value];
+        if (target == null)
+        {
+            UO.ClientPrint("Cannot see target", "targeting", UO.Me);
+            return;
+        }
+
+        if (UO.TryAttack(target) != AttackResult.Accepted)
+            UO.ClientPrint($"Cannot attack {target}"); 
+
+        alreadyTargeted.Clear();
+        alreadyTargeted.Push(target.Id);
+    }
+    
     public static void TargetLast()
     {
         if (!selectedTarget.HasValue)
+        {
+            UO.ClientPrint("No selected target", "targeting", UO.Me);
             return;
+        }
+        
         var target = UO.Mobiles[selectedTarget.Value];
         if (target == null)
+        {
+            UO.ClientPrint("Cannot see target", "targeting", UO.Me);
             return;
+        }
     
         if (CurrentTarget != selectedTarget)
         {
@@ -201,6 +231,7 @@ public static class Targeting
 UO.RegisterCommand("target-next", Targeting.TargetNext);
 UO.RegisterCommand("target-prev", Targeting.TargetPrev);
 UO.RegisterCommand("target-last", Targeting.TargetLast);
+UO.RegisterCommand("target-attack", Targeting.AttackLast);
 UO.RegisterCommand("target-pvm", () =>
 {
     Targeting.Mode = TargetingModes.Pvm;

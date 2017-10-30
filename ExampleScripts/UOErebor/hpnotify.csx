@@ -1,3 +1,4 @@
+#load "colors.csx"
 #load "targeting.csx"
 
 using System;

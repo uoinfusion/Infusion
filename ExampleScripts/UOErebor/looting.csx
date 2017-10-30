@@ -1,3 +1,4 @@
+#load "colors.csx"
 #load "Specs.csx"
 #load "ignore.csx"
 #load "equip.csx"

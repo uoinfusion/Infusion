@@ -108,6 +108,8 @@ namespace Infusion.LegacyApi
         {
             if (packet.PlayerId == player.PlayerId)
             {
+                player.Name = packet.PlayerName;
+                player.Armor = packet.Armor;
                 player.CurrentStamina = packet.CurrentStamina;
                 player.MaxStamina = packet.MaxStamina;
                 player.CurrentHealth = packet.CurrentHealth;
@@ -115,6 +117,7 @@ namespace Infusion.LegacyApi
                 player.CurrentMana = packet.CurrentMana;
                 player.MaxMana = packet.MaxMana;
                 player.Weight = packet.Weight;
+                player.Gold = packet.Gold;
                 player.Intelligence = packet.Intelligence;
                 player.Dexterity = packet.Dexterity;
                 player.Strength = packet.Strength;

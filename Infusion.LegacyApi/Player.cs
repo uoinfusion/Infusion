@@ -67,6 +67,7 @@ namespace Infusion.LegacyApi
 
         public Item BankBox => legacyApi.Items.OnLayer(Layer.BankBox).FirstOrDefault();
 
+        public string Name { get; internal set; }
         public Color Color { get; internal set; }
         public ModelId BodyType { get; internal set; }
         public ushort CurrentHealth { get; set; }
@@ -76,9 +77,11 @@ namespace Infusion.LegacyApi
         public ushort CurrentMana { get; internal set; }
         public ushort MaxMana { get; internal set; }
         public ushort Weight { get; internal set; }
+        public uint Gold { get; internal set; }
         public ushort Dexterity { get; internal set; }
         public ushort Strength { get; internal set; }
         public ushort Intelligence { get; internal set; }
+        public ushort Armor { get; internal set; }
 
         public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } =
             ImmutableDictionary<Skill, SkillValue>.Empty;

@@ -40,6 +40,15 @@ namespace Infusion.Desktop.Tests
         }
 
         [TestMethod]
+        public void Stores_commands_without_leading_and_trailing_spaces()
+        {
+            var history = new CommandHistory();
+
+            history.EnterCommand(" command1 ");
+            history.GetOlder().Should().Be("command1");
+        }
+
+        [TestMethod]
         public void Doesnt_store_duplicate_command()
         {
             var history = new CommandHistory();
@@ -47,6 +56,19 @@ namespace Infusion.Desktop.Tests
             history.EnterCommand("command2");
             history.EnterCommand("command1");
             history.EnterCommand("command1");
+
+            history.GetOlder().Should().Be("command1");
+            history.GetOlder().Should().Be("command2");
+        }
+
+        [TestMethod]
+        public void Considers_commands_varyin_by_leading_or_trailing_spaces_as_duplicate()
+        {
+            var history = new CommandHistory();
+
+            history.EnterCommand("command2");
+            history.EnterCommand(" command1");
+            history.EnterCommand("command1 ");
 
             history.GetOlder().Should().Be("command1");
             history.GetOlder().Should().Be("command2");

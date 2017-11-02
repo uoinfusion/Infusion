@@ -23,6 +23,8 @@ namespace Infusion.Desktop
             if (history.Count == maxHistoryLength)
                 history.Dequeue();
 
+            command = command.Trim();
+
             if (currentHistoryIndex < 1 || !history.Any() || history.ElementAt(currentHistoryIndex - 1) != command)
             {
                 history.Enqueue(command);

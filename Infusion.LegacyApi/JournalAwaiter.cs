@@ -10,6 +10,7 @@ namespace Infusion.LegacyApi
     {
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
         private readonly SpeechJournal journal;
+        private readonly Func<TimeSpan?> defaultTimeout;
         private readonly JournalSource journalSource;
         private readonly Func<CancellationToken?> tokenProvider;
 
@@ -22,11 +23,12 @@ namespace Infusion.LegacyApi
         private Action timeoutAction;
 
         internal JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalSource journalSource = null,
-            SpeechJournal journal = null)
+            SpeechJournal journal = null, Func<TimeSpan?> defaultTimeout = null)
         {
             this.tokenProvider = tokenProvider;
             this.journalSource = journalSource;
             this.journal = journal;
+            this.defaultTimeout = defaultTimeout;
         }
 
         internal void ReceiveJournalEntry(JournalEntry entry)
@@ -136,6 +138,8 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(TimeSpan? timeout = null)
         {
+            timeout = timeout ?? defaultTimeout?.Invoke();
+
             JournalEntry beforeWaitAny = null;
             long? lastWaitEntryId = null;
 
@@ -204,7 +208,7 @@ namespace Infusion.LegacyApi
         {
             var info = new StringBuilder();
 
-            info.AppendLine(timeout.HasValue ? $"Timeout after {timeout.Value}" : "Timeout after unspecified TimeSpan");
+            info.AppendLine(timeout.HasValue ? $"Journal WaitAny timeout after {timeout.Value}" : "Journal WaitAny timeout after unspecified TimeSpan");
             if (lastWaitEntryId.HasValue)
                 info.AppendLine($"Jurnal's LastWaitEntryId is {lastWaitEntryId.Value}");
 

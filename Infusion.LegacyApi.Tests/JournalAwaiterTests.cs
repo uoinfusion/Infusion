@@ -24,7 +24,7 @@ namespace Infusion.LegacyApi.Tests
         public void When_is_case_insensitive_by_default_when_waiting_and_already_in_journal()
         {
             var source = new JournalSource();
-            var journal = new SpeechJournal(source, null);
+            var journal = new SpeechJournal(source);
 
             source.AddMessage("name", "cas InSeNsItIvE", new ObjectId(0), 0);
 

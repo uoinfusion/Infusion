@@ -1,3 +1,4 @@
+#load "common.csx"
 #load "colors.csx"
 #load "Specs.csx"
 #load "ignore.csx"
@@ -268,7 +269,12 @@ public static class Looting
     {
         var originalLocation = UO.Me.Location;
 
-        UO.OpenContainer(container);
+        UO.Use(container);
+        if (Common.WaitForContainer())
+        {
+            UO.Log("Cannot open body, maybe it is not possible to loot the body");
+            return;
+        }
 
         UO.ClientPrint($"Number of items in container: {UO.Items.InContainer(container).Count()}");
 

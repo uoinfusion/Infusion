@@ -7,16 +7,27 @@ using Infusion.Commands;
 
 public static class Common
 {
+    private static EventJournal commonJurnal = UO.CreateEventJournal();    
+
     public static void WaitForChangedLocation()
     {
-        Location3D startLocation = UO.Me.Location;
-        do
-        {
-            UO.Wait(50);
-        }
-        while (UO.Me.Location == startLocation);
+        UO.Log("Waiting for changed location.");
+        commonJurnal.When<PlayerLocationChangedEvent>(e => { })
+            .WaitAny();
 
         UO.Log("Waiting for changed location finished.");
+    }
+    
+    public static bool WaitForContainer()
+    {
+        bool result = false;
+    
+        commonJurnal.When<ContainerOpenedEvent>(e => result = true)
+            .When<SpeechReceivedEvent>(e => e.Speech.Message.Contains("You cannot reach that"), e => result = false)
+            .When<SpeechReceivedEvent>(e => e.Speech.Message.Contains("You can't see that"), e => result = false)
+            .WaitAny();
+            
+        return result;
     }
     
     public static void WaitCommand(string parameters)

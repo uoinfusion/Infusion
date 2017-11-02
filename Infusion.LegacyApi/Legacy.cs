@@ -46,7 +46,7 @@ namespace Infusion.LegacyApi
             journalSource = new JournalSource();
             journalSource.NewMessageReceived +=
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
-            Journal = new SpeechJournal(journalSource, this);
+            Journal = new SpeechJournal(journalSource, () => CancellationToken, () => DefaultTimeout);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
             targeting = new Targeting(ultimaServer, ultimaClient, this);
 
@@ -97,20 +97,7 @@ namespace Infusion.LegacyApi
 
         internal UltimaServer Server { get; }
         public UltimaClient Client { get; }
-        public IUltimaClientWindow ClientWindow { get; internal set; }
-
-        public void OpenContainer(Item container, TimeSpan? timeout = null)
-        {
-            OpenContainer(container.Id);
-        }
-
-        public void OpenContainer(ObjectId containerId, TimeSpan? timeout = null)
-        {
-            Use(containerId);
-
-            if (!itemsObserver.WaitForContainerOpened(timeout))
-                throw new LegacyException($"Cannot open container {containerId}");
-        }
+        public IUltimaClientWindow ClientWindow { get; internal set; } = new NullUltimaClientWindow();
 
         public Command RegisterCommand(string name, Action commandAction) => CommandHandler.RegisterCommand(name,
             commandAction);
@@ -153,13 +140,15 @@ namespace Infusion.LegacyApi
             CommandHandler.RegisterCommand(new Command("warmode-off", WarModeOff,
                 "War mode off."));
             CommandHandler.RegisterCommand(new Command("terminate", Terminate,
-                "Terminates all running commands and scripts.", executionMode: CommandExecutionMode.Direct));
+                "Terminates all running commands excluding background commands.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("terminate-all", CommandHandler.TerminateAll,
+                "Terminates all running commands.", executionMode: CommandExecutionMode.Direct));
             CommandHandler.RegisterCommand(new Command("filter-light", ToggleLightFiltering));
             CommandHandler.RegisterCommand(new Command("filter-weather", ToggleWeatherFiltering));
         }
 
-        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, this);
-        public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, () => CancellationToken);
+        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, () => CancellationToken, () => DefaultTimeout);
+        public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, () => CancellationToken, () => DefaultTimeout);
 
         public void Say(string message)
         {
@@ -203,7 +192,7 @@ namespace Infusion.LegacyApi
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.Matching(spec).InContainer(Me.BackPack).FirstOrDefault()
+                       ?? Items.Matching(spec).InBackPack().FirstOrDefault()
                        ?? Items.Matching(spec).OnLayer(Layer.Backpack)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
@@ -230,7 +219,7 @@ namespace Infusion.LegacyApi
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.OfType(type).InContainer(Me.BackPack).FirstOrDefault()
+                       ?? Items.OfType(type).InBackPack().FirstOrDefault()
                        ?? Items.OfType(type).OnLayer(Layer.Backpack)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
             if (item != null)
@@ -252,7 +241,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(types).InContainer(Me.BackPack)
+            var item = Items.OfType(types).InBackPack()
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)

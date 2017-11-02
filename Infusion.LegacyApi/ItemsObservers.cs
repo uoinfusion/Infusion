@@ -10,15 +10,12 @@ namespace Infusion.LegacyApi
 {
     internal class ItemsObservers
     {
-        private readonly ManualResetEvent drawContainerReceivedEvent = new ManualResetEvent(false);
         private readonly GameObjectCollection gameObjects;
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private readonly Legacy legacyApi;
         private readonly EventJournalSource eventJournalSource;
 
-        private readonly ManualResetEvent resumeClientReceivedEvent = new ManualResetEvent(false);
         private DragResult dragResult = DragResult.None;
-        private readonly ManualResetEvent cannotReachEvent = new ManualResetEvent(false);
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi, EventJournalSource eventJournalSource)
@@ -49,27 +46,7 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
             serverPacketSubject.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
-            serverPacketSubject.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
-            serverPacketSubject.Subscribe(PacketDefinitions.ClilocMessageAffix, HandleClilocMessageAffix);
             clientPacketSubject.Subscribe(PacketDefinitions.DoubleClick, HandleDoubleClick);
-        }
-
-        private void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
-        {
-            if (packet.MessageId == (MessageId)0x0007A258 || // Message "You cannot reach that."
-                packet.MessageId == (MessageId)0x0007A48C) // Message "You can't see that."
-            {
-                cannotReachEvent.Set();
-            }
-        }
-
-        private void HandleClilocMessage(ClilocMessagePacket packet)
-        {
-            if (packet.MessageId == (MessageId) 0x0007A258 || // Message "You cannot reach that."
-                packet.MessageId == (MessageId) 0x0007A48C) // Message "You can't see that."
-            {
-                cannotReachEvent.Set();
-            }
         }
 
         private void HandleDoubleClick(DoubleClickRequest request)
@@ -117,16 +94,26 @@ namespace Infusion.LegacyApi
                 gameObjects.UpdateObject(item.UpdateName(packet.Name));
         }
 
-        private void HandlePauseClient(PauseClientPacket packet)
-        {
-            if (packet.Choice == PauseClientChoice.Resume)
-                resumeClientReceivedEvent.Set();
-        }
+        private ObjectId? drawContainerId;
 
         private void HandleDrawContainer(DrawContainerPacket packet)
         {
-            // ignoring possibility that there might be many container being openned at the same time
-            drawContainerReceivedEvent.Set();
+            drawContainerId = packet.ContainerId;
+        }
+
+        private void HandlePauseClient(PauseClientPacket packet)
+        {
+            // Server resumes client as soons as it is finished with sending content of a container.
+            // When container contains an item:
+            //      HandleDrawContainer -> HandlePauseClient (Pause) -> HandleAddMultipleItemsInContainer -> HandlePauseClient (Resume)
+            // When container is empty:
+            //      HandleDrawContainer -> HandlePauseClient (Pause) -> HandlePauseClient (Resume)
+            // The problem is with empty containers - no HandleAddMultipleItemsInContainer is invoked
+            if (packet.Choice == PauseClientChoice.Resume && drawContainerId.HasValue)
+            {
+                eventJournalSource.Publish(new ContainerOpenedEvent(drawContainerId.Value));
+                drawContainerId = null;
+            }
         }
 
         private void HandleWornItemPacket(WornItemPacket packet)
@@ -276,46 +263,6 @@ namespace Infusion.LegacyApi
             }
 
             return dragResult;
-        }
-
-        public bool WaitForContainerOpened(TimeSpan? timeout)
-        {
-            var timeSpentWaiting = new TimeSpan();
-            var sleepSpan = TimeSpan.FromMilliseconds(100);
-
-            resumeClientReceivedEvent.Reset();
-            drawContainerReceivedEvent.Reset();
-            cannotReachEvent.Reset();
-
-            int waitAnyResult;
-            while ((waitAnyResult = WaitHandle.WaitAny(new WaitHandle[] { drawContainerReceivedEvent, cannotReachEvent }, sleepSpan)) == WaitHandle.WaitTimeout)
-            {
-                legacyApi.CheckCancellation();
-
-                if (timeout.HasValue)
-                {
-                    timeSpentWaiting += sleepSpan;
-                    if (timeSpentWaiting > timeout.Value)
-                        throw new TimeoutException();
-                }
-            }
-
-            if (waitAnyResult == 1 /* index of cannotReachEvent */)
-                return false;
-
-            while (!resumeClientReceivedEvent.WaitOne(sleepSpan))
-            {
-                legacyApi.CheckCancellation();
-
-                if (timeout.HasValue)
-                {
-                    timeSpentWaiting += sleepSpan;
-                    if (timeSpentWaiting > timeout.Value)
-                        throw new TimeoutException();
-                }
-            }
-
-            return true;
         }
     }
 }

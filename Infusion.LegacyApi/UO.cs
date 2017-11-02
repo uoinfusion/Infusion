@@ -15,6 +15,12 @@ namespace Infusion.LegacyApi
 
         public static Gump CurrentGump => Current.CurrentGump;
 
+        public static TimeSpan DefaultTimeout
+        {
+            get => Current.DefaultTimeout;
+            set => Current.DefaultTimeout = value;
+        }
+
         public static UltimaClient Client => Current.Client;
 
         public static IUltimaClientWindow ClientWindow => Current.ClientWindow;
@@ -42,12 +48,6 @@ namespace Infusion.LegacyApi
         {
             Current = current;
         }
-
-        public static void OpenContainer(Item container, TimeSpan? timeout = null)
-            => Current.OpenContainer(container, timeout);
-
-        public static void OpenContainer(ObjectId containerId, TimeSpan? timeout = null)
-            => Current.OpenContainer(containerId, timeout);
 
         public static Command RegisterCommand(string name, Action commandAction)
             => Current.RegisterCommand(name, commandAction);

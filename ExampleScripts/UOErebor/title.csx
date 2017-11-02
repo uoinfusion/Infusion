@@ -9,8 +9,11 @@ public static class Title
     public static Func<string> Text = () =>
         $"{UO.Me.Name} - Weight: {UO.Me.Weight}, GP: {UO.Me.Gold}, Armor: {UO.Me.Armor}, " +
         $"Int: {UO.Me.Intelligence}, Dex: {UO.Me.Dexterity}, Str: {UO.Me.Strength}, " +
-        $"Food: {UO.Items.InContainer(UO.Me.BackPack).Matching(Specs.Food).Sum(x => x.Amount):###}, ";
-        
+        $"Food: {Amount(Specs.Food)}";
+
+    public static string Amount(ItemSpec itemSpec)
+        => UO.Items.InBackPack().Matching(itemSpec).Sum(x => x.Amount).ToString();
+
     public static void Run()
     {
         while (true)

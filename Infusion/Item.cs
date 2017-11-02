@@ -46,7 +46,7 @@
             };
         }
 
-        public Item Update(ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId)
+        internal Item Update(ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId)
         {
             var updatedItem = (Item)Duplicate();
             updatedItem.Location = location;

@@ -40,6 +40,23 @@ namespace Infusion.LegacyApi
         public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId)
             => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == containerId);
 
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId, bool recursive)
+            => recursive 
+                ? items.Where(i => AnyParentContainerInContainer(i, containerId))
+                : items.InContainer(containerId);
+
+        public static IEnumerable<Item> InBackPack(this IEnumerable<Item> items)
+        {
+            var backPack = UO.Me.BackPack;
+            return items.Where(i => AnyParentContainerInContainer(i, backPack));
+        }
+
+        public static IEnumerable<Item> InBankBox(this IEnumerable<Item> items)
+        {
+            var bank = UO.Me.BankBox;
+            return items.Where(i => AnyParentContainerInContainer(i, bank));
+        }
+
         public static IEnumerable<Item> OnGround(this IEnumerable<Item> items)
             => items.Where(i => i.IsOnGround);
 
@@ -65,5 +82,31 @@ namespace Infusion.LegacyApi
 
         public static IEnumerable<Item> MinDistance(this IEnumerable<Item> items, ushort minDistance)
             => items.Where(i => i.GetDistance(UO.Me.Location) >= minDistance);
+
+        private static bool AnyParentContainerInContainer(Item item, Item testedContainer)
+        {
+            if (item.ContainerId == testedContainer.Id)
+                return true;
+
+            if (item.ContainerId.HasValue)
+            {
+                var itemContainer = UO.Items[item.ContainerId.Value];
+                if (itemContainer == null)
+                    return false;
+
+                return AnyParentContainerInContainer(itemContainer, testedContainer);
+            }
+
+            return false;
+        }
+
+        private static bool AnyParentContainerInContainer(Item item, ObjectId testedContainerId)
+        {
+            var testedContainer = UO.Items[testedContainerId];
+            if (testedContainer == null)
+                return false;
+
+            return AnyParentContainerInContainer(item, testedContainer);
+        }
     }
 }

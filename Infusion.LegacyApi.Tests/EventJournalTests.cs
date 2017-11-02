@@ -516,6 +516,64 @@ namespace Infusion.LegacyApi.Tests
             eventBeforeDeleteHandled.Should().BeFalse();
             eventAfterDeleteHandled.Should().BeTrue();
         }
+
+        [TestMethod]
+        public void Can_cancel_All_handling()
+        {
+            var source = new EventJournalSource();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+
+            var task = Task.Run(() =>
+            {
+                Action action = () =>
+                {
+                    while (true)
+                    {
+                        journal.When<SpeechRequestedEvent>(e => { })
+                            .All();
+                    }
+                };
+
+                action.ShouldThrow<OperationCanceledException>();
+            });
+
+            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+
+            cancellationTokenSource.Cancel();
+            task.Wait(TimeSpan.FromMilliseconds(100)).Should()
+                .BeTrue("false means timeout - tested task was not cancelled in time");
+        }
+
+        [TestMethod]
+        public void Can_cancel_All_handling_of_many_events_with_noncancellable_handlers()
+        {
+            var source = new EventJournalSource();
+            var cancellationTokenSource = new CancellationTokenSource();
+            var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+
+            for (int i = 0; i < 10000; i++)
+            {
+                source.Publish(new SpeechRequestedEvent(i.ToString()));
+            }
+
+            var task = Task.Run(() =>
+            {
+                Action action = () =>
+                {
+                    journal.When<SpeechRequestedEvent>(e => { Thread.Sleep(25); })
+                        .All();
+                };
+
+                action.ShouldThrow<OperationCanceledException>();
+            });
+
+            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+
+            cancellationTokenSource.Cancel();
+            task.Wait(TimeSpan.FromMilliseconds(100)).Should()
+                .BeTrue("false means timeout - tested task was not cancelled in time");
+        }
     }
 
     internal class TestEventJournalSource : IEventJournalSource

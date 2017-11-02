@@ -11,6 +11,7 @@ namespace Infusion.LegacyApi
     {
         private readonly Func<CancellationToken?> cancellationTokenProvider;
         private readonly EventJournal journal;
+        private readonly Func<TimeSpan?> defaultTimeout;
         private readonly AutoResetEvent eventReceivedEvent = new AutoResetEvent(false);
         private readonly object eventReceivedLock = new object();
 
@@ -25,10 +26,11 @@ namespace Infusion.LegacyApi
         private Delegate whenActionToExecute;
 
         internal EventJournalAwaiter(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider,
-            EventJournal journal)
+            EventJournal journal, Func<TimeSpan?> defaultTimeout)
         {
             this.cancellationTokenProvider = cancellationTokenProvider;
             this.journal = journal;
+            this.defaultTimeout = defaultTimeout;
             source.NewEventReceived += HandleNewEvent;
             preallocatedAllEvents = new List<IEvent>(source.MaximumCapacity);
         }
@@ -61,7 +63,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        internal EventJournalAwaiter When<T>(Func<T, bool> whenPredicate, Action<T> whenAction) where T : IEvent
+        public EventJournalAwaiter When<T>(Func<T, bool> whenPredicate, Action<T> whenAction) where T : IEvent
         {
             if (!eventSubscriptions.TryGetValue(typeof(T), out var subscriptionList))
             {
@@ -76,6 +78,7 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(TimeSpan? timeout = null)
         {
+            timeout = timeout ?? defaultTimeout?.Invoke();
             var startedTime = DateTime.UtcNow;
 
             journal.AwaitingStarted.Set();
@@ -84,7 +87,7 @@ namespace Infusion.LegacyApi
             {
                 var elapsed = DateTime.UtcNow - startedTime;
                 if (timeout.HasValue && timeout.Value < elapsed)
-                    throw new TimeoutException();
+                    throw new TimeoutException("Event journal WaitAny timeout.");
 
                 if (cancellationTokenProvider != null)
                 {
@@ -182,8 +185,20 @@ namespace Infusion.LegacyApi
 
             journal.GatherEvents(preallocatedAllEvents, lastProcessedEventId);
 
+            if (cancellationTokenProvider != null)
+            {
+                var token = cancellationTokenProvider();
+                token?.ThrowIfCancellationRequested();
+            }
+
             foreach (var ev in preallocatedAllEvents)
             {
+                if (cancellationTokenProvider != null)
+                {
+                    var token = cancellationTokenProvider();
+                    token?.ThrowIfCancellationRequested();
+                }
+
                 if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
                 {
                     foreach (var subscription in subscriptionsList)

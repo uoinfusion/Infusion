@@ -566,6 +566,45 @@ namespace Infusion.Tests.Commands
             commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("backgroundcmd");
         }
 
+        [TestMethod]
+        public void TerminateAll_terminates_background_commands()
+        {
+            var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
+            {
+                DoSomeCancellableAction();
+            });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",backgroundcmd");
+            command.WaitForInitialization();
+            command.Finish();
+            commandHandler.TerminateAll();
+
+            command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
+                .BeTrue("background command should not run after non-specific terminate all");
+            commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("backgroundcmd");
+        }
+
+        [TestMethod]
+        public void TerminateAll_terminates_normal_commands()
+        {
+            var command = new TestCommand(commandHandler, "normalcmd", CommandExecutionMode.Normal, () =>
+            {
+                DoSomeCancellableAction();
+            });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke(",normalcmd");
+            command.WaitForInitialization();
+            command.Finish();
+            commandHandler.TerminateAll();
+
+            command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
+                .BeTrue("normal command should not run after non-specific terminate all");
+            commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("normalcmd");
+        }
+
+
         private sealed class TestCommand
         {
             private readonly Action additionalAction;

@@ -122,5 +122,10 @@ namespace Infusion.Commands
                 return false;
             }
         }
+
+        public void TerminateAll()
+        {
+            Terminate(true);
+        }
     }
 }

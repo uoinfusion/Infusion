@@ -23,6 +23,6 @@ namespace Infusion.Proxy
                 LatencyMin = time;
         }
 
-        public override string ToString() => $"{LatencyMin:fffff};{LatencyAvg:fffff};{LatencyMax:fffff}";
+        public override string ToString() => $"Count: {Count}; {LatencyMin:fffff}; {LatencyAvg:fffff}; {LatencyMax:fffff}";
     }
 }

@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi
     internal sealed class JournalSource : IEnumerable<JournalEntry>
     {
         private readonly object sourceLock = new object();
-        private const int MaxLength = 256;
+        internal const int MaxLength = 256;
         private ImmutableQueue<JournalEntry> journal = ImmutableQueue.Create<JournalEntry>();
         private long lastActionJournalEntryId;
 

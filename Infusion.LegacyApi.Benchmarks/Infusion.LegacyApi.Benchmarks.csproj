@@ -42,9 +42,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EventJournal.cs" />
+    <Compile Include="EventJournalBenchmarks.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpeechJournalBenchmarks.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Infusion.LegacyApi;
 using Infusion.LegacyApi.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -573,6 +574,81 @@ namespace Infusion.LegacyApi.Tests
             cancellationTokenSource.Cancel();
             task.Wait(TimeSpan.FromMilliseconds(100)).Should()
                 .BeTrue("false means timeout - tested task was not cancelled in time");
+        }
+
+        [TestMethod]
+        public void Publish_after_WaitAny_doesnt_influence_next_call_to_WaitAny()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            string result = string.Empty;
+
+            var task = Task.Run(() =>
+            {
+                journal
+                    .When<ContainerOpenedEvent>(e => result = "y")
+                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "qwer", e => { result = "x"; })
+                    .WaitAny();
+            });
+
+            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0)));
+            task.Wait(100).Should().BeTrue();
+            result.Should().Be("x");
+
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0)));
+
+            result = "z";
+            task = Task.Run(() =>
+            {
+                journal
+                    .When<ContainerOpenedEvent>(e => result = "y")
+                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "qwer", e => { result = "x"; })
+                    .WaitAny();
+            });
+
+            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            source.Publish(new ContainerOpenedEvent(1));
+
+            task.Wait(100).Should().BeTrue();
+            result.Should().Be("y");
+        }
+
+        [TestMethod]
+        public void Can_use_same_journal_concurrently()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var source = new EventJournalSource();
+                var journal = new EventJournal(source);
+                string task1Result = string.Empty;
+                string task2Result = string.Empty;
+
+                var task1 = Task.Run(() =>
+                {
+                    journal.When<SpeechRequestedEvent>(e => { task1Result = "SpeechRequestedEvent"; })
+                        .WaitAny();
+                });
+
+                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+
+                var task2 = Task.Run(() =>
+                {
+                    journal.When<DialogBoxOpenedEvent>(e => { task2Result = "DialogBoxOpenedEvent"; })
+                        .WaitAny();
+                });
+
+                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+
+                source.Publish(new SpeechRequestedEvent("test"));
+                source.Publish(new DialogBoxOpenedEvent(new DialogBox(1, 1, "", null)));
+
+                task1.Wait(100).Should().BeTrue();
+                task2.Wait(100).Should().BeTrue();
+
+                task1Result.Should().Be("SpeechRequestedEvent");
+                task2Result.Should().Be("DialogBoxOpenedEvent");
+            });
         }
     }
 

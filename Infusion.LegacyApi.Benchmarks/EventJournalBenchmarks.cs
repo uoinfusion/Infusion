@@ -4,22 +4,22 @@ using Infusion.LegacyApi.Events;
 namespace Infusion.LegacyApi.Benchmarks
 {
     [MemoryDiagnoser]
-    public class EventJournal
+    public class EventJournalBenchmarks
     {
-        private readonly EventJournalSource fullSource;
-        private readonly LegacyApi.EventJournal fullJournal;
+        private readonly EventJournal emptyJournal;
         private readonly EventJournalSource emptySource;
-        private readonly LegacyApi.EventJournal emptyJournal;
+        private readonly EventJournal fullJournal;
+        private readonly EventJournalSource fullSource;
 
-        public EventJournal()
+        public EventJournalBenchmarks()
         {
             emptySource = new EventJournalSource();
-            emptyJournal = new LegacyApi.EventJournal(emptySource);
+            emptyJournal = new EventJournal(emptySource);
 
             fullSource = new EventJournalSource();
-            fullJournal = new LegacyApi.EventJournal(fullSource);
+            fullJournal = new EventJournal(fullSource);
 
-            for (int i = 0; i <= fullSource.MaximumCapacity + 1; i++)
+            for (var i = 0; i <= fullSource.MaximumCapacity + 1; i++)
                 fullSource.Publish(new SpeechRequestedEvent("test"));
         }
 
@@ -30,9 +30,9 @@ namespace Infusion.LegacyApi.Benchmarks
         }
 
         [Benchmark]
-        public void HandlingAllWithFullJournal()
+        public void HandlingAllWithFullJournal_NoneEventsHandled()
         {
-            fullJournal.When<SpeechRequestedEvent>(e => { })
+            fullJournal.When<DialogBoxOpenedEvent>(e => { })
                 .All();
         }
 

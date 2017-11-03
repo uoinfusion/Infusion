@@ -24,20 +24,17 @@ namespace Infusion.LegacyApi
         private IEvent receivedEvent;
 
         private Delegate whenActionToExecute;
+        private readonly IEventJournalSource source;
 
         internal EventJournalAwaiter(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider,
             EventJournal journal, Func<TimeSpan?> defaultTimeout)
         {
+            this.source = source;
             this.cancellationTokenProvider = cancellationTokenProvider;
             this.journal = journal;
             this.defaultTimeout = defaultTimeout;
             source.NewEventReceived += HandleNewEvent;
-            preallocatedAllEvents = new List<IEvent>(source.MaximumCapacity);
-        }
-
-        public void ClearSubscriptions()
-        {
-            eventSubscriptions.Clear();
+            preallocatedAllEvents = new List<IEvent>();
         }
 
         private void HandleNewEvent(object sender, IEvent ev)
@@ -58,8 +55,9 @@ namespace Infusion.LegacyApi
                         whenActionToExecute = subscription.WhenAction;
                         receivedEvent = ev;
                     }
+
+                    eventReceivedEvent.Set();
                 }
-                eventReceivedEvent.Set();
             }
         }
 
@@ -78,38 +76,50 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(TimeSpan? timeout = null)
         {
-            timeout = timeout ?? defaultTimeout?.Invoke();
-            var startedTime = DateTime.UtcNow;
-
-            journal.AwaitingStarted.Set();
-
-            while (!eventReceivedEvent.WaitOne(10))
+            try
             {
-                var elapsed = DateTime.UtcNow - startedTime;
-                if (timeout.HasValue && timeout.Value < elapsed)
-                    throw new TimeoutException("Event journal WaitAny timeout.");
+                timeout = timeout ?? defaultTimeout?.Invoke();
+                var startedTime = DateTime.UtcNow;
 
-                if (cancellationTokenProvider != null)
+                journal.AwaitingStarted.Set();
+
+                while (!eventReceivedEvent.WaitOne(10))
                 {
-                    var token = cancellationTokenProvider();
-                    token?.ThrowIfCancellationRequested();
+                    var elapsed = DateTime.UtcNow - startedTime;
+                    if (timeout.HasValue && timeout.Value < elapsed)
+                        throw new TimeoutException("Event journal WaitAny timeout.");
+
+                    if (cancellationTokenProvider != null)
+                    {
+                        var token = cancellationTokenProvider();
+                        token?.ThrowIfCancellationRequested();
+                    }
+                }
+
+                Delegate whenAction;
+                IEvent ev;
+                lock (eventReceivedLock)
+                {
+                    whenAction = whenActionToExecute;
+                    whenActionToExecute = null;
+
+                    ev = receivedEvent;
+                    receivedEvent = null;
+                }
+
+                whenAction.DynamicInvoke(ev);
+            }
+            finally
+            {
+                lock (eventReceivedLock)
+                {
+                    source.NewEventReceived -= HandleNewEvent;
+                    whenActionToExecute = null;
+                    receivedEvent = null;
+                    eventSubscriptions.Clear();
+                    eventReceivedEvent.Reset();
                 }
             }
-
-            Delegate whenAction;
-            IEvent ev;
-            lock (eventReceivedLock)
-            {
-                whenAction = whenActionToExecute;
-                whenActionToExecute = null;
-
-                ev = receivedEvent;
-                receivedEvent = null;
-            }
-
-            whenAction.DynamicInvoke(ev);
-
-            eventReceivedEvent.Reset();
         }
 
         public EventJournalAwaiter When<T>(Action<T> action)
@@ -171,45 +181,59 @@ namespace Infusion.LegacyApi
             {
                 lock (eventReceivedLock)
                 {
+                    source.NewEventReceived -= HandleNewEvent;
+                    eventSubscriptions.Clear();
                     incommingEventQueue = null;
+                    eventReceivedEvent.Reset();
                 }
             }
         }
 
         public void All()
         {
-            var lastProcessedEventId = journal.LastEventId;
-
-            journal.AwaitingStarted.Set();
-            preallocatedAllEvents.Clear();
-
-            journal.GatherEvents(preallocatedAllEvents, lastProcessedEventId);
-
-            if (cancellationTokenProvider != null)
+            try
             {
-                var token = cancellationTokenProvider();
-                token?.ThrowIfCancellationRequested();
-            }
+                var lastProcessedEventId = journal.LastEventId;
 
-            foreach (var ev in preallocatedAllEvents)
-            {
+                journal.AwaitingStarted.Set();
+                preallocatedAllEvents.Clear();
+
+                journal.GatherEvents(preallocatedAllEvents, lastProcessedEventId);
+
                 if (cancellationTokenProvider != null)
                 {
                     var token = cancellationTokenProvider();
                     token?.ThrowIfCancellationRequested();
                 }
 
-                if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
+                foreach (var ev in preallocatedAllEvents)
                 {
-                    foreach (var subscription in subscriptionsList)
+                    if (cancellationTokenProvider != null)
                     {
-                        if (subscription.Predicate == null || (bool)subscription.Predicate.DynamicInvoke(ev))
-                            subscription.WhenAction.DynamicInvoke(ev);
+                        var token = cancellationTokenProvider();
+                        token?.ThrowIfCancellationRequested();
+                    }
+
+                    if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
+                    {
+                        foreach (var subscription in subscriptionsList)
+                        {
+                            if (subscription.Predicate == null || (bool)subscription.Predicate.DynamicInvoke(ev))
+                                subscription.WhenAction.DynamicInvoke(ev);
+                        }
                     }
                 }
-            }
 
-            journal.JournalStartEventId = lastProcessedEventId;
+                journal.JournalStartEventId = lastProcessedEventId;
+            }
+            finally
+            {
+                lock (eventReceivedLock)
+                {
+                    source.NewEventReceived -= HandleNewEvent;
+                    eventSubscriptions.Clear();
+                }
+            }
         }
 
         private class EventSubscription

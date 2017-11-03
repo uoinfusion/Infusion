@@ -10,7 +10,8 @@ namespace Infusion.LegacyApi
     public class EventJournal : IEnumerable<IEvent>
     {
         private readonly IEventJournalSource source;
-        private readonly EventJournalAwaiter awaiter;
+        private readonly Func<CancellationToken?> cancellationTokenProvider;
+        private readonly Func<TimeSpan?> defaultTimeout;
 
         public EventId JournalStartEventId { get; internal set; }
         public EventId LastEventId => source.LastEventId;
@@ -20,20 +21,19 @@ namespace Infusion.LegacyApi
         internal EventJournal(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider = null, Func<TimeSpan?> defaultTimeout = null)
         {
             this.source = source;
+            this.cancellationTokenProvider = cancellationTokenProvider;
+            this.defaultTimeout = defaultTimeout;
             JournalStartEventId = source.LastEventId;
-            this.awaiter = new EventJournalAwaiter(source, cancellationTokenProvider, this, defaultTimeout);
         }
 
         public EventJournalAwaiter When<T>(Action<T> whenAction) where T : IEvent
         {
-            awaiter.ClearSubscriptions();
-            return awaiter.When(whenAction);
+            return new EventJournalAwaiter(source, cancellationTokenProvider, this, defaultTimeout).When(whenAction);
         }
 
         public EventJournalAwaiter When<T>(Func<T, bool> acceptEventPredicate, Action<T> whenAction) where T : IEvent
         {
-            awaiter.ClearSubscriptions();
-            return awaiter.When(acceptEventPredicate, whenAction);
+            return new EventJournalAwaiter(source, cancellationTokenProvider, this, defaultTimeout).When(acceptEventPredicate, whenAction);
         }
 
         public IEnumerator<IEvent> GetEnumerator() => OrderedEvents.Select(e => e.Event).GetEnumerator();

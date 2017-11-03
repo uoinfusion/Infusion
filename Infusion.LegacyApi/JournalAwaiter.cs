@@ -183,7 +183,7 @@ namespace Infusion.LegacyApi
                         return;
                     }
 
-                    var token = tokenProvider();
+                    var token = tokenProvider?.Invoke();
                     token?.ThrowIfCancellationRequested();
                 }
 

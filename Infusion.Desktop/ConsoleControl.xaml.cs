@@ -39,9 +39,9 @@ namespace Infusion.Desktop
 
 
             ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
-            Program.Console = new MultiplexLogger(Program.Console,
+            Program.Console = new AsyncLogger(new MultiplexLogger(Program.Console,
                 new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration),
-                new FileLogger(Program.Configuration));
+                new FileLogger(Program.Configuration)));
             var commandHandler = new CommandHandler(Program.Console);
 
             Program.Initialize(commandHandler);

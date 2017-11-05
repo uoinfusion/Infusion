@@ -112,7 +112,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Cannot_see_entry_received_before_journal_deletion()
+        public void Contains_cannot_see_entry_received_before_journal_deletion()
         {
             var source = new JournalSource();
             var journal = new SpeechJournal(source, null);
@@ -121,6 +121,23 @@ namespace Infusion.LegacyApi.Tests
             journal.Delete();
 
             journal.Contains("message before delete").Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void WaitAny_cannot_see_entry_received_before_journal_deletion()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "message before delete", new ObjectId(0), 0);
+            journal.Delete();
+
+            bool canSeeMessageBeforeDelete = false;
+            journal.When("message before delete", e => canSeeMessageBeforeDelete = true)
+                .WhenTimeout(() => { })
+                .WaitAny(TimeSpan.FromMilliseconds(1));
+
+            canSeeMessageBeforeDelete.Should().BeFalse();
         }
 
         [TestMethod]

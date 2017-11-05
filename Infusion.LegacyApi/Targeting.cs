@@ -102,9 +102,9 @@ namespace Infusion.LegacyApi
 
         public void TargetTile(Location3D location, ModelId tileType)
         {
-            server.TargetLocation(new CursorId(0x00000025), location, tileType, CursorType.Harmful);
+            server.TargetLocation(lastCursorId, location, tileType, CursorType.Harmful);
 
-            client.TargetLocation(new CursorId(0x00000025), location, tileType, CursorType.Cancel);
+            client.TargetLocation(lastCursorId, location, tileType, CursorType.Cancel);
 
             discardNextTargetLocationRequestIfEmpty = true;
         }

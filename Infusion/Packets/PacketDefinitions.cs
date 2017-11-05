@@ -322,8 +322,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<DrawObjectPacket> DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
             new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket());
 
-        public static readonly PacketDefinition OpenDialogBox = new PacketDefinition(0x7C,
-            new VariablePacketLength(), "OpenDialogBox");
+        public static readonly PacketDefinition<OpenDialogBoxPacket> OpenDialogBox = new PacketDefinition<OpenDialogBoxPacket>(0x7C,
+            new VariablePacketLength(), "OpenDialogBox", packet => new OpenDialogBoxPacket());
 
         public static readonly PacketDefinition LoginDenied = new PacketDefinition(0x82,
             new StaticPacketLength(2), "LoginDenied");

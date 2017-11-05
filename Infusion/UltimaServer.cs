@@ -146,5 +146,11 @@ namespace Infusion
         {
             Send(packet.RawPacket);
         }
+
+        public void DialogBoxResponse(uint dialogId, ushort menuId, byte responseIndex, ModelId responseType, Color responseColor)
+        {
+            var packet = new ResponseToDialogBoxRequest(dialogId, menuId, responseIndex, responseType, responseColor);
+            Send(packet.RawPacket);
+        }
     }
 }

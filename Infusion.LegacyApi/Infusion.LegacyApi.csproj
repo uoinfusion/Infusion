@@ -49,9 +49,11 @@
     </Compile>
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedClientPacketsFilters.cs" />
+    <Compile Include="DialogBoxObservers.cs" />
     <Compile Include="Events\CommandRequestedEvent.cs" />
     <Compile Include="Events\ContainerOpenedEvent.cs" />
     <Compile Include="Events\CurrentHealthUpdatedEvent.cs" />
+    <Compile Include="Events\DialogBoxOpenedEvent.cs" />
     <Compile Include="Events\EventId.cs" />
     <Compile Include="EventJournal.cs" />
     <Compile Include="EventJournalAwaiter.cs" />

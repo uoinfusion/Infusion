@@ -19,6 +19,7 @@ namespace Infusion.LegacyApi
             this.cancellationToken = cancellationToken;
             this.defaultTimeout = defaultTimeout;
             journalEntryStartId = source.CurrentJournalEntryId;
+            LastWaitEntryId = journalEntryStartId;
         }
 
         public IEnumerator<JournalEntry> GetEnumerator()
@@ -40,6 +41,7 @@ namespace Infusion.LegacyApi
         public void Delete()
         {
             journalEntryStartId = source.CurrentJournalEntryId;
+            LastWaitEntryId = journalEntryStartId;
         }
 
         public void WaitAny(params string[] words)

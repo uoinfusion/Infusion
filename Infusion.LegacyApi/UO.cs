@@ -139,6 +139,9 @@ namespace Infusion.LegacyApi
         public static void TargetTile(string tileInfo)
             => Current.TargetTile(tileInfo);
 
+        public static void Target(Location2D location)
+            => Current.Target(location);
+
         public static void Target(TargetInfo targetInfo)
             => Current.Target(targetInfo);
 
@@ -240,5 +243,21 @@ namespace Infusion.LegacyApi
         public static void ToggleLightFiltering() => Current.ToggleLightFiltering();
 
         public static void ToggleWeatherFiltering() => Current.ToggleWeatherFiltering();
+
+        public static DialogBox WaitForDialogBox(params string[] failMessages)
+            => Current.WaitForDialogBox(failMessages);
+
+        public static DialogBox WaitForDialogBox(bool showDialog = false, params string[] failMessages)
+            => Current.WaitForDialogBox(showDialog, failMessages);
+
+        public static DialogBox WaitForDialogBox(bool showDialog = false, TimeSpan? timeout = null, params string[] failMessages)
+            => Current.WaitForDialogBox(showDialog, timeout, failMessages);
+
+        public static void TriggerDialogBox(string dialogResponse)
+            => Current.TriggerDialogBox(dialogResponse);
+
+        public static void TriggerDialogBox(byte responseIndex)
+            => Current.TriggerDialogBox(responseIndex);
+
     }
 }

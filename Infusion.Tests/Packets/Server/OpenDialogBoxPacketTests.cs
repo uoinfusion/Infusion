@@ -1,0 +1,122 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using FluentAssertions;
+using Infusion.Packets.Server;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Infusion.Tests.Packets.Server
+{
+    [TestClass]
+    public class OpenDialogBoxPacketTests
+    {
+        [TestMethod]
+        public void Can_deserialize()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x7C, // packet
+                0x00, 0xF1, // size
+                0x00, 0x06, 0x39, 0x0E, // dialog id
+                0x00, 0x0C, // menu id
+                0x1C, // length of question
+
+                // question
+                0x57, 0x68, 0x61, 0x74, 0x20, 0x64, 0x6F, 0x20, 0x79, 0x6F, 0x75, 0x20, 0x77, 0x61, 0x6E, 0x74,
+                0x20, 0x74, 0x6F, 0x20, 0x73, 0x75, 0x6D, 0x6D, 0x6F, 0x6E, 0x20, 0x3F,
+
+                0x0D, // number of responses
+
+                0x21, 0x1F, // response type
+                0x00, 0x00, // response color
+                0x0A, // response text length
+                // "Bone Horse"
+                0x42, 0x6F, 0x6E, 0x65, 0x20, 0x48, 0x6F, 0x72, 0x73, 0x65,
+
+                0x20, 0xD9, // response type
+                0x00, 0x00, // response color
+                0x14, // response text length
+                0x54, 0x65, 0x6D, 0x6E, 0x79, 0x20, 0x56, 0x61, 0x6D, 0x70, 0x69, 0x72, 0x20, 0x4C, 0x65, 0x76,
+                0x65, 0x6C, 0x20, 0x31,
+
+                0x20, 0xF8, // response type
+                0x00, 0x00, // response color
+                0x0A, // response text length
+                0x4C, 0x69, 0x63, 0x68, 0x65, 0x20, 0x4C, 0x6F, 0x72, 0x64,
+
+                0x20, 0xEC, // response type
+                0x00, 0x00, // response color
+                0x05, // response text length
+                0x4D, 0x75, 0x6D, 0x6D, 0x79,
+
+                0x20, 0xD9, // response type
+                0x00, 0x00, // response color
+                0x07, // response text length
+                0x56, 0x61, 0x6D, 0x70, 0x69, 0x72, 0x65,
+
+                0x20, 0xF8, // response type
+                0x00, 0x00, // response color
+                0x05, // response text length
+                0x4C, 0x69, 0x63, 0x68, 0x65,
+
+                0x21, 0x09, // response type
+                0x00, 0x00, // response color
+                0x04, // response text length
+                0x46, 0x65, 0x78, 0x74,
+
+                0x20, 0xE7, // response type
+                0x00, 0x00, // response color
+                0x0D, // response text length
+                0x53, 0x6B, 0x65, 0x6C, 0x65, 0x74, 0x6F, 0x6E, 0x20, 0x4D, 0x61, 0x67, 0x65,
+
+                0x20, 0xE7, // response type
+                0x00, 0x00, // response color
+                0x17, // response text length
+                0x53, 0x6B, 0x65, 0x6C, 0x65, 0x74, 0x6F, 0x6E, 0x20, 0x41, 0x72, 0x63, 0x68, 0x65, 0x72, 0x20,
+                0x4C, 0x65, 0x76, 0x65, 0x6C, 0x20, 0x31,
+
+                0x20, 0xE7, // response type
+                0x00, 0x00, // response color
+                0x0E, // response text length
+                0x53, 0x6B, 0x65, 0x6C, 0x65, 0x74, 0x6F, 0x6E, 0x20, 0x53, 0x77, 0x6F, 0x72, 0x64,
+
+                0x20, 0xE7, // response type
+                0x00, 0x00, // response color
+                0x0C, // response text length
+                0x53, 0x6B, 0x65,
+                0x6C, 0x65, 0x74, 0x6F, 0x6E, 0x20, 0x41, 0x78, 0x65,
+
+                0x20, 0xE7, // response type
+                0x00, 0x00, // response color
+                0x08, // response text length
+                0x53, 0x6B, 0x65, 0x6C, 0x65, 0x74, 0x6F, 0x6E,
+
+                0x20, 0xEC, // response type
+                0x00, 0x00, // response color
+                0x06, // response text length
+                // "Zombie"
+                0x5A, 0x6F, 0x6D, 0x62, 0x69, 0x65,
+            });
+
+            var packet = new OpenDialogBoxPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.MenuId.Should().Be(0x000C);
+            packet.DialogId.Should().Be(0x0006390E);
+            packet.Question.Should().Be("What do you want to summon ?");
+            packet.Responses.Length.Should().Be(13);
+
+            packet.Responses.First().Color.Should().Be((Color)0);
+            packet.Responses.First().Type.Should().Be((ModelId)0x211F);
+            packet.Responses.First().Text.Should().Be("Bone Horse");
+            packet.Responses.First().Index.Should().Be(1);
+
+            packet.Responses.Last().Color.Should().Be((Color)0);
+            packet.Responses.Last().Type.Should().Be((ModelId) 0x20EC);
+            packet.Responses.Last().Text.Should().Be("Zombie");
+            packet.Responses.Last().Index.Should().Be(13);
+        }
+    }
+}

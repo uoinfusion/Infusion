@@ -30,6 +30,7 @@ namespace Infusion.LegacyApi
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
         private readonly EventJournalSource eventJournalSource;
+        private readonly DialogBoxObservers dialogBoxObervers;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
@@ -56,6 +57,7 @@ namespace Infusion.LegacyApi
             soundObserver = new SoundObserver(ultimaServer, configuration, eventJournalSource);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource);
+            dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource);
 
             playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, eventJournalSource);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
@@ -69,6 +71,7 @@ namespace Infusion.LegacyApi
             CommandHandler.CancellationTokenCreated += (sender, token) => CancellationToken = token;
 
             Configuration = configuration;
+            legacyEventJournal = CreateEventJournal();
         }
 
         public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
@@ -327,6 +330,14 @@ namespace Infusion.LegacyApi
             targeting.TargetTile(tileInfo);
         }
 
+        public void Target(Location2D location)
+        {
+            CheckCancellation();
+            journalSource.NotifyLastAction();
+
+            targeting.TargetTile(location.X, location.Y, 0, 0);
+        }
+
         public void Target(TargetInfo targetInfo)
         {
             CheckCancellation();
@@ -580,6 +591,51 @@ namespace Infusion.LegacyApi
             ClientPrint(Configuration.FilterWeatherEnabled
                 ? "Weather filtering turned on"
                 : "Weather filtering turned off");
+        }
+
+        private readonly EventJournal legacyEventJournal;
+
+        public DialogBox WaitForDialogBox(params string[] failMessages)
+            => WaitForDialogBox(false, null, failMessages);
+
+        public DialogBox WaitForDialogBox(bool showDialog = false, params string[] failMessages)
+            => WaitForDialogBox(showDialog, null, failMessages);
+
+        public DialogBox WaitForDialogBox(bool showDialog = false, TimeSpan? timeout = null, params string[] failMessages)
+        {
+            DialogBox result = null;
+
+            try
+            {
+                dialogBoxObervers.ShowDialogBox = showDialog;
+
+                legacyEventJournal.When<DialogBoxOpenedEvent>(e => result = e.DialogBox)
+                    .When<SpeechReceivedEvent>(e => failMessages.Any(msg => e.Speech.Text.Contains(msg)),
+                        e => result = null)
+                    .WaitAny(timeout);
+
+                return result;
+            }
+            finally 
+            {
+                dialogBoxObervers.ShowDialogBox = true;
+            }
+        }
+
+        public void TriggerDialogBox(string dialogResponse)
+        {
+            CheckCancellation();
+            journalSource.NotifyLastAction();
+
+            dialogBoxObervers.TriggerDialogBox(dialogResponse);
+        }
+
+        public void TriggerDialogBox(byte responseIndex)
+        {
+            CheckCancellation();
+            journalSource.NotifyLastAction();
+
+            dialogBoxObervers.TriggerDialogBox(responseIndex);
         }
     }
 }

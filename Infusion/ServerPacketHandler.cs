@@ -95,6 +95,8 @@ namespace Infusion
                 packetHandler.Publish<PlaySoundEffectPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.QuestArrow.Id)
                 packetHandler.Publish<QuestArrowPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.OpenDialogBox.Id)
+                packetHandler.Publish<OpenDialogBoxPacket>(rawPacket);
 
             return rawPacket;
         }

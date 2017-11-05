@@ -270,7 +270,7 @@ public static class Looting
         var originalLocation = UO.Me.Location;
 
         UO.Use(container);
-        if (Common.WaitForContainer())
+        if (!Common.WaitForContainer())
         {
             UO.Log("Cannot open body, maybe it is not possible to loot the body");
             return;

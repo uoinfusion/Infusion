@@ -69,7 +69,8 @@ namespace Infusion.LegacyApi
 
         internal void AddObject(GameObject gameObject)
         {
-            gameObjects = gameObjects.SetItem(gameObject.Id, gameObject);
+            if (gameObject.Id != 0)
+                gameObjects = gameObjects.SetItem(gameObject.Id, gameObject);
         }
 
         internal void RemoveItem(ObjectId id)

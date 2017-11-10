@@ -58,6 +58,7 @@
     <Compile Include="EventJournal.cs" />
     <Compile Include="EventJournalAwaiter.cs" />
     <Compile Include="EventJournalSource.cs" />
+    <Compile Include="Events\GumpReceivedEvent.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\PlayerLocationChangedEvent.cs" />
     <Compile Include="IEventJournalSource.cs" />

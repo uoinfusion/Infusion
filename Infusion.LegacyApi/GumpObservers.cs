@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Events;
 using Infusion.Packets;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
@@ -13,16 +14,18 @@ namespace Infusion.LegacyApi
         private readonly UltimaServer server;
         private readonly UltimaClient client;
         private readonly Legacy legacy;
+        private readonly EventJournalSource eventSource;
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
-        private bool blockNextGumpMenuSelectionRequest;
+        private GumpTypeId? nextBlockedCancellationGumpId;
         private bool showNextAwaitedGump = true;
 
-        public GumpObservers(UltimaServer server, UltimaClient client, Legacy legacy)
+        public GumpObservers(UltimaServer server, UltimaClient client, Legacy legacy, EventJournalSource eventSource)
         {
             this.server = server;
             this.client = client;
             this.legacy = legacy;
+            this.eventSource = eventSource;
             server.RegisterFilter(FilterSendGumpMenuDialog);
 
             IClientPacketSubject clientPacketSubject = client;
@@ -43,10 +46,13 @@ namespace Infusion.LegacyApi
 
         private Packet? FilterGumpMenuSelection(Packet rawPacket)
         {
-            if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id && blockNextGumpMenuSelectionRequest)
+            if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id && nextBlockedCancellationGumpId.HasValue)
             {
-                blockNextGumpMenuSelectionRequest = false;
-                return null;
+                var packet = PacketDefinitionRegistry.Materialize<GumpMenuSelectionRequest>(rawPacket);
+                var gumpId = nextBlockedCancellationGumpId.Value;
+                nextBlockedCancellationGumpId = null;
+                if (gumpId == packet.Id)
+                    return null;
             }
 
             return rawPacket;
@@ -57,11 +63,14 @@ namespace Infusion.LegacyApi
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
                 var nextGumpNotVisible = false;
+                nextBlockedCancellationGumpId = null;
 
                 lock (gumpLock)
                 {
                     var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
-                    CurrentGump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+                    var gump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+                    CurrentGump = gump;
+                    eventSource.Publish(new GumpReceivedEvent(gump));
 
                     if (!showNextAwaitedGump)
                     {
@@ -79,25 +88,32 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        internal Gump WaitForGump(TimeSpan? timeout = null, bool showGump = true)
+        internal Gump WaitForGump(bool showGump = true, TimeSpan ? timeout = null)
         {
-            if (CurrentGump != null)
-                return CurrentGump;
-
-            showNextAwaitedGump = showGump;
-
-            gumpReceivedEvent.Reset();
-
-            var totalMilliseconds = 0;
-            while (!gumpReceivedEvent.WaitOne(100))
+            try
             {
-                totalMilliseconds += 100;
-                if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
-                    return null;
+                if (CurrentGump != null)
+                    return CurrentGump;
 
-                legacy.CheckCancellation();
+                showNextAwaitedGump = showGump;
+
+                gumpReceivedEvent.Reset();
+
+                var totalMilliseconds = 0;
+                while (!gumpReceivedEvent.WaitOne(100))
+                {
+                    totalMilliseconds += 100;
+                    if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
+                        return null;
+
+                    legacy.CheckCancellation();
+                }
+                return CurrentGump;
             }
-            return CurrentGump;
+            finally
+            {
+                showNextAwaitedGump = true;
+            }
         }
 
         internal void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
@@ -117,7 +133,7 @@ namespace Infusion.LegacyApi
             {
                 server.RequestGumpSelection(packet);
 
-                blockNextGumpMenuSelectionRequest = true;
+                nextBlockedCancellationGumpId = packet.Id;
                 client.CloseGump(CurrentGump.GumpId);
                 CurrentGump = null;
             }

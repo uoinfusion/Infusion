@@ -226,8 +226,24 @@ public static class Targeting
         
         UO.Target(target);
     }
+    
+    public static void SelectTarget()
+    {
+        var mobile = UO.AskForMobile();
+        if (mobile == null)
+        {
+            UO.Log("Targeting canceled");
+            return;
+        }
+        
+        selectedTarget = mobile.Id;
+        CurrentTarget = mobile.Id;
+        alreadyTargeted.Clear();
+        alreadyTargeted.Push(mobile.Id);
+    }
 }
 
+UO.RegisterCommand("target-select", Targeting.SelectTarget);
 UO.RegisterCommand("target-next", Targeting.TargetNext);
 UO.RegisterCommand("target-prev", Targeting.TargetPrev);
 UO.RegisterCommand("target-last", Targeting.TargetLast);

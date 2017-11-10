@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi
             eventJournalSource = new EventJournalSource();
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
                 ultimaServer, this, eventJournalSource);
-            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this);
+            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this, eventJournalSource);
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
@@ -160,9 +160,9 @@ namespace Infusion.LegacyApi
             Server.Say(message);
         }
 
-        public Gump WaitForGump(TimeSpan? timeout = null)
+        public Gump WaitForGump(bool showGump = true, TimeSpan? timeout = null)
         {
-            return gumpObservers.WaitForGump(timeout);
+            return gumpObservers.WaitForGump(showGump, timeout);
         }
 
         public void Use(ObjectId objectId)
@@ -338,6 +338,14 @@ namespace Infusion.LegacyApi
             targeting.TargetTile(location.X, location.Y, 0, 0);
         }
 
+        public void Target(Location3D location)
+        {
+            CheckCancellation();
+            journalSource.NotifyLastAction();
+
+            targeting.TargetTile(location.X, location.Y, 0, 0);
+        }
+
         public void Target(TargetInfo targetInfo)
         {
             CheckCancellation();
@@ -420,6 +428,8 @@ namespace Infusion.LegacyApi
 
             return obj as Mobile;
         }
+
+        public TargetInfo? AskForLocation() => targeting.LocationInfo();
 
         public void WaitForTarget()
         {

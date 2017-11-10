@@ -17,7 +17,7 @@ public static class Necro
     public static void SummonCreature(string creatureName)
     {
         UO.Log($"Where do you want to summon {creatureName}"); 
-        var targetInfo = UO.Info();
+        var targetInfo = UO.AskForLocation();
         if (!targetInfo.HasValue)
         {
             UO.Log("Targeting cancelled");
@@ -29,7 +29,7 @@ public static class Necro
         UO.WaitForDialogBox();
         UO.TriggerDialogBox(creatureName);
         UO.WaitForTarget();
-        UO.Target(targetInfo.Value.Location);
+        UO.Target(targetInfo.Value);
         
         bool spellFailed = false;
         

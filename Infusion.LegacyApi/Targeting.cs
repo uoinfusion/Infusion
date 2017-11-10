@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading;
 using Infusion.Packets;
 using Infusion.Packets.Both;
@@ -57,6 +58,14 @@ namespace Infusion.LegacyApi
 
             if (packet.CursorId == new CursorId(0xDEADBEEF))
             {
+                if (packet.Location.X == 0xFFFF && packet.Location.Y == 0xFFFF &&
+                    packet.ClickedOnId.Value == 0)
+                {
+                    lastTargetInfo = null;
+                    receivedTargetInfoEvent.Set();
+                    return null;
+                }
+
                 switch (packet.CursorTarget)
                 {
                     case CursorTarget.Location:
@@ -65,7 +74,7 @@ namespace Infusion.LegacyApi
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Item, packet.ClickedOnType, packet.ClickedOnId);
+                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Object, packet.ClickedOnType, packet.ClickedOnId);
                         break;
                 }
 
@@ -147,7 +156,7 @@ namespace Infusion.LegacyApi
         {
             switch (targetInfo.Type)
             {
-                case TargetType.Item:
+                case TargetType.Object:
                     if (targetInfo.Id.HasValue)
                     {
                         Target(targetInfo.Id.Value, targetInfo.ModelId, targetInfo.Location);
@@ -203,6 +212,19 @@ namespace Infusion.LegacyApi
             }
 
             return lastItemIdInfo;
+        }
+
+        public TargetInfo? LocationInfo()
+        {
+            receivedTargetInfoEvent.Reset();
+            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+
+            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            {
+                legacyApi.CheckCancellation();
+            }
+
+            return lastTargetInfo;
         }
     }
 }

@@ -2,7 +2,8 @@
 {
     public enum TargetType
     {
-        Item,
+        None,
+        Object,
         Tile
     }
 }

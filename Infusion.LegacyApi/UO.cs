@@ -73,8 +73,8 @@ namespace Infusion.LegacyApi
         public static void Say(string message)
             => Current.Say(message);
 
-        public static Gump WaitForGump(TimeSpan? timeout = null)
-            => Current.WaitForGump(timeout);
+        public static Gump WaitForGump(bool showGump = true, TimeSpan? timeout = null)
+            => Current.WaitForGump(showGump, timeout);
 
         public static void Use(ObjectId objectId)
             => Current.Use(objectId);
@@ -90,6 +90,9 @@ namespace Infusion.LegacyApi
 
         public static Mobile AskForMobile()
             => Current.AskForMobile();
+
+        public static TargetInfo? AskForLocation() 
+            => Current.AskForLocation();
 
         public static void Use(GameObject item)
             => Current.Use(item);

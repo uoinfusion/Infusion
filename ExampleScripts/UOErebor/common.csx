@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 using Infusion.LegacyApi;
 using Infusion;
 using Infusion.Commands;
@@ -30,13 +31,33 @@ public static class Common
         return result;
     }
     
+    public static void OpenContainerCommand(string parameters)
+    {
+        if (!uint.TryParse(parameters, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint containerId))
+        {
+            throw new CommandInvocationException("Expecting hexadecimal id of a container.");
+        }
+        
+        var container = UO.Items[containerId];
+        if (container == null)
+        {
+            throw new CommandInvocationException($"Cannot find container {containerId}.");
+        }
+        
+        UO.Use(container);
+        if (!WaitForContainer())
+        {
+            throw new CommandInvocationException($"Cannot open container {container}");
+        }
+    }
+    
     public static void WaitCommand(string parameters)
     {
         if (string.IsNullOrEmpty(parameters))
             throw new CommandInvocationException("Wait time not specified");
             
         if (!int.TryParse(parameters, out int waitMilliseconds))
-            throw new CommandInvocationException($"{parameters} is not a number");
+            throw new CommandInvocationException($"{parameters}* is not a number");
             
         UO.Log($"Waiting {waitMilliseconds}"); 
         UO.Wait(waitMilliseconds);
@@ -69,3 +90,4 @@ public interface IMobileLookup : IEnumerable<Mobile>
 }
 
 UO.RegisterCommand("wait", Common.WaitCommand);
+UO.RegisterCommand("opencontainer", Common.OpenContainerCommand);

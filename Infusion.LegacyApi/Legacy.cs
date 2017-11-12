@@ -370,6 +370,18 @@ namespace Infusion.LegacyApi
             targeting.Target(player);
         }
 
+        public void Target(ObjectId id)
+        {
+            CheckCancellation();
+            journalSource.NotifyLastAction();
+
+            var gameObject = GameObjects[id];
+            if (gameObject == null)
+                targeting.Target(id);
+            else
+                targeting.Target(gameObject);
+        }
+
         public void Terminate(string parameters)
         {
             try

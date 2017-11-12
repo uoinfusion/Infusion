@@ -10,15 +10,18 @@ public static class Party
     private static readonly RequestStatusQueue requestStatusQueue =
         new RequestStatusQueue();
 
+    public static StatusesConfiguration Window => statuses.Configuration;
+
+    private static ObjectId? lastTargetId = null; 
+
     static Party()
     {
         requestStatusQueue.OneRequestInterval = TimeSpan.FromMilliseconds(500);
-        statuses = new Statuses("Party");
+        statuses = Statuses.Create("Party", () => UO.ClientWindow);
         statuses.MobileTargeted += (sender, id) =>
         {
-            var target = UO.Mobiles[id];
-            if (target != null)
-                UO.Target(target);
+            lastTargetId = id;
+            UO.Target(id);
         };
 
         requestStatusQueue.StartProcessing();
@@ -89,10 +92,23 @@ public static class Party
     {
         var member = UO.AskForMobile();
         if (member == null)
+        {
+            if (lastTargetId.HasValue)
+            {
+                statuses.Remove(lastTargetId.Value);
+                lastTargetId = null;
+            }
             return;
-            
-        statuses.Remove(member);
+        }
+        else
+            statuses.Remove(member);
     }
+    
+    public static void WindowInfo()
+    {
+        UO.Log(statuses.WindowInfo);
+    }
+
 }
 
 UO.RegisterBackgroundCommand("party", Party.Run);
@@ -102,3 +118,4 @@ UO.RegisterCommand("party-toggle", Party.Toggle);
 UO.RegisterCommand("party-add", Party.Add);
 UO.RegisterCommand("party-remove", Party.Remove);
 UO.RegisterCommand("party-show", Party.ShowStatuses);
+UO.RegisterCommand("party-windowinfo", Party.WindowInfo);

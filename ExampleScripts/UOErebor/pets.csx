@@ -16,13 +16,14 @@ public static class Pets
     private static readonly RequestStatusQueue requestStatusQueue = new RequestStatusQueue();
 
     public static MobileSpec PetsSpec = new[] { Specs.NecroSummons }; 
+    public static StatusesConfiguration Window => statuses.Configuration;
 
     public static IMobileLookup MyPets { get; } = new MobileLookupLinqWrapper(
         UO.Mobiles.Matching(PetsSpec).Where(x => x.CanRename));
 
     static Pets()
     {
-        statuses = new Statuses("Pets");
+        statuses = Statuses.Create("Pets", () => UO.ClientWindow);
         statuses.MobileTargeted += (sender, id) =>
         {
             var target = UO.Mobiles[id];
@@ -89,7 +90,9 @@ public static class Pets
         else if (args.UpdatedMobile.CanRename)
         {
             if (statuses.Count == 0)
+            {
                 AddMyPets();
+            }
 
             statuses.Add(args.UpdatedMobile, StatusBarType.Pet);
         }
@@ -110,13 +113,19 @@ public static class Pets
             UO.Log($"Pet left view: {mobile}");
             statuses.Remove(mobile);
         }
-    }    
+    }
+    
+    public static void WindowInfo()
+    {
+        UO.Log(statuses.WindowInfo);
+    }
         
     public static void Show() => statuses.Open();
 }
 
 UO.RegisterBackgroundCommand("pets", Pets.Run);
 UO.RegisterCommand("pets-show", Pets.Show);
+UO.RegisterCommand("pets-windowinfo", Pets.WindowInfo);
 UO.RegisterCommand("pets-enable", Pets.Enable);
 UO.RegisterCommand("pets-disable", Pets.Disable);
 

@@ -85,8 +85,7 @@ public static class Magery
     {
         if (!uint.TryParse(parameters, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint runeId))
         {
-            UO.Alert("Expecting hexadecimal id of a rune.");
-            return;
+            throw new CommandInvocationException("Expecting hexadecimal id of a rune.");
         }
         
         Recall(() => RecallTo(runeId));

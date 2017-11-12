@@ -36,6 +36,7 @@
       <HintPath>..\packages\System.Collections.Immutable.1.2.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -110,6 +111,7 @@
     <Compile Include="WalkRequest.cs" />
     <Compile Include="WalkRequestQueue.cs" />
     <Compile Include="WeatherObserver.cs" />
+    <Compile Include="WindowBounds.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infusion\Infusion.csproj">

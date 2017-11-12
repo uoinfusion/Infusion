@@ -18,7 +18,7 @@ public static class Banking
             else
                 UO.Say("hi");
                 
-            gump = UO.WaitForGump(TimeSpan.FromSeconds(10));
+            gump = UO.WaitForGump(true, TimeSpan.FromSeconds(10));
             if (gump == null)
             {
                 failedCount++;

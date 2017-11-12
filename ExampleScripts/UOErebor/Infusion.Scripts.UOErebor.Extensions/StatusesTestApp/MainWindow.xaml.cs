@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
+using Infusion.LegacyApi;
 using Infusion.Scripts.UOErebor.Extensions.StatusBars;
 
 namespace StatusesTestApp
@@ -43,7 +44,7 @@ namespace StatusesTestApp
             };
             DataContext = viewModel;
 
-            statusBars = new Statuses("Test");
+            statusBars = new Statuses("Test", () => new NullUltimaClientWindow());
             statusBars.Open();
             statusBars.MobileTargeted += (sender, id) =>
             {

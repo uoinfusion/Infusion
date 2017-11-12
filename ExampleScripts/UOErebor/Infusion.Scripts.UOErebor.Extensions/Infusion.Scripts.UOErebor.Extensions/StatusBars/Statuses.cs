@@ -1,22 +1,45 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
+using Infusion.LegacyApi;
 
 namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
 {
     public sealed class Statuses
     {
-        private StatusesWindow statusesWindow;
+        public static Statuses Create(string title, Func<IUltimaClientWindow> ultimaClientWindow)
+        {
+            if (statusesInstances.TryGetValue(title, out Statuses instance))
+            {
+                instance.MobileTargeted = delegate { };
+                return instance;
+            }
 
-        internal string Title { get; private set; }
+            instance = new Statuses(title, ultimaClientWindow);
+            statusesInstances[title] = instance;
+
+            return instance;
+        }
+
+        private readonly static Dictionary<string, Statuses> statusesInstances = new Dictionary<string, Statuses>();
+
+        private readonly Func<IUltimaClientWindow> ultimaClientWindow;
+        public StatusesConfiguration Configuration { get; }
+        public string Title { get; private set; }
+
+        private StatusesWindow statusesWindow;
+        
 
         public event EventHandler<ObjectId> MobileTargeted;
 
-        public Statuses(string title)
+        internal Statuses(string title, Func<IUltimaClientWindow> ultimaClientWindow)
         {
             Title = title;
+            this.ultimaClientWindow = ultimaClientWindow;
+            Configuration = new StatusesConfiguration(400, 400, WindowDock.None);
         }
 
         public int Count => StatusBars.Count;
@@ -29,6 +52,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
 
         internal void OnMobileTargeted(ObjectId id)
         {
+            ultimaClientWindow().Focus();
             MobileTargeted?.Invoke(this, id);
         }
 
@@ -50,8 +74,52 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
                 if (statusesWindow == null)
                     statusesWindow = new StatusesWindow(this);
 
+                statusesWindow.Title = Title;
+                statusesWindow.Width = Configuration.Width;
+                statusesWindow.Height = Configuration.Height;
+                var bounds = ultimaClientWindow().GetBounds();
+                if (bounds.HasValue)
+                {
+                    switch (Configuration.GameClientWindowDock)
+                    {
+                        case WindowDock.BottomLeft:
+                            statusesWindow.Left = bounds.Value.Left;
+                            statusesWindow.Top = bounds.Value.Bottom - Configuration.Height;
+                            break;
+                        case WindowDock.BottomRight:
+                            statusesWindow.Left = bounds.Value.Right - Configuration.Width;
+                            statusesWindow.Top = bounds.Value.Bottom - Configuration.Height;
+                            break;
+                        case WindowDock.TopLeft:
+                            statusesWindow.Top = bounds.Value.Top;
+                            statusesWindow.Left = bounds.Value.Left;
+                            break;
+                        case WindowDock.TopRight:
+                            statusesWindow.Top = bounds.Value.Top;
+                            statusesWindow.Left = bounds.Value.Right - Configuration.Width;
+                            break;
+                    }
+                }
+
                 statusesWindow.Show();
             }));
+        }
+
+        public string WindowInfo
+        {
+            get
+            {
+                string result = "invalid";
+
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    result = statusesWindow != null
+                        ? $"X: {statusesWindow.Left}, Y: {statusesWindow.Top}, Width: {statusesWindow.Width}, Height: {statusesWindow.Height}"
+                        : "closed";
+                }));
+
+                return result;
+            }
         }
 
         public void Close()
@@ -95,14 +163,19 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             }));
         }
 
-        public void Remove(Mobile mobile)
+        public void Remove(ObjectId id)
         {
-            var statusBar = Get(mobile.Id);
+            var statusBar = Get(id);
             if (statusBar != null)
             {
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
                     new Action(() => { StatusBars.Remove(statusBar); }));
             }
+        }
+
+        public void Remove(Mobile mobile)
+        {
+            Remove(mobile.Id);
         }
 
         public void Update(Mobile mobile)

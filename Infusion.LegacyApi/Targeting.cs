@@ -17,6 +17,8 @@ namespace Infusion.LegacyApi
         private bool discardNextTargetLocationRequestIfEmpty;
         private CursorId lastCursorId = new CursorId(0x00000025);
         private ObjectId lastItemIdInfo;
+        private bool targetInfoRequested = false;
+
 
         private TargetInfo? lastTargetInfo;
         private ModelId lastTypeInfo;
@@ -96,26 +98,42 @@ namespace Infusion.LegacyApi
 
         public TargetInfo? Info()
         {
-            lastTargetInfo = null;
-            receivedTargetInfoEvent.Reset();
-
-            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
-
-            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            try
             {
-                legacyApi.CheckCancellation();
-            }
+                lastTargetInfo = null;
+                targetInfoRequested = true;
+                receivedTargetInfoEvent.Reset();
 
-            return lastTargetInfo;
+                client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+
+                while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+                {
+                    legacyApi.CheckCancellation();
+                }
+
+                return lastTargetInfo;
+            }
+            finally
+            {
+                targetInfoRequested = false;
+            }
         }
 
         public void TargetTile(Location3D location, ModelId tileType)
         {
-            server.TargetLocation(lastCursorId, location, tileType, CursorType.Harmful);
+            if (targetInfoRequested)
+            {
+                lastTargetInfo = new TargetInfo(location, TargetType.Tile, tileType, null);
+                receivedTargetInfoEvent.Set();
 
-            client.TargetLocation(lastCursorId, location, tileType, CursorType.Cancel);
+            }
+            else
+            {
+                server.TargetLocation(lastCursorId, location, tileType, CursorType.Harmful);
+            }
 
             discardNextTargetLocationRequestIfEmpty = true;
+            client.TargetLocation(lastCursorId, location, tileType, CursorType.Cancel);
         }
 
         public void TargetTile(string tileInfo)
@@ -175,43 +193,54 @@ namespace Infusion.LegacyApi
             Target(player.PlayerId, player.BodyType, player.Location);
         }
 
+        public void Target(ObjectId id)
+        {
+            Target(id, 0, new Location3D(0, 0, 0));
+        }
+
         private void Target(ObjectId itemId, ModelId type, Location3D location)
         {
-            server.TargetItem(lastCursorId, itemId, CursorType.Harmful, location, type);
+            if (targetInfoRequested)
+            {
+                lastItemIdInfo = itemId;
+                lastTypeInfo = type;
+                lastTargetInfo = new TargetInfo(location, TargetType.Object, type, itemId);
+                receivedTargetInfoEvent.Set();
+            }
+            else
+            {
+                server.TargetItem(lastCursorId, itemId, CursorType.Harmful, location, type);
+            }
 
             discardNextTargetLocationRequestIfEmpty = true;
             client.CancelTarget(lastCursorId, itemId, location, type);
         }
 
-        public void Target(GameObject item)
+        public void Target(GameObject gameObject)
         {
-            Target(item.Id, item.Type, item.Location);
-        }
-
-        public ModelId TypeInfo()
-        {
-            receivedTargetInfoEvent.Reset();
-            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
-
-            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
-            {
-                legacyApi.CheckCancellation();
-            }
-
-            return lastTypeInfo;
+            Target(gameObject.Id, gameObject.Type, gameObject.Location);
         }
 
         public ObjectId ItemIdInfo()
         {
-            receivedTargetInfoEvent.Reset();
-            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
-
-            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            try
             {
-                legacyApi.CheckCancellation();
-            }
+                targetInfoRequested = true;
+                receivedTargetInfoEvent.Reset();
+                client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
-            return lastItemIdInfo;
+                while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+                {
+                    legacyApi.CheckCancellation();
+                }
+
+                return lastItemIdInfo;
+
+            }
+            finally
+            {
+                targetInfoRequested = false;
+            }
         }
 
         public TargetInfo? LocationInfo()

@@ -94,6 +94,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Infusion.LegacyApi\Infusion.LegacyApi.csproj">
+      <Project>{28A5CECE-9E74-4524-9DFD-238ED4DF12BA}</Project>
+      <Name>Infusion.LegacyApi</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\src\Infusion\Infusion.csproj">
       <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
       <Name>Infusion</Name>

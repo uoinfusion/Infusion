@@ -8,5 +8,8 @@ namespace Infusion.LegacyApi
     public interface IUltimaClientWindow
     {
         void SetTitle(string title);
+        WindowBounds? GetBounds();
+        void Focus();
+
     }
 }

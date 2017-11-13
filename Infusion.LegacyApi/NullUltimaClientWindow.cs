@@ -10,5 +10,13 @@
         public void Focus()
         {
         }
+
+        public void PressKey(char ch)
+        {
+        }
+
+        public void PressKey(KeyCode keyCode)
+        {
+        }
     }
 }

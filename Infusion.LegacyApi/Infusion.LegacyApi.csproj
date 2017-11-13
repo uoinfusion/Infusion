@@ -67,6 +67,7 @@
     <Compile Include="Events\MobileLeftViewEvent.cs" />
     <Compile Include="Events\MobileEnteredViewEvent.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
+    <Compile Include="KeyCode.cs" />
     <Compile Include="LocalUltimaClientWindow.cs" />
     <Compile Include="NullUltimaClientWindow.cs" />
     <Compile Include="OrderedEvent.cs" />

@@ -10,6 +10,8 @@ namespace Infusion.LegacyApi
         void SetTitle(string title);
         WindowBounds? GetBounds();
         void Focus();
+        void PressKey(char ch);
+        void PressKey(KeyCode keyCode);
 
     }
 }

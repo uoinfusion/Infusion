@@ -37,6 +37,28 @@ namespace Infusion.LegacyApi
             SwitchToThisWindow(ultimaClientProcess.MainWindowHandle);
         }
 
+        public void PressKey(char ch)
+        {
+            SendChar(ultimaClientProcess.MainWindowHandle, (int) ch);
+        }
+
+        public void PressKey(KeyCode keyCode)
+        {
+            PostMessage(ultimaClientProcess.MainWindowHandle, WM_KEYDOWN, (int)keyCode, 1);
+            PostMessage(ultimaClientProcess.MainWindowHandle, WM_KEYUP, (int)keyCode, 1);
+        }
+
+        private static void SendChar(IntPtr hWnd, int value)
+        {
+            int lParam = 1 | ((OemKeyScan(value) & 0xFF) << 16) | (0x3 << 30);
+
+            PostMessage(hWnd, WM_CHAR, value, lParam);
+        }
+
+        private const int WM_CHAR = 0x102;
+        private const int WM_KEYDOWN = 0x100;
+        private const int WM_KEYUP = 0x0101;
+
         [DllImport("user32.dll")]
         private static extern int SetWindowText(IntPtr hWnd, string text);
 
@@ -49,5 +71,12 @@ namespace Infusion.LegacyApi
 
         [DllImport("user32.dll")]
         public static extern void SwitchToThisWindow(IntPtr hWnd);
+
+        [DllImport("User32")]
+        public static extern bool PostMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
+
+        [DllImport("User32")]
+        public static extern int OemKeyScan(int wOemChar);
+
     }
 }

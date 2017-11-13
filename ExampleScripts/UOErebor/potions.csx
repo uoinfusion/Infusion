@@ -36,7 +36,7 @@ public static class Potions
     
     public static void Toggle()
     {
-        if (UO.CommandHandler.IsCommandRunning(""))
+        if (UO.CommandHandler.IsCommandRunning("potions"))
             Disable();
         else
             Enable();

@@ -22,22 +22,22 @@ namespace Infusion.Logging
 
         public void Important(string message)
         {
-            Task.Run(() => baseLogger.Info(message));
+            Task.Run(() => baseLogger.Important(message));
         }
 
         public void Debug(string message)
         {
-            Task.Run(() => baseLogger.Info(message));
+            Task.Run(() => baseLogger.Debug(message));
         }
 
         public void Critical(string message)
         {
-            Task.Run(() => baseLogger.Info(message));
+            Task.Run(() => baseLogger.Critical(message));
         }
 
         public void Error(string message)
         {
-            Task.Run(() => baseLogger.Info(message));
+            Task.Run(() => baseLogger.Error(message));
         }
     }
 }

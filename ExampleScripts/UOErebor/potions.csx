@@ -12,9 +12,9 @@ public static class Potions
     public static readonly TimeSpan FastCooldown = TimeSpan.FromSeconds(5);
     public static readonly TimeSpan NoDuration = TimeSpan.FromSeconds(0);
     
-    public static readonly Potion HealPotion = new Potion(Specs.HealPotion, FastCooldown, NoDuration);
-    public static readonly Potion HealLesserPotion = new Potion(Specs.HealLesserPotion, FastCooldown, NoDuration);
-    public static readonly Potion HealGreaterPotion = new Potion(Specs.HealGreaterPotion, FastCooldown, NoDuration);
+    public static readonly Potion HealPotion = new Potion(Specs.HealPotion, SlowCooldown, NoDuration);
+    public static readonly Potion HealLesserPotion = new Potion(Specs.HealLesserPotion, SlowCooldown, NoDuration);
+    public static readonly Potion HealGreaterPotion = new Potion(Specs.HealGreaterPotion, SlowCooldown, NoDuration);
     
     public static Color CooldownColor { get; set; } = Colors.Purple;
     public static CountdownStage[] CooldownStages = new[] { new CountdownStage(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1)) };
@@ -63,7 +63,8 @@ public static class Potions
                 if (cooldownCountdown != null)
                     cooldownCountdown.Cancel();
                 
-                cooldownCountdown = new Countdown(potion.Cooldown, "potion", CooldownColor,  CooldownStages);
+                cooldownCountdown = new Countdown(potion.Cooldown, "potion cooldown", CooldownColor,  CooldownStages);
+                cooldownCountdown.Start();
             }
         }
     }

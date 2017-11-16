@@ -72,7 +72,7 @@ public class Countdown : IDisposable
             if (timeLeft < Stages[currentStageIndex].StartBeforeTimeout 
                 && now - lastNotificationTime > Stages[currentStageIndex].NotificationPeriod)
             {
-                UO.ClientPrint($"{this.Name}: {timeLeft.TotalSeconds:F1} s", this.Name, UO.Me.PlayerId, UO.Me.BodyType,
+                UO.ClientPrint($"{this.Name}: {Math.Round(timeLeft.TotalSeconds):F0} s", this.Name, UO.Me.PlayerId, UO.Me.BodyType,
                     SpeechType.Speech, this.Color, true);
                 lastNotificationTime = now;
             }

@@ -164,8 +164,8 @@ namespace Infusion.LegacyApi
         public static TargetInfo? Info()
             => Current.Info();
 
-        public static void WaitForTarget()
-            => Current.WaitForTarget();
+        public static void WaitForTarget(TimeSpan? timeout = null)
+            => Current.WaitForTarget(timeout);
 
         public static void DropItem(Item item, Item targetContainer)
             => Current.DropItem(item, targetContainer);

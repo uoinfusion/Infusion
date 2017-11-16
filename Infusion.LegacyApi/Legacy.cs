@@ -443,11 +443,11 @@ namespace Infusion.LegacyApi
 
         public TargetInfo? AskForLocation() => targeting.LocationInfo();
 
-        public void WaitForTarget()
+        public void WaitForTarget(TimeSpan? timeout = null)
         {
             CheckCancellation();
 
-            targeting.WaitForTarget();
+            targeting.WaitForTarget(timeout ?? DefaultTimeout);
         }
 
         public void DropItem(Item item, Item targetContainer)

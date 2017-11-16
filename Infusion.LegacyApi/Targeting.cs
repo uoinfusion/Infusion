@@ -87,11 +87,17 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        public void WaitForTarget()
+        public void WaitForTarget(TimeSpan timeout)
         {
             targetFromServerReceivedEvent.Reset();
-            while (!targetFromServerReceivedEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            var totalWaitingMillieseconds = 0;
+
+            while (!targetFromServerReceivedEvent.WaitOne(100))
             {
+                totalWaitingMillieseconds += 100;
+                if (timeout.TotalMilliseconds < totalWaitingMillieseconds)
+                    throw new TimeoutException($"WaitForTarget timeout after {timeout}.");
+
                 legacyApi.CheckCancellation();
             }
         }
@@ -106,7 +112,7 @@ namespace Infusion.LegacyApi
 
                 client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
-                while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+                while (!receivedTargetInfoEvent.WaitOne(10))
                 {
                     legacyApi.CheckCancellation();
                 }
@@ -229,7 +235,7 @@ namespace Infusion.LegacyApi
                 receivedTargetInfoEvent.Reset();
                 client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
-                while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+                while (!receivedTargetInfoEvent.WaitOne(10))
                 {
                     legacyApi.CheckCancellation();
                 }
@@ -248,7 +254,7 @@ namespace Infusion.LegacyApi
             receivedTargetInfoEvent.Reset();
             client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
-            while (!receivedTargetInfoEvent.WaitOne(TimeSpan.FromSeconds(1)))
+            while (!receivedTargetInfoEvent.WaitOne(10))
             {
                 legacyApi.CheckCancellation();
             }

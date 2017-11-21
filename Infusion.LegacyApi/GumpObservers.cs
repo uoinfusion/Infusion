@@ -48,11 +48,14 @@ namespace Infusion.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.GumpMenuSelection.Id && nextBlockedCancellationGumpId.HasValue)
             {
-                var packet = PacketDefinitionRegistry.Materialize<GumpMenuSelectionRequest>(rawPacket);
-                var gumpId = nextBlockedCancellationGumpId.Value;
-                nextBlockedCancellationGumpId = null;
-                if (gumpId == packet.Id)
-                    return null;
+                lock (gumpLock)
+                {
+                    var packet = PacketDefinitionRegistry.Materialize<GumpMenuSelectionRequest>(rawPacket);
+                    var gumpId = nextBlockedCancellationGumpId.Value;
+                    nextBlockedCancellationGumpId = null;
+                    if (gumpId == packet.Id)
+                        return null;
+                }
             }
 
             return rawPacket;
@@ -63,7 +66,6 @@ namespace Infusion.LegacyApi
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
                 var nextGumpNotVisible = false;
-                nextBlockedCancellationGumpId = null;
 
                 lock (gumpLock)
                 {
@@ -92,12 +94,15 @@ namespace Infusion.LegacyApi
         {
             try
             {
-                if (CurrentGump != null)
-                    return CurrentGump;
+                lock (gumpLock)
+                {
+                    if (CurrentGump != null)
+                        return CurrentGump;
 
-                showNextAwaitedGump = showGump;
+                    showNextAwaitedGump = showGump;
 
-                gumpReceivedEvent.Reset();
+                    gumpReceivedEvent.Reset();
+                }
 
                 var totalMilliseconds = 0;
                 while (!gumpReceivedEvent.WaitOne(100))

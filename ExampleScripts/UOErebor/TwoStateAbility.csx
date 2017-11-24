@@ -1,4 +1,4 @@
-public class TwoStateAbility
+public class TwoStateAbility : ITwoStateAbility
 {
     public bool? IsTurnedOn { get; private set; }
     private SpeechJournal abilityJournal = UO.CreateSpeechJournal();
@@ -62,5 +62,22 @@ public class TwoStateAbility
 
         IsTurnedOn = false;
         abilityJournal.Delete();
+    }
+}
+
+public interface ITwoStateAbility
+{
+    void TurnOn();
+    void TurnOff();
+}
+    
+class NoAbility : ITwoStateAbility
+{
+    public void TurnOff()
+    {
+    }
+
+    public void TurnOn()
+    {
     }
 }

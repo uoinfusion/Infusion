@@ -11,13 +11,13 @@ namespace Infusion.LegacyApi.Tests
     public class JournalAwaiterTests
     {
         private CancellationTokenSource cancellationTokenSource;
-        private Func<CancellationToken?> cancellationTokenProvider;
+        private Cancellation cancellation;
 
         [TestInitialize]
         public void Initialize()
         {
             cancellationTokenSource = new CancellationTokenSource();
-            cancellationTokenProvider = () => cancellationTokenSource.Token;
+            cancellation = new Cancellation(() => cancellationTokenSource.Token);
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var executed = false;
             var initializedEvent = new AutoResetEvent(false);
-            var awaiter = new JournalAwaiter(cancellationTokenProvider);
+            var awaiter = new JournalAwaiter(cancellation);
 
             var task = Task.Run(() =>
             {
@@ -84,7 +84,7 @@ namespace Infusion.LegacyApi.Tests
             var firstConditionExecuted = false;
             var secondConditionExecuted = false;
             var initializedEvent = new AutoResetEvent(false);
-            var awaiter = new JournalAwaiter(cancellationTokenProvider);
+            var awaiter = new JournalAwaiter(cancellation);
 
             var task = Task.Run(() =>
             {
@@ -110,7 +110,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var executed = false;
             var initializedEvent = new AutoResetEvent(false);
-            var awaiter = new JournalAwaiter(cancellationTokenProvider);
+            var awaiter = new JournalAwaiter(cancellation);
 
             var task = Task.Run(() =>
             {
@@ -131,7 +131,7 @@ namespace Infusion.LegacyApi.Tests
         public void Can_cancell_awaiting()
         {
             var initializedEvent = new AutoResetEvent(false);
-            var awaiter = new JournalAwaiter(() => cancellationTokenSource.Token);
+            var awaiter = new JournalAwaiter(cancellation);
 
             var task = Task.Run(() =>
             {
@@ -152,7 +152,7 @@ namespace Infusion.LegacyApi.Tests
         public void Can_execute_action_when_awaiting_timeouts()
         {
             bool executed = false;
-            var awaiter = new JournalAwaiter(() => cancellationTokenSource.Token);
+            var awaiter = new JournalAwaiter(cancellation);
 
             awaiter.WhenTimeout(() => executed = true)
                 .WaitAny(TimeSpan.FromMilliseconds(10));
@@ -164,7 +164,7 @@ namespace Infusion.LegacyApi.Tests
         public void Throws_exception_When_awaiting_timeouts_and_no_timeout_action()
         {
             var source = new JournalSource();
-            var awaiter = new JournalAwaiter(() => cancellationTokenSource.Token, source);
+            var awaiter = new JournalAwaiter(cancellation, source);
             source.AddMessage("name1", "message1", 0x12345, 0x1234);
 
             ((Action) (() => awaiter.WaitAny(TimeSpan.FromMilliseconds(10))))

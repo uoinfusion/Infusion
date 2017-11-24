@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi
     internal sealed class Targeting
     {
         private readonly UltimaClient client;
-        private readonly Func<CancellationToken?> cancellationTokenProvider;
+        private readonly Cancellation cancellation;
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly UltimaServer server;
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
@@ -23,11 +23,11 @@ namespace Infusion.LegacyApi
         private TargetInfo? lastTargetInfo;
         private ModelId lastTypeInfo;
 
-        public Targeting(UltimaServer server, UltimaClient client, Func<CancellationToken?> cancellationTokenProvider)
+        public Targeting(UltimaServer server, UltimaClient client, Cancellation cancellation)
         {
             this.server = server;
             this.client = client;
-            this.cancellationTokenProvider = cancellationTokenProvider;
+            this.cancellation = cancellation;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
 
 
@@ -109,7 +109,7 @@ namespace Infusion.LegacyApi
                 if (timeout.TotalMilliseconds < totalWaitingMillieseconds)
                     throw new TimeoutException($"WaitForTarget timeout after {timeout}.");
 
-                cancellationTokenProvider()?.ThrowIfCancellationRequested();
+                cancellation?.Check();
             }
         }
 
@@ -125,7 +125,7 @@ namespace Infusion.LegacyApi
 
                 while (!receivedTargetInfoEvent.WaitOne(10))
                 {
-                    cancellationTokenProvider()?.ThrowIfCancellationRequested();
+                    cancellation?.Check();
                 }
 
                 return lastTargetInfo;
@@ -248,7 +248,7 @@ namespace Infusion.LegacyApi
 
                 while (!receivedTargetInfoEvent.WaitOne(10))
                 {
-                    cancellationTokenProvider()?.ThrowIfCancellationRequested();
+                    cancellation?.Check();
                 }
 
                 return lastItemIdInfo;
@@ -267,7 +267,7 @@ namespace Infusion.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(10))
             {
-                cancellationTokenProvider()?.ThrowIfCancellationRequested();
+                cancellation?.Check();
             }
 
             return lastTargetInfo;

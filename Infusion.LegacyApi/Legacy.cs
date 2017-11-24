@@ -29,16 +29,18 @@ namespace Infusion.LegacyApi
 
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
+        private readonly Cancellation cancellation;
         private readonly EventJournalSource eventJournalSource;
         private readonly DialogBoxObservers dialogBoxObervers;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
+            cancellation = new Cancellation(() => CancellationToken);
             eventJournalSource = new EventJournalSource();
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
                 ultimaServer, this, eventJournalSource);
-            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, eventJournalSource, () => CancellationToken);
+            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, eventJournalSource, cancellation);
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
@@ -47,9 +49,9 @@ namespace Infusion.LegacyApi
             journalSource = new JournalSource();
             journalSource.NewMessageReceived +=
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
-            Journal = new SpeechJournal(journalSource, () => CancellationToken, () => DefaultTimeout);
+            Journal = new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
-            targeting = new Targeting(ultimaServer, ultimaClient, () => CancellationToken);
+            targeting = new Targeting(ultimaServer, ultimaClient, cancellation);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
             lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
@@ -150,8 +152,8 @@ namespace Infusion.LegacyApi
             CommandHandler.RegisterCommand(new Command("filter-weather", ToggleWeatherFiltering));
         }
 
-        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, () => CancellationToken, () => DefaultTimeout);
-        public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, () => CancellationToken, () => DefaultTimeout);
+        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);
+        public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, cancellation, () => DefaultTimeout);
 
         public void Say(string message)
         {

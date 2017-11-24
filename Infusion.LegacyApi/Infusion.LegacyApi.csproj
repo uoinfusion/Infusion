@@ -50,6 +50,7 @@
     </Compile>
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedClientPacketsFilters.cs" />
+    <Compile Include="Cancellation.cs" />
     <Compile Include="DialogBoxObservers.cs" />
     <Compile Include="Events\CommandRequestedEvent.cs" />
     <Compile Include="Events\ContainerOpenedEvent.cs" />

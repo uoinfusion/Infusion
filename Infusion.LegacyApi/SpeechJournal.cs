@@ -9,14 +9,14 @@ namespace Infusion.LegacyApi
     public sealed class SpeechJournal : IEnumerable<JournalEntry>
     {
         private readonly JournalSource source;
-        private readonly Func<CancellationToken?> cancellationToken;
+        private readonly Cancellation cancellation;
         private readonly Func<TimeSpan?> defaultTimeout;
         private long journalEntryStartId;
 
-        internal SpeechJournal(JournalSource source, Func<CancellationToken?> cancellationToken = null, Func<TimeSpan?> defaultTimeout = null)
+        internal SpeechJournal(JournalSource source, Cancellation cancellation = null, Func<TimeSpan?> defaultTimeout = null)
         {
             this.source = source;
-            this.cancellationToken = cancellationToken;
+            this.cancellation = cancellation;
             this.defaultTimeout = defaultTimeout;
             journalEntryStartId = source.CurrentJournalEntryId;
             LastWaitEntryId = journalEntryStartId;
@@ -46,85 +46,85 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(params string[] words)
         {
-            new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(words, () => { })
                 .WaitAny();
         }
 
         public JournalAwaiter When(string awaitedWord1, Action whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, Action whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, Action whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 
         public JournalAwaiter When(string[] awaitedWords, Action whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWords, whenAction);
         }
 
         public JournalAwaiter When(string[] awaitedWords, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWords, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3,
             Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
         }
 
         public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action<JournalEntry> whenAction)
         {
-            return new JournalAwaiter(cancellationToken, source, this, defaultTimeout)
+            return new JournalAwaiter(cancellation, source, this, defaultTimeout)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 

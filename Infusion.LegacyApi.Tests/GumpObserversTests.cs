@@ -17,7 +17,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var testProxy = new InfusionTestProxy();
             var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                () => testProxy.CancellationTokenSource.Token);
+                new Cancellation(() => testProxy.CancellationTokenSource.Token));
             Gump resultGump = null;
 
             var task = Task.Run(() => { resultGump = observer.WaitForGump(); });
@@ -34,7 +34,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var testProxy = new InfusionTestProxy();
             var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                () => testProxy.CancellationTokenSource.Token);
+                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() => { observer.WaitForGump(false); });
             observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
@@ -49,7 +49,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var testProxy = new InfusionTestProxy();
             var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                () => testProxy.CancellationTokenSource.Token);
+                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() => { observer.WaitForGump(false); });
             observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
@@ -73,7 +73,7 @@ namespace Infusion.LegacyApi.Tests
 
             var testProxy = new InfusionTestProxy();
             var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                () => testProxy.CancellationTokenSource.Token);
+                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {
@@ -93,8 +93,8 @@ namespace Infusion.LegacyApi.Tests
         {
             var testProxy = new InfusionTestProxy();
             var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                () => testProxy.CancellationTokenSource.Token);
-            var journal = new EventJournal(testProxy.EventSource, () => testProxy.CancellationTokenSource.Token);
+                new Cancellation(() => testProxy.CancellationTokenSource.Token));
+            var journal = new EventJournal(testProxy.EventSource, new Cancellation(() => testProxy.CancellationTokenSource.Token));
             Gump resultGump = null;
 
             var task = Task.Run(() =>
@@ -125,7 +125,7 @@ namespace Infusion.LegacyApi.Tests
             // closed by proxy (step 1) and sends unexpected response error.
             var testProxy = new InfusionTestProxy();
             var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                () => testProxy.CancellationTokenSource.Token);
+                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {

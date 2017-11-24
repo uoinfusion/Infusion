@@ -283,7 +283,7 @@ namespace Infusion.LegacyApi.Tests
                 var initializedEvent = new AutoResetEvent(false);
                 var source = new EventJournalSource();
                 var cancellationTokenSource = new CancellationTokenSource();
-                var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+                var journal = new EventJournal(source, new Cancellation(() => cancellationTokenSource.Token));
 
                 var task = Task.Run(() =>
                 {
@@ -318,7 +318,7 @@ namespace Infusion.LegacyApi.Tests
                 int whenExecutedCount = 0;
                 var source = new EventJournalSource();
                 var cancellationTokenSource = new CancellationTokenSource();
-                var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+                var journal = new EventJournal(source, new Cancellation(() => cancellationTokenSource.Token));
                 var resultBuilder = new StringBuilder();
 
                 var task = Task.Run(() =>
@@ -523,7 +523,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var source = new EventJournalSource();
             var cancellationTokenSource = new CancellationTokenSource();
-            var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+            var journal = new EventJournal(source, new Cancellation(() => cancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {
@@ -551,7 +551,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var source = new EventJournalSource();
             var cancellationTokenSource = new CancellationTokenSource();
-            var journal = new EventJournal(source, () => cancellationTokenSource.Token);
+            var journal = new EventJournal(source, new Cancellation(() => cancellationTokenSource.Token));
 
             for (int i = 0; i < 10000; i++)
             {

@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi
     public class EventJournal : IEnumerable<IEvent>
     {
         private readonly IEventJournalSource source;
-        private readonly Func<CancellationToken?> cancellationTokenProvider;
+        private readonly Cancellation cancellation;
         private readonly Func<TimeSpan?> defaultTimeout;
 
         public EventId JournalStartEventId { get; internal set; }
@@ -18,22 +18,22 @@ namespace Infusion.LegacyApi
 
         internal AutoResetEvent AwaitingStarted { get; } = new AutoResetEvent(false);
 
-        internal EventJournal(IEventJournalSource source, Func<CancellationToken?> cancellationTokenProvider = null, Func<TimeSpan?> defaultTimeout = null)
+        internal EventJournal(IEventJournalSource source, Cancellation cancellation = null, Func<TimeSpan?> defaultTimeout = null)
         {
             this.source = source;
-            this.cancellationTokenProvider = cancellationTokenProvider;
+            this.cancellation = cancellation;
             this.defaultTimeout = defaultTimeout;
             JournalStartEventId = source.LastEventId;
         }
 
         public EventJournalAwaiter When<T>(Action<T> whenAction) where T : IEvent
         {
-            return new EventJournalAwaiter(source, cancellationTokenProvider, this, defaultTimeout).When(whenAction);
+            return new EventJournalAwaiter(source, cancellation, this, defaultTimeout).When(whenAction);
         }
 
         public EventJournalAwaiter When<T>(Func<T, bool> acceptEventPredicate, Action<T> whenAction) where T : IEvent
         {
-            return new EventJournalAwaiter(source, cancellationTokenProvider, this, defaultTimeout).When(acceptEventPredicate, whenAction);
+            return new EventJournalAwaiter(source, cancellation, this, defaultTimeout).When(acceptEventPredicate, whenAction);
         }
 
         public IEnumerator<IEvent> GetEnumerator() => OrderedEvents.Select(e => e.Event).GetEnumerator();

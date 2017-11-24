@@ -12,6 +12,7 @@ namespace Infusion.LegacyApi.Tests
             Client = new UltimaClient(ClientPacketHandler, packet => { });
             EventSource = new EventJournalSource();
             CancellationTokenSource = new CancellationTokenSource();
+            Cancellation = new Cancellation(() => CancellationTokenSource.Token);
         }
 
         public UltimaClient Client { get; }
@@ -22,5 +23,6 @@ namespace Infusion.LegacyApi.Tests
         internal ClientPacketHandler ClientPacketHandler { get; }
         internal EventJournalSource EventSource { get; }
         public CancellationTokenSource CancellationTokenSource { get; }
+        public Cancellation Cancellation { get; }
     }
 }

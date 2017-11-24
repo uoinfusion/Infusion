@@ -11,8 +11,8 @@ namespace Infusion.LegacyApi
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
         private readonly SpeechJournal journal;
         private readonly Func<TimeSpan?> defaultTimeout;
+        private readonly Cancellation cancellation;
         private readonly JournalSource journalSource;
-        private readonly Func<CancellationToken?> tokenProvider;
 
         private readonly Dictionary<string[], Action<JournalEntry>> whenActions =
             new Dictionary<string[], Action<JournalEntry>>();
@@ -22,10 +22,10 @@ namespace Infusion.LegacyApi
 
         private Action timeoutAction;
 
-        internal JournalAwaiter(Func<CancellationToken?> tokenProvider, JournalSource journalSource = null,
+        internal JournalAwaiter(Cancellation cancellation, JournalSource journalSource = null,
             SpeechJournal journal = null, Func<TimeSpan?> defaultTimeout = null)
         {
-            this.tokenProvider = tokenProvider;
+            this.cancellation = cancellation;
             this.journalSource = journalSource;
             this.journal = journal;
             this.defaultTimeout = defaultTimeout;
@@ -183,8 +183,7 @@ namespace Infusion.LegacyApi
                         return;
                     }
 
-                    var token = tokenProvider?.Invoke();
-                    token?.ThrowIfCancellationRequested();
+                    cancellation?.Check();
                 }
 
                 var action = receivedAction;

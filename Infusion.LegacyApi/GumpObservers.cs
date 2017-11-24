@@ -14,7 +14,7 @@ namespace Infusion.LegacyApi
         private readonly UltimaServer server;
         private readonly UltimaClient client;
         private readonly EventJournalSource eventSource;
-        private readonly Func<CancellationToken?> cancellatioTokenProvider;
+        private readonly Cancellation cancellation;
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private GumpTypeId? nextBlockedCancellationGumpId;
@@ -22,12 +22,12 @@ namespace Infusion.LegacyApi
 
         internal AutoResetEvent WaitForGumpStartedEvent { get; } = new AutoResetEvent(false);
 
-        public GumpObservers(UltimaServer server, UltimaClient client, EventJournalSource eventSource, Func<CancellationToken?> cancellatioTokenProvider)
+        public GumpObservers(UltimaServer server, UltimaClient client, EventJournalSource eventSource, Cancellation cancellation)
         {
             this.server = server;
             this.client = client;
             this.eventSource = eventSource;
-            this.cancellatioTokenProvider = cancellatioTokenProvider;
+            this.cancellation = cancellation;
             server.RegisterFilter(FilterSendGumpMenuDialog);
 
             IClientPacketSubject clientPacketSubject = client;
@@ -114,7 +114,7 @@ namespace Infusion.LegacyApi
                     if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
                         return null;
 
-                    cancellatioTokenProvider()?.ThrowIfCancellationRequested();
+                    cancellation.Check();
                 }
                 return CurrentGump;
             }

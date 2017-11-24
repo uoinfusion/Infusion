@@ -59,6 +59,10 @@
   <ItemGroup>
     <Compile Include="ConcurrencyTester.cs" />
     <Compile Include="EventJournalTests.cs" />
+    <Compile Include="InfusionTestProxy.cs" />
+    <Compile Include="Packets\GumpMenuSelectionRequests.cs" />
+    <Compile Include="GumpObserversTests.cs" />
+    <Compile Include="Packets\SendGumpMenuDialogPackets.cs" />
     <Compile Include="SpeechJournalTests.cs" />
     <Compile Include="ItemCollectionTests.cs" />
     <Compile Include="ItemSpecTests.cs" />

@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi
             eventJournalSource = new EventJournalSource();
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
                 ultimaServer, this, eventJournalSource);
-            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, this, eventJournalSource);
+            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, eventJournalSource, () => CancellationToken);
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);

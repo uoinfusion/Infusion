@@ -13,19 +13,21 @@ namespace Infusion.LegacyApi
     {
         private readonly UltimaServer server;
         private readonly UltimaClient client;
-        private readonly Legacy legacy;
         private readonly EventJournalSource eventSource;
+        private readonly Func<CancellationToken?> cancellationTokenSource;
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private GumpTypeId? nextBlockedCancellationGumpId;
         private bool showNextAwaitedGump = true;
 
-        public GumpObservers(UltimaServer server, UltimaClient client, Legacy legacy, EventJournalSource eventSource)
+        internal AutoResetEvent WaitForGumpStartedEvent { get; } = new AutoResetEvent(false);
+
+        public GumpObservers(UltimaServer server, UltimaClient client, EventJournalSource eventSource, Func<CancellationToken?> cancellationTokenSource)
         {
             this.server = server;
             this.client = client;
-            this.legacy = legacy;
             this.eventSource = eventSource;
+            this.cancellationTokenSource = cancellationTokenSource;
             server.RegisterFilter(FilterSendGumpMenuDialog);
 
             IClientPacketSubject clientPacketSubject = client;
@@ -90,7 +92,7 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        internal Gump WaitForGump(bool showGump = true, TimeSpan ? timeout = null)
+        internal Gump WaitForGump(bool showGump = true, TimeSpan? timeout = null)
         {
             try
             {
@@ -102,6 +104,7 @@ namespace Infusion.LegacyApi
                     showNextAwaitedGump = showGump;
 
                     gumpReceivedEvent.Reset();
+                    WaitForGumpStartedEvent.Set();
                 }
 
                 var totalMilliseconds = 0;
@@ -111,7 +114,7 @@ namespace Infusion.LegacyApi
                     if (timeout.HasValue && totalMilliseconds > timeout.Value.TotalMilliseconds)
                         return null;
 
-                    legacy.CheckCancellation();
+                    cancellationTokenSource()?.ThrowIfCancellationRequested();
                 }
                 return CurrentGump;
             }

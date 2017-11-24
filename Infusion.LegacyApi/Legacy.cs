@@ -49,7 +49,7 @@ namespace Infusion.LegacyApi
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(journalSource, () => CancellationToken, () => DefaultTimeout);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
-            targeting = new Targeting(ultimaServer, ultimaClient, this);
+            targeting = new Targeting(ultimaServer, ultimaClient, () => CancellationToken);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
             lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
@@ -155,9 +155,15 @@ namespace Infusion.LegacyApi
 
         public void Say(string message)
         {
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             Server.Say(message);
+        }
+
+        private void NotifyLastAction()
+        {
+            journalSource.NotifyLastAction();
+            targeting.NotifyLastAction(DateTime.UtcNow);
         }
 
         public Gump WaitForGump(bool showGump = true, TimeSpan? timeout = null)
@@ -169,7 +175,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
             Server.DoubleClick(objectId);
         }
 
@@ -326,14 +332,14 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
             targeting.TargetTile(tileInfo);
         }
 
         public void Target(Location2D location)
         {
             CheckCancellation();
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             targeting.TargetTile(location.X, location.Y, 0, 0);
         }
@@ -341,7 +347,7 @@ namespace Infusion.LegacyApi
         public void Target(Location3D location)
         {
             CheckCancellation();
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             targeting.TargetTile(location.X, location.Y, 0, 0);
         }
@@ -350,7 +356,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
             targeting.Target(targetInfo);
         }
 
@@ -358,7 +364,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
             targeting.Target(item);
         }
 
@@ -366,14 +372,14 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
             targeting.Target(player);
         }
 
         public void Target(ObjectId id)
         {
             CheckCancellation();
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             var gameObject = GameObjects[id];
             if (gameObject == null)
@@ -559,14 +565,14 @@ namespace Infusion.LegacyApi
 
         public void CastSpell(Spell spell)
         {
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             Server.CastSpell(spell);
         }
 
         public void UseSkill(Skill skill)
         {
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             Server.UseSkill(skill);
             eventJournalSource.Publish(new SkillRequestedEvent(skill));
@@ -647,7 +653,7 @@ namespace Infusion.LegacyApi
         public void TriggerDialogBox(string dialogResponse)
         {
             CheckCancellation();
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             dialogBoxObervers.TriggerDialogBox(dialogResponse);
         }
@@ -655,7 +661,7 @@ namespace Infusion.LegacyApi
         public void TriggerDialogBox(byte responseIndex)
         {
             CheckCancellation();
-            journalSource.NotifyLastAction();
+            NotifyLastAction();
 
             dialogBoxObervers.TriggerDialogBox(responseIndex);
         }

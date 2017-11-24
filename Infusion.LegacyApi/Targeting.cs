@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi
     internal sealed class Targeting
     {
         private readonly UltimaClient client;
-        private readonly Legacy legacyApi;
+        private readonly Func<CancellationToken?> cancellationTokenProvider;
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly UltimaServer server;
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
@@ -23,11 +23,11 @@ namespace Infusion.LegacyApi
         private TargetInfo? lastTargetInfo;
         private ModelId lastTypeInfo;
 
-        public Targeting(UltimaServer server, UltimaClient client, Legacy legacyApi)
+        public Targeting(UltimaServer server, UltimaClient client, Func<CancellationToken?> cancellationTokenProvider)
         {
             this.server = server;
             this.client = client;
-            this.legacyApi = legacyApi;
+            this.cancellationTokenProvider = cancellationTokenProvider;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
 
 
@@ -35,10 +35,13 @@ namespace Infusion.LegacyApi
             clientPacketSubject.RegisterFilter(FilterClientTargetCursorPacket);
         }
 
+        internal AutoResetEvent WaitForTargetStartedEvent { get; } = new AutoResetEvent(false);
+
         private void HanldeServerTargetCursorPacket(TargetCursorPacket packet)
         {
             targetFromServerReceivedEvent.Set();
             lastCursorId = packet.CursorId;
+            lastTargetCursorPacketTime = DateTime.UtcNow;
         }
 
         private Packet? FilterClientTargetCursorPacket(Packet rawPacket)
@@ -89,8 +92,16 @@ namespace Infusion.LegacyApi
 
         public void WaitForTarget(TimeSpan timeout)
         {
+            if (lastTargetCursorPacketTime > default(DateTime) || lastActionTime > default(DateTime))
+            {
+                if (lastTargetCursorPacketTime > lastActionTime)
+                    return;
+            }
+
             targetFromServerReceivedEvent.Reset();
             var totalWaitingMillieseconds = 0;
+
+            WaitForTargetStartedEvent.Set();
 
             while (!targetFromServerReceivedEvent.WaitOne(100))
             {
@@ -98,7 +109,7 @@ namespace Infusion.LegacyApi
                 if (timeout.TotalMilliseconds < totalWaitingMillieseconds)
                     throw new TimeoutException($"WaitForTarget timeout after {timeout}.");
 
-                legacyApi.CheckCancellation();
+                cancellationTokenProvider()?.ThrowIfCancellationRequested();
             }
         }
 
@@ -114,7 +125,7 @@ namespace Infusion.LegacyApi
 
                 while (!receivedTargetInfoEvent.WaitOne(10))
                 {
-                    legacyApi.CheckCancellation();
+                    cancellationTokenProvider()?.ThrowIfCancellationRequested();
                 }
 
                 return lastTargetInfo;
@@ -237,7 +248,7 @@ namespace Infusion.LegacyApi
 
                 while (!receivedTargetInfoEvent.WaitOne(10))
                 {
-                    legacyApi.CheckCancellation();
+                    cancellationTokenProvider()?.ThrowIfCancellationRequested();
                 }
 
                 return lastItemIdInfo;
@@ -256,10 +267,18 @@ namespace Infusion.LegacyApi
 
             while (!receivedTargetInfoEvent.WaitOne(10))
             {
-                legacyApi.CheckCancellation();
+                cancellationTokenProvider()?.ThrowIfCancellationRequested();
             }
 
             return lastTargetInfo;
+        }
+
+        private DateTime lastActionTime;
+        private DateTime lastTargetCursorPacketTime;
+
+        public void NotifyLastAction(DateTime lastActionTime)
+        {
+            this.lastActionTime = lastActionTime;
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using Infusion.IO;
+using Infusion.Logging;
 using Infusion.Packets;
+using Infusion.Utilities;
 
 namespace Infusion.Diagnostic
 {
@@ -8,11 +10,13 @@ namespace Infusion.Diagnostic
     {
         private readonly object flushLock = new object(); 
         private readonly IPushStream diagnosticOutputStream;
+        private readonly CircuitBreaker loggingBreaker;
         private readonly BinaryPushStreamWriter writer;
 
-        public BinaryDiagnosticPushStream(IPushStream diagnosticOutputStream)
+        public BinaryDiagnosticPushStream(IPushStream diagnosticOutputStream, CircuitBreaker loggingBreaker)
         {
             this.diagnosticOutputStream = diagnosticOutputStream;
+            this.loggingBreaker = loggingBreaker;
             this.writer = new BinaryPushStreamWriter(diagnosticOutputStream);
         }
 
@@ -31,12 +35,15 @@ namespace Infusion.Diagnostic
 
         public void DumpPacket(Packet packet, DiagnosticStreamDirection direction)
         {
-            lock (flushLock)
+            loggingBreaker.Protect(() =>
             {
-                writer.Write(DateTime.UtcNow.Ticks);
-                writer.Write((uint) direction);
-                writer.Write(packet.Payload, 0, packet.Length);
-            }
+                lock (flushLock)
+                {
+                    writer.Write(DateTime.UtcNow.Ticks);
+                    writer.Write((uint) direction);
+                    writer.Write(packet.Payload, 0, packet.Length);
+                }
+            });
         }
 
         public void Finish()

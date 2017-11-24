@@ -239,6 +239,7 @@
     <Compile Include="UltimaClientConnection.cs" />
     <Compile Include="UltimaClientConnectionStatus.cs" />
     <Compile Include="UltimaServer.cs" />
+    <Compile Include="Utilities\CircuitBreaker.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="WarMode.cs" />
     <Compile Include="WeatherType.cs" />

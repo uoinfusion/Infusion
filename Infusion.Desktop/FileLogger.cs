@@ -3,17 +3,20 @@ using System.IO;
 using Infusion.Desktop.Profiles;
 using Infusion.Logging;
 using Infusion.Proxy;
+using Infusion.Utilities;
 
 namespace Infusion.Desktop
 {
     internal sealed class FileLogger : ILogger
     {
         private readonly Configuration configuration;
+        private readonly CircuitBreaker loggingBreaker;
         private object logLock = new object();
 
-        public FileLogger(Configuration configuration)
+        public FileLogger(Configuration configuration, CircuitBreaker loggingBreaker)
         {
             this.configuration = configuration;
+            this.loggingBreaker = loggingBreaker;
         }
 
         private void WriteLine(string message)
@@ -21,7 +24,7 @@ namespace Infusion.Desktop
             if (!configuration.LogToFileEnabled)
                 return;
 
-            try
+            loggingBreaker.Protect(() =>
             {
                 lock (logLock)
                 {
@@ -42,11 +45,7 @@ namespace Infusion.Desktop
                     }
                 }
 
-            }
-            catch (Exception)
-            {
-                // just swallow the exception, we don't want to terminate game because of logging problems
-            }
+            });
         }
 
         public void Info(string message)

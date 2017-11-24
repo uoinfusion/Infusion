@@ -205,7 +205,7 @@ namespace Infusion.Proxy
 
         private static void ClientLoop(ILogger packetLogger)
         {
-            var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(Configuration);
+            var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(Configuration, Console);
             serverDiagnosticPushStream =
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server"),
                     new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ClientToServer, diagnosticProvider.GetStream));

@@ -1,18 +1,24 @@
 ﻿using System;
 using System.IO;
 using Infusion.IO;
+using Infusion.Logging;
+using Infusion.Utilities;
 
 namespace Infusion.Diagnostic
 {
     internal sealed class InfusionDiagnosticPushStreamProvider : IDisposable
     {
         private readonly Configuration configuration;
+        private readonly ILogger logger;
         private BinaryDiagnosticPushStream outputStream;
         private readonly object providerLock = new object();
 
-        public InfusionDiagnosticPushStreamProvider(Configuration configuration)
+        public InfusionDiagnosticPushStreamProvider(Configuration configuration, ILogger logger)
         {
             this.configuration = configuration;
+            this.logger = logger;
+
+            loggingBreaker = new CircuitBreaker(HandleLoggingException);
         }
 
         public ServerConnection ServerConnection { get; set; }
@@ -23,41 +29,62 @@ namespace Infusion.Diagnostic
             outputStream?.Dispose();
         }
 
+        private readonly CircuitBreaker loggingBreaker;
+
+        private void HandleLoggingException(Exception ex)
+        {
+            logger.Error($"Error while logging packets to disk. Please, check that Infusion can write to {configuration.LogPath}.");
+            logger.Info("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogPacketsToFileEnabled = false in your initial script.");
+            logger.Debug(ex.ToString());
+        }
+
+
         public BinaryDiagnosticPushStream GetStream()
         {
-            lock (providerLock)
+            BinaryDiagnosticPushStream result = null;
+
+            loggingBreaker.Protect(() =>
             {
-                // Packets may be interpreted differently
-                if (ServerConnection == null || ClientConnection == null ||
-                    ServerConnection.Status != ServerConnectionStatus.Game ||
-                    ClientConnection.Status != UltimaClientConnectionStatus.Game)
+                lock (providerLock)
                 {
-                    return null;
+                    // Packets may be interpreted differently
+                    if (ServerConnection == null || ClientConnection == null ||
+                        ServerConnection.Status != ServerConnectionStatus.Game ||
+                        ClientConnection.Status != UltimaClientConnectionStatus.Game)
+                    {
+                        result = null;
+                        return;
+                    }
+
+                    if (outputStream == null && string.IsNullOrEmpty(configuration.LogPath) &&
+                        !configuration.LogPacketsToFileEnabled)
+                    {
+                        result = null;
+                        return;
+                    }
+                    if (outputStream != null && (string.IsNullOrEmpty(configuration.LogPath) ||
+                                                 !configuration.LogPacketsToFileEnabled))
+                    {
+                        outputStream = null;
+                        result = null;
+                        return;
+                    }
+                    if (outputStream == null && !string.IsNullOrEmpty(configuration.LogPath) &&
+                        configuration.LogPacketsToFileEnabled)
+                    {
+                        var fileName = Path.Combine(configuration.LogPath,
+                            $"{DateTime.UtcNow:yyyyMMdd-HH.mm.ss.ffff}.packets");
+                        outputStream =
+                            new BinaryDiagnosticPushStream(
+                                new SynchronizedPushStream(new StreamToPushStreamAdapter(File.OpenWrite(fileName))), loggingBreaker);
+                    }
+
+                    result = outputStream;
                 }
 
-                if (outputStream == null && string.IsNullOrEmpty(configuration.LogPath) &&
-                    !configuration.LogPacketsToFileEnabled)
-                {
-                    return null;
-                }
-                if (outputStream != null && (string.IsNullOrEmpty(configuration.LogPath) ||
-                                             !configuration.LogPacketsToFileEnabled))
-                {
-                    outputStream = null;
-                    return null;
-                }
-                if (outputStream == null && !string.IsNullOrEmpty(configuration.LogPath) &&
-                    configuration.LogPacketsToFileEnabled)
-                {
-                    var fileName = Path.Combine(configuration.LogPath,
-                        $"{DateTime.UtcNow:yyyyMMdd-HH.mm.ss.ffff}.packets");
-                    outputStream =
-                        new BinaryDiagnosticPushStream(
-                            new SynchronizedPushStream(new StreamToPushStreamAdapter(File.OpenWrite(fileName))));
-                }
+            });
 
-                return outputStream;
-            }
+            return result;
         }
     }
 }

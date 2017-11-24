@@ -27,7 +27,7 @@ namespace Infusion.Desktop
         private void HandleFileLoggingException(Exception ex)
         {
             infusionConsoleLogger.Error($"Error while writing logsto disk. Please, check that Infusion can write to {Program.Configuration.LogPath}.");
-            infusionConsoleLogger.Info("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
+            infusionConsoleLogger.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
             infusionConsoleLogger.Debug(ex.ToString());
         }
 

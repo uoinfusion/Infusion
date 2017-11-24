@@ -34,7 +34,7 @@ namespace Infusion.Diagnostic
         private void HandleLoggingException(Exception ex)
         {
             logger.Error($"Error while logging packets to disk. Please, check that Infusion can write to {configuration.LogPath}.");
-            logger.Info("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogPacketsToFileEnabled = false in your initial script.");
+            logger.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogPacketsToFileEnabled = false in your initial script.");
             logger.Debug(ex.ToString());
         }
 

@@ -1,1 +1,0 @@
-@start .\bin\Infusion.Desktop.exe

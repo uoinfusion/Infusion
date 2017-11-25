@@ -82,11 +82,11 @@ namespace Infusion
 
         public static Location2D Parse(string positionString)
         {
-            int separatorIndex = positionString.IndexOf(", ", StringComparison.Ordinal);
+            int separatorIndex = positionString.IndexOf(",", StringComparison.Ordinal);
 
             string xstring = positionString.Substring(0, separatorIndex);
-            string ystring = positionString.Substring(separatorIndex + ", ".Length,
-                positionString.Length - separatorIndex - ", ".Length);
+            string ystring = positionString.Substring(separatorIndex + ",".Length,
+                positionString.Length - separatorIndex - ",".Length);
 
             ushort x = ushort.Parse(xstring);
             ushort y = ushort.Parse(ystring);

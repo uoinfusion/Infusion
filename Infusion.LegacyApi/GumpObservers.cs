@@ -19,6 +19,7 @@ namespace Infusion.LegacyApi
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private GumpTypeId? nextBlockedCancellationGumpId;
         private bool showNextAwaitedGump = true;
+        private bool currentGumpVisible;
 
         internal AutoResetEvent WaitForGumpStartedEvent { get; } = new AutoResetEvent(false);
 
@@ -78,9 +79,12 @@ namespace Infusion.LegacyApi
 
                     if (!showNextAwaitedGump)
                     {
+                        currentGumpVisible = false;
                         nextGumpNotVisible = true;
                         showNextAwaitedGump = true;
                     }
+                    else
+                        currentGumpVisible = true;
                 }
 
                 gumpReceivedEvent.Set();
@@ -139,10 +143,13 @@ namespace Infusion.LegacyApi
         {
             lock (gumpLock)
             {
-                server.RequestGumpSelection(packet);
+                if (currentGumpVisible)
+                {
+                    nextBlockedCancellationGumpId = packet.Id;
+                    client.CloseGump(CurrentGump.GumpId);
+                }
 
-                nextBlockedCancellationGumpId = packet.Id;
-                client.CloseGump(CurrentGump.GumpId);
+                server.RequestGumpSelection(packet);
                 CurrentGump = null;
             }
         }

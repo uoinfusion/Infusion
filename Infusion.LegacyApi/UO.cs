@@ -49,6 +49,8 @@ namespace Infusion.LegacyApi
             Current = current;
         }
 
+        public static void CheckCancellation() => Current.CheckCancellation();
+
         public static Command RegisterCommand(string name, Action commandAction)
             => Current.RegisterCommand(name, commandAction);
 

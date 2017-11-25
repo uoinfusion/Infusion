@@ -181,7 +181,7 @@ namespace Infusion.LegacyApi
             Server.DoubleClick(objectId);
         }
 
-        internal void CheckCancellation()
+        public void CheckCancellation()
         {
             cancellationToken.Value?.ThrowIfCancellationRequested();
         }

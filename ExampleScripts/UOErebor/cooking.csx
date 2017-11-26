@@ -12,7 +12,7 @@ public static class Cooking
     // Injection.
     private static SpeechJournal journal = UO.CreateSpeechJournal();
 
-    public static void Cook(ModelId rawFoodType, string campfireTile)
+    public static void Cook(ModelId rawFoodType, TargetInfo? campfireTile)
     {
         var rawFood = UO.Items.OfType(rawFoodType).InContainer(UO.Me.BackPack).First();
     
@@ -20,7 +20,7 @@ public static class Cooking
         {
             UO.Use(rawFood);
             UO.WaitForTarget();
-            UO.TargetTile(campfireTile);
+            UO.Target(campfireTile.Value);
     
             journal.WaitAny("Jidlo neni pozivatelne", "Mmm, smells good");
             UO.Wait(500);
@@ -50,7 +50,7 @@ public static class Cooking
     {
         var cookingPlace = UO.Items.Matching(Specs.CookingPlaces).OnGround().MaxDistance(2).First();
     
-        string cookingPlaceTile = null;
+        TargetInfo? cookingPlaceTile = null;
         if (cookingPlace == null)
         {
             UO.ClientPrint("Cooking place not found, specify a cooking place tile");

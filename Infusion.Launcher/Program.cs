@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -24,7 +25,7 @@ namespace Infusion.Launcher
             }
 
             var startInfo = new ProcessStartInfo(infusionExe);
-            if (args.All(x => x != "--no-elevation"))
+            if (args.Any(x => x.Trim().Equals("--elevated", StringComparison.OrdinalIgnoreCase)))
             {
                 startInfo.Verb = "runas";
             }

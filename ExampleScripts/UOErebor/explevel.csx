@@ -98,11 +98,33 @@ public static class ExplevelTracker
             return;
         }
         string[] experienceValueParts = experienceValueText.Split('/');
-        CurrentExp = int.Parse(experienceValueParts[0].Trim());
-        NextLevelExp = int.Parse(experienceValueParts[1].Trim());
+        if (experienceValueParts.Length != 2)
+        {
+            UO.Log($"Cannot parse experience text is ${experienceValueText}");
+            return;
+        }
+
+        if (!int.TryParse(experienceValueParts[0].Trim(), out int currentExp))
+        {
+            UO.Log($"Cannot parse experience text is ${experienceValueText}");
+            return;
+        }
+        CurrentExp = currentExp;
+        
+        if (!int.TryParse(experienceValueParts[1].Trim(), out int nextLevelExp))
+        {
+            UO.Log($"Cannot parse experience text is ${experienceValueText}");
+            return;
+        }
+        NextLevelExp = nextLevelExp;
 
         string levelValueText = gump.TextLines[4];
-        Level = int.Parse(levelValueText);
+        if (!int.TryParse(levelValueText, out int level))
+        {
+            UO.Log($"Cannot parse level text is ${levelValueText}");
+            return;
+        }
+        Level = level;
     }
 }
 

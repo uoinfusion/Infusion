@@ -60,6 +60,11 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
+        internal void UpdateCurrentStamina(ObjectId playerId, ushort currentStamina, ushort maxStamina)
+        {
+            Send(new UpdateCurrentStaminaPacket(playerId, currentStamina, maxStamina).RawPacket);
+        }
+
         internal void CloseGump(GumpInstanceId gumpId)
         {
             Send(new CloseGenericGumpPacket(gumpId).RawPacket);

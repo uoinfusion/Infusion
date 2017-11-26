@@ -13,6 +13,32 @@ public static class Hidding
 
     public static void Hide()
     {
+        if (UO.CommandHandler.IsCommandRunning("hide-run"))
+        {
+            UO.ClientPrint("Hidding stopped");
+            UO.CommandHandler.Terminate("hide-run");
+        }
+        else
+        {
+            UO.CommandHandler.Invoke(",hide-run");
+            if (!UO.CommandHandler.IsCommandRunning("hide-watchalwayswalk"))
+                UO.CommandHandler.Invoke(",hide-watchalwayswalk");
+        }
+    }
+    
+    private static EventJournal alwaysWalkJournal = UO.CreateEventJournal();
+    
+    public static void RunWatchAlwaysWalk()
+    {
+        alwaysWalkJournal
+            .When<SpeechReceivedEvent>(
+                e => e.Speech.Message == "You have been revealed!",
+                e => UO.ClientFilters.Stamina.Disable())
+            .Incomming();
+    }
+
+    public static void RunHidding()
+    {
         UO.WarModeOff();
     
         var originalLocation = UO.Me.Location;
@@ -22,43 +48,47 @@ public static class Hidding
         {
             UO.ClientPrint("Trying to hide");
             
-            // Don't worry, it will not affect any other script.
+            // Don't worry, it will not affect any other scripts.
             hiddingJournal.Delete();
             UO.UseSkill(Skill.Hiding);
-
-            // This waits until "Skryti se povedlo." or "Nepovedlo se ti schovat" arrives to journal.
-            hiddingJournal
-                .When("You must wait a few moments to use another skill", () =>
-                    // wait when you have to wait before using another script
-                    UO.Wait(5000))
-                .When("Skryti se povedlo.", () =>
-                    // when hidding is successful terminate the do while loop
-                    // (you cannot use break statement directly in an annonynous method)
-                    hidden = true)
-                .When("Nepovedlo se ti schovat", () =>
-                    // when hidding fails, do while loop continues
-                    hidden = false)
-                .When("You are preoccupied with thoughts of battle.", () =>
-                {
-                    UO.WarModeOff();
-                    hidden = false;
-                })
-                // if server sends neither "Skryti se povedlo." nor "Nepovedlo se ti schovat"
-                // in one minute, then the script terminates with an TimoutException.
-                .WaitAny(TimeSpan.FromMinutes(1));
             
-            // If player moves then terminate the attempt. There is actually
-            // no specific reason for this check.
-            // Just a matter of taste - by moving player states that he doesn't
-            // want to try hide anymore. Obviously this is not always true, feel free
-            // to remove this if.
-            if (UO.Me.Location != originalLocation)
+            bool unfinishedAttempt;
+            do 
             {
-                UO.ClientPrint("Player has moved, stopping hidding");
-                break;
-            }
+                unfinishedAttempt = false;
+                // This waits until "Skryti se povedlo." or "Nepovedlo se ti schovat" arrives to journal.
+                hiddingJournal
+                    .When("You must wait a few moments to use another skill", () =>
+                        // wait when you have to wait before using another script
+                        UO.Wait(5000))
+                    .When("Skryti se povedlo.", () =>
+                        // when hidding is successful terminate the do while loop
+                        // (you cannot use break statement directly in an annonynous method)
+                        hidden = true)
+                    .When("Nepovedlo se ti schovat", () =>
+                    {
+                        // when hidding fails, do while loop continues
+                        hidden = false;
+                        UO.ClientFilters.Stamina.Disable();
+                    })
+                    .When("You are preoccupied with thoughts of battle.", () =>
+                    {
+                        UO.WarModeOff();
+                        hidden = false;
+                    })
+                    .WhenTimeout(() =>
+                    {
+                        UO.ClientFilters.Stamina.SetFakeStamina(1);
+                        unfinishedAttempt = true;
+                    })
+                    // if server sends neither "Skryti se povedlo." nor "Nepovedlo se ti schovat"
+                    // in one minute, then the script terminates with an TimoutException.
+                    .WaitAny(TimeSpan.FromMilliseconds(2000));
+            } while (unfinishedAttempt);
         } while (!hidden);
     }
 }
 
-UO.CommandHandler.RegisterCommand("hide", Hidding.Hide);
+UO.RegisterCommand("hide", Hidding.Hide);
+UO.RegisterBackgroundCommand("hide-run", Hidding.RunHidding);
+UO.RegisterBackgroundCommand("hide-watchalwayswalk", Hidding.RunWatchAlwaysWalk);

@@ -44,6 +44,8 @@ namespace Infusion.LegacyApi
 
         public static SpeechJournal Journal => Current.Journal;
 
+        public static LegacyFilters ClientFilters => Current.ClientFilters;
+
         internal static void Initialize(Legacy current)
         {
             Current = current;
@@ -248,10 +250,6 @@ namespace Infusion.LegacyApi
 
         public static void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)
             => Current.ClientPrint(message, name, onBehalfItem, log);
-
-        public static void ToggleLightFiltering() => Current.ToggleLightFiltering();
-
-        public static void ToggleWeatherFiltering() => Current.ToggleWeatherFiltering();
 
         public static DialogBox WaitForDialogBox(params string[] failMessages)
             => Current.WaitForDialogBox(failMessages);

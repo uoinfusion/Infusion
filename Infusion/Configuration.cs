@@ -8,11 +8,6 @@ namespace Infusion
 {
     public sealed class Configuration : INotifyPropertyChanged
     {
-        internal HashSet<SoundId> FilteredSoundSet = new HashSet<SoundId>();
-
-        private bool filterLightEnabled = true;
-
-        private bool filterWeatherEnabled = true;
         private bool hideWhenMinimized;
         private string[] ignoredWords = Array.Empty<string>();
         private bool logPacketsToFileEnabled;
@@ -87,36 +82,6 @@ namespace Infusion
             set
             {
                 hideWhenMinimized = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool FilterWeatherEnabled
-        {
-            get => filterWeatherEnabled;
-            set
-            {
-                filterWeatherEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public bool FilterLightEnabled
-        {
-            get => filterLightEnabled;
-            set
-            {
-                filterLightEnabled = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public SoundId[] FilteredSounds
-        {
-            get => FilteredSoundSet.ToArray();
-            set
-            {
-                FilteredSoundSet = value == null ? new HashSet<SoundId>() : new HashSet<SoundId>(value);
                 OnPropertyChanged();
             }
         }

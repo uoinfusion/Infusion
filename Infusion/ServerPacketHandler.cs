@@ -18,6 +18,12 @@ namespace Infusion
             packetHandler.RegisterFilter(filter);
         }
 
+        public void RegisterOutputFilter(Func<Packet, Packet?> filter)
+        {
+            packetHandler.RegisterOutputFilter(filter);
+        }
+
+
         public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer) where TPacket : MaterializedPacket
         {
             packetHandler.Subscribe(definition, observer);
@@ -98,7 +104,7 @@ namespace Infusion
             else if (rawPacket.Id == PacketDefinitions.OpenDialogBox.Id)
                 packetHandler.Publish<OpenDialogBoxPacket>(rawPacket);
 
-            return rawPacket;
+            return packetHandler.FilterOutput(rawPacket);
         }
     }
 }

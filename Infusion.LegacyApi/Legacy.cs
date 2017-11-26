@@ -4,6 +4,7 @@ using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
 using Infusion.LegacyApi.Events;
+using Infusion.LegacyApi.Filters;
 using Infusion.Logging;
 
 namespace Infusion.LegacyApi
@@ -18,6 +19,7 @@ namespace Infusion.LegacyApi
         private readonly GumpObservers gumpObservers;
         private readonly ItemsObservers itemsObserver;
         private readonly JournalObservers journalObservers;
+        private readonly EventJournal legacyEventJournal;
 
         private readonly JournalSource journalSource;
         private readonly LightObserver lightObserver;
@@ -54,11 +56,12 @@ namespace Infusion.LegacyApi
             targeting = new Targeting(ultimaServer, ultimaClient, cancellation);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
-            lightObserver = new LightObserver(ultimaServer, ultimaClient, configuration, Me);
-            weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, configuration);
-            soundObserver = new SoundObserver(ultimaServer, configuration, eventJournalSource);
+            lightObserver = new LightObserver(ultimaServer, ultimaClient, Me, this);
+            weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, this);
+            soundObserver = new SoundObserver(ultimaServer, eventJournalSource);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource);
+            var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);
             dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource);
 
             playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, eventJournalSource);
@@ -69,16 +72,20 @@ namespace Infusion.LegacyApi
             Client = ultimaClient;
 
             CommandHandler = commandHandler;
-            RegisterDefaultCommands();
             CommandHandler.CancellationTokenCreated += (sender, token) => CancellationToken = token;
 
             Configuration = configuration;
             legacyEventJournal = CreateEventJournal();
+
+            ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver);
+            RegisterDefaultCommands();
         }
 
         public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
         public Configuration Configuration { get; }
+
+        public LegacyFilters ClientFilters { get; }
 
         public Gump CurrentGump => gumpObservers.CurrentGump;
 
@@ -148,8 +155,8 @@ namespace Infusion.LegacyApi
                 "Terminates all running commands excluding background commands.", executionMode: CommandExecutionMode.Direct));
             CommandHandler.RegisterCommand(new Command("terminate-all", CommandHandler.TerminateAll,
                 "Terminates all running commands.", executionMode: CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("filter-light", ToggleLightFiltering));
-            CommandHandler.RegisterCommand(new Command("filter-weather", ToggleWeatherFiltering));
+            CommandHandler.RegisterCommand(new Command("filter-light", ClientFilters.Light.Toggle));
+            CommandHandler.RegisterCommand(new Command("filter-weather", ClientFilters.Weather.Toggle));
         }
 
         public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);
@@ -608,22 +615,6 @@ namespace Infusion.LegacyApi
         {
             ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026, log);
         }
-
-        public void ToggleLightFiltering()
-        {
-            lightObserver.ToggleLightFiltering();
-            ClientPrint(Configuration.FilterLightEnabled ? "Light filtering turned on" : "Light filtering turned off");
-        }
-
-        public void ToggleWeatherFiltering()
-        {
-            weatherObserver.ToggleWeatherFiltering();
-            ClientPrint(Configuration.FilterWeatherEnabled
-                ? "Weather filtering turned on"
-                : "Weather filtering turned off");
-        }
-
-        private readonly EventJournal legacyEventJournal;
 
         public DialogBox WaitForDialogBox(params string[] failMessages)
             => WaitForDialogBox(false, null, failMessages);

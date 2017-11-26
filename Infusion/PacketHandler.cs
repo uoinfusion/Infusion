@@ -8,6 +8,7 @@ namespace Infusion
     internal sealed class PacketHandler
     {
         private readonly List<Func<Packet, Packet?>> filters = new List<Func<Packet, Packet?>>();
+        private readonly List<Func<Packet, Packet?>> outputFilters = new List<Func<Packet, Packet?>>();
 
         private ImmutableDictionary<int, ImmutableList<Delegate>> observers =
             ImmutableDictionary<int, ImmutableList<Delegate>>.Empty;
@@ -17,6 +18,21 @@ namespace Infusion
             Packet? filteredPacket = packet;
 
             foreach (var filter in filters)
+            {
+                filteredPacket = filter(filteredPacket.Value);
+
+                if (!filteredPacket.HasValue)
+                    break;
+            }
+
+            return filteredPacket;
+        }
+
+        public Packet? FilterOutput(Packet packet)
+        {
+            Packet? filteredPacket = packet;
+
+            foreach (var filter in outputFilters)
             {
                 filteredPacket = filter(filteredPacket.Value);
 
@@ -74,6 +90,11 @@ namespace Infusion
                 observerList = observerList.Remove(observer);
                 observers = observers.SetItem(definition.Id, observerList);
             }
+        }
+
+        public void RegisterOutputFilter(Func<Packet, Packet?> filter)
+        {
+            outputFilters.Add(filter);
         }
     }
 }

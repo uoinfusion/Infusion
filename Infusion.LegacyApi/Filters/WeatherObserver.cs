@@ -1,24 +1,25 @@
 using Infusion.Packets;
 using Infusion.Packets.Server;
 
-namespace Infusion.LegacyApi
+namespace Infusion.LegacyApi.Filters
 {
-    internal class WeatherObserver
+    internal class WeatherObserver : IWeatherFilter
     {
         private readonly UltimaClient client;
-        private readonly Configuration configuration;
+        private readonly Legacy legacy;
         private Packet? lastWeatherPacket;
+        private bool enabled;
 
-        public WeatherObserver(IServerPacketSubject serverPacketHandler, UltimaClient client, Configuration configuration)
+        public WeatherObserver(IServerPacketSubject serverPacketHandler, UltimaClient client, Legacy legacy)
         {
             this.client = client;
-            this.configuration = configuration;
+            this.legacy = legacy;
             serverPacketHandler.RegisterFilter(FilterBlockedServerPackets);
         }
 
         private Packet? FilterBlockedServerPackets(Packet rawPacket)
         {
-            if (rawPacket.Id == PacketDefinitions.SetWeather.Id && configuration.FilterWeatherEnabled)
+            if (rawPacket.Id == PacketDefinitions.SetWeather.Id && enabled)
             {
                 lastWeatherPacket = rawPacket.Clone();
 
@@ -28,18 +29,30 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        public void ToggleWeatherFiltering()
+        public void Toggle()
         {
-            if (configuration.FilterWeatherEnabled)
+            if (enabled)
             {
-                configuration.FilterWeatherEnabled = false;
-                RestoreWeather();
+                Disable();
             }
             else
             {
-                configuration.FilterWeatherEnabled = true;
-                client.Send(CreateNeutralWeatherPacket());
+                Enable();
             }
+        }
+
+        public void Enable()
+        {
+            enabled = true;
+            client.Send(CreateNeutralWeatherPacket());
+            legacy.ClientPrint("Weather filtering turned on");
+        }
+
+        public void Disable()
+        {
+            enabled = false;
+            RestoreWeather();
+            legacy.ClientPrint("Weather filtering turned off");
         }
 
         private Packet CreateNeutralWeatherPacket() =>

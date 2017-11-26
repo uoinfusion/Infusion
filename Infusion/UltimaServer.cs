@@ -26,6 +26,11 @@ namespace Infusion
             packetSubject.RegisterFilter(filter);
         }
 
+        public void RegisterOutputFilter(Func<Packet, Packet?> filter)
+        {
+            packetSubject.RegisterOutputFilter(filter);
+        }
+
         public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer) where TPacket : MaterializedPacket
         {
             packetSubject.Subscribe(definition, observer);

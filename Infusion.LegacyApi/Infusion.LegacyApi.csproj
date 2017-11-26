@@ -67,8 +67,13 @@
     <Compile Include="Events\MobileDeletedEvent.cs" />
     <Compile Include="Events\MobileLeftViewEvent.cs" />
     <Compile Include="Events\MobileEnteredViewEvent.cs" />
+    <Compile Include="Filters\ILightFilter.cs" />
+    <Compile Include="Filters\ISoundFilter.cs" />
+    <Compile Include="Filters\IStaminaFilter.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
+    <Compile Include="Filters\IWeatherFilter.cs" />
     <Compile Include="KeyCode.cs" />
+    <Compile Include="LegacyFilters.cs" />
     <Compile Include="LocalUltimaClientWindow.cs" />
     <Compile Include="NullUltimaClientWindow.cs" />
     <Compile Include="OrderedEvent.cs" />
@@ -90,17 +95,18 @@
     <Compile Include="JournalObservers.cs" />
     <Compile Include="JournalSource.cs" />
     <Compile Include="LegacyException.cs" />
-    <Compile Include="LightObserver.cs" />
+    <Compile Include="Filters\LightObserver.cs" />
     <Compile Include="MobileCollection.cs" />
     <Compile Include="MobileCollectionExtensions.cs" />
     <Compile Include="MobileSpec.cs" />
     <Compile Include="Events\QuestArrowEvent.cs" />
     <Compile Include="QuestArrowObserver.cs" />
     <Compile Include="Events\SoundEffectPlayedEvent.cs" />
-    <Compile Include="SoundObserver.cs" />
+    <Compile Include="Filters\SoundObserver.cs" />
     <Compile Include="SpecSpecificity.cs" />
     <Compile Include="Events\SpeechRequestedEvent.cs" />
     <Compile Include="SpeechRequestObserver.cs" />
+    <Compile Include="Filters\StaminaFilter.cs" />
     <Compile Include="TargetInfo.cs" />
     <Compile Include="TargetType.cs" />
     <Compile Include="UO.cs" />
@@ -112,7 +118,7 @@
     <Compile Include="UltimaMap.cs" />
     <Compile Include="WalkRequest.cs" />
     <Compile Include="WalkRequestQueue.cs" />
-    <Compile Include="WeatherObserver.cs" />
+    <Compile Include="Filters\WeatherObserver.cs" />
     <Compile Include="WindowBounds.cs" />
   </ItemGroup>
   <ItemGroup>

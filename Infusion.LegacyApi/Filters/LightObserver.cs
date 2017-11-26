@@ -1,20 +1,21 @@
 using Infusion.Packets;
 using Infusion.Packets.Server;
 
-namespace Infusion.LegacyApi
+namespace Infusion.LegacyApi.Filters
 {
-    internal class LightObserver
+    public class LightObserver : ILightFilter
     {
         private readonly UltimaClient client;
-        private readonly Configuration configuration;
         private readonly Player player;
+        private readonly Legacy legacy;
         private Packet? lastOverallLightLevelRawPacket;
+        private bool enabled;
 
-        public LightObserver(IServerPacketSubject serverPacketHandler, UltimaClient client, Configuration configuration, Player player)
+        internal LightObserver(IServerPacketSubject serverPacketHandler, UltimaClient client, Player player, Legacy legacy)
         {
             this.client = client;
-            this.configuration = configuration;
             this.player = player;
+            this.legacy = legacy;
             serverPacketHandler.RegisterFilter(FilterBlockedServerPackets);
             serverPacketHandler.Subscribe(PacketDefinitions.PersonalLightLevel, HandlePersonalLightLevelPacket);
         }
@@ -26,7 +27,7 @@ namespace Infusion.LegacyApi
 
         private Packet? FilterBlockedServerPackets(Packet rawPacket)
         {
-            if (rawPacket.Id == PacketDefinitions.OverallLightLevel.Id && configuration.FilterLightEnabled)
+            if (rawPacket.Id == PacketDefinitions.OverallLightLevel.Id && enabled)
             {
                 lastOverallLightLevelRawPacket = rawPacket.Clone();
                 var lastOverallLightLevelPacket =
@@ -40,17 +41,15 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        public void ToggleLightFiltering()
+        public void Toggle()
         {
-            if (configuration.FilterLightEnabled)
+            if (enabled)
             {
-                configuration.FilterLightEnabled = false;
-                RestoreLight();
+                Disable();
             }
             else
             {
-                configuration.FilterLightEnabled = true;
-                client.Send(CreateFullLightLevelPacket());
+                Enable();
             }
         }
 
@@ -64,6 +63,20 @@ namespace Infusion.LegacyApi
         {
             if (lastOverallLightLevelRawPacket.HasValue)
                 client.Send(lastOverallLightLevelRawPacket.Value);
+        }
+
+        public void Enable()
+        {
+            enabled = true;
+            client.Send(CreateFullLightLevelPacket());
+            legacy.ClientPrint("Light filtering turned on");
+        }
+
+        public void Disable()
+        {
+            enabled = false;
+            RestoreLight();
+            legacy.ClientPrint("Light filtering turned off");
         }
     }
 }

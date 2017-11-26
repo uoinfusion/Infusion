@@ -5,13 +5,13 @@
 // You don't have to load all these scripts for all characters. 
 // You can safely remove load of any script file you don't want to
 // use. Removing scripts may make script (re)loading faster a little bit.
+#load "UOErebor\colors.csx"
 #load "UOErebor\Specs.csx"
 #load "UOErebor\afk.csx"
 #load "UOErebor\banking.csx"
 #load "UOErebor\common.csx"
 #load "UOErebor\cooking.csx"
 #load "UOErebor\combattext.csx"
-#load "UOErebor\countdowns.csx"
 #load "UOErebor\craft.csx"
 #load "UOErebor\doors.csx"
 #load "UOErebor\eating.csx"
@@ -122,14 +122,6 @@ HitPointNotificationModes.AboveAllMobiles.PetsColor = Colors.Green;
 HitPointNotificationModes.AboveAllMobiles.MyColor = Colors.Green;
 
 
-// Spell countdowns shows when a spell cast will be finished.
-Countdowns.AddSpellCountdown("Beleg Ruin Kel", TimeSpan.FromMilliseconds(2500), Colors.Purple);
-// Skill use countdowns shows when a skill use attempt will be finished.
-Countdowns.AddSkillCountdown(Skill.Hiding, TimeSpan.FromMilliseconds(2500), Colors.Purple);
-// You have to enable countdowns before script displays anything.
-Countdowns.Enable();
-
-
 // You can choose a light source. If you call Light.Check() and
 // you need create or renew light, then script makes light using
 // PreferredLightSource.
@@ -143,7 +135,7 @@ Light.PreferredLightSource = LightSources.Torch; // uses torch to make light
 // a new quest arrow appears.
 // You can call QuestArrow.Info() (or ,questarrow-info) to get information about
 // an active quest arrow.
-QuestArrow.Start();
+QuestArrow.Enable();
 // If you want to stop quest arrow tracking, then you can remove previous line
 // or uncomment the following line:
 // QuestArrow.Stop();
@@ -151,28 +143,25 @@ QuestArrow.Start();
 
 // This script redirects messages from journal over your head, so you can
 // notice them more easilly.
-CombatText.Redirections = new[]
-{
-    new CombatTextRedirection("Kouzlo se nezdarilo.", Colors.Blue),
-    new CombatTextRedirection("Nevidis na cil.", Colors.Blue),
-};
+CombatText.Add("Kouzlo se nezdarilo.", Colors.Blue);
+CombatText.Add("Nevidis na cil.", Colors.Blue);
 CombatText.Enable();
 
 
 // Game client ignores light level changes, so you are not bothered by dark in the night.
 // You can set this to false if you want to enjoy darkness during night.
-UO.Configuration.FilterLightEnabled = true;
+UO.ClientFilters.Light.Enable();
 
 // Game client ignores weather changes, so you are not bothered by rain or snow animation.
 // You can set this to true if you want to enjoy rain and snow.
-UO.Configuration.FilterWeatherEnabled = true;
+UO.ClientFilters.Weather.Enable();
 
 // You can select sounds that you don't want to hear. For example you can
 // filter out sounds of your backyard (dog barking and horse neighing):
-UO.Configuration.FilteredSounds = new[]
+UO.ClientFilters.Sound.SetFilteredSounds(new[]
 {
     Sounds.Horse1,Sounds.Horse2, Sounds.Horse3, Sounds.Horse4, Sounds.Horse5,
     Sounds.Dog1, Sounds.Dog2, Sounds.Dog3, Sounds.Dog4, Sounds.Dog5    
-};
+});
 // Uncoment following line if you want to hear all sounds:
 // UO.Configuration.FilteredSounds = null;

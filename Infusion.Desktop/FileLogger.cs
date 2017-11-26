@@ -37,6 +37,7 @@ namespace Infusion.Desktop
                     if (!File.Exists(fileName))
                     {
                         File.Create(fileName).Dispose();
+                        File.AppendAllText(fileName, $"Infusion {VersionHelpers.ProductVersion}");
                     }
 
                     File.AppendAllText(fileName, $@"{now:HH:mm:ss:fffff}: {message}{Environment.NewLine}");

@@ -10,6 +10,7 @@ using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
 using Infusion.LegacyApi;
 using Infusion.Proxy;
+using Infusion.Utilities;
 using Application = System.Windows.Application;
 
 namespace Infusion.Desktop
@@ -22,6 +23,8 @@ namespace Infusion.Desktop
         public InfusionWindow()
         {
             InitializeComponent();
+
+            Program.Console.Important($"Infusion {VersionHelpers.ProductVersion}");
 
             notifyIcon = new NotifyIcon();
             notifyIcon.Icon = System.Drawing.Icon.FromHandle(new Bitmap(Properties.Resources.infusion).GetHicon());

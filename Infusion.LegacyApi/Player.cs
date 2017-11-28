@@ -82,6 +82,7 @@ namespace Infusion.LegacyApi
         public ushort Strength { get; internal set; }
         public ushort Intelligence { get; internal set; }
         public ushort Armor { get; internal set; }
+        public bool HasMount => hasMount != null && hasMount();
 
         public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } =
             ImmutableDictionary<Skill, SkillValue>.Empty;

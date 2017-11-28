@@ -9,7 +9,7 @@ using Infusion.Proxy;
 
 namespace Infusion.Desktop
 {
-    internal class InfusionConsoleLogger : ILogger
+    internal class InfusionConsoleLogger : ITimestampedLogger
     {
         private readonly ConsoleContent consoleContent;
         private readonly Dispatcher dispatcher;
@@ -24,51 +24,49 @@ namespace Infusion.Desktop
             this.configuration = configuration;
         }
 
-        public void Info(string message)
+        public void Info(DateTime timeStamp, string message)
         {
-            DispatchWriteLine(message, Brushes.Gray);
+            DispatchWriteLine(timeStamp, message, Brushes.Gray);
         }
 
-        public void Important(string message)
+        public void Important(DateTime timeStamp, string message)
         {
-            DispatchWriteLine(message, Brushes.White);
+            DispatchWriteLine(timeStamp, message, Brushes.White);
             ToastNotification(message);
         }
 
-        public void Debug(string message)
+        public void Debug(DateTime timeStamp, string message)
         {
-            DispatchWriteLine(message, Brushes.DimGray);
+            DispatchWriteLine(timeStamp, message, Brushes.DimGray);
         }
 
-        public void Critical(string message)
+        public void Critical(DateTime timeStamp, string message)
         {
-            DispatchWriteLine(message, Brushes.Red);
+            DispatchWriteLine(timeStamp, message, Brushes.Red);
             ToastAlertNotification(message);
         }
 
-        public void Error(string message)
+        public void Error(DateTime timeStamp, string message)
         {
-            DispatchWriteLine(message, Brushes.DarkRed);
+            DispatchWriteLine(timeStamp, message, Brushes.DarkRed);
         }
 
-        private void DispatchWriteLine(string message, Brush textBrush)
+        private void DispatchWriteLine(DateTime timeStamp, string message, Brush textBrush)
         {
-            dispatcher.BeginInvoke((Action) (() => { WriteLine(message, textBrush); }));
+            dispatcher.BeginInvoke((Action) (() => { WriteLine(timeStamp, message, textBrush); }));
         }
 
         private DateTime? lastWriteLineDate;
 
-        private void WriteLine(string message, Brush textBrush)
+        private void WriteLine(DateTime timeStamp, string message, Brush textBrush)
         {
-            var now = DateTime.Now;
-
-            if (!lastWriteLineDate.HasValue || lastWriteLineDate.Value != now.Date)
+            if (!lastWriteLineDate.HasValue || lastWriteLineDate.Value != timeStamp.Date)
             {
-                consoleContent.Add($"{now.Date:d}", Brushes.White);
-                lastWriteLineDate = now.Date;
+                consoleContent.Add($"{timeStamp.Date:d}", Brushes.White);
+                lastWriteLineDate = timeStamp.Date;
             }
 
-            consoleContent.Add($"{now:HH:mm:ss:fff} - {message}", textBrush);
+            consoleContent.Add($"{timeStamp:HH:mm:ss:fff} - {message}", textBrush);
         }
 
         private void ToastNotification(string message)

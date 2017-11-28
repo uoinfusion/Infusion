@@ -22,13 +22,12 @@ namespace Infusion.Desktop
 
         private readonly CommandHistory history = new CommandHistory();
         private readonly FlowDocument outputDocument;
-        private InfusionConsoleLogger infusionConsoleLogger;
 
         private void HandleFileLoggingException(Exception ex)
         {
-            infusionConsoleLogger.Error($"Error while writing logsto disk. Please, check that Infusion can write to {Program.Configuration.LogPath}.");
-            infusionConsoleLogger.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
-            infusionConsoleLogger.Debug(ex.ToString());
+            Program.Console.Error($"Error while writing logs to disk. Please, check that Infusion can write to {Program.Configuration.LogPath}.");
+            Program.Console.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
+            Program.Console.Debug(ex.ToString());
         }
 
         public ConsoleControl()
@@ -49,10 +48,9 @@ namespace Infusion.Desktop
 
             ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
 
-            infusionConsoleLogger = new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration);
+            var infusionConsoleLogger = new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration);
 
-            Program.Console = new AsyncLogger(new MultiplexLogger(Program.Console,
-                infusionConsoleLogger,
+            Program.Console = new AsyncLogger(new MultiplexLogger(infusionConsoleLogger,
                 new FileLogger(Program.Configuration, new CircuitBreaker(HandleFileLoggingException))));
             var commandHandler = new CommandHandler(Program.Console);
 

@@ -2,16 +2,16 @@
 
 namespace Infusion.Logging
 {
-    internal sealed class MultiplexLogger : ILogger
+    internal sealed class MultiplexLogger : ITimestampedLogger
     {
-        private readonly ILogger[] outputLoggers;
+        private readonly ITimestampedLogger[] outputLoggers;
 
-        public MultiplexLogger(params ILogger[] outputLoggers)
+        public MultiplexLogger(params ITimestampedLogger[] outputLoggers)
         {
             this.outputLoggers = outputLoggers;
         }
 
-        public void ForeachLogger(Action<ILogger> loggerAction)
+        public void ForeachLogger(Action<ITimestampedLogger> loggerAction)
         {
             foreach (var logger in outputLoggers)
             {
@@ -19,29 +19,29 @@ namespace Infusion.Logging
             }
         }
 
-        public void Info(string message)
+        public void Info(DateTime timeStamp, string message)
         {
-            ForeachLogger(logger => logger.Info(message));
+            ForeachLogger(logger => logger.Info(timeStamp, message));
         }
 
-        public void Important(string message)
+        public void Important(DateTime timeStamp, string message)
         {
-            ForeachLogger(logger => logger.Important(message));
+            ForeachLogger(logger => logger.Important(timeStamp, message));
         }
 
-        public void Debug(string message)
+        public void Debug(DateTime timeStamp, string message)
         {
-            ForeachLogger(logger => logger.Debug(message));
+            ForeachLogger(logger => logger.Debug(timeStamp, message));
         }
 
-        public void Critical(string message)
+        public void Critical(DateTime timeStamp, string message)
         {
-            ForeachLogger(logger => logger.Critical(message));
+            ForeachLogger(logger => logger.Critical(timeStamp, message));
         }
 
-        public void Error(string message)
+        public void Error(DateTime timeStamp, string message)
         {
-            ForeachLogger(logger => logger.Error(message));
+            ForeachLogger(logger => logger.Error(timeStamp, message));
         }
     }
 }

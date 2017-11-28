@@ -7,7 +7,7 @@ using Infusion.Utilities;
 
 namespace Infusion.Desktop
 {
-    internal sealed class FileLogger : ILogger
+    internal sealed class FileLogger : ITimestampedLogger
     {
         private readonly Configuration configuration;
         private readonly CircuitBreaker loggingBreaker;
@@ -19,7 +19,7 @@ namespace Infusion.Desktop
             this.loggingBreaker = loggingBreaker;
         }
 
-        private void WriteLine(string message)
+        private void WriteLine(DateTime timeStamp, string message)
         {
             if (!configuration.LogToFileEnabled)
                 return;
@@ -30,9 +30,7 @@ namespace Infusion.Desktop
                 {
                     string logsPath = configuration.LogPath;
 
-                    var now = DateTime.Now;
-
-                    string fileName = Path.Combine(logsPath, $"{now:yyyy-MM-dd}.log");
+                    string fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
 
                     if (!File.Exists(fileName))
                     {
@@ -40,34 +38,34 @@ namespace Infusion.Desktop
                         File.AppendAllText(fileName, $"Infusion {VersionHelpers.ProductVersion}");
                     }
 
-                    File.AppendAllText(fileName, $@"{now:HH:mm:ss:fffff}: {message}{Environment.NewLine}");
+                    File.AppendAllText(fileName, $@"{timeStamp:HH:mm:ss:fffff}: {message}{Environment.NewLine}");
                 }
             });
         }
 
-        public void Info(string message)
+        public void Info(DateTime timeStamp, string message)
         {
-            WriteLine(message);
+            WriteLine(timeStamp, message);
         }
 
-        public void Important(string message)
+        public void Important(DateTime timeStamp, string message)
         {
-            WriteLine(message);
+            WriteLine(timeStamp, message);
         }
 
-        public void Debug(string message)
+        public void Debug(DateTime timeStamp, string message)
         {
-            WriteLine(message);
+            WriteLine(timeStamp, message);
         }
 
-        public void Critical(string message)
+        public void Critical(DateTime timeStamp, string message)
         {
-            WriteLine(message);
+            WriteLine(timeStamp, message);
         }
 
-        public void Error(string message)
+        public void Error(DateTime timeStamp, string message)
         {
-            WriteLine(message);
+            WriteLine(timeStamp, message);
         }
     }
 }

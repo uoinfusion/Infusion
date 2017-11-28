@@ -8,36 +8,58 @@ namespace Infusion.Logging
 {
     public class AsyncLogger : ILogger
     {
-        private readonly ILogger baseLogger;
+        private readonly ITimestampedLogger baseLogger;
 
-        public AsyncLogger(ILogger baseLogger)
+        public AsyncLogger(ITimestampedLogger baseLogger)
         {
             this.baseLogger = baseLogger;
         }
 
         public void Info(string message)
         {
-            Task.Run(() => baseLogger.Info(message));
+            var timeStamp = DateTime.Now;
+
+            Enqueue(() => baseLogger.Info(timeStamp, message));
         }
 
         public void Important(string message)
         {
-            Task.Run(() => baseLogger.Important(message));
+            var timeStamp = DateTime.Now;
+
+            Enqueue(() => baseLogger.Important(timeStamp, message));
         }
 
         public void Debug(string message)
         {
-            Task.Run(() => baseLogger.Debug(message));
+            var timeStamp = DateTime.Now;
+
+            Enqueue(() => baseLogger.Debug(timeStamp, message));
         }
 
         public void Critical(string message)
         {
-            Task.Run(() => baseLogger.Critical(message));
+            var timeStamp = DateTime.Now;
+
+            Enqueue(() => baseLogger.Critical(timeStamp, message));
         }
 
         public void Error(string message)
         {
-            Task.Run(() => baseLogger.Error(message));
+            var timeStamp = DateTime.Now;
+
+            Enqueue(() => baseLogger.Error(timeStamp, message));
+        }
+
+        private readonly object enqueueLock = new object();
+        private Task lastTask;
+
+        private void Enqueue(Action action)
+        {
+            lock (enqueueLock)
+            {
+                lastTask = lastTask?.ContinueWith(t => action()) 
+                    ?? Task.Run(action);
+            }
         }
     }
 }

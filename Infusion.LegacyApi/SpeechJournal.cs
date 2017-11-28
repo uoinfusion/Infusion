@@ -51,6 +51,13 @@ namespace Infusion.LegacyApi
                 .WaitAny();
         }
 
+        public void WaitAny(TimeSpan timeout, params string[] words)
+        {
+            new JournalAwaiter(cancellation, source, this, defaultTimeout)
+                .When(words, () => { })
+                .WaitAny(timeout);
+        }
+
         public JournalAwaiter When(string awaitedWord1, Action whenAction)
         {
             return new JournalAwaiter(cancellation, source, this, defaultTimeout)

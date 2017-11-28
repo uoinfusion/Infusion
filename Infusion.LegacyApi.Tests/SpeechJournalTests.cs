@@ -39,7 +39,7 @@ namespace Infusion.LegacyApi.Tests
             var journal = new SpeechJournal(source, null);
 
             source.AddMessage("name", "before last action", new ObjectId(0), 0);
-            source.NotifyLastAction();
+            source.NotifyAction();
             source.AddMessage("name", "after last action", new ObjectId(0), 0);
 
             journal.When("after last action", () => executed = true).WaitAny(TimeSpan.FromMilliseconds(100));
@@ -56,7 +56,7 @@ namespace Infusion.LegacyApi.Tests
             var journal = new SpeechJournal(source, null);
 
             source.AddMessage("name", "before last action", new ObjectId(0), 0);
-            source.NotifyLastAction();
+            source.NotifyAction();
             source.AddMessage("name", "after last action", new ObjectId(0), 0);
 
             journal.When("before last action", () => executed = true).WhenTimeout(() => timeoutExecuted = true).WaitAny(TimeSpan.FromMilliseconds(10));

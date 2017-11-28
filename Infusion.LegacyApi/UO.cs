@@ -266,5 +266,8 @@ namespace Infusion.LegacyApi
         public static void TriggerDialogBox(byte responseIndex)
             => Current.TriggerDialogBox(responseIndex);
 
+        public static void NotifyAction()
+            => Current.NotifyAction();
+
     }
 }

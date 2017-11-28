@@ -31,7 +31,7 @@ namespace Infusion.LegacyApi
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)journal).GetEnumerator();
 
-        public void NotifyLastAction()
+        public void NotifyAction()
         {
             lastActionJournalEntryId = CurrentJournalEntryId;
         }

@@ -164,14 +164,14 @@ namespace Infusion.LegacyApi
 
         public void Say(string message)
         {
-            NotifyLastAction();
+            NotifyAction();
 
             Server.Say(message);
         }
 
-        private void NotifyLastAction()
+        public void NotifyAction()
         {
-            journalSource.NotifyLastAction();
+            journalSource.NotifyAction();
             targeting.NotifyLastAction(DateTime.UtcNow);
         }
 
@@ -184,7 +184,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            NotifyLastAction();
+            NotifyAction();
             Server.DoubleClick(objectId);
         }
 
@@ -341,14 +341,14 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            NotifyLastAction();
+            NotifyAction();
             targeting.TargetTile(tileInfo);
         }
 
         public void Target(Location2D location)
         {
             CheckCancellation();
-            NotifyLastAction();
+            NotifyAction();
 
             targeting.TargetTile(location.X, location.Y, 0, 0);
         }
@@ -356,7 +356,7 @@ namespace Infusion.LegacyApi
         public void Target(Location3D location)
         {
             CheckCancellation();
-            NotifyLastAction();
+            NotifyAction();
 
             targeting.TargetTile(location.X, location.Y, 0, 0);
         }
@@ -365,7 +365,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            NotifyLastAction();
+            NotifyAction();
             targeting.Target(targetInfo);
         }
 
@@ -373,7 +373,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            NotifyLastAction();
+            NotifyAction();
             targeting.Target(item);
         }
 
@@ -381,14 +381,14 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            NotifyLastAction();
+            NotifyAction();
             targeting.Target(player);
         }
 
         public void Target(ObjectId id)
         {
             CheckCancellation();
-            NotifyLastAction();
+            NotifyAction();
 
             var gameObject = GameObjects[id];
             if (gameObject == null)
@@ -574,14 +574,14 @@ namespace Infusion.LegacyApi
 
         public void CastSpell(Spell spell)
         {
-            NotifyLastAction();
+            NotifyAction();
 
             Server.CastSpell(spell);
         }
 
         public void UseSkill(Skill skill)
         {
-            NotifyLastAction();
+            NotifyAction();
 
             Server.UseSkill(skill);
             eventJournalSource.Publish(new SkillRequestedEvent(skill));
@@ -646,7 +646,7 @@ namespace Infusion.LegacyApi
         public void TriggerDialogBox(string dialogResponse)
         {
             CheckCancellation();
-            NotifyLastAction();
+            NotifyAction();
 
             dialogBoxObervers.TriggerDialogBox(dialogResponse);
         }
@@ -654,7 +654,7 @@ namespace Infusion.LegacyApi
         public void TriggerDialogBox(byte responseIndex)
         {
             CheckCancellation();
-            NotifyLastAction();
+            NotifyAction();
 
             dialogBoxObervers.TriggerDialogBox(responseIndex);
         }

@@ -253,6 +253,9 @@ namespace Infusion.LegacyApi
         private void HandleCharMoveRejectionPacket(CharMoveRejectionPacket packet)
         {
             player.RejectWalkRequest(packet);
+
+            eventJournalSource.Publish(new PlayerMoveRejectedEvent());
+
         }
 
         internal event EventHandler WalkRequestDequeued;
@@ -298,6 +301,7 @@ namespace Infusion.LegacyApi
                 }
             }
 
+            eventJournalSource.Publish(new PlayerMoveAcceptedEvent());
 
             return discardCurrentPacket ? (Packet?) null : rawPacket;
         }
@@ -307,6 +311,8 @@ namespace Infusion.LegacyApi
             player.CurrentSequenceKey = (byte) (packet.SequenceKey + 1);
             player.WalkRequestQueue.Enqueue(new WalkRequest(packet.SequenceKey,
                 packet.Direction, packet.MovementType, false));
+
+            eventJournalSource.Publish(new PlayerMoveRequestedEvent(packet.Direction));
         }
 
         private void OnWalkRequestDequeued()

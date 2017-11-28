@@ -25,6 +25,7 @@ namespace Infusion.LegacyApi
         private Delegate whenActionToExecute;
         private readonly IEventJournalSource source;
         private readonly Cancellation cancellation;
+        private Action timeoutAction;
 
         internal EventJournalAwaiter(IEventJournalSource source, Cancellation cancellation,
             EventJournal journal, Func<TimeSpan?> defaultTimeout)
@@ -87,7 +88,15 @@ namespace Infusion.LegacyApi
                 {
                     var elapsed = DateTime.UtcNow - startedTime;
                     if (timeout.HasValue && timeout.Value < elapsed)
-                        throw new TimeoutException("Event journal WaitAny timeout.");
+                    {
+                        if (timeoutAction != null)
+                        {
+                            timeoutAction();
+                            return;
+                        }
+                        else
+                            throw new TimeoutException("Event journal WaitAny timeout.");
+                    }
 
                     cancellation?.Check();
                 }
@@ -127,6 +136,13 @@ namespace Infusion.LegacyApi
             }
 
             subscriptionList.Add(new EventSubscription(null, action));
+
+            return this;
+        }
+
+        public EventJournalAwaiter WhenTimeout(Action timeoutAction)
+        {
+            this.timeoutAction = timeoutAction;
 
             return this;
         }

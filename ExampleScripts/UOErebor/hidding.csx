@@ -13,9 +13,11 @@ public static class Hidding
 
     public static void Hide()
     {
+        UO.ClientFilters.Stamina.Disable();
+
         if (UO.CommandHandler.IsCommandRunning("hide-run"))
         {
-            UO.ClientPrint("Hidding stopped");
+            UO.ClientPrint("Hidding stopped", "hidding", UO.Me);
             UO.CommandHandler.Terminate("hide-run");
         }
         else
@@ -26,15 +28,15 @@ public static class Hidding
         }
     }
     
-    private static EventJournal alwaysWalkJournal = UO.CreateEventJournal();
+    private static SpeechJournal alwaysWalkJournal = UO.CreateSpeechJournal();
     
     public static void RunWatchAlwaysWalk()
     {
-        alwaysWalkJournal
-            .When<SpeechReceivedEvent>(
-                e => e.Speech.Message == "You have been revealed!",
-                e => UO.ClientFilters.Stamina.Disable())
-            .Incomming();
+        while (true)
+        {
+            alwaysWalkJournal.WaitAny(TimeSpan.MaxValue, "Byla jsi objevena", "Byl jsi objeven", "You have been revealed!");
+            UO.ClientFilters.Stamina.Disable();
+        }
     }
 
     public static void RunHidding()
@@ -46,7 +48,7 @@ public static class Hidding
         bool hidden = false;
         do
         {
-            UO.ClientPrint("Trying to hide");
+            UO.ClientPrint("Trying to hide", "hidding", UO.Me);
             
             // Don't worry, it will not affect any other scripts.
             hiddingJournal.Delete();

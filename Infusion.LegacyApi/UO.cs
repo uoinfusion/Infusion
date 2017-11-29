@@ -46,6 +46,8 @@ namespace Infusion.LegacyApi
 
         public static LegacyFilters ClientFilters => Current.ClientFilters;
 
+        public static GlobalTrace Trace => Current.Trace;
+
         internal static void Initialize(Legacy current)
         {
             Current = current;

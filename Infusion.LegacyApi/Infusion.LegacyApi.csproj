@@ -82,6 +82,9 @@
     <Compile Include="OrderedEvent.cs" />
     <Compile Include="Events\SkillRequestedEvent.cs" />
     <Compile Include="Events\SpeechReceivedEvent.cs" />
+    <Compile Include="ScriptTrace.cs" />
+    <Compile Include="ScriptTraceLogger.cs" />
+    <Compile Include="GlobalTrace.cs" />
     <Compile Include="SpeechJournal.cs" />
     <Compile Include="GameObjectCollectionWrapper.cs" />
     <Compile Include="GumpObservers.cs" />

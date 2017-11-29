@@ -77,6 +77,8 @@ namespace Infusion.LegacyApi
             Configuration = configuration;
             legacyEventJournal = CreateEventJournal();
 
+            Trace = new GlobalTrace(logger);
+
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver);
             RegisterDefaultCommands();
         }
@@ -86,6 +88,8 @@ namespace Infusion.LegacyApi
         public Configuration Configuration { get; }
 
         public LegacyFilters ClientFilters { get; }
+
+        public GlobalTrace Trace { get; }
 
         public Gump CurrentGump => gumpObservers.CurrentGump;
 

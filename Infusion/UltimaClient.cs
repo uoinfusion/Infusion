@@ -116,5 +116,11 @@ namespace Infusion
             var packet = new DeleteObjectPacket(id);
             Send(packet.RawPacket);
         }
+
+        internal void PauseClient(PauseClientChoice pause)
+        {
+            var packet = new PauseClientPacket(pause);
+            Send(packet.RawPacket);
+        }
     }
 }

@@ -18,7 +18,6 @@ namespace Infusion.LegacyApi
         private readonly Legacy legacyApi;
         private readonly GameObjectCollection gameObjects;
         private readonly EventJournalSource eventJournalSource;
-        private bool discardNextClientAck;
 
         public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource)
         {
@@ -31,7 +30,6 @@ namespace Infusion.LegacyApi
             this.eventJournalSource = eventJournalSource;
 
             IClientPacketSubject clientPacketSubject = client;
-            clientPacketSubject.RegisterFilter(FilterClientPackets);
             clientPacketSubject.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
 
             server.RegisterFilter(FilterServerPackets);
@@ -124,22 +122,6 @@ namespace Infusion.LegacyApi
 
                 // spaghetti hack: gameObjects health is handled in ItemsObservers
             }
-        }
-
-        private Packet? FilterClientPackets(Packet rawPacket)
-        {
-            if (discardNextClientAck && rawPacket.Id == PacketDefinitions.CharacterMoveAck.Id)
-            {
-                var packet = PacketDefinitionRegistry.Materialize<CharacterMoveAckPacket>(rawPacket);
-
-                if (packet.MovementSequenceKey == 0)
-                {
-                    discardNextClientAck = false;
-                    return null;
-                }
-            }
-
-            return rawPacket;
         }
 
         private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
@@ -275,10 +257,17 @@ namespace Infusion.LegacyApi
                 {
                     if (walkRequest.IssuedByProxy)
                     {
-                        discardNextClientAck = true;
-
+                        client.PauseClient(PauseClientChoice.Pause);
                         client.DrawGamePlayer(player.PlayerId, player.BodyType,
                             player.Location, player.Direction, player.MovementType, player.Color);
+                        foreach (var mobile in UO.Mobiles)
+                        {
+                            if (mobile.Id != player.PlayerId)
+                            {
+                                UO.Client.ObjectInfo(mobile.Id, mobile.Type, mobile.Location, mobile.Color);
+                            }
+                        }
+                        client.PauseClient(PauseClientChoice.Resume);
 
                         discardCurrentPacket = true;
                     }

@@ -1,3 +1,5 @@
+// Mentioned on wiki\Commands.md
+
 using System;
 using Infusion.Commands;
 using Infusion.LegacyApi;
@@ -48,7 +50,7 @@ public static class QuestArrow
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",questarrow");
+        UO.CommandHandler.Invoke("questarrow");
     }
 }
 

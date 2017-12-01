@@ -126,7 +126,7 @@ namespace Infusion.Desktop
                 }, executionMode: CommandExecutionMode.Direct);
 
                 UO.CommandHandler.RegisterCommand(command);
-                UO.CommandHandler.Invoke("," + commandName, cancellationTokenSource);
+                UO.CommandHandler.InvokeSyntax("," + commandName, cancellationTokenSource);
                 UO.CommandHandler.Unregister(command);
 
                 return result;

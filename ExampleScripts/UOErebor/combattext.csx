@@ -16,7 +16,7 @@ public static class CombatText
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",combattext");
+        UO.CommandHandler.Invoke("combattext");
     }
     
     public static void Disable()

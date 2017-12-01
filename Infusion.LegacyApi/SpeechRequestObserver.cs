@@ -27,7 +27,7 @@ namespace Infusion.LegacyApi
                 var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
                 if (commandHandler.IsInvocationSyntax(packet.Text))
                 {
-                    commandHandler.Invoke(packet.Text);
+                    commandHandler.InvokeSyntax(packet.Text);
                     eventSource.Publish(new CommandRequestedEvent(packet.Text));
 
                     return null;

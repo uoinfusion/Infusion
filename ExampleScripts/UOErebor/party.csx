@@ -29,7 +29,7 @@ public static class Party
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",party");
+        UO.CommandHandler.Invoke("party");
     }
     
     public static void Disable()

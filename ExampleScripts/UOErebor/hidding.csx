@@ -22,9 +22,9 @@ public static class Hidding
         }
         else
         {
-            UO.CommandHandler.Invoke(",hide-run");
+            UO.CommandHandler.Invoke("hide-run");
             if (!UO.CommandHandler.IsCommandRunning("hide-watchalwayswalk"))
-                UO.CommandHandler.Invoke(",hide-watchalwayswalk");
+                UO.CommandHandler.Invoke("hide-watchalwayswalk");
         }
     }
     

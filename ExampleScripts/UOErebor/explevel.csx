@@ -19,7 +19,7 @@ public static class ExplevelTracker
 
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",explevel-run");
+        UO.CommandHandler.Invoke("explevel-run");
     }
     
     public static void Disable()

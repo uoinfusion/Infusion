@@ -139,7 +139,7 @@ namespace Infusion.Desktop
             {
                 if (command != ",cls")
                     Program.Console.Debug(command);
-                UO.CommandHandler.Invoke(command);
+                UO.CommandHandler.InvokeSyntax(command);
             }
             else
                 UO.Say(command);

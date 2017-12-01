@@ -26,7 +26,7 @@ public static class Title
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",title");
+        UO.CommandHandler.Invoke("title");
     }
     
     public static void Disable()

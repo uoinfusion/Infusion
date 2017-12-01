@@ -49,7 +49,7 @@ public static class Pets
     {
         if (!UO.CommandHandler.IsCommandRunning("pets"))
         {
-            UO.CommandHandler.Invoke(",pets");
+            UO.CommandHandler.Invoke("pets");
             statuses.Clear();
 
             AddMyPets();

@@ -101,32 +101,51 @@ namespace Infusion.Commands
             return command;
         }
 
-        public void Invoke(string commandInvocationSyntax, CancellationTokenSource cancellationTokenSource = null)
+        public void Invoke(string commandName, CancellationTokenSource cancellationTokenSource = null)
         {
             try
-            {
-                var syntax = CommandParser.Parse(commandInvocationSyntax);
-                if (!syntax.HasParameters)
-                {
-                    if (!commands.TryGetValue(syntax.Name, out Command command))
-                        throw new CommandInvocationException($"Unknown command name '{commandInvocationSyntax}'");
+            { 
+                if (!commands.TryGetValue(commandName, out Command command))
+                    throw new CommandInvocationException($"Unknown command name '{commandName}'");
 
-                    invocator.Invoke(command, cancellationTokenSource);
-                }
-                else
-                {
-                    if (!commands.TryGetValue(syntax.Name, out Command command))
-                        throw new CommandInvocationException($"Unknown command name '{commandInvocationSyntax}'");
-
-                    if (command.AcceptsParameters)
-                        invocator.Invoke(command, syntax.Parameters, cancellationTokenSource);
-                    else
-                        throw new CommandInvocationException($"Command '{command.Name}' doesn't accept parameters.");
-                }
+                invocator.Invoke(command, cancellationTokenSource);
             }
             catch (CommandInvocationException ex)
             {
                 logger.Error(ex.Message);
+            }
+
+        }
+
+        public void Invoke(string commandName, string commandParameters,
+            CancellationTokenSource cancellationTokenSource = null)
+        {
+            try
+            {
+                if (!commands.TryGetValue(commandName, out Command command))
+                    throw new CommandInvocationException($"Unknown command name '{commandName}'");
+
+                if (command.AcceptsParameters)
+                    invocator.Invoke(command, commandParameters, cancellationTokenSource);
+                else
+                    throw new CommandInvocationException($"Command '{command.Name}' doesn't accept parameters.");
+            }
+            catch (CommandInvocationException ex)
+            {
+                logger.Error(ex.Message);
+            }
+        }
+
+        public void InvokeSyntax(string commandInvocationSyntax, CancellationTokenSource cancellationTokenSource = null)
+        {
+            var syntax = CommandParser.Parse(commandInvocationSyntax);
+            if (!syntax.HasParameters)
+            {
+                Invoke(syntax.Name, cancellationTokenSource);
+            }
+            else
+            {
+                Invoke(syntax.Name, syntax.Parameters, cancellationTokenSource);
             }
         }
 

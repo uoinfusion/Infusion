@@ -26,7 +26,7 @@ public static class Potions
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",potions");
+        UO.CommandHandler.Invoke("potions");
     }
     
     public static void Disable()

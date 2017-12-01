@@ -104,7 +104,7 @@ public static class Phantoms
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",phantoms");
+        UO.CommandHandler.Invoke("phantoms");
     }
     
     public static void Disable()

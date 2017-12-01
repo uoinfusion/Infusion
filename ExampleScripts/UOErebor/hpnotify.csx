@@ -19,7 +19,7 @@ public static class HitPointNotifier
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke(",hpnotify");
+        UO.CommandHandler.Invoke("hpnotify");
     }
     
     public static void Disable()

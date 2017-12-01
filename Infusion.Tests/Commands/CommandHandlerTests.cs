@@ -33,30 +33,24 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
-        public void Can_create_two_scripts_with_different_names()
+        public void Can_register_two_commands_with_different_names()
         {
             commandHandler.RegisterCommand("testName1", () => { });
             commandHandler.RegisterCommand("testName2", () => { });
         }
 
         [TestMethod]
-        public void Can_invoke_script_parameterless_script()
+        public void Can_invoke_parameterless_command()
         {
             var ev = new AutoResetEvent(false);
             commandHandler.RegisterCommand("testName", () => ev.Set());
 
-            commandHandler.Invoke(",testName");
+            commandHandler.Invoke("testName");
             ev.WaitOne(1000).Should().BeTrue();
         }
 
         [TestMethod]
-        public void Can_create_parametrized_script()
-        {
-            commandHandler.RegisterCommand("testName", parameters => { });
-        }
-
-        [TestMethod]
-        public void Can_invoke_parametrized_script()
+        public void Can_invoke_parametrized_command()
         {
             var actualParameters = string.Empty;
             var ev = new AutoResetEvent(false);
@@ -67,25 +61,58 @@ namespace Infusion.Tests.Commands
                 ev.Set();
             });
 
-            commandHandler.Invoke(",testName parameter1 parameter2");
+            commandHandler.Invoke("testName", "parameter1 parameter2");
             ev.WaitOne(1000).Should().BeTrue();
             actualParameters.Should().Be("parameter1 parameter2");
         }
 
         [TestMethod]
-        public void Does_not_invoke_parameterless_command_with_parameters()
+        public void Can_invoke_syntax_with_parameterless_command()
+        {
+            var ev = new AutoResetEvent(false);
+            commandHandler.RegisterCommand("testName", () => ev.Set());
+
+            commandHandler.InvokeSyntax(",testName");
+            ev.WaitOne(1000).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Can_register_parametrized_command()
+        {
+            commandHandler.RegisterCommand("testName", parameters => { });
+        }
+
+        [TestMethod]
+        public void Can_invoke_syntax_with_parametrized_command()
+        {
+            var actualParameters = string.Empty;
+            var ev = new AutoResetEvent(false);
+
+            commandHandler.RegisterCommand("testName", parameters =>
+            {
+                actualParameters = parameters;
+                ev.Set();
+            });
+
+            commandHandler.InvokeSyntax(",testName parameter1 parameter2");
+            ev.WaitOne(1000).Should().BeTrue();
+            actualParameters.Should().Be("parameter1 parameter2");
+        }
+
+        [TestMethod]
+        public void Does_not_invoke_syntax_with_parameterless_command_with_parameters()
         {
             bool executed = false;
             var command = new TestCommand(commandHandler, ",testName", () => executed = true);
             commandHandler.RegisterCommand(command.Command);
 
-            commandHandler.Invoke(",testName parameter1");
+            commandHandler.InvokeSyntax(",testName parameter1");
 
             executed.Should().BeFalse();
         }
 
         [TestMethod]
-        public void Can_invoke_parametrized_command_without_parameters()
+        public void Can_invoke_syntax_with_parametrized_command_without_parameters()
         {
             bool executed = false;
             var finished = new AutoResetEvent(false);
@@ -95,14 +122,14 @@ namespace Infusion.Tests.Commands
                 finished.Set();
             });
 
-            commandHandler.Invoke(",testName");
+            commandHandler.InvokeSyntax(",testName");
             finished.WaitOne(TimeSpan.FromMilliseconds(100));
 
             executed.Should().BeTrue();
         }
 
         [TestMethod]
-        public void Can_return_registered_script_names()
+        public void Can_return_registered_command_names()
         {
             commandHandler.RegisterCommand("testName", () => { });
             commandHandler.RegisterCommand("testName2", parameters => { });
@@ -111,14 +138,14 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
-        public void Can_recognize_script_invocation_syntax()
+        public void Can_recognize_command_invocation_syntax()
         {
             commandHandler.IsInvocationSyntax(",testName").Should().BeTrue();
             commandHandler.IsInvocationSyntax("testName").Should().BeFalse();
         }
 
         [TestMethod]
-        public void Can_unregister_parameterless_script()
+        public void Can_unregister_parameterless_command()
         {
             commandHandler.RegisterCommand("testname1", param => { });
             commandHandler.RegisterCommand("testname2", () => { });
@@ -129,7 +156,7 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
-        public void Can_unregister_parametrized_script()
+        public void Can_unregister_parametrized_command()
         {
             commandHandler.RegisterCommand("testname1", param => { });
             commandHandler.RegisterCommand("testname2", () => { });
@@ -146,8 +173,8 @@ namespace Infusion.Tests.Commands
             var command2 = new TestCommand("cmd2");
             commandHandler.RegisterCommand(command1.Command);
             commandHandler.RegisterCommand(command2.Command);
-            commandHandler.Invoke(",cmd1");
-            commandHandler.Invoke(",cmd2");
+            commandHandler.InvokeSyntax(",cmd1");
+            commandHandler.InvokeSyntax(",cmd2");
 
             command1.WaitForInitialization();
             command2.WaitForInitialization();
@@ -163,7 +190,7 @@ namespace Infusion.Tests.Commands
         {
             var command1 = new TestCommand("cmd1");
             commandHandler.RegisterCommand(command1.Command);
-            commandHandler.Invoke(",cmd1");
+            commandHandler.InvokeSyntax(",cmd1");
 
             command1.WaitForInitialization();
 
@@ -178,13 +205,13 @@ namespace Infusion.Tests.Commands
         {
             var finishedCommand = new TestCommand(commandHandler, "finished_cmd", () =>{ });
             commandHandler.RegisterCommand(finishedCommand.Command);
-            commandHandler.Invoke(",finished_cmd");
+            commandHandler.InvokeSyntax(",finished_cmd");
             finishedCommand.Finish();
             finishedCommand.WaitForFinished();
 
             var runningCommand = new TestCommand("running_cmd");
             commandHandler.RegisterCommand(runningCommand.Command);
-            commandHandler.Invoke(",running_cmd");
+            commandHandler.InvokeSyntax(",running_cmd");
             runningCommand.WaitForInitialization();
 
             commandHandler.RunningCommands.Select(c => c.Name).Should().NotContain("finished_cmd");
@@ -210,7 +237,7 @@ namespace Infusion.Tests.Commands
                 int oldExecutionCount = executionCount;
                 counterDone.Reset();
                 command.Reset();
-                commandHandler.Invoke(",cmd");
+                commandHandler.InvokeSyntax(",cmd");
                 counterDone.WaitOne(TimeSpan.FromMilliseconds(100));
 
                 commandHandler.Terminate("cmd");
@@ -229,7 +256,7 @@ namespace Infusion.Tests.Commands
         {
             var command = new TestCommand(commandHandler, "cmd", () => DoSomeCancellableAction());
             commandHandler.RegisterCommand(command.Command);
-            commandHandler.Invoke(",cmd");
+            commandHandler.InvokeSyntax(",cmd");
             command.WaitForInitialization();
 
             commandHandler.Terminate("non_existing_command");
@@ -251,9 +278,9 @@ namespace Infusion.Tests.Commands
             {
                 command1.Reset();
                 command2.Reset();
-                commandHandler.Invoke(",cmd1");
+                commandHandler.InvokeSyntax(",cmd1");
                 command1.WaitForInitialization();
-                commandHandler.Invoke(",cmd2");
+                commandHandler.InvokeSyntax(",cmd2");
                 command2.WaitForInitialization();
 
                 commandHandler.RunningCommands.Should().NotBeEmpty();
@@ -275,10 +302,10 @@ namespace Infusion.Tests.Commands
             var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () => DoSomeCancellableAction());
             commandHandler.RegisterCommand(nestedCommand.Command);
 
-            var parentCommand = new TestCommand(commandHandler, "parent", () => commandHandler.Invoke(",nested"));
+            var parentCommand = new TestCommand(commandHandler, "parent", () => commandHandler.InvokeSyntax(",nested"));
             commandHandler.RegisterCommand(parentCommand.Command);
 
-            commandHandler.Invoke(",parent");
+            commandHandler.InvokeSyntax(",parent");
             parentCommand.WaitForInitialization();
 
             commandHandler.Terminate("parent");
@@ -307,7 +334,7 @@ namespace Infusion.Tests.Commands
             {
                 try
                 {
-                    commandHandler.Invoke(",nested");
+                    commandHandler.InvokeSyntax(",nested");
                 }
                 catch (InvalidOperationException)
                 {
@@ -318,7 +345,7 @@ namespace Infusion.Tests.Commands
 
             nestedCommand.Finish();
             parentCommand.Finish();
-            commandHandler.Invoke(",parent");
+            commandHandler.InvokeSyntax(",parent");
 
             parentCommand.WaitForFinished();
 
@@ -331,7 +358,7 @@ namespace Infusion.Tests.Commands
         {
             var parentCommand = new TestCommand(commandHandler, "parent", () => throw new InvalidOperationException("some exception message that is supposed to appear in the logger output"));
             commandHandler.RegisterCommand(parentCommand.Command);
-            commandHandler.Invoke(",parent");
+            commandHandler.InvokeSyntax(",parent");
 
             parentCommand.WaitForFinished();
 
@@ -354,11 +381,11 @@ namespace Infusion.Tests.Commands
             var parentCommand = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Normal, () =>
             {
                 parentCommandThreadId = Thread.CurrentThread.ManagedThreadId;
-                commandHandler.Invoke(",nested");
+                commandHandler.InvokeSyntax(",nested");
             });
             commandHandler.RegisterCommand(parentCommand.Command);
 
-            commandHandler.Invoke(",cmd1");
+            commandHandler.InvokeSyntax(",cmd1");
             parentCommand.WaitForInitialization();
             nestedCommand.WaitForAdditionalAction();
 
@@ -386,12 +413,12 @@ namespace Infusion.Tests.Commands
                 });
             commandHandler.RegisterCommand(nestedCommand.Command);
             var parentCommand = new TestCommand(commandHandler, "parent", CommandExecutionMode.Direct,
-                () => commandHandler.Invoke(",nested"));
+                () => commandHandler.InvokeSyntax(",nested"));
             commandHandler.RegisterCommand(parentCommand.Command);
 
             nestedCommand.Finish();
             parentCommand.Finish();
-            commandHandler.Invoke(",parent");
+            commandHandler.InvokeSyntax(",parent");
 
             nestedCommandExecuted.Should().BeTrue();
         }
@@ -402,12 +429,12 @@ namespace Infusion.Tests.Commands
             var nestedCommandExecuted = false;
             var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.AlwaysParallel, () => nestedCommandExecuted = true);
             commandHandler.RegisterCommand(nestedCommand.Command);
-            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.Invoke(",nested"));
+            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.InvokeSyntax(",nested"));
             commandHandler.RegisterCommand(command.Command);
 
             nestedCommand.Reset();
             command.Reset();
-            commandHandler.Invoke(",cmd1");
+            commandHandler.InvokeSyntax(",cmd1");
             command.WaitForInitialization();
             nestedCommand.WaitForInitialization();
             nestedCommand.WaitForAdditionalAction();
@@ -427,7 +454,7 @@ namespace Infusion.Tests.Commands
         {
             var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () => { });
             commandHandler.RegisterCommand(nestedCommand.Command);
-            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.Invoke(",nested"));
+            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.InvokeSyntax(",nested"));
             commandHandler.RegisterCommand(command.Command);
 
             for (int i = 0; i < 100; i++)
@@ -435,7 +462,7 @@ namespace Infusion.Tests.Commands
                 nestedCommand.Reset();
                 command.Reset();
 
-                commandHandler.Invoke(",cmd1");
+                commandHandler.InvokeSyntax(",cmd1");
                 nestedCommand.WaitForAdditionalAction();
 
                 commandHandler.RunningCommands.Select(x => x.Name).Should().Contain("cmd1");
@@ -456,8 +483,8 @@ namespace Infusion.Tests.Commands
 
             var command = new TestCommand(commandHandler, "cmd1", () => executionCount++);
             commandHandler.RegisterCommand(command.Command);
-            commandHandler.Invoke(",cmd1");
-            commandHandler.Invoke(",cmd1");
+            commandHandler.InvokeSyntax(",cmd1");
+            commandHandler.InvokeSyntax(",cmd1");
 
             command.Finish();
             command.WaitForFinished();
@@ -472,7 +499,7 @@ namespace Infusion.Tests.Commands
             var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Direct, () => commandThread = Thread.CurrentThread.ManagedThreadId);
             commandHandler.RegisterCommand(command.Command);
             command.Finish();
-            commandHandler.Invoke(",cmd1");
+            commandHandler.InvokeSyntax(",cmd1");
             command.WaitForAdditionalAction();
 
             commandThread.Should().Be(Thread.CurrentThread.ManagedThreadId);
@@ -485,7 +512,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand(command.Command);
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            commandHandler.Invoke(",cmd1", cancellationTokenSource);
+            commandHandler.InvokeSyntax(",cmd1", cancellationTokenSource);
             cancellationTokenSource.Cancel();
 
             command.Finish();
@@ -502,7 +529,7 @@ namespace Infusion.Tests.Commands
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
             // ReSharper disable once MethodSupportsCancellation
-            Task.Run(() => commandHandler.Invoke(",cmd1", cancellationTokenSource));
+            Task.Run(() => commandHandler.InvokeSyntax(",cmd1", cancellationTokenSource));
 
             command.Finish();
             cancellationTokenSource.Cancel();
@@ -518,7 +545,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand(command.Command);
 
             // ReSharper disable once MethodSupportsCancellation
-            Task.Run(() => commandHandler.Invoke(",cmd1"));
+            Task.Run(() => commandHandler.InvokeSyntax(",cmd1"));
             command.WaitForAdditionalAction();
 
             commandHandler.Terminate();
@@ -537,7 +564,7 @@ namespace Infusion.Tests.Commands
             });
             commandHandler.RegisterCommand(command.Command);
 
-            commandHandler.Invoke(",backgroundcmd");
+            commandHandler.InvokeSyntax(",backgroundcmd");
             command.WaitForInitialization();
             command.Finish();
             commandHandler.Terminate();
@@ -556,7 +583,7 @@ namespace Infusion.Tests.Commands
             });
             commandHandler.RegisterCommand(command.Command);
 
-            commandHandler.Invoke(",backgroundcmd");
+            commandHandler.InvokeSyntax(",backgroundcmd");
             command.WaitForInitialization();
             command.Finish();
             commandHandler.Terminate("backgroundcmd");
@@ -575,7 +602,7 @@ namespace Infusion.Tests.Commands
             });
             commandHandler.RegisterCommand(command.Command);
 
-            commandHandler.Invoke(",backgroundcmd");
+            commandHandler.InvokeSyntax(",backgroundcmd");
             command.WaitForInitialization();
             command.Finish();
             commandHandler.TerminateAll();
@@ -594,7 +621,7 @@ namespace Infusion.Tests.Commands
             });
             commandHandler.RegisterCommand(command.Command);
 
-            commandHandler.Invoke(",normalcmd");
+            commandHandler.InvokeSyntax(",normalcmd");
             command.WaitForInitialization();
             command.Finish();
             commandHandler.TerminateAll();

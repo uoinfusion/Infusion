@@ -18,8 +18,13 @@ public class TwoStateAbility : ITwoStateAbility
     {
         if (IsTurnedOn.HasValue && IsTurnedOn.Value)
         {
+            // doesn't work if this method is called rarelly,
+            // so a message is scrolled out from the journal
             if (!abilityJournal.Contains(TurnedOffMessage))
+            {
+                abilityJournal.Delete();
                 return;
+            }
         }
     
         UO.Say(ToggleCommand);

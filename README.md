@@ -37,7 +37,7 @@ We develop, test and regularly use Infusion in game on highly customized shard [
 stable on this shard and there is a lot of example scripts you can immediately start using:
 
 - Display [status bar](ExampleScripts/UOErebor/party.csx) of your friends in an external window. These status bars never disappear so you always see how many HP your friends have.
-- [Hiding](hidding.csx) with *always walk* feature to utilize stealth. 
+- [Hiding](ExampleScripts/UOErebor/hidding.csx) with *always walk* feature to utilize stealth. 
 - [Targeting](ExampleScripts/UOErebor/targeting.csx) red karma only, skipping own summon/pets.
 - Fast and reliable [walking](ExampleScripts/UOErebor/walking.csx).
 - Damage [notification](ExampleScripts/UOErebor/hpnotify.csx).

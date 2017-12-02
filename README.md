@@ -16,7 +16,9 @@ debugging capabilities.
 ## Getting Started
 
 - Read [Getting Started](https://github.com/JakubLinhart/Infusion/wiki/Getting-started).
-- Look at [example scripts](https://github.com/uoinfusion/Infusion/tree/master/ExampleScripts) with many explanatory comments.
+- If you know Injection, take a look to a brief [comparison with Infusion](https://github.com/uoinfusion/Infusion/wiki/Comparison-with-Injection).
+- Look at [example scripts](https://github.com/uoinfusion/Infusion/tree/master/ExampleScripts).
+
 
 ## Current Status
 
@@ -34,8 +36,9 @@ for you.
 We develop, test and regularly use Infusion in game on highly customized shard [UOErebor](http://uoerebor.cz/) (Czech only). Which means that Infusion is pretty
 stable on this shard and there is a lot of example scripts you can immediately start using:
 
-- Display status bar of your friends in an external window. These status bars never disappear so you always see how many HP your friends have.
+- Display [status bar](ExampleScripts/UOErebor/party.csx) of your friends in an external window. These status bars never disappear so you always see how many HP your friends have.
 - Targeting red karma only, skipping own summon/pets.
+- Fast and reliable walking.
 - Damage notification.
 - Open bank using banker or house menu.
 - Using travel stones.

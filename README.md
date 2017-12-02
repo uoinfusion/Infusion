@@ -37,15 +37,17 @@ We develop, test and regularly use Infusion in game on highly customized shard [
 stable on this shard and there is a lot of example scripts you can immediately start using:
 
 - Display [status bar](ExampleScripts/UOErebor/party.csx) of your friends in an external window. These status bars never disappear so you always see how many HP your friends have.
-- Targeting red karma only, skipping own summon/pets.
-- Fast and reliable walking.
-- Damage notification.
-- Open bank using banker or house menu.
-- Using travel stones.
+- [Hiding](hidding.csx) with *always walk* feature to utilize stealth. 
+- [Targeting](ExampleScripts/UOErebor/targeting.csx) red karma only, skipping own summon/pets.
+- Fast and reliable [walking](ExampleScripts/UOErebor/walking.csx).
+- Damage [notification](ExampleScripts/UOErebor/hpnotify.csx).
+- Show [experience](ExampleScripts/UOErebor/explevel.csx) in game window title.
+- [Open bank](ExampleScripts/UOErebor/banking.csx) using banker or house menu.
+- Using [travel stones](ExampleScripts/UOErebor/travelstone.csx).
 - Filtering sounds, overall light and weather effect.
-- Looting.
-- Chasing and shaving sheep.
+- [Looting](ExampleScripts/UOErebor/looting.csx).
+- [Chasing and shaving](ExampleScripts/UOErebor/sheepshaving.csx) sheep.
 - Easier item manipulation (moving food/regs only, moving the same type).
-- Predefined names for many item types/color combinations (spell scrolls, food, regs, tools, resources, doors and many others).
+- [Predefined names](ExampleScripts/UOErebor/Specs.csx) for many item types/color combinations (spell scrolls, food, regs, tools, resources, doors and many others).
 
 [![Join the chat at https://gitter.im/ultimaonlineinfusion/infusion](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ultimaonlineinfusion/infusion-erebor)

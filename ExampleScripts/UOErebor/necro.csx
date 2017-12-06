@@ -26,8 +26,15 @@ public static class Necro
         
         UO.WarModeOff();
         UO.CastSpell(Spell.SummonCreature);
-        UO.WaitForDialogBox();
+
+        if (UO.WaitForDialogBox("You lack ", "You can't make anything with what you have.", "You don't know that spell.") == null)
+        {
+            UO.Log("Cannot open summon dialog box");
+            return;
+        }
+        
         UO.TriggerDialogBox(creatureName);
+        
         UO.WaitForTarget();
         UO.Target(targetInfo.Value);
         
@@ -37,8 +44,9 @@ public static class Necro
             .When<MobileEnteredViewEvent>(
                 e => Specs.Satan.Matches(e.Mobile) 
                         && (Location2D)e.Mobile.Location == (Location2D)targetInfo.Value.Location,
-                e => { })
-            .When<SpeechReceivedEvent>(e => e.Speech.Message.Contains("Kouzlo se nezdarilo."), e => spellFailed = true)
+                e => spellFailed = false)
+            .When<SpeechReceivedEvent>(
+                e => IsFailMessage(e.Speech.Message), e => spellFailed = true)
             .WaitAny();
         
         if (spellFailed)
@@ -46,6 +54,10 @@ public static class Necro
             
         UO.Say("all stay");
     }
+    
+    private static bool IsFailMessage(string message) =>
+        message.Contains("Target is not in line of sight") || message.Contains("Kouzlo se nezdarilo.")
+        || message.Contains("You can't make anything with what you have.");
 }
 
 UO.RegisterCommand("summon-satan", () => Necro.SummonCreature("Satan"));

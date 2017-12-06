@@ -10,6 +10,51 @@ public static class Items
         UO.TryMoveItem(item, UO.Me.BackPack);
     }
     
+    public static void BatchedMove(int totalAmount, int batchSize)
+    {
+        UO.Log("Select item to move");
+        var itemTemplate = UO.AskForItem();
+        if (itemTemplate == null)
+        {
+            UO.Log("Moving cancelled");
+            return;
+        }
+        
+        UO.Log("Select target container");
+        var targetContainer = UO.AskForItem();
+        if (targetContainer == null)
+        {
+            UO.Log("Moving cancelled");
+            return;
+        }
+        
+        while (totalAmount > 0)
+        {
+            var itemsToMove = UO.Items.OfColor(itemTemplate.Color).OfType(itemTemplate.Type);
+            if (itemTemplate.ContainerId.HasValue)
+            {
+                itemsToMove = itemsToMove.InContainer(itemTemplate.ContainerId.Value);
+            }
+            
+            var itemsToMoveOnSamePosition = itemsToMove.Where(x => x.Location == itemTemplate.Location).ToArray();
+            if (itemsToMoveOnSamePosition.Any())
+                itemsToMove = itemsToMoveOnSamePosition;
+            
+            var itemToMove = itemsToMove.FirstOrDefault();
+            if (itemToMove == null)
+            {
+                UO.Log("No item to move found");
+                break;
+            }
+            var amount = batchSize > totalAmount ? totalAmount : batchSize;
+            amount = amount > itemToMove.Amount ? itemToMove.Amount : amount;
+            
+            UO.Log($"Moving {amount}, {totalAmount} to move");
+            Items.MoveItems(itemsToMove, (ushort)amount, targetContainer);
+            totalAmount -= amount;   
+        }
+    }
+    
     public static void MoveItems(IEnumerable<Item> items, Item targetContainer)
     {
         foreach (var item in items)

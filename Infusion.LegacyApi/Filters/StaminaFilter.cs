@@ -49,9 +49,15 @@ namespace Infusion.LegacyApi.Filters
                 }
                 if (rawPacket.Id == PacketDefinitions.StatusBarInfo.Id)
                 {
-                    var writer = new ArrayPacketWriter(rawPacket.Payload);
-                    writer.Position = 50;
-                    writer.WriteUShort(stamina.Value);
+                    // hack: NPC status bar packets are shorter (doesn't contain other stats than HP),
+                    // don't want to materialize specific packet and check mobile id, so
+                    // packet lenght check could be sufficient
+                    if (rawPacket.Length > 50)
+                    {
+                        var writer = new ArrayPacketWriter(rawPacket.Payload);
+                        writer.Position = 50;
+                        writer.WriteUShort(stamina.Value);
+                    }
                 }
             }
 

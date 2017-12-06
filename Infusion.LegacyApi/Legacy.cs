@@ -499,13 +499,13 @@ namespace Infusion.LegacyApi
             Server.DragItem(item.Id, amount);
         }
 
-        public bool TryMoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
+        public bool TryMoveItem(Item item, GameObject targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainer.Id, timeout, dropDelay);
 
         public bool TryMoveItem(Item item, ObjectId targetContainerId, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainerId, timeout, dropDelay);
 
-        public bool TryMoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+        public bool TryMoveItem(Item item, ushort amount, GameObject targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainer.Id, timeout, dropDelay);
 
         public bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, TimeSpan? timeout = null,

@@ -188,7 +188,7 @@ namespace Infusion.LegacyApi
         public static void DragItem(Item item, ushort amount)
             => Current.DragItem(item, amount);
 
-        public static bool TryMoveItem(Item item, Item targetContainer, TimeSpan? timeout = null,
+        public static bool TryMoveItem(Item item, GameObject targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
             => Current.TryMoveItem(item, targetContainer, timeout, dropDelay);
 
@@ -196,7 +196,7 @@ namespace Infusion.LegacyApi
             TimeSpan? dropDelay = null)
             => Current.TryMoveItem(item, targetContainerId, timeout, dropDelay);
 
-        public static bool TryMoveItem(Item item, ushort amount, Item targetContainer, TimeSpan? timeout = null,
+        public static bool TryMoveItem(Item item, ushort amount, GameObject targetContainer, TimeSpan? timeout = null,
             TimeSpan? dropDelay = null)
             => Current.TryMoveItem(item, amount, targetContainer, timeout, dropDelay);
 

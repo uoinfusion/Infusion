@@ -13,9 +13,14 @@ namespace Infusion.Diagnostic
 
         public static IEnumerable<PacketLogEntry> ParseFile(string fileName)
         {
-            string log = File.ReadAllText(fileName);
-
-            return new PacketLogParser().Parse(log);
+            using (var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (var reader = new StreamReader(stream))
+                {
+                    string log = reader.ReadToEnd();
+                    return new PacketLogParser().Parse(log);
+                }
+            }
         }
 
         public IEnumerable<PacketLogEntry> Parse(string log)

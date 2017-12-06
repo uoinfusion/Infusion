@@ -38,7 +38,14 @@ namespace Infusion.Desktop
                         File.AppendAllText(fileName, $"Infusion {VersionHelpers.ProductVersion}");
                     }
 
-                    File.AppendAllText(fileName, $@"{timeStamp:HH:mm:ss:fffff}: {message}{Environment.NewLine}");
+                    using (var stream =
+                        new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                    {
+                        using (var writer = new StreamWriter(stream))
+                        {
+                            writer.WriteLine($@"{timeStamp:HH:mm:ss:fffff}: {message}");
+                        }
+                    }
                 }
             });
         }

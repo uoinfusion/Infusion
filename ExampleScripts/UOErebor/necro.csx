@@ -33,7 +33,12 @@ public static class Necro
             return;
         }
         
-        UO.TriggerDialogBox(creatureName);
+        if (!UO.TriggerDialogBox(creatureName))
+        {
+            UO.Log($"{creatureName} not in the dialog box.");
+            UO.CloseDialogBox();
+            return;            
+        }
         
         UO.WaitForTarget();
         UO.Target(targetInfo.Value);

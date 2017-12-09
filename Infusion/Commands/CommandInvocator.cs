@@ -42,15 +42,28 @@ namespace Infusion.Commands
                         if (nestingLevel.Value > 0)
                             NestedAction(action, command, parameters, cancellationTokenSource);
                         else
-                            Task.Run(() => NonNestedAction(action, parameters, command, cancellationTokenSource));
+                        {
+                            NonNestedAction(action, parameters, command, cancellationTokenSource);
+                        }
                         break;
                     case CommandExecutionMode.AlwaysParallel:
                     case CommandExecutionMode.Background:
-                        Task.Run(() => NonNestedAction(action, parameters, command, cancellationTokenSource));
+                        NonNestedAction(action, parameters, command, cancellationTokenSource);
                         break;
                     default:
                         throw new InvalidOperationException();
                 }
+            }
+
+            private void NonNestedAction(Action action, string parameters, Command command, CancellationTokenSource cancellationTokenSource)
+            {
+                cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
+                var commandInvocation = new CommandInvocation(command, parameters, command.ExecutionMode, nestingLevel.Value,
+                    cancellationTokenSource);
+
+                var task = new Task(() => NonNestedAction(action, commandInvocation));
+                commandInvocation.Task = task;
+                task.Start();
             }
 
             private void NestedAction(Action action, Command command, string parameters, CancellationTokenSource cancellationTokenSource)
@@ -79,15 +92,11 @@ namespace Infusion.Commands
                 }
             }
 
-            private void NonNestedAction(Action action, string parameters, Command command, CancellationTokenSource cancellationTokenSource)
+            private void NonNestedAction(Action action, CommandInvocation invocation)
             {
-                cancellationTokenSource = cancellationTokenSource ?? new CancellationTokenSource();
-                commandHandler.OnCancellationTokenCreated(cancellationTokenSource.Token);
-                var commandInvocation = new CommandInvocation(command, parameters, command.ExecutionMode, nestingLevel.Value,
-                    cancellationTokenSource);
-
-                AddCommandInvocation(command, commandInvocation);
+                AddCommandInvocation(invocation.Command, invocation);
                 nestingLevel.Value += 1;
+                commandHandler.OnCancellationTokenCreated(invocation.CancellationTokenSource.Token);
 
                 try
                 {
@@ -95,17 +104,17 @@ namespace Infusion.Commands
                 }
                 catch (OperationCanceledException)
                 {
-                    logger.Info($"Command '{command.Name}' cancelled.");
+                    logger.Info($"Command '{invocation.Command.Name}' cancelled.");
                 }
                 catch (Exception ex)
                 {
-                    logger.Error($"Command '{command.Name}' threw exception:");
+                    logger.Error($"Command '{invocation.Command.Name}' threw exception:");
                     logger.Info(ex.ToString());
                 }
                 finally
                 {
-                    commandHandler.RemoveCommandInvocation(commandInvocation);
-                    cancellationTokenSource.Dispose();
+                    commandHandler.RemoveCommandInvocation(invocation);
+                    invocation.CancellationTokenSource.Dispose();
 
                     nestingLevel.Value -= 1;
                 }
@@ -125,7 +134,7 @@ namespace Infusion.Commands
 
         public void TerminateAll()
         {
-            Terminate(true);
+            BeginTerminate(true);
         }
     }
 }

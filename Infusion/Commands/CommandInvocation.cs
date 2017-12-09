@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Infusion.Commands
 {
@@ -24,5 +25,6 @@ namespace Infusion.Commands
         internal Command Command { get; }
         internal int NestingLevel { get; }
         internal CancellationTokenSource CancellationTokenSource { get; }
+        internal Task Task { get; set; }
     }
 }

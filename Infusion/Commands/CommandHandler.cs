@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Infusion.Logging;
 
 namespace Infusion.Commands
@@ -134,6 +135,11 @@ namespace Infusion.Commands
             {
                 logger.Error(ex.Message);
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                logger.Debug(ex.ToString());
+            }
         }
 
         public void InvokeSyntax(string commandInvocationSyntax, CancellationTokenSource cancellationTokenSource = null)
@@ -171,16 +177,33 @@ namespace Infusion.Commands
             Unregister(command.Name);
         }
 
-        public void Terminate(string commandName)
+        public void Terminate(string commandName, TimeSpan? timeout = null)
         {
+            CommandInvocation awaitedInvocation = null;
+
             lock (runningCommandsLock)
             {
                 if (runningCommands.TryGetValue(commandName, out CommandInvocation invocation))
+                {
+                    awaitedInvocation = invocation;
                     invocation.CancellationTokenSource?.Cancel();
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            if (awaitedInvocation != null)
+            {
+                if (!awaitedInvocation.Task.Wait(timeout ?? TimeSpan.FromSeconds(30)))
+                {
+                    throw new TimeoutException($"Cannot terminate command {awaitedInvocation.CommandName}");
+                }
             }
         }
 
-        public void Terminate(bool force = false)
+        public void BeginTerminate(bool force = false)
         {
             IEnumerable<CommandInvocation> invocations;
 

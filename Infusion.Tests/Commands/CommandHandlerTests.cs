@@ -224,26 +224,23 @@ namespace Infusion.Tests.Commands
             int executionCount = 0;
             EventWaitHandle counterDone = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-            var command = new TestCommand(commandHandler, "cmd", () =>
+            var command = new Command("cmd", () =>
             {
                 executionCount++;
                 counterDone.Set();
                 DoSomeCancellableAction();
             });
-            commandHandler.RegisterCommand(command.Command);
+            commandHandler.RegisterCommand(command);
 
             for (var i = 0; i < 10; i++)
             {
                 int oldExecutionCount = executionCount;
                 counterDone.Reset();
-                command.Reset();
-                commandHandler.InvokeSyntax(",cmd");
+                Task.Run(() => commandHandler.Invoke("cmd"));
+
                 counterDone.WaitOne(TimeSpan.FromMilliseconds(100));
+                commandHandler.Terminate("cmd", TimeSpan.FromMilliseconds(100));
 
-                commandHandler.Terminate("cmd");
-                command.Finish();
-
-                command.WaitForFinished().Should().BeTrue();
                 commandHandler.RunningCommands.Should().BeEmpty();
                 executionCount.Should().Be(oldExecutionCount + 1);
             }
@@ -285,7 +282,7 @@ namespace Infusion.Tests.Commands
 
                 commandHandler.RunningCommands.Should().NotBeEmpty();
 
-                commandHandler.Terminate();
+                commandHandler.BeginTerminate();
 
                 command1.Finish();
                 command1.WaitForFinished().Should().BeTrue();
@@ -522,6 +519,37 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
+        public void Specific_Terminate_waits_for_command_termination()
+        {
+            var commandStartedEvent = new AutoResetEvent(false);
+            bool commandEndReached = false;
+
+            var command = new Command("cmd1", executionMode: CommandExecutionMode.Normal, commandAction: () =>
+            {
+                commandStartedEvent.Set();
+
+                try
+                {
+                    DoSomeCancellableAction();
+                }
+                finally
+                {
+                    Thread.Sleep(10);
+                    commandEndReached = true;
+                }
+            });
+
+            commandHandler.RegisterCommand(command);
+            commandHandler.Invoke("cmd1");
+
+            commandStartedEvent.WaitOne(100).Should().BeTrue();
+            commandHandler.Terminate("cmd1");
+
+            var result = commandEndReached;
+            result.Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_terminate_Direct_command_with_custom_CancellationTokenSource()
         {
             var command = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Direct, () => { DoSomeCancellableAction(); });
@@ -548,7 +576,7 @@ namespace Infusion.Tests.Commands
             Task.Run(() => commandHandler.InvokeSyntax(",cmd1"));
             command.WaitForAdditionalAction();
 
-            commandHandler.Terminate();
+            commandHandler.BeginTerminate();
 
             commandHandler.CommandNames.Should().Contain("cmd1", "Direct command without custom cancellation token cannot be terminated, to support special commands like ,terminate.");
 
@@ -567,7 +595,7 @@ namespace Infusion.Tests.Commands
             commandHandler.InvokeSyntax(",backgroundcmd");
             command.WaitForInitialization();
             command.Finish();
-            commandHandler.Terminate();
+            commandHandler.BeginTerminate();
 
             command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
                 .BeFalse("background command should still run after non-specific terminate");

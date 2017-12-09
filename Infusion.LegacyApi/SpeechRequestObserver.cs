@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Infusion.Commands;
 using Infusion.LegacyApi.Events;
 using Infusion.Logging;
@@ -23,12 +24,15 @@ namespace Infusion.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
             {
-
                 var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
                 if (commandHandler.IsInvocationSyntax(packet.Text))
                 {
-                    commandHandler.InvokeSyntax(packet.Text);
                     eventSource.Publish(new CommandRequestedEvent(packet.Text));
+
+                    Task.Run(() =>
+                    {
+                        commandHandler.InvokeSyntax(packet.Text);
+                    });
 
                     return null;
                 }

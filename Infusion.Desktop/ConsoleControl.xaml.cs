@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -139,7 +140,10 @@ namespace Infusion.Desktop
             {
                 if (command != ",cls")
                     Program.Console.Debug(command);
-                UO.CommandHandler.InvokeSyntax(command);
+                Task.Run(() =>
+                {
+                    UO.CommandHandler.InvokeSyntax(command);
+                });
             }
             else
                 UO.Say(command);

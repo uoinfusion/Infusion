@@ -16,7 +16,7 @@
 #load "UOErebor\doors.csx"
 #load "UOErebor\eating.csx"
 #load "UOErebor\healing.csx"
-#load "UOErebor\hidding.csx"
+#load "UOErebor\hiding.csx"
 #load "UOErebor\hpnotify.csx"
 #load "UOErebor\items.csx"
 #load "UOErebor\light.csx"
@@ -146,6 +146,10 @@ QuestArrow.Enable();
 CombatText.Add("Kouzlo se nezdarilo.", Colors.Blue);
 CombatText.Add("Nevidis na cil.", Colors.Blue);
 CombatText.Enable();
+
+
+Hiding.AlwaysWalkEnabled = true;
+Hiding.AlwaysWalkDelayTime = TimeSpan.FromMilliseconds(1800);
 
 
 // Game client ignores light level changes, so you are not bothered by dark in the night.

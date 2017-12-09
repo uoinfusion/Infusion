@@ -13,6 +13,7 @@ public static class Hiding
     
     public static bool AlwaysWalkEnabled { get; set; } = true;
     public static TimeSpan AlwaysWalkDelayTime { get; set; } = TimeSpan.FromMilliseconds(1800);
+    public static ScriptTrace Trace = UO.Trace.Create();
 
     public static void Hide()
     {
@@ -87,8 +88,10 @@ public static class Hiding
                     })
                     .WhenTimeout(() =>
                     {
+                        Trace.Log($"hide timeout for always walk after {AlwaysWalkDelayTime}");
                         if (AlwaysWalkEnabled)
                         {
+                            Trace.Log("enabling fake stamina");
                             UO.ClientFilters.Stamina.SetFakeStamina(1);
                         }
                         

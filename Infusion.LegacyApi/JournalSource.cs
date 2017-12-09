@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Threading;
 using Infusion.Packets;
 
 namespace Infusion.LegacyApi
@@ -12,7 +13,19 @@ namespace Infusion.LegacyApi
         private readonly object sourceLock = new object();
         internal const int MaxLength = 256;
         private ImmutableQueue<JournalEntry> journal = ImmutableQueue.Create<JournalEntry>();
-        private long lastActionJournalEntryId;
+
+        private readonly ThreadLocal<long> lastActionJournalEntryId;
+
+        internal JournalSource()
+        {
+            lastActionJournalEntryId = new ThreadLocal<long>(false);
+        }
+
+        internal long LastActionJournalEntryId
+        {
+            get => lastActionJournalEntryId.Value;
+            private set => lastActionJournalEntryId.Value = value;
+        }
 
         public long CurrentJournalEntryId
         {
@@ -33,7 +46,7 @@ namespace Infusion.LegacyApi
 
         public void NotifyAction()
         {
-            lastActionJournalEntryId = CurrentJournalEntryId;
+            LastActionJournalEntryId = CurrentJournalEntryId;
         }
 
         public void AddMessage(string name, string message, ObjectId speakerId, ModelId type)
@@ -65,6 +78,6 @@ namespace Infusion.LegacyApi
             NewMessageReceived?.Invoke(this, newEntry);
         }
 
-        public IEnumerable<JournalEntry> AfterLastAction() => journal.Where(x => x.Id >= lastActionJournalEntryId);
+        public IEnumerable<JournalEntry> AfterLastAction() => journal.Where(x => x.Id >= LastActionJournalEntryId);
     }
 }

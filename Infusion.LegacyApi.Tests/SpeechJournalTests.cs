@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -63,6 +65,43 @@ namespace Infusion.LegacyApi.Tests
 
             timeoutExecuted.Should().BeTrue();
             executed.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Lastaction_is_not_affected_by_actions_on_another_thread()
+        {
+            var source = new JournalSource();
+            var scriptJournal = new SpeechJournal(source);
+            var nextScriptStep = new AutoResetEvent(false);
+            var nextOtherThreadStep = new AutoResetEvent(false);
+            bool message1Received = false;
+            bool message2Received = false;
+
+            var scriptTask = Task.Run(() =>
+            {
+                source.NotifyAction();
+
+                nextOtherThreadStep.Set();
+                nextScriptStep.WaitOne();
+
+                scriptJournal
+                    .When("message 1", () => message1Received = true)
+                    .When("message 2", () => message2Received = true)
+                    .WaitAny();
+            });
+
+            nextOtherThreadStep.WaitOne();
+
+            source.AddMessage("name", "message 1", 0, 0);
+            source.NotifyAction();
+            source.AddMessage("name", "message 2", 0, 0);
+
+            nextScriptStep.Set();
+
+            scriptTask.Wait(100).Should().BeTrue();
+
+            message1Received.Should().BeTrue();
+            message2Received.Should().BeFalse();
         }
 
         [TestMethod]
@@ -174,5 +213,6 @@ namespace Infusion.LegacyApi.Tests
 
             journal.ContainsAnyWord("message1").Any().Should().BeTrue();
         }
+
     }
 }

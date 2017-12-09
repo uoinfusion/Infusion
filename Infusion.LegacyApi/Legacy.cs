@@ -407,7 +407,7 @@ namespace Infusion.LegacyApi
             {
                 Log("Terminate attempt");
                 if (string.IsNullOrEmpty(parameters))
-                    CommandHandler.Terminate();
+                    CommandHandler.BeginTerminate();
                 else
                     CommandHandler.Terminate(parameters);
             }
@@ -647,20 +647,23 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void TriggerDialogBox(string dialogResponse)
+        public bool TriggerDialogBox(string dialogResponse)
         {
-            CheckCancellation();
             NotifyAction();
 
-            dialogBoxObervers.TriggerDialogBox(dialogResponse);
+            return dialogBoxObervers.TriggerDialogBox(dialogResponse);
         }
 
-        public void TriggerDialogBox(byte responseIndex)
+        public bool TriggerDialogBox(byte responseIndex)
         {
-            CheckCancellation();
             NotifyAction();
 
-            dialogBoxObervers.TriggerDialogBox(responseIndex);
+            return dialogBoxObervers.TriggerDialogBox(responseIndex);
+        }
+
+        public void CloseDialogBox()
+        {
+            dialogBoxObervers.CloseDialogBox();
         }
     }
 }

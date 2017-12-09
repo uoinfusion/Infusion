@@ -41,28 +41,26 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
-        internal void TriggerDialogBox(string responseText)
+        internal bool TriggerDialogBox(string responseText)
         {
-            if (CurrentDialogBox == null)
-                throw new LegacyException("No dialog box found.");
-
-            var response = CurrentDialogBox.Responses.FirstOrDefault(x => x.Text.Contains(responseText));
+            var response = CurrentDialogBox?.Responses.FirstOrDefault(x => x.Text.Contains(responseText));
             if (response == null)
-                throw new LegacyException($"Cannot find {responseText} in current dialog box. Responses are: {CurrentDialogBox.ResponseTexts}");
+                return false;
 
             TriggerDialogBox(response);
+
+            return true;
         }
 
-        internal void TriggerDialogBox(byte responseIndex)
+        internal bool TriggerDialogBox(byte responseIndex)
         {
-            if (CurrentDialogBox == null)
-                throw new LegacyException("No dialog box found.");
-
-            var response = CurrentDialogBox.Responses.FirstOrDefault(x => x.Index == responseIndex);
+            var response = CurrentDialogBox?.Responses.FirstOrDefault(x => x.Index == responseIndex);
             if (response == null)
-                throw new LegacyException($"Cannot find {responseIndex} in current dialog box. Responses are: {CurrentDialogBox.ResponseTexts}");
+                return false;
 
             TriggerDialogBox(response);
+
+            return true;
         }
 
         private void TriggerDialogBox(DialogBoxResponse response)
@@ -70,6 +68,15 @@ namespace Infusion.LegacyApi
             server.DialogBoxResponse(CurrentDialogBox.DialogId, CurrentDialogBox.MenuId, response.Index, response.Type, response.Color);
 
             CurrentDialogBox = null;
+        }
+
+        internal void CloseDialogBox()
+        {
+            if (CurrentDialogBox != null)
+            {
+                server.DialogBoxResponse(CurrentDialogBox.DialogId, CurrentDialogBox.MenuId, 0, 0, (Color)0);
+                CurrentDialogBox = null;
+            }
         }
     }
 }

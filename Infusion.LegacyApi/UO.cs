@@ -262,11 +262,14 @@ namespace Infusion.LegacyApi
         public static DialogBox WaitForDialogBox(bool showDialog = false, TimeSpan? timeout = null, params string[] failMessages)
             => Current.WaitForDialogBox(showDialog, timeout, failMessages);
 
-        public static void TriggerDialogBox(string dialogResponse)
+        public static bool TriggerDialogBox(string dialogResponse)
             => Current.TriggerDialogBox(dialogResponse);
 
-        public static void TriggerDialogBox(byte responseIndex)
+        public static bool TriggerDialogBox(byte responseIndex)
             => Current.TriggerDialogBox(responseIndex);
+
+        public static void CloseDialogBox()
+            => Current.CloseDialogBox();
 
         public static void NotifyAction()
             => Current.NotifyAction();

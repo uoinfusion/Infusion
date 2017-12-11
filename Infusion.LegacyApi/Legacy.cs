@@ -35,6 +35,9 @@ namespace Infusion.LegacyApi
         private readonly EventJournalSource eventJournalSource;
         private readonly DialogBoxObservers dialogBoxObervers;
 
+        internal AutoResetEvent WaitForTargetStartedEvent => targeting.WaitForTargetStartedEvent;
+        internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
+
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
@@ -175,9 +178,14 @@ namespace Infusion.LegacyApi
 
         public void NotifyAction()
         {
+            NotifyAction(DateTime.UtcNow);
+        }
+
+        internal void NotifyAction(DateTime actionTime)
+        {
             journalSource.NotifyAction();
             eventJournalSource.NotifyAction();
-            targeting.NotifyLastAction(DateTime.UtcNow);
+            targeting.NotifyLastAction(actionTime);
         }
 
         public Gump WaitForGump(bool showGump = true, TimeSpan? timeout = null)
@@ -470,21 +478,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            if (failMessages.Any())
-            {
-                bool result = false;
-
-                legacyEventJournal.When<ServerRequestedTargetEvent>(e => result = true)
-                    .When<SpeechReceivedEvent>(e => failMessages.Any(msg => e.Speech.Text.Contains(msg)),
-                        e => result = false)
-                    .WaitAny(timeout ?? DefaultTimeout);
-
-                return result;
-            }
-
-            targeting.WaitForTarget(timeout ?? DefaultTimeout);
-
-            return true;
+            return targeting.WaitForTarget(timeout ?? DefaultTimeout, failMessages);
         }
 
         public void DropItem(Item item, Item targetContainer)

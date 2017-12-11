@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using Infusion.Commands;
+using Infusion.Logging;
 using Infusion.Packets;
 
 namespace Infusion.LegacyApi.Tests
@@ -16,9 +18,9 @@ namespace Infusion.LegacyApi.Tests
             ClientPacketHandler = new ClientPacketHandler();
             Server = new UltimaServer(ServerPacketHandler, packet => { packetsSentToServer.Add(packet); });
             Client = new UltimaClient(ClientPacketHandler, packet => { packetsSentToClient.Add(packet); });
-            EventSource = new EventJournalSource();
-            CancellationTokenSource = new CancellationTokenSource();
-            Cancellation = new Cancellation(() => CancellationTokenSource.Token);
+
+            var logger = new NullLogger();
+            Api = new Legacy(new Configuration(), new CommandHandler(logger), Server, Client, logger);
         }
 
         public IEnumerable<Packet> PacketsSentToClient => packetsSentToClient;
@@ -26,6 +28,8 @@ namespace Infusion.LegacyApi.Tests
 
         public Packet? PacketReceivedFromServer(Packet packet) => ServerPacketHandler.HandlePacket(packet);
         public Packet? PacketReceivedFromClient(Packet packet) => ClientPacketHandler.HandlePacket(packet);
+
+        public Legacy Api { get; }
 
         public UltimaClient Client { get; }
 

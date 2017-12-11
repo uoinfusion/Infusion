@@ -17,12 +17,10 @@ namespace Infusion.LegacyApi.Tests
         public void Can_wait_for_gump()
         {
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
             Gump resultGump = null;
 
-            var task = Task.Run(() => { resultGump = observer.WaitForGump(); });
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            var task = Task.Run(() => { resultGump = testProxy.Api.WaitForGump(); });
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().NotBeNull();
 
@@ -34,11 +32,9 @@ namespace Infusion.LegacyApi.Tests
         public void Can_block_gump_for_client()
         {
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
-            var task = Task.Run(() => { observer.WaitForGump(false); });
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            var task = Task.Run(() => { testProxy.Api.WaitForGump(false); });
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().BeNull();
 
@@ -49,11 +45,9 @@ namespace Infusion.LegacyApi.Tests
         public void Doesnt_block_gump_for_client_after_blocked_gump()
         {
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
-            var task = Task.Run(() => { observer.WaitForGump(false); });
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            var task = Task.Run(() => { testProxy.Api.WaitForGump(false); });
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().BeNull();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().NotBeNull();
@@ -73,17 +67,15 @@ namespace Infusion.LegacyApi.Tests
             // closed by proxy (step 1) and sends unexpected response error.
 
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {
-                observer.WaitForGump();
+                testProxy.Api.WaitForGump();
                 // cancellation a special case of gump response
-                observer.GumpResponse().Cancel();
+                testProxy.Api.GumpResponse().Cancel();
             });
 
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
             task.Wait(100).Should().BeTrue();
             testProxy.PacketReceivedFromClient(GumpMenuSelectionRequests.CancelExplevel).Should().BeNull();
@@ -101,16 +93,14 @@ namespace Infusion.LegacyApi.Tests
             // Proxy must not block the response in this case and the observer has to reset current gump.
 
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {
-                observer.WaitForGump(false);
-                observer.GumpResponse().Cancel();
+                testProxy.Api.WaitForGump(false);
+                testProxy.Api.GumpResponse().Cancel();
             });
 
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
             task.Wait(100).Should().BeTrue();
@@ -123,23 +113,21 @@ namespace Infusion.LegacyApi.Tests
             // user closes gump from game client 
             testProxy.PacketReceivedFromClient(GumpMenuSelectionRequests.CancelExplevel);
 
-            observer.CurrentGump.Should().BeNull();
+            testProxy.Api.CurrentGump.Should().BeNull();
         }
 
         [TestMethod]
         public void Doesnt_cancel_hidden_gump_on_game_client()
         {
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {
-                observer.WaitForGump(false); // next gump is hidden
-                observer.GumpResponse().Cancel();
+                testProxy.Api.WaitForGump(false); // next gump is hidden
+                testProxy.Api.GumpResponse().Cancel();
             });
 
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
             task.Wait(100).Should().BeTrue();
@@ -152,9 +140,7 @@ namespace Infusion.LegacyApi.Tests
         public void Can_publish_event_after_receiving_gump()
         {
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
-            var journal = new EventJournal(testProxy.EventSource, new Cancellation(() => testProxy.CancellationTokenSource.Token));
+            var journal = testProxy.Api.CreateEventJournal();
             Gump resultGump = null;
 
             var task = Task.Run(() =>
@@ -184,17 +170,15 @@ namespace Infusion.LegacyApi.Tests
             // If proxy doesn't block the gump cancellation request then server receives a response to a gump that was already
             // closed by proxy (step 1) and sends unexpected response error.
             var testProxy = new InfusionTestProxy();
-            var observer = new GumpObservers(testProxy.Server, testProxy.Client, testProxy.EventSource,
-                new Cancellation(() => testProxy.CancellationTokenSource.Token));
 
             var task = Task.Run(() =>
             {
-                observer.WaitForGump();
+                testProxy.Api.WaitForGump();
                 // cancellation a special case of gump response
-                observer.GumpResponse().Cancel();
+                testProxy.Api.GumpResponse().Cancel();
             });
 
-            observer.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
             task.Wait(100).Should().BeTrue();
 

@@ -39,7 +39,7 @@ namespace Infusion.Tests.Gumps
             parser.Parse(gump);
             string description = processor.GetDescription().Trim();
 
-            description.Should().Be("CheckBox: x = 13, y = 57, id = 100");
+            description.Should().Be("CheckBox: x = 13, y = 57, id = 100, uncheckId=9904, checkId=9903, initialState=False");
         }
 
         [TestMethod]
@@ -138,6 +138,26 @@ namespace Infusion.Tests.Gumps
             string description = processor.GetDescription();
 
             description.Should().Be($"Button: x = 13, y = 158, pageId = 0, triggerId = 0{Environment.NewLine}Button: x = 13, y = 158, pageId = 0, triggerId = 0{Environment.NewLine}");
+        }
+
+        [TestMethod]
+        public void Can_parse_GumpPic()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{GumpPic 14 0 2257}", new string[0]);
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Trim().Should().Be("GumpPic: x = 14, y = 0, gumpId = 2257");
+        }
+
+        [TestMethod]
+        public void Can_parse_TilePicHue()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{TilePicHue 14 45 6254 0}", new string[0]);
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Trim().Should().Be("TilePicHue: x = 14, y = 45, itemId = 6254, hue = 0");
         }
 
         [TestMethod]
@@ -274,7 +294,8 @@ namespace Infusion.Tests.Gumps
             parser.Parse(gump);
             string description = processor.GetDescription();
 
-            description.Should().Be(@"Text: x = 164, y = 13, hue = 955, Majitel:
+            description.Should().Be(@"GumpPic: x = 13, y = 13, gumpId = 100
+Text: x = 164, y = 13, hue = 955, Majitel:
 Text: x = 164, y = 35, hue = 955, Jooky
 Text: x = 164, y = 57, hue = 955, Tvuj status:
 Text: x = 164, y = 79, hue = 955, Pritel

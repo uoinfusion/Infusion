@@ -3,13 +3,13 @@ using Infusion.Packets;
 
 namespace Infusion.Gumps
 {
-    internal sealed class SelectControlByLabelGumpParserProcessor : IGumpParserProcessor
+    internal sealed class SelectControlByLabelGumpParserProcessor : IProcessButton, IProcessText, IProcessCheckBox, IProcessTextEntry
     {
         private readonly string controlLabel;
         private readonly GumpLabelPosition labelPosition;
         private bool takeNextControl;
         private GumpControlId? previousControlId;
-        private GumpControls targetControl;
+        private readonly GumpControls targetControl;
 
         public SelectControlByLabelGumpParserProcessor(string controlLabel, GumpLabelPosition labelPosition, GumpControls targetControl)
         {
@@ -20,7 +20,7 @@ namespace Infusion.Gumps
 
         public GumpControlId? SelectedControldId { get; private set; }
 
-        void IGumpParserProcessor.OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId)
+        void IProcessButton.OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId)
         {
             if (targetControl == GumpControls.Button)
                 ProcessControl(triggerId);
@@ -42,7 +42,7 @@ namespace Infusion.Gumps
             }
         }
 
-        void IGumpParserProcessor.OnText(int x, int y, uint hue, string text)
+        void IProcessText.OnText(int x, int y, uint hue, string text)
         {
             if (SelectedControldId.HasValue)
                 return;
@@ -64,13 +64,13 @@ namespace Infusion.Gumps
             previousControlId = null;
         }
 
-        void IGumpParserProcessor.OnCheckBox(int x, int y, GumpControlId id)
+        void IProcessCheckBox.OnCheckBox(int x, int y, GumpControlId id, int uncheckId, int checkId, bool initialState)
         {
             if (targetControl == GumpControls.CheckBox)
                 ProcessControl(id);
         }
 
-        public void OnTextEntry(int x, int y, int width, int maxLength, string text, GumpControlId id)
+        void IProcessTextEntry.OnTextEntry(int x, int y, int width, int maxLength, string text, GumpControlId id)
         {
             if (targetControl == GumpControls.TextEntry)
                 ProcessControl(id);

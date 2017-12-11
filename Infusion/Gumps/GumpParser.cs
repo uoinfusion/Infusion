@@ -45,22 +45,53 @@ namespace Infusion.Gumps
                 case "textentry":
                     ParseTextEntry();
                     break;
+                case "gumppic":
+                    ParseGumpPic();
+                    break;
+                case "tilepichue":
+                    ParseTilePicHue();
+                    break;
                 default:
                     ParseUnknown();
                     break;
             }
         }
 
+        private void ParseTilePicHue()
+        {
+            unchecked
+            {
+                var x = ParseIntParameter();
+                var y = ParseIntParameter();
+                var itemId = (uint)ParseIntParameter();
+                var hue = ParseIntParameter();
+
+                if (parserProcessor is IProcessTilePicHue tilePicHueProcessor)
+                    tilePicHueProcessor.OnTilePicHue(x, y, itemId, hue);
+            }
+        }
+
+        private void ParseGumpPic()
+        {
+            var x = ParseIntParameter();
+            var y = ParseIntParameter();
+            var gumpId = ParseIntParameter();
+
+            if (parserProcessor is IProcessGumpPic gumpPicProcessor)
+                gumpPicProcessor.OnGumpPic(x, y, gumpId);
+        }
+
         private void ParseCheckBox()
         {
             var x = ParseIntParameter();
             var y = ParseIntParameter();
-            var uncheck = ParseIntParameter();
-            var check = ParseIntParameter();
-            var isChecked = ParseBoolParameter();
+            var uncheckId = ParseIntParameter();
+            var checkId = ParseIntParameter();
+            var initialState = ParseBoolParameter();
             var id = ParseIntParameter();
 
-            parserProcessor.OnCheckBox(x, y, new GumpControlId((uint)id));
+            if (parserProcessor is IProcessCheckBox checkBoxProcessor)
+                checkBoxProcessor.OnCheckBox(x, y, new GumpControlId((uint)id), uncheckId, checkId, initialState);
         }
 
         private void ParseTextEntry()
@@ -73,7 +104,8 @@ namespace Infusion.Gumps
             var id = (uint)ParseIntParameter();
             var text = ParseStringParameter();
 
-            parserProcessor.OnTextEntry(x, y, width, maxLength, text, new GumpControlId(id));
+            if (parserProcessor is IProcessTextEntry textEntryProcessor)
+                textEntryProcessor.OnTextEntry(x, y, width, maxLength, text, new GumpControlId(id));
         }
 
         private void ParseUnknown()
@@ -89,7 +121,8 @@ namespace Infusion.Gumps
             uint hue = (uint)ParseIntParameter();
             var textId = ParseIntParameter();
 
-            parserProcessor.OnText(x, y, hue, gump.TextLines[textId]);
+            if (parserProcessor is IProcessText textProcessor)
+                textProcessor.OnText(x, y, hue, gump.TextLines[textId]);
         }
 
         private void ParseButton()
@@ -102,7 +135,8 @@ namespace Infusion.Gumps
             var pageId = (uint)ParseIntParameter();
             var triggerId = (uint)ParseIntParameter();
 
-            parserProcessor.OnButton(x, y, down, up, isTrigger, pageId, new GumpControlId(triggerId));
+            if (parserProcessor is IProcessButton buttonProcessor)
+                buttonProcessor.OnButton(x, y, down, up, isTrigger, pageId, new GumpControlId(triggerId));
         }
 
         private bool ParseBoolParameter()

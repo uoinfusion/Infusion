@@ -53,7 +53,7 @@ namespace Infusion.LegacyApi
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
-            targeting = new Targeting(ultimaServer, ultimaClient, cancellation);
+            targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
             lightObserver = new LightObserver(ultimaServer, ultimaClient, Me, this);
@@ -462,11 +462,28 @@ namespace Infusion.LegacyApi
 
         public TargetInfo? AskForLocation() => targeting.LocationInfo();
 
-        public void WaitForTarget(TimeSpan? timeout = null)
+        public bool WaitForTarget(params string[] failMessages)
+            => WaitForTarget(DefaultTimeout, failMessages);
+
+        public bool WaitForTarget(TimeSpan? timeout, params string[] failMessages)
         {
             CheckCancellation();
 
+            if (failMessages.Any())
+            {
+                bool result = false;
+
+                legacyEventJournal.When<ServerRequestedTargetEvent>(e => result = true)
+                    .When<SpeechReceivedEvent>(e => failMessages.Any(msg => e.Speech.Text.Contains(msg)),
+                        e => result = false)
+                    .WaitAny(timeout ?? DefaultTimeout);
+
+                return result;
+            }
+
             targeting.WaitForTarget(timeout ?? DefaultTimeout);
+
+            return true;
         }
 
         public void DropItem(Item item, Item targetContainer)

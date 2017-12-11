@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading;
+using Infusion.LegacyApi.Events;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
@@ -11,6 +12,7 @@ namespace Infusion.LegacyApi
     {
         private readonly UltimaClient client;
         private readonly Cancellation cancellation;
+        private readonly EventJournalSource eventSource;
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly UltimaServer server;
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
@@ -23,11 +25,12 @@ namespace Infusion.LegacyApi
         private TargetInfo? lastTargetInfo;
         private ModelId lastTypeInfo;
 
-        public Targeting(UltimaServer server, UltimaClient client, Cancellation cancellation)
+        public Targeting(UltimaServer server, UltimaClient client, Cancellation cancellation, EventJournalSource eventSource)
         {
             this.server = server;
             this.client = client;
             this.cancellation = cancellation;
+            this.eventSource = eventSource;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
 
 
@@ -42,6 +45,7 @@ namespace Infusion.LegacyApi
             targetFromServerReceivedEvent.Set();
             lastCursorId = packet.CursorId;
             lastTargetCursorPacketTime = DateTime.UtcNow;
+            eventSource.Publish(new ServerRequestedTargetEvent(packet.CursorId));
         }
 
         private Packet? FilterClientTargetCursorPacket(Packet rawPacket)

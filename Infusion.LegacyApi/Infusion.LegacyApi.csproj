@@ -66,6 +66,7 @@
     <Compile Include="Events\PlayerMoveRejectedEvent.cs" />
     <Compile Include="Events\PlayerMoveRequestedEvent.cs" />
     <Compile Include="Events\PlayerLocationChangedEvent.cs" />
+    <Compile Include="Events\ServerRequestedTargetEvent.cs" />
     <Compile Include="IEventJournalSource.cs" />
     <Compile Include="Events\MobileDeletedEvent.cs" />
     <Compile Include="Events\MobileLeftViewEvent.cs" />

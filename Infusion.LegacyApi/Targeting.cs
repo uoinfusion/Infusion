@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Infusion.LegacyApi.Events;
@@ -20,6 +21,7 @@ namespace Infusion.LegacyApi
         private CursorId lastCursorId = new CursorId(0x00000025);
         private ObjectId lastItemIdInfo;
         private bool targetInfoRequested = false;
+        private EventJournal eventJournal;
 
 
         private TargetInfo? lastTargetInfo;
@@ -32,7 +34,7 @@ namespace Infusion.LegacyApi
             this.cancellation = cancellation;
             this.eventSource = eventSource;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
-
+            eventJournal = new EventJournal(eventSource, cancellation);
 
             IClientPacketSubject clientPacketSubject = client;
             clientPacketSubject.RegisterFilter(FilterClientTargetCursorPacket);
@@ -115,6 +117,26 @@ namespace Infusion.LegacyApi
 
                 cancellation?.Check();
             }
+        }
+
+        public bool WaitForTarget(TimeSpan timeout, params string[] failMessages)
+        {
+            if (failMessages.Any())
+            {
+                bool result = false;
+
+                eventJournal.When<ServerRequestedTargetEvent>(e => result = true)
+                    .When<SpeechReceivedEvent>(e => failMessages.Any(msg => e.Speech.Text.Contains(msg)),
+                        e => result = false)
+                    .WaitAny(timeout);
+
+                return result;
+            }
+
+            WaitForTarget(timeout);
+
+            return true;
+
         }
 
         public TargetInfo? Info()

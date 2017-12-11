@@ -42,8 +42,6 @@ public static class Targeting
 
     public static TargetingMode Mode { get; set; } = TargetingModes.Pvm;
 
-    public static bool AutoTurnOffWarMode { get; set; } = false;
-
     public static IMobileLookup Ignored { get; set; } = Pets.MyPets;
 
     private static IEnumerable<Mobile> GetTargets()
@@ -157,7 +155,8 @@ public static class Targeting
         }
         else
             UO.ClientPrint($"*** {target.Name} ***", "targeting", target.Id, target.Type, SpeechType.Speech, Colors.Green, log: false);
-            
+        
+        UO.Client.AllowAttack(target.Id);
         UO.ClientPrint($"Target distance: {target.GetDistance(UO.Me.Location)}", log: false);
         
         selectedTarget = target.Id;
@@ -204,18 +203,6 @@ public static class Targeting
         {
             // When we are targeting a target for the first time:
             CurrentTarget = selectedTarget;
-
-            // We want to force the game client to display a status bar 
-            // of the new target. Attacking the new target seems
-            // to be the only way how to do it on 3.0.6m.
-            if (UO.TryAttack(target) != AttackResult.Accepted)
-                UO.ClientPrint($"Cannot attack {target}"); 
-
-            // For characters like mage, necro or cleric, it is unwanted
-            // to turn on war mode just by targeting. Turn it off
-            // automatically enalbed.            
-            if (AutoTurnOffWarMode)
-                UO.WarModeOff();
 
             // Restart targeting by clearing list of already targeted
             // items. We have to add current target, so ',targetnext'

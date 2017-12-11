@@ -122,5 +122,11 @@ namespace Infusion
             var packet = new PauseClientPacket(pause);
             Send(packet.RawPacket);
         }
+
+        public void AllowAttack(ObjectId id)
+        {
+            var packet = new AllowRefuseAttackPacket(id);
+            Send(packet.RawPacket);
+        }
     }
 }

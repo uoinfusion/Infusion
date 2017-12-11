@@ -77,12 +77,33 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(TimeSpan? timeout = null)
         {
+            preallocatedAllEvents.Clear();
+            journal.GetherWaitEnyEvents(preallocatedAllEvents);
+
+            journal.AwaitingStarted.Set();
+
+            foreach (var ev in preallocatedAllEvents)
+            {
+                cancellation?.Check();
+
+                if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
+                {
+                    foreach (var subscription in subscriptionsList)
+                    {
+                        if (subscription.Predicate == null || (bool) subscription.Predicate.DynamicInvoke(ev))
+                        {
+                            journal.NotifyWait();
+                            subscription.WhenAction.DynamicInvoke(ev);
+                            return;
+                        }
+                    }
+                }
+            }
+
             try
             {
                 timeout = timeout ?? defaultTimeout?.Invoke();
                 var startedTime = DateTime.UtcNow;
-
-                journal.AwaitingStarted.Set();
 
                 while (!eventReceivedEvent.WaitOne(10))
                 {
@@ -113,6 +134,7 @@ namespace Infusion.LegacyApi
                 }
 
                 whenAction.DynamicInvoke(ev);
+                journal.NotifyWait();
             }
             finally
             {
@@ -206,7 +228,7 @@ namespace Infusion.LegacyApi
                 journal.AwaitingStarted.Set();
                 preallocatedAllEvents.Clear();
 
-                journal.GatherEvents(preallocatedAllEvents, lastProcessedEventId);
+                journal.GatherEvents(preallocatedAllEvents, EventId.MinValue, lastProcessedEventId);
 
                 cancellation?.Check();
 

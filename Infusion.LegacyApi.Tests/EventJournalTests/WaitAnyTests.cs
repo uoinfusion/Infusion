@@ -277,6 +277,37 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
         }
 
         [TestMethod]
+        public void Can_handle_events_published_after_action_but_before_awaiting()
+        {
+            var canPublishEvent = new AutoResetEvent(false);
+            var canAwaitEvent = new AutoResetEvent(false);
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+            
+            string handledMessage = string.Empty;
+            var task = Task.Run(() =>
+            {
+                canPublishEvent.Set();
+                canAwaitEvent.WaitOne(100).Should().BeTrue();
+
+                journal.When<SpeechRequestedEvent>(ev => handledMessage = ev.Message)
+                    .WaitAny(TimeSpan.FromMilliseconds(100));
+            });
+
+            source.NotifyAction();
+            canPublishEvent.WaitOne(100).Should().BeTrue();
+            source.Publish(new SpeechRequestedEvent("message1"));
+            canAwaitEvent.Set();
+
+            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            source.Publish(new SpeechRequestedEvent("message2 - we don't want to get this one"));
+
+            task.Wait(100).Should().BeTrue();
+
+            handledMessage.Should().Be("message1");
+        }
+
+        [TestMethod]
         public void Can_use_same_journal_concurrently()
         {
             ConcurrencyTester.Run(() =>

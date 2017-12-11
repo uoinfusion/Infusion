@@ -11,6 +11,8 @@ namespace Infusion.LegacyApi.Events
         }
 
         public int Value { get; }
+        public static EventId MinValue => new EventId(int.MinValue);
+        public static EventId MaxValue => new EventId(int.MaxValue);
 
         public int CompareTo(EventId other)
         {
@@ -43,5 +45,7 @@ namespace Infusion.LegacyApi.Events
         public static bool operator <=(EventId ev1, EventId ev2) => ev1.Value <= ev2.Value;
         public static bool operator ==(EventId ev1, EventId ev2) => ev1.Equals(ev2);
         public static bool operator !=(EventId ev1, EventId ev2) => !ev1.Equals(ev2);
+
+        public EventId Next() => new EventId(Value + 1);
     }
 }

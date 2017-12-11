@@ -47,7 +47,22 @@ namespace Infusion.LegacyApi
             JournalStartEventId = source.LastEventId;
         }
 
-        public void GatherEvents(ICollection<IEvent> targetCollection, EventId maxEventId)
-            => source.GetherEvents(targetCollection, JournalStartEventId, maxEventId);
+        public void GatherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
+            => source.GatherEvents(targetCollection, minEventId > JournalStartEventId ? minEventId : JournalStartEventId, maxEventId);
+
+        public void NotifyWait()
+        {
+            LastWaitEventId = source.LastEventId.Next();
+        }
+
+        public EventId LastWaitEventId { get; private set; }
+
+        public void GetherWaitEnyEvents(List<IEvent> targetCollection)
+        {
+            if (LastWaitEventId > source.LastActionEventId)
+                return;
+
+            source.GatherEvents(targetCollection, source.LastActionEventId, EventId.MaxValue);
+        }
     }
 }

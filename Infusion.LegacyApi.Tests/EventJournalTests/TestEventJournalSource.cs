@@ -14,10 +14,14 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             source.Publish(ev);
         }
 
+        public void NotifyAction()
+            => source.NotifyAction();
+
         public IEnumerable<OrderedEvent> Events => source.Events;
         public EventId LastEventId => source.LastEventId;
+        public EventId LastActionEventId => source.LastActionEventId;
         public int MaximumCapacity => 128;
-        public void GetherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
+        public void GatherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
         {
             foreach (var ev in Events)
             {

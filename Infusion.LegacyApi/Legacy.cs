@@ -176,6 +176,7 @@ namespace Infusion.LegacyApi
         public void NotifyAction()
         {
             journalSource.NotifyAction();
+            eventJournalSource.NotifyAction();
             targeting.NotifyLastAction(DateTime.UtcNow);
         }
 

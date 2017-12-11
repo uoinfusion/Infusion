@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using Infusion.LegacyApi.Events;
@@ -39,9 +38,10 @@ namespace Infusion.LegacyApi
         public IEnumerable<OrderedEvent> Events => events;
 
         public EventId LastEventId { get; private set; }
+        public EventId LastActionEventId { get; private set; }
         public int MaximumCapacity => MaxEventCount;
 
-        public void GetherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
+        public void GatherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
         {
             lock (sourceLock)
             {
@@ -54,6 +54,11 @@ namespace Infusion.LegacyApi
                         targetCollection.Add(ev.Event);
                 }
             }
+        }
+
+        public void NotifyAction()
+        {
+            LastActionEventId = LastEventId;
         }
 
         private EventId GenerateId() =>

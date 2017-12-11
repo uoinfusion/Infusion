@@ -6,11 +6,13 @@ namespace Infusion.LegacyApi
 {
     internal interface IEventJournalSource
     {
-        event EventHandler<IEvent> NewEventReceived;
-        void Publish(IEvent ev);
         IEnumerable<OrderedEvent> Events { get; }
         EventId LastEventId { get; }
+        EventId LastActionEventId { get; }
         int MaximumCapacity { get; }
-        void GetherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId);
+        event EventHandler<IEvent> NewEventReceived;
+        void Publish(IEvent ev);
+        void NotifyAction();
+        void GatherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId);
     }
 }

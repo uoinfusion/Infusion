@@ -353,6 +353,7 @@ public static class Specs
     public static readonly ItemSpec ClosedDoor = new[] { DoorSecretStone1, DoorSecretStone2, DoorSecretStone3, DoorSecretWood1, DoorSecretWood2, DoorSecretStone4, DoorMetal, DoorMetalBar, DoorRattan, DoorWood, DoorWood4, DoorMetal2, DoorWood2, DoorWood3 };
 
     public static readonly ItemSpec Packa = 0x1091;
+    public static readonly ItemSpec SpiderWeb = new[] {0x0EE3, 0x0EE4, 0x0EE5, 0x0EE6};
 
     public static readonly ItemSpec OpenDoor = new[]
     {

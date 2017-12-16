@@ -28,6 +28,7 @@ namespace Infusion.LegacyApi
         private readonly PlayerObservers playerObservers;
         private readonly QuestArrowObserver questArrowObserver;
         private readonly SoundObserver soundObserver;
+        private readonly ShapeshiftingFilter shapeShifter;
 
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
@@ -63,6 +64,7 @@ namespace Infusion.LegacyApi
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, this);
             soundObserver = new SoundObserver(ultimaServer, eventJournalSource);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
+            shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource);
             var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);
             dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource);
@@ -82,7 +84,7 @@ namespace Infusion.LegacyApi
 
             Trace = new GlobalTrace(logger);
 
-            ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver);
+            ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
         }
 

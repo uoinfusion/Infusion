@@ -54,7 +54,7 @@ public static class Walls
         Trace.Log($"targetInfo: {wallPreviewTargetInfo}");
     }
     
-    public static void ApproveWall(ModelId eastWestWallType, ModelId northSouthWallType, Spell wallSpell, TimeSpan wallDurability)
+    public static void ApproveWall(ModelId eastWestWallType, ModelId northSouthWallType, Spell wallSpell, TimeSpan wallDurability, int wallDuplicates)
     {
         Trace.Log($"ApproveWall {eastWestWallType}/{northSouthWallType}, {wallDurability}");
         if (!wallPreviewTargetInfo.HasValue)
@@ -92,7 +92,7 @@ public static class Walls
 
                         // Sphere sends wall twice, not sure why. So we have to choose wall that arrives
                         // at the target location.
-                        if (wallCounter == 1)
+                        if (wallCounter == wallDuplicates)
                             return true;
                         wallCounter++;
                         
@@ -147,7 +147,7 @@ public static class Walls
 
     public static void ApproveWallOfStone()
     {
-        ApproveWall(0x0080, 0x0080, Spell.WallOfStone, TimeSpan.FromSeconds(140));
+        ApproveWall(0x0080, 0x0080, Spell.WallOfStone, TimeSpan.FromSeconds(140), 1);
     }
 
     public static void PreviewEnergyField()
@@ -157,7 +157,7 @@ public static class Walls
     
     public static void ApproveEnergyField()
     {
-        ApproveWall(0x3947, 0x3956, Spell.EnergyField, TimeSpan.FromSeconds(520));
+        ApproveWall(0x3947, 0x3956, Spell.EnergyField, TimeSpan.FromSeconds(520), 0);
     }
 }
 

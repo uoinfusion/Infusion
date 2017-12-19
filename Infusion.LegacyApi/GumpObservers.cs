@@ -4,6 +4,7 @@ using System.Threading;
 using Infusion.Gumps;
 using Infusion.LegacyApi.Events;
 using Infusion.Packets;
+using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 
@@ -66,6 +67,13 @@ namespace Infusion.LegacyApi
 
         private Packet? FilterSendGumpMenuDialog(Packet rawPacket)
         {
+            if (rawPacket.Id == PacketDefinitions.GeneralInformationPacket.Id && rawPacket.Payload[4] == 4)
+            {
+                var packet = new CloseGenericGumpPacket();
+                packet.Deserialize(rawPacket);
+
+                eventSource.Publish(new ServerRequestedGumpCloseEvent(packet.GumpId));
+            }
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
                 var nextGumpNotVisible = false;

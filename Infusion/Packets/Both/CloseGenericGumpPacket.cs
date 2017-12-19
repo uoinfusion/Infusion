@@ -9,7 +9,11 @@ namespace Infusion.Packets.Both
 {
     internal sealed class CloseGenericGumpPacket
     {
-        public GumpInstanceId GumpId { get; }
+        public GumpInstanceId GumpId { get; private set; }
+
+        public CloseGenericGumpPacket()
+        {
+        }
 
         public CloseGenericGumpPacket(GumpInstanceId gumpId)
         {
@@ -24,9 +28,20 @@ namespace Infusion.Packets.Both
             writer.WriteUInt(gumpId.Value);
             writer.WriteUInt(0);
 
-            RawPacket = new Packet(PacketDefinitions.GeneralInformationPacket.Id, payload);
+            rawPacket = new Packet(PacketDefinitions.GeneralInformationPacket.Id, payload);
         }
 
-        public Packet RawPacket { get; }
+        public void Deserialize(Packet rawPacket)
+        {
+            this.rawPacket = rawPacket;
+
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+            reader.Skip(6);
+            GumpId = (GumpInstanceId)reader.ReadUInt();
+        }
+
+        private Packet rawPacket;
+
+        public Packet RawPacket => rawPacket;
     }
 }

@@ -63,7 +63,6 @@
     <Compile Include="EventJournalTests\EnumerationTests.cs" />
     <Compile Include="EventJournalTests\IncommingTests.cs" />
     <Compile Include="EventJournalTests\WaitAnyTests.cs" />
-    <Compile Include="InfusionTestProxy.cs" />
     <Compile Include="Packets\GumpMenuSelectionRequests.cs" />
     <Compile Include="GumpObserversTests.cs" />
     <Compile Include="Packets\SendGumpMenuDialogPackets.cs" />

@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Threading;
 using Infusion.Commands;
 using Infusion.Logging;
 using Infusion.Packets;
 
-namespace Infusion.LegacyApi.Tests
+namespace Infusion.LegacyApi
 {
-    internal class InfusionTestProxy
+    public class InfusionTestProxy
     {
         private readonly List<Packet> packetsSentToClient = new List<Packet>();
         private readonly List<Packet> packetsSentToServer = new List<Packet>();
@@ -33,12 +31,9 @@ namespace Infusion.LegacyApi.Tests
 
         public UltimaClient Client { get; }
 
-        public UltimaServer Server { get; }
+        internal UltimaServer Server { get; }
 
         internal ServerPacketHandler ServerPacketHandler { get; }
         internal ClientPacketHandler ClientPacketHandler { get; }
-        internal EventJournalSource EventSource { get; }
-        public CancellationTokenSource CancellationTokenSource { get; }
-        public Cancellation Cancellation { get; }
     }
 }

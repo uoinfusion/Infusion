@@ -66,6 +66,7 @@
     <Compile Include="Events\PlayerMoveRejectedEvent.cs" />
     <Compile Include="Events\PlayerMoveRequestedEvent.cs" />
     <Compile Include="Events\PlayerLocationChangedEvent.cs" />
+    <Compile Include="Events\ServerRequestedGumpCloseEvent.cs" />
     <Compile Include="Events\ServerRequestedTargetEvent.cs" />
     <Compile Include="Filters\IShapeshiftingFilter.cs" />
     <Compile Include="Filters\ShapeshiftingFilter.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Filters\ILightFilter.cs" />
     <Compile Include="Filters\ISoundFilter.cs" />
     <Compile Include="Filters\IStaminaFilter.cs" />
+    <Compile Include="InfusionTestProxy.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
     <Compile Include="Filters\IWeatherFilter.cs" />
     <Compile Include="KeyCode.cs" />

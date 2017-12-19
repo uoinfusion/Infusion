@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Events;
 
 public static class Mage
 {
@@ -15,40 +16,42 @@ public static class Mage
         "Nyni budes kouzlit s vetsim usilim.", "Tve usili polevilo.");
     
     private static EventJournal journal = UO.CreateEventJournal();    
-    
+
+    private static readonly GumpInstanceId chargerGumpId = (GumpInstanceId)0x9600057B;
+
     public static int FireChargerLevel
     {
         get
         {
-            var lastCharger = journal
-                .Reverse()
-                .OfType<GumpReceivedEvent>()
-                .Where(ev =>
-                {
-                    if (Trace.Enabled) Trace.Log($"Id: {ev.Gump.Id}, GumpId: {ev.Gump.GumpId}");
-                    
-                    //return ev.Gump.Id == (GumpTypeId)0x40083F8E;
-                    //return ev.Gump.Id == (GumpTypeId)0x9600057B;
-                    return ev.Gump.GumpId == (GumpInstanceId)0x9600057B;
-                    //return ev.Gump.GumpId == (GumpInstanceId)0x40083F8E;
-                 })
-                .Select(ev => {
-                    var processor = new ChargerGumpProcessor(2257);
-                    var parser = new GumpParser(processor);
-                    
-                    parser.Parse(ev.Gump);
-                    
-                    if (Trace.Enabled) Trace.Log($"IsCharger: {processor.IsChargerGump}, Level: {processor.ChargerLevel}");                     
-                    
-                    return processor;
-                })
-                .Where(p => p.IsChargerGump)
-                .FirstOrDefault();
+            int lastCharger = 0;
+        
+            journal
+                .When<ServerRequestedGumpCloseEvent>(ev => lastCharger = ProcessCloseRequest(ev, lastCharger))
+                .When<GumpReceivedEvent>(ev => lastCharger = ProcessGump(ev, lastCharger))
+                .All();
                 
-             journal.Delete();
-
-             return lastCharger != null ? lastCharger.ChargerLevel : 0;
+            return lastCharger;
         }
+    }
+
+    private static int ProcessGump(GumpReceivedEvent ev, int lastCharger)
+    {
+        if (ev.Gump.GumpId == chargerGumpId)
+            return lastCharger;
+    
+        var processor = new ChargerGumpProcessor(2257);
+        var parser = new GumpParser(processor);
+        
+        parser.Parse(ev.Gump);
+        
+        if (Trace.Enabled) Trace.Log($"IsCharger: {processor.IsChargerGump}, Level: {processor.ChargerLevel}");                     
+        
+        return processor.IsChargerGump ? processor.ChargerLevel : lastCharger;
+    }
+
+    private static int ProcessCloseRequest(ServerRequestedGumpCloseEvent ev, int lastCharger)
+    {
+        return ev.GumpId == chargerGumpId ? 0 : lastCharger;
     }
 
     private class ChargerGumpProcessor : IProcessGumpPic, IProcessTilePicHue

@@ -23,6 +23,8 @@ public static class Afk
         "gm", "halo", "lagr"
     };
     
+    public static string[] IgnoredNames { get; set; } = { };
+    
     private static SpeechJournal afkCheckJournal = UO.CreateSpeechJournal();
  
     public static IDisposable Start()
@@ -52,7 +54,9 @@ public static class Afk
             var afkAlertRequired = afkCheckJournal
                 .ByAnyName(AfkNames).Any();
 
-            afkAlertRequired |= afkCheckJournal.Contains(AfkMessages);
+            afkAlertRequired |= afkCheckJournal
+                .Where(x => !IgnoredNames.Any(ignored => x.Name.IndexOf(ignored, StringComparison.OrdinalIgnoreCase) >= 0))
+                .Any(x => AfkMessages.Any(msg => x.Message.IndexOf(msg, StringComparison.OrdinalIgnoreCase) >= 0));
 
             afkCheckJournal.Delete();
         

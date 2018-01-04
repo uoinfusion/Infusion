@@ -2,6 +2,7 @@
 #load "targeting.csx"
 
 using System;
+using System.Collections.Generic;
 using Infusion;
 using Infusion.LegacyApi;
 
@@ -62,33 +63,6 @@ public interface IPrintHitPointNotification
     void Print(int delta, Mobile updatedMobile);
 }
 
-public class OwnAndTargetAbovePlayerNotificationPrinter : IPrintHitPointNotification
-{
-    public Color MeColor { get; set; } = Colors.LightBlue;
-    public Color OthersColor { get; set; } = Colors.Green;
-
-    public void Print(int delta, Mobile mobile)
-    {
-        var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
-        if (mobile.Id == Targeting.CurrentTarget)
-        {
-            if (!string.IsNullOrEmpty(mobile.Name))
-            {
-                UO.ClientPrint($"{mobile.Name}: {deltaText}/{mobile.CurrentHealth} %",
-                    "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
-                    OthersColor, log: false);
-            }
-            
-        }
-        else if (mobile.Id == UO.Me.PlayerId)
-        {
-            UO.ClientPrint($"{deltaText}/{mobile.CurrentHealth}",
-                "hpnotify", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Speech,
-                MeColor, log: false);                
-        }
-    }
-}
-
 public class AboveAllMobilesNotificationPrinter : IPrintHitPointNotification
 {
     public Color EnemyColor { get; set; } = Colors.Green;
@@ -129,13 +103,53 @@ public class AboveAllMobilesNotificationPrinter : IPrintHitPointNotification
     }
 }
 
+public class StandardPrinter : IPrintHitPointNotification
+{
+    private Dictionary<ObjectId, string> prefixes = new Dictionary<ObjectId, string>();
+
+    public void AddPrefix(ObjectId id, string prefix)
+    {
+        prefixes[id] = prefix;
+    }
+
+    public Color HealColor { get; set; } = Colors.LightBlue;
+
+    public Color HarmColor { get; set; } = Colors.Red;
+   
+    public bool MeAndTargetOnly { get; set; } = true;
+
+    public void Print(int delta, Mobile mobile)
+    {
+        var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
+        var textColor = (delta > 0) ? HealColor : HarmColor;
+       
+        if (MeAndTargetOnly && mobile.Id != UO.Me.PlayerId
+            && Targeting.SelectedTarget.HasValue && mobile.Id != Targeting.SelectedTarget.Value)
+        {
+            return;
+        }
+        
+        var currentHealthText = mobile.Id == UO.Me.PlayerId ?
+           mobile.CurrentHealth.ToString() :
+           $"{mobile.CurrentHealth} %";
+        
+        string text;
+        
+        if (prefixes.TryGetValue(mobile.Id, out string prefix))
+            text = $"{prefix}: {deltaText}/{currentHealthText}";
+        else
+            text = $"{deltaText}/{currentHealthText}";
+        
+        UO.ClientPrint(text, "hpnotify", mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: false);        
+   }
+}
 
 public static class HitPointNotificationModes
 {
     public static AboveAllMobilesNotificationPrinter AboveAllMobiles { get; } =
         new AboveAllMobilesNotificationPrinter();
-    public static OwnAndTargetAbovePlayerNotificationPrinter OwnAndTargetAbovePlayer { get; } =
-        new OwnAndTargetAbovePlayerNotificationPrinter();
+    public static StandardPrinter Standard { get; } =
+        new StandardPrinter();        
 }
 
 UO.RegisterBackgroundCommand("hpnotify", HitPointNotifier.Run);

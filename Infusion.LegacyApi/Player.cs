@@ -54,6 +54,7 @@ namespace Infusion.LegacyApi
             }
         }
 
+        internal byte Flags { get; set; }
         internal Location3D PredictedLocation { get; set; }
         internal Direction PredictedDirection { get; set; }
 
@@ -82,6 +83,12 @@ namespace Infusion.LegacyApi
         public ushort Strength { get; internal set; }
         public ushort Intelligence { get; internal set; }
         public ushort Armor { get; internal set; }
+
+        public bool IsDead => (Flags & 0x02) != 0;
+        public bool IsPoisoned => (Flags & 0x04) != 0;
+        public bool IsInWarMode => (Flags & 0x40) != 0;
+        public bool IsHidden => (Flags & 0x80) != 0;
+
         public bool HasMount => hasMount != null && hasMount();
 
         public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } =

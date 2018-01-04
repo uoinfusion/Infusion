@@ -17,6 +17,7 @@ namespace Infusion.Packets.Server
         public Color Color { get; private set; }
         public Notoriety Notoriety { get; private set; }
         public IEnumerable<Item> Items { get; private set; }
+        public byte Flags { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -29,7 +30,7 @@ namespace Infusion.Packets.Server
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             (Direction, MovementType) = reader.ReadDirection();
             Color = (Color) reader.ReadUShort();
-            var ignoredFlag = reader.ReadByte();
+            Flags = reader.ReadByte();
             Notoriety = (Notoriety) reader.ReadByte();
 
             var items = new List<Item>();

@@ -35,6 +35,8 @@ namespace Infusion.Packets.Server
             rawPacket = new Packet(PacketDefinitions.DrawGamePlayer.Id, payload);
         }
 
+        public byte Flags { get; private set; }
+
         public ObjectId PlayerId { get; private set; }
 
         public ModelId BodyType { get; private set; }
@@ -60,7 +62,7 @@ namespace Infusion.Packets.Server
             reader.Skip(1); // unknown
 
             Color = reader.ReadColor();
-            reader.Skip(1); // flag byte
+            Flags = reader.ReadByte();
 
             var xloc = reader.ReadUShort();
             var yloc = reader.ReadUShort();

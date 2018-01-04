@@ -43,8 +43,22 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.SendSkills, HandleSendSkillsPacket);
             server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
+            server.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
 
             clientPacketSubject.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
+        }
+
+        private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
+        {
+            if (packet.PlayerId == player.PlayerId)
+            {
+                player.Flags = packet.Flags;
+                player.BodyType = packet.Type;
+                player.Direction = packet.Direction;
+                player.Location = packet.Location;
+                player.MovementType = packet.MovementType;
+                player.Color = packet.Color;
+            }
         }
 
         private void HandleRequestSkills(SkillRequest packet)
@@ -173,6 +187,7 @@ namespace Infusion.LegacyApi
                 player.MovementType = packet.MovementType;
                 player.PredictedDirection = player.Direction;
                 player.ResetWalkRequestQueue();
+                player.Flags = packet.Flags;
 
                 player.CurrentSequenceKey = 0;
                 player.Color = packet.Color;
@@ -191,7 +206,6 @@ namespace Infusion.LegacyApi
                     gameObjects.AddObject(mobile);
                 }
 
-
                 OnWalkRequestDequeued();
             }
         }
@@ -200,8 +214,6 @@ namespace Infusion.LegacyApi
         {
             if (packet.Id == legacyApi.Me.PlayerId)
             {
-
-
                 player.Location = packet.Location;
                 player.PredictedLocation = packet.Location;
                 player.Direction = packet.Direction;
@@ -210,6 +222,7 @@ namespace Infusion.LegacyApi
 
                 player.Color = packet.Color;
                 player.BodyType = packet.Type;
+                player.Flags = packet.Flags;
 
                 player.ResetWalkRequestQueue();
                 player.CurrentSequenceKey = 0;

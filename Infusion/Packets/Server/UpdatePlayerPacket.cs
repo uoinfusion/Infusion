@@ -10,6 +10,7 @@ namespace Infusion.Packets.Server
         public Direction Direction { get; private set; }
         public MovementType MovementType { get; set; }
         public Color Color { get; private set; }
+        public byte Flags { get; private set; }
 
         private Packet rawPacket;
 
@@ -25,6 +26,7 @@ namespace Infusion.Packets.Server
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
             (Direction, MovementType) = reader.ReadDirection();
             Color = (Color) reader.ReadUShort();
+            Flags = reader.ReadByte();
         }
 
         public override Packet RawPacket => rawPacket;

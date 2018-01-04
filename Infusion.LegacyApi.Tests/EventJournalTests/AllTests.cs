@@ -31,6 +31,27 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
         }
 
         [TestMethod]
+        public void Can_handle_all_unprocessed_speech_events()
+        {
+            var source = new EventJournalSource();
+            var journal = new EventJournal(source);
+
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(0, "name", "test1", 0, 0)));
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(0, "name", "test2", 0, 0)));
+
+            bool test1Handled = false;
+            bool test2Handled = false;
+
+            journal
+                .When("test1", () => test1Handled = true)
+                .When("test2", () => test2Handled = true)
+                .All();
+
+            test1Handled.Should().BeTrue();
+            test2Handled.Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Can_handle_all_unprocessed_events_with_multiple_subscriptions_to_one_event()
         {
             var source = new EventJournalSource();

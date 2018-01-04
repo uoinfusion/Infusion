@@ -31,6 +31,11 @@ namespace Infusion.LegacyApi
             return new EventJournalAwaiter(source, cancellation, this, defaultTimeout).When(whenAction);
         }
 
+        public EventJournalAwaiter When(string s1, Action whenAction)
+        {
+            return new EventJournalAwaiter(source, cancellation, this, defaultTimeout).When(s1, whenAction);
+        }
+
         public EventJournalAwaiter When<T>(Func<T, bool> acceptEventPredicate, Action<T> whenAction) where T : IEvent
         {
             return new EventJournalAwaiter(source, cancellation, this, defaultTimeout).When(acceptEventPredicate, whenAction);

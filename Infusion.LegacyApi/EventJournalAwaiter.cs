@@ -162,6 +162,22 @@ namespace Infusion.LegacyApi
             return this;
         }
 
+        public EventJournalAwaiter When(string s1, Action action)
+        {
+            if (!eventSubscriptions.TryGetValue(typeof(SpeechReceivedEvent), out var subscriptionList))
+            {
+                subscriptionList = new List<EventSubscription>();
+                eventSubscriptions.Add(typeof(SpeechReceivedEvent), subscriptionList);
+            }
+
+            Delegate predicate = (Func<SpeechReceivedEvent, bool>)(ev =>
+                ev.Speech.Text.IndexOf(s1, StringComparison.OrdinalIgnoreCase) >= 0);
+
+            subscriptionList.Add(new EventSubscription(predicate, (Action<SpeechReceivedEvent>)(e => action())));
+
+            return this;
+        }
+
         public EventJournalAwaiter WhenTimeout(Action timeoutAction)
         {
             this.timeoutAction = timeoutAction;

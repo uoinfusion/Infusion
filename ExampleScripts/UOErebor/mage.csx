@@ -36,7 +36,7 @@ public static class Mage
 
     private static int ProcessGump(GumpReceivedEvent ev, int lastCharger)
     {
-        if (ev.Gump.GumpId == chargerGumpId)
+        if (ev.Gump.GumpId != chargerGumpId)
             return lastCharger;
     
         var processor = new ChargerGumpProcessor(2257);
@@ -44,14 +44,19 @@ public static class Mage
         
         parser.Parse(ev.Gump);
         
-        if (Trace.Enabled) Trace.Log($"IsCharger: {processor.IsChargerGump}, Level: {processor.ChargerLevel}");                     
-        
-        return processor.IsChargerGump ? processor.ChargerLevel : lastCharger;
+        lastCharger = processor.IsChargerGump ? processor.ChargerLevel : lastCharger;
+
+        if (Trace.Enabled) Trace.Log($"IsCharger: {processor.IsChargerGump}, Level: {processor.ChargerLevel}, lastCharger: {lastCharger}");                     
+
+        return lastCharger;
     }
 
     private static int ProcessCloseRequest(ServerRequestedGumpCloseEvent ev, int lastCharger)
     {
-        return ev.GumpId == chargerGumpId ? 0 : lastCharger;
+        lastCharger = ev.GumpId == chargerGumpId ? 0 : lastCharger;
+        Trace.Log($"Processing close request {ev.GumpId}, lastCharger= {lastCharger}");
+
+        return lastCharger;
     }
 
     private class ChargerGumpProcessor : IProcessGumpPic, IProcessTilePicHue

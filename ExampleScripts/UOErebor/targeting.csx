@@ -36,7 +36,7 @@ public static class TargetingModes
 public static class Targeting
 {
     private static Stack<ObjectId> alreadyTargeted = new Stack<ObjectId>();
-    private static ObjectId? selectedTarget;
+    public static ObjectId? SelectedTarget { get; private set; }
 
     public static ObjectId? CurrentTarget { get; private set; }
 
@@ -73,7 +73,7 @@ public static class Targeting
         var target = potentialTargets.FirstOrDefault(i =>
             // excluding mobiles already target
             !alreadyTargeted.Contains(i.Id) &&
-            (!selectedTarget.HasValue || selectedTarget.Value != i.Id));
+            (!SelectedTarget.HasValue || SelectedTarget.Value != i.Id));
         
         if (target != null)
         {
@@ -83,7 +83,7 @@ public static class Targeting
         }
         else
         {
-            if (potentialTargets.Count() == 1 && selectedTarget == potentialTargets.First().Id)
+            if (potentialTargets.Count() == 1 && SelectedTarget == potentialTargets.First().Id)
                 SelectTarget(potentialTargets.First());
             else
             {
@@ -112,7 +112,7 @@ public static class Targeting
 
         if (alreadyTargeted.Any())
         {
-            if (selectedTarget.HasValue && selectedTarget.Value == alreadyTargeted.Peek())
+            if (SelectedTarget.HasValue && SelectedTarget.Value == alreadyTargeted.Peek())
                 alreadyTargeted.Pop();
     
             while (alreadyTargeted.Any() && (target = UO.Mobiles[alreadyTargeted.Pop()]) == null)
@@ -159,18 +159,18 @@ public static class Targeting
         UO.Client.AllowAttack(target.Id);
         UO.ClientPrint($"Target distance: {target.GetDistance(UO.Me.Location)}", log: false);
         
-        selectedTarget = target.Id;
+        SelectedTarget = target.Id;
     }
     
     public static void AttackLast()
     {
-        if (!selectedTarget.HasValue)
+        if (!SelectedTarget.HasValue)
         {
             UO.ClientPrint("No selected target", "targeting", UO.Me);
             return;
         }
         
-        var target = UO.Mobiles[selectedTarget.Value];
+        var target = UO.Mobiles[SelectedTarget.Value];
         if (target == null)
         {
             UO.ClientPrint("Cannot see target", "targeting", UO.Me);
@@ -186,23 +186,23 @@ public static class Targeting
     
     public static void TargetLast()
     {
-        if (!selectedTarget.HasValue)
+        if (!SelectedTarget.HasValue)
         {
             UO.ClientPrint("No selected target", "targeting", UO.Me);
             return;
         }
         
-        var target = UO.Mobiles[selectedTarget.Value];
+        var target = UO.Mobiles[SelectedTarget.Value];
         if (target == null)
         {
             UO.ClientPrint("Cannot see target", "targeting", UO.Me);
             return;
         }
     
-        if (CurrentTarget != selectedTarget)
+        if (CurrentTarget != SelectedTarget)
         {
             // When we are targeting a target for the first time:
-            CurrentTarget = selectedTarget;
+            CurrentTarget = SelectedTarget;
 
             // Restart targeting by clearing list of already targeted
             // items. We have to add current target, so ',targetnext'
@@ -223,7 +223,7 @@ public static class Targeting
             return;
         }
         
-        selectedTarget = mobile.Id;
+        SelectedTarget = mobile.Id;
         CurrentTarget = mobile.Id;
         alreadyTargeted.Clear();
         alreadyTargeted.Push(mobile.Id);

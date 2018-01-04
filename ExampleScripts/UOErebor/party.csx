@@ -81,12 +81,19 @@ public static class Party
         if (newMember == null)
             return;
 
-        if (!statuses.Contains(newMember))
-        {
-            UO.RequestStatus(newMember);
-            statuses.Add(newMember, StatusBarType.Friend);
-        }
+        Add(newMember);
     }
+    
+
+   public static void Add(Mobile newMember)
+   {
+       if (!statuses.Contains(newMember))
+       {
+           UO.RequestStatus(newMember);
+
+           statuses.Add(newMember, StatusBarType.Friend);
+       }
+   }
     
     public static void Remove()
     {

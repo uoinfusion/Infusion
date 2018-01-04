@@ -43,6 +43,8 @@ public static class Hiding
                 "Byl jsi objeven",
                 "You have been revealed!",
                 "You're now visible.");
+                
+            UO.Trace.Log("disabling always walk");
             UO.ClientFilters.Stamina.Disable();
         }
     }
@@ -58,13 +60,21 @@ public static class Hiding
         {
             UO.ClientPrint("Trying to hide", "hiding", UO.Me);
             
+            if (UO.Me.IsHidden)
+            {
+                UO.ClientPrint("Already hidden");
+                return;
+            }
+            
             // Don't worry, it will not affect any other scripts.
             hidingJournal.Delete();
             UO.UseSkill(Skill.Hiding);
             
-            bool unfinishedAttempt;
+            bool unfinishedAttempt = false;
+                        
             do 
             {
+                Trace.Log($"hide cycle, {DateTime.UtcNow:mm:ss:fffff}, unfinishedAttempt: {unfinishedAttempt}"); 
                 unfinishedAttempt = false;
                 // This waits until "Skryti se povedlo." or "Nepovedlo se ti schovat" arrives to journal.
                 hidingJournal
@@ -80,6 +90,7 @@ public static class Hiding
                         // when hiding fails, do while loop continues
                         hidden = false;
                         UO.ClientFilters.Stamina.Disable();
+                        Trace.Log("enabling always walk");
                     })
                     .When("You are preoccupied with thoughts of battle.", () =>
                     {
@@ -88,11 +99,11 @@ public static class Hiding
                     })
                     .WhenTimeout(() =>
                     {
-                        Trace.Log($"hide timeout for always walk after {AlwaysWalkDelayTime}");
+                        Trace.Log($"hide timeout for always walk after {AlwaysWalkDelayTime}, {DateTime.UtcNow:mm:ss:fffff}");
                         if (AlwaysWalkEnabled)
                         {
-                            Trace.Log("enabling fake stamina");
-                            UO.ClientFilters.Stamina.SetFakeStamina(1);
+                            Trace.Log("enabling always walk");
+                            UO.ClientFilters.Stamina.SetFakeStamina(0);
                         }
                         
                         unfinishedAttempt = true;

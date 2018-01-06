@@ -208,6 +208,24 @@ namespace Infusion.LegacyApi
             cancellationToken.Value?.ThrowIfCancellationRequested();
         }
 
+        internal void ClientPrint(string message, Player player, Color color, bool logMessage = true)
+            => ClientPrint(message, player.Name ?? "<player>", player.PlayerId, player.BodyType, SpeechType.Speech, color, logMessage);
+
+        internal void ClientPrint(string message, Mobile mobile, Color color, bool logMessage = true) 
+            => ClientPrint(message, mobile.Name ?? "<mobile>", mobile.Id, mobile.Type, SpeechType.Speech, color, logMessage);
+
+        internal void ClientPrint(string message, Item item, Color color, bool logMessage = true) 
+            => ClientPrint(message, item.Name ?? "<item>", item.Id, item.Type, SpeechType.Speech, color, logMessage);
+
+        internal void ClientPrint(string message, Player player, bool logMessage = true)
+            => ClientPrint(message, player.Name ?? "<player>", player, logMessage);
+
+        internal void ClientPrint(string message, Mobile mobile, bool logMessage = true) 
+            => ClientPrint(message, mobile.Name ?? "<mobile>", mobile, logMessage);
+
+        internal void ClientPrint(string message, Item item, bool logMessage = true)
+            => ClientPrint(message, item.Name ?? "<item>", item, logMessage);
+
         public void RequestStatus(Mobile item) => Server.RequestStatus(item.Id);
         public void RequestStatus(ObjectId id) => Server.RequestStatus(id);
 
@@ -626,7 +644,13 @@ namespace Infusion.LegacyApi
         public void ClientPrint(string message, string name, Player onBehalfPlayer, bool log = true)
         {
             ClientPrint(message, name, onBehalfPlayer.PlayerId, onBehalfPlayer.BodyType, SpeechType.Speech,
-                (Color) 0x0026, log);
+                (Color)0x0026, log);
+        }
+
+        public void ClientPrint(string message, string name, Mobile onBehalf, bool log = true)
+        {
+            ClientPrint(message, name, onBehalf.Id, onBehalf.Type, SpeechType.Speech,
+                (Color)0x0026, log);
         }
 
         public void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)

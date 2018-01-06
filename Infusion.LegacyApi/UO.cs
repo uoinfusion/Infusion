@@ -247,6 +247,24 @@ namespace Infusion.LegacyApi
             Color color, bool log = true)
             => Current.ClientPrint(message, name, itemId, itemModel, type, color, log);
 
+        public static void ClientPrint(string message, Player player, Color color, bool logMessage = true)
+            => Current.ClientPrint(message, player, color, logMessage);
+
+        public static void ClientPrint(string message, Mobile mobile, Color color, bool logMessage = true)
+            => Current.ClientPrint(message, mobile, color, logMessage);
+
+        public static void ClientPrint(string message, Item item, Color color, bool logMessage = true)
+            => Current.ClientPrint(message, item, color, logMessage);
+
+        public static void ClientPrint(string message, Player player, bool logMessage = true)
+            => Current.ClientPrint(message, player, logMessage);
+
+        public static void ClientPrint(string message, Mobile mobile, bool logMessage = true)
+            => Current.ClientPrint(message, mobile, logMessage);
+
+        public static void ClientPrint(string message, Item item, bool logMessage = true)
+            => Current.ClientPrint(message, item, logMessage);
+
         public static void ClientPrint(string message, bool log = true)
             => Current.ClientPrint(message, log);
 
@@ -255,6 +273,9 @@ namespace Infusion.LegacyApi
 
         public static void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)
             => Current.ClientPrint(message, name, onBehalfItem, log);
+
+        public static void ClientPrint(string message, string name, Mobile onBehalf, bool log = true)
+            => Current.ClientPrint(message, name, onBehalf, log);
 
         public static DialogBox WaitForDialogBox(params string[] failMessages)
             => Current.WaitForDialogBox(failMessages);

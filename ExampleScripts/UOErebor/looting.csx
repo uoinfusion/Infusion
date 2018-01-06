@@ -27,6 +27,8 @@ public static class Looting
         Specs.Hairs
     };
 
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
+
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec OnGroundLoot { get; set; } = new[]
     {
@@ -62,8 +64,8 @@ public static class Looting
             {
                 if (!previousEquipment.HasValue || handEquipment.Id != previousEquipment.Value.Id)
                 {
-                    UO.Log($"Previous equipment: {previousEquipment?.ToString() ?? "null"}");
-                    UO.Log($"Current equipment: {handEquipment}");            
+                    Trace.Log($"Previous equipment: {previousEquipment?.ToString() ?? "null"}");
+                    Trace.Log($"Current equipment: {handEquipment}");            
                     previousEquipment = handEquipment;
                 }
             }
@@ -108,8 +110,8 @@ public static class Looting
                 {
                     if (!previousEquipment.HasValue || handEquipment.Id != previousEquipment.Value.Id)
                     {
-                        UO.Log($"Previous equipment: {previousEquipment?.ToString() ?? "null"}");
-                        UO.Log($"Current equipment: {handEquipment}");            
+                        Trace.Log($"Previous equipment: {previousEquipment?.ToString() ?? "null"}");
+                        Trace.Log($"Current equipment: {handEquipment}");            
                         previousEquipment = handEquipment;
                     }
                 }
@@ -280,6 +282,12 @@ public static class Looting
 
         foreach (var itemToPickup in UO.Items.InContainer(container).ToArray())
         {
+            if (container.GetDistance(UO.Me.Location) > 4)
+            {
+                UO.ClientPrint("corpse too far away, cancelling loot", "looting", UO.Me);
+                return;
+            }
+        
             if (!IgnoredLoot.Matches(itemToPickup))
             {
                 UO.ClientPrint($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");

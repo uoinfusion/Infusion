@@ -7,6 +7,8 @@ public class IgnoredItems
 {
     private static object alreadyLootedItemsLock = new object();
     private static Dictionary<ObjectId, Item> alreadyLootedItems = new Dictionary<ObjectId, Item>();
+
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
         
     public void Ignore(Item item)
     {
@@ -35,7 +37,7 @@ public class IgnoredItems
                     // Now, we can remove the ignored item, because we know, that the
                     // id was recycled.
                     alreadyLootedItems.Remove(testedItem.Id);
-                    UO.Log($"Found item {testedItem} that recycles id of {ignoredItem}. " +
+                    Trace.Log($"Found item {testedItem} that recycles id of {ignoredItem}. " +
                         "Removing previously ignored item.");
                     return false;
                 }

@@ -99,7 +99,7 @@ public class AboveAllMobilesNotificationPrinter : IPrintHitPointNotification
             $"{mobile.CurrentHealth} %";
     
         UO.ClientPrint($"{deltaText}/{currentHealthText}", "hpnotify",
-        mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: false);        
+            mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: false);        
     }
 }
 

@@ -37,6 +37,7 @@ public static class Targeting
 {
     private static Stack<ObjectId> alreadyTargeted = new Stack<ObjectId>();
     public static ObjectId? SelectedTarget { get; private set; }
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     public static ObjectId? CurrentTarget { get; private set; }
 
@@ -66,7 +67,7 @@ public static class Targeting
         var potentialTargets = GetTargets(); 
         if (!potentialTargets.Any())
         {
-            UO.ClientPrint("No potential target");
+            UO.ClientPrint("No potential target", "targeting", UO.Me);
             return;
         }
         
@@ -99,9 +100,12 @@ public static class Targeting
     
     public static void PrintAlreadyTargeted()
     {
-        UO.Log(alreadyTargeted
-            .Select(x => x.ToString())
-            .Aggregate("Targeted: ", (l, r) => l + ", " + r));
+        if (Trace.Enabled)
+        {
+            Trace.Log(alreadyTargeted
+                .Select(x => x.ToString())
+                .Aggregate("Targeted: ", (l, r) => l + ", " + r));
+        }
     }
     
     public static void TargetPrev()

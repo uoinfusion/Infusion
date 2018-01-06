@@ -8,7 +8,7 @@ using Infusion.Packets.Server;
 
 namespace Infusion.LegacyApi
 {
-    internal class ItemsObservers
+    internal partial class ItemsObservers
     {
         private readonly GameObjectCollection gameObjects;
         private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
@@ -46,8 +46,16 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.PauseClient, HandlePauseClient);
             serverPacketSubject.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
+            serverPacketSubject.Subscribe(PacketDefinitions.GraphicalEffect, HandleGraphicalEffect);
             clientPacketSubject.Subscribe(PacketDefinitions.DoubleClick, HandleDoubleClick);
         }
+
+        private void HandleGraphicalEffect(GraphicalEffectPacket packet)
+        {
+            eventJournalSource.Publish(new GraphicalEffectStartedEvent(packet.DirectionType, packet.CharacterId,
+                packet.TargetId, packet.Type, packet.Location, packet.TargetLocation));
+        }
+
 
         private void HandleDoubleClick(DoubleClickRequest request)
         {

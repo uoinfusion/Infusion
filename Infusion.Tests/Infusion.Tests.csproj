@@ -86,6 +86,7 @@
     <Compile Include="Packets\Server\ConnectToGameServerPacketTests.cs" />
     <Compile Include="Packets\Server\DrawGamePlayerPacketTests.cs" />
     <Compile Include="Packets\Server\DrawObjectPacketTests.cs" />
+    <Compile Include="Packets\Server\GraphicalEffectPacketTests.cs" />
     <Compile Include="Packets\Server\ObjectInfoPacketTests.cs" />
     <Compile Include="Packets\Server\OpenDialogBoxPacketTests.cs" />
     <Compile Include="Packets\Server\PlaySoundEffectPacketTests.cs" />

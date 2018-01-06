@@ -307,8 +307,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition CharacterAnimation = new PacketDefinition(0x6E,
             new StaticPacketLength(14), "CharacterAnimation");
 
-        public static readonly PacketDefinition GraphicalEffect = new PacketDefinition(0x70,
-            new StaticPacketLength(28), "GraphicalEffect");
+        public static readonly PacketDefinition<GraphicalEffectPacket> GraphicalEffect = new PacketDefinition<GraphicalEffectPacket>(0x70,
+            new StaticPacketLength(28), "GraphicalEffect", packet => new GraphicalEffectPacket());
 
         public static readonly PacketDefinition OpenBuyWindow = new PacketDefinition(0x74,
             new VariablePacketLength(), "OpenBuyWindow");

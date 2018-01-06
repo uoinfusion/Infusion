@@ -103,6 +103,8 @@ namespace Infusion
                 packetHandler.Publish<QuestArrowPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.OpenDialogBox.Id)
                 packetHandler.Publish<OpenDialogBoxPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.GraphicalEffect.Id)
+                packetHandler.Publish<GraphicalEffectPacket>(rawPacket);
 
             return packetHandler.FilterOutput(rawPacket);
         }

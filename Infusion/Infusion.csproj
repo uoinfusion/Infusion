@@ -158,6 +158,7 @@
     <Compile Include="Packets\Server\CloseContainerPacket.cs" />
     <Compile Include="DialogBoxResponse.cs" />
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
+    <Compile Include="Packets\Server\GraphicalEffectPacket.cs" />
     <Compile Include="Packets\Server\OpenDialogBoxPacket.cs" />
     <Compile Include="Packets\Server\PauseClientChoice.cs" />
     <Compile Include="Packets\Server\PauseClientPacket.cs" />

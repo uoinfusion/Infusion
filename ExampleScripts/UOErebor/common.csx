@@ -63,6 +63,33 @@ public static class Common
         UO.Wait(waitMilliseconds);
         UO.Log("Waiting finished");
     }
+    
+    public static void InvisItem()
+    {
+        var targetInfo = UO.Info();
+        if (targetInfo.HasValue)
+        {
+            if (targetInfo.Value.Id.HasValue)
+            {
+                UO.Client.DeleteItem(targetInfo.Value.Id.Value);
+            }
+            else
+                UO.ClientPrint("No object selected");
+        }
+        else
+            UO.ClientPrint("Targeting cancelled");
+    }
+    
+    public static void InvisAllItems()
+    {
+        foreach (var item in UO.Items.OnGround())
+            UO.Client.DeleteItem(item.Id);
+        
+        foreach (var mobile in UO.Mobiles)
+        {
+            UO.Client.DeleteItem(mobile.Id);
+        }
+    }
 }
 
 class MobileLookupLinqWrapper : IMobileLookup
@@ -91,3 +118,5 @@ public interface IMobileLookup : IEnumerable<Mobile>
 
 UO.RegisterCommand("wait", Common.WaitCommand);
 UO.RegisterCommand("opencontainer", Common.OpenContainerCommand);
+UO.RegisterCommand("invis-item-all", Common.InvisAllItems);
+UO.RegisterCommand("invis-item", Common.InvisItem);

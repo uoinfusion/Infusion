@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class RequestStatusQueue
 {
+    public static ScriptTrace Trace = UO.Trace.Create();
+
     private object requestQueueLock = new object();
     private LinkedList<ObjectId> requestQueue = new LinkedList<ObjectId>();
     private DateTime lastProcessing;
@@ -48,7 +50,7 @@ public class RequestStatusQueue
             {
                 UO.RequestStatus(requestedMobile);
                 requestQueue.Remove(requestedMobile.Id);
-                UO.Log($"Requested status of {requestedMobile.Id}, queue lenght {requestQueue.Count}");
+                Trace.Log($"Requested status of {requestedMobile.Id}, queue lenght {requestQueue.Count}");
             }
         }
 

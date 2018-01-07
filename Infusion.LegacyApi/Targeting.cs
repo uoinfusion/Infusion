@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using Infusion.LegacyApi.Events;
 using Infusion.Packets;
@@ -11,23 +11,29 @@ namespace Infusion.LegacyApi
 {
     internal sealed class Targeting
     {
-        private readonly UltimaClient client;
         private readonly Cancellation cancellation;
+        private readonly UltimaClient client;
         private readonly EventJournalSource eventSource;
+
+        private readonly Queue<TargetInfo> nextTargets = new Queue<TargetInfo>();
+        private readonly object nextTargetsLock = new object();
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly UltimaServer server;
         private readonly AutoResetEvent targetFromServerReceivedEvent = new AutoResetEvent(false);
         private bool discardNextTargetLocationRequestIfEmpty;
+        private readonly EventJournal eventJournal;
+
+        private DateTime lastActionTime;
         private CursorId lastCursorId = new CursorId(0x00000025);
         private ObjectId lastItemIdInfo;
-        private bool targetInfoRequested = false;
-        private EventJournal eventJournal;
-
+        private DateTime lastTargetCursorPacketTime;
 
         private TargetInfo? lastTargetInfo;
         private ModelId lastTypeInfo;
+        private bool targetInfoRequested;
 
-        public Targeting(UltimaServer server, UltimaClient client, Cancellation cancellation, EventJournalSource eventSource)
+        public Targeting(UltimaServer server, UltimaClient client, Cancellation cancellation,
+            EventJournalSource eventSource)
         {
             this.server = server;
             this.client = client;
@@ -38,6 +44,9 @@ namespace Infusion.LegacyApi
 
             IClientPacketSubject clientPacketSubject = client;
             clientPacketSubject.RegisterFilter(FilterClientTargetCursorPacket);
+
+            IServerPacketSubject serverPacketSubject = server;
+            serverPacketSubject.RegisterFilter(FilterSeverTargetCursorPacket);
         }
 
         internal AutoResetEvent WaitForTargetStartedEvent { get; } = new AutoResetEvent(false);
@@ -48,6 +57,34 @@ namespace Infusion.LegacyApi
             lastCursorId = packet.CursorId;
             lastTargetCursorPacketTime = DateTime.UtcNow;
             eventSource.Publish(new ServerRequestedTargetEvent(packet.CursorId));
+        }
+
+        private Packet? FilterSeverTargetCursorPacket(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
+            {
+                TargetInfo? targetInfo = null;
+
+                lock (nextTargetsLock)
+                {
+                    if (nextTargets.Count > 0)
+                    {
+                        targetInfo = nextTargets.Dequeue();
+                    }
+                }
+
+                if (targetInfo.HasValue && targetInfo.Value.Id.HasValue)
+                {
+                    var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
+
+                    server.TargetItem(packet.CursorId, targetInfo.Value.Id.Value, packet.CursorType,
+                        targetInfo.Value.Location, targetInfo.Value.ModelId);
+
+                    return null;
+                }
+            }
+
+            return rawPacket;
         }
 
         private Packet? FilterClientTargetCursorPacket(Packet rawPacket)
@@ -80,12 +117,14 @@ namespace Infusion.LegacyApi
                 switch (packet.CursorTarget)
                 {
                     case CursorTarget.Location:
-                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Tile, packet.ClickedOnType.Value, null);
+                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Tile, packet.ClickedOnType.Value,
+                            null);
                         break;
                     case CursorTarget.Object:
                         lastTypeInfo = packet.ClickedOnType;
                         lastItemIdInfo = packet.ClickedOnId;
-                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Object, packet.ClickedOnType, packet.ClickedOnId);
+                        lastTargetInfo = new TargetInfo(packet.Location, TargetType.Object, packet.ClickedOnType,
+                            packet.ClickedOnId);
                         break;
                 }
 
@@ -136,7 +175,6 @@ namespace Infusion.LegacyApi
             WaitForTarget(timeout);
 
             return true;
-
         }
 
         public TargetInfo? Info()
@@ -168,7 +206,6 @@ namespace Infusion.LegacyApi
             {
                 lastTargetInfo = new TargetInfo(location, TargetType.Tile, tileType, null);
                 receivedTargetInfoEvent.Set();
-
             }
             else
             {
@@ -222,6 +259,7 @@ namespace Infusion.LegacyApi
                     {
                         Target(targetInfo.Id.Value, targetInfo.ModelId, targetInfo.Location);
                     }
+
                     return;
                 case TargetType.Tile:
                     TargetTile(targetInfo.Location.X, targetInfo.Location.Y, targetInfo.Location.Z, targetInfo.ModelId);
@@ -257,6 +295,9 @@ namespace Infusion.LegacyApi
 
             discardNextTargetLocationRequestIfEmpty = true;
             client.CancelTarget(lastCursorId, itemId, location, type);
+
+            lock (nextTargetsLock)
+                nextTargets.Clear();
         }
 
         public void Target(GameObject gameObject)
@@ -278,7 +319,6 @@ namespace Infusion.LegacyApi
                 }
 
                 return lastItemIdInfo;
-
             }
             finally
             {
@@ -299,12 +339,60 @@ namespace Infusion.LegacyApi
             return lastTargetInfo;
         }
 
-        private DateTime lastActionTime;
-        private DateTime lastTargetCursorPacketTime;
-
         public void NotifyLastAction(DateTime lastActionTime)
         {
             this.lastActionTime = lastActionTime;
+        }
+
+        public void AddNextTarget(Item[] items)
+        {
+            lock (nextTargetsLock)
+            {
+                nextTargets.Clear();
+                foreach (var item in items)
+                {
+                    nextTargets.Enqueue(new TargetInfo(item.Location, TargetType.Object, item.Type, item.Id));
+                }
+            }
+        }
+
+        public void AddNextTarget(Mobile[] mobiles)
+        {
+            lock (nextTargetsLock)
+            {
+                nextTargets.Clear();
+                foreach (var mobile in mobiles)
+                {
+                    nextTargets.Enqueue(
+                        new TargetInfo(mobile.Location, TargetType.Object, mobile.Type, mobile.Id));
+                }
+            }
+        }
+
+        public void AddNextTarget(Player player)
+        {
+            lock (nextTargetsLock)
+            {
+                nextTargets.Clear();
+                nextTargets.Enqueue(
+                    new TargetInfo(player.Location, TargetType.Object, player.BodyType, player.PlayerId));
+            }
+        }
+
+        public void AddNextTarget(ObjectId[] ids)
+        {
+            lock (nextTargetsLock)
+            {
+                nextTargets.Clear();
+                foreach (var id in ids)
+                    nextTargets.Enqueue(new TargetInfo(new Location3D(0, 0, 0), TargetType.Object, 0, id));
+            }
+        }
+
+        public void ClearNextTarget()
+        {
+            lock (nextTargetsLock)
+                nextTargets.Clear();
         }
     }
 }

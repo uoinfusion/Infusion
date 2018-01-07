@@ -703,5 +703,11 @@ namespace Infusion.LegacyApi
         {
             dialogBoxObervers.CloseDialogBox();
         }
+
+        public void WaitTargetObject(params ObjectId[] id) => targeting.AddNextTarget(id);
+        public void WaitTargetObject(params Item[] item) => targeting.AddNextTarget(item);
+        public void WaitTargetObject(params Mobile[] mobile) => targeting.AddNextTarget(mobile);
+        public void WaitTargetObject(Player player) => targeting.AddNextTarget(player);
+        public void ClearTargetObject() => targeting.ClearNextTarget();
     }
 }

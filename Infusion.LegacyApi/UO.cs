@@ -298,5 +298,11 @@ namespace Infusion.LegacyApi
         public static void NotifyAction()
             => Current.NotifyAction();
 
+        public static void WaitTargetObject(params ObjectId[] id) => Current.WaitTargetObject(id);
+        public static void WaitTargetObject(params Item[] item) => Current.WaitTargetObject(item);
+        public static void WaitTargetObject(params Mobile[] mobile) => Current.WaitTargetObject(mobile);
+        public static void WaitTargetObject(Player player) => Current.WaitTargetObject(player);
+        public static void ClearTargetObject() => Current.ClearTargetObject();
+
     }
 }

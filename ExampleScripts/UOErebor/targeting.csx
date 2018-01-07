@@ -17,19 +17,22 @@ public static class TargetingModes
                 // considering just murderers (red karma) and mobiles that are
                 // not player's pets/summons - player can change name of her/his
                 // pets/summons.
-                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer && !i.CanRename && !Targeting.Ignored.Contains(i. Id))
+                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer
+                    && !i.CanRename && !Targeting.Ignored.Contains(i. Id) && (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
                 .OrderByDistance();
                 
     public static TargetingMode Pvp = () =>
         UO.Mobiles.MaxDistance(20)
                 .Matching(Specs.Player)
-                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer && !Targeting.Ignored.Contains(i. Id))
+                .Where(i => i.Id != UO.Me.PlayerId && i.Notoriety == Notoriety.Murderer
+                    && !Targeting.Ignored.Contains(i. Id)&& (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
                 .OrderByDistance();
 
     public static TargetingMode PvpFriend = () =>
         UO.Mobiles.MaxDistance(20)
                 .Matching(Specs.Player)
-                .Where(i => i.Id != UO.Me.PlayerId && !Targeting.Ignored.Contains(i. Id))
+                .Where(i => i.Id != UO.Me.PlayerId && !Targeting.Ignored.Contains(i. Id) 
+                    && (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
                 .OrderByDistance();
 }
 
@@ -44,6 +47,8 @@ public static class Targeting
     public static TargetingMode Mode { get; set; } = TargetingModes.Pvm;
 
     public static IMobileLookup Ignored { get; set; } = Pets.MyPets;
+    
+    public static MobileSpec IgnoredSpec { get; set; } = null;
 
     private static IEnumerable<Mobile> GetTargets()
     {
@@ -55,7 +60,8 @@ public static class Targeting
                 // considering just murderers (red karma) and mobiles that are
                 // not player's pets/summons - player can change name of her/his
                 // pets/summons.
-                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanRename && !Ignored.Contains(i. Id))
+                .Where(i => i.Notoriety == Notoriety.Murderer && !i.CanRename && !Ignored.Contains(i. Id) 
+                    && (IgnoredSpec == null || !IgnoredSpec.Matches(i)))
                 .OrderByDistance();
         }
     }

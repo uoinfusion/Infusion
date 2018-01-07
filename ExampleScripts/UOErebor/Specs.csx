@@ -51,6 +51,9 @@ public static class Specs
     public static readonly ItemSpec Torch = 0x0F64;
     public static readonly ItemSpec BurningTorch = 0x0A12;
 
+    // Armor
+    public static readonly ItemSpec BoneHelmet = 0x1451;
+
     // Resources
     public static readonly ItemSpec Shaft = 0x1BD4;
     public static readonly ItemSpec Wire = 0x1879;

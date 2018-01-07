@@ -277,6 +277,7 @@ public static class Looting
             UO.Log("Cannot open body, maybe it is not possible to loot the body");
             return;
         }
+        UO.Wait(250);
 
         UO.ClientPrint($"Number of items in container: {UO.Items.InContainer(container).Count()}");
 
@@ -297,7 +298,6 @@ public static class Looting
                     return;
                 }
 
-                UO.Wait(25);
                 if (journal.Contains("Ne tak rychle!"))
                 {
                     journal.Delete();

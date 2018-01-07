@@ -1,4 +1,5 @@
 #load "countdown.csx"
+#load "counter.csx"
 #load "colors.csx"
 
 using System;
@@ -79,6 +80,7 @@ public static class Walls
 
         ObjectId? targetObjectId = null;
         ModelId? targetObjectType = null;
+        Item targetObject = null;
         int wallCounter = 0;        
     
         eventJournal
@@ -103,6 +105,7 @@ public static class Walls
                 {
                     targetObjectId = i.NewItem.Id;
                     targetObjectType = i.NewItem.Type;
+                    targetObject = i.NewItem;
                     Trace.Log($"choosing wall {targetObjectId.Value}, {targetObjectType.Value}, wallCounter = {wallCounter}");
                 })
             .When<SpeechReceivedEvent>(
@@ -110,7 +113,7 @@ public static class Walls
                 s => { })
             .WaitAny();
             
-        if (targetObjectId.HasValue && targetObjectType.HasValue)
+        if (targetObjectId.HasValue && targetObjectType.HasValue && targetObject != null)
         {
             Trace.Log("Newly created wall found, starting count down!");
             
@@ -120,8 +123,7 @@ public static class Walls
                 DeletePreview();
             }
 
-            new Countdown(wallDurability, "wall", Colors.Blue, targetObjectId.Value,
-                targetObjectType.Value).Start();
+            new Counter("wall", Colors.Blue, targetObject, 500).Start();
         }
     }
     

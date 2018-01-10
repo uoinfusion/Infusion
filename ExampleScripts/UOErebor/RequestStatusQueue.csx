@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class RequestStatusQueue
 {
-    public static ScriptTrace Trace = UO.Trace.Create();
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     private object requestQueueLock = new object();
     private LinkedList<ObjectId> requestQueue = new LinkedList<ObjectId>();

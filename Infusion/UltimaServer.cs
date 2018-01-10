@@ -7,18 +7,13 @@ namespace Infusion
 {
     internal sealed class UltimaServer : IServerPacketSubject
     {
-        private readonly IServerPacketSubject packetSubject;
         private readonly Action<Packet> packetSender;
+        private readonly IServerPacketSubject packetSubject;
 
         public UltimaServer(IServerPacketSubject packetSubject, Action<Packet> packetSender)
         {
             this.packetSubject = packetSubject;
             this.packetSender = packetSender;
-        }
-
-        private void Send(Packet rawPacket)
-        {
-            packetSender(rawPacket);
         }
 
         public void RegisterFilter(Func<Packet, Packet?> filter)
@@ -31,14 +26,21 @@ namespace Infusion
             packetSubject.RegisterOutputFilter(filter);
         }
 
-        public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer) where TPacket : MaterializedPacket
+        public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
+            where TPacket : MaterializedPacket
         {
             packetSubject.Subscribe(definition, observer);
         }
 
-        public void Unsubscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer) where TPacket : MaterializedPacket
+        public void Unsubscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
+            where TPacket : MaterializedPacket
         {
             packetSubject.Subscribe(definition, observer);
+        }
+
+        private void Send(Packet rawPacket)
+        {
+            packetSender(rawPacket);
         }
 
         public void Say(string message)
@@ -127,7 +129,8 @@ namespace Infusion
             Send(targetRequest.RawPacket);
         }
 
-        public void TargetItem(CursorId cursorId, ObjectId itemId, CursorType cursorType, Location3D location, ModelId type)
+        public void TargetItem(CursorId cursorId, ObjectId itemId, CursorType cursorType, Location3D location,
+            ModelId type)
         {
             var targetRequest = new TargetLocationRequest(cursorId, itemId, CursorType.Harmful, location,
                 type);
@@ -152,7 +155,8 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        public void DialogBoxResponse(uint dialogId, ushort menuId, byte responseIndex, ModelId responseType, Color responseColor)
+        public void DialogBoxResponse(uint dialogId, ushort menuId, byte responseIndex, ModelId responseType,
+            Color responseColor)
         {
             var packet = new ResponseToDialogBoxRequest(dialogId, menuId, responseIndex, responseType, responseColor);
             Send(packet.RawPacket);

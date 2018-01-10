@@ -16,7 +16,7 @@ namespace Infusion.LegacyApi.Filters
             serverPacketHandler.RegisterOutputFilter(FilterItemShapes);
         }
 
-        public void AddShapeShift(ItemSpec spec, ModelId targetType, Color targetColor)
+        public void AddShapeShift(ItemSpec spec, ModelId targetType, Color? targetColor = null)
         {
             itemShapeShiftDefinitions.Add(new ItemShapeShiftDefinition(spec, targetType, targetColor));
         }
@@ -47,7 +47,7 @@ namespace Infusion.LegacyApi.Filters
                     if (def.SourceSpec.Matches(packet.Type))
                     {
                         var newPacket =
-                            new ObjectInfoPacket(packet.Id, def.TargetType, packet.Location, def.TargetColor);
+                            new ObjectInfoPacket(packet.Id, def.TargetType, packet.Location, def.TargetColor ?? packet.Dye);
 
                         return newPacket.RawPacket;
                     }
@@ -59,7 +59,7 @@ namespace Infusion.LegacyApi.Filters
 
         private struct ItemShapeShiftDefinition
         {
-            public ItemShapeShiftDefinition(ItemSpec sourceSpec, ModelId targetType, Color targetColor)
+            public ItemShapeShiftDefinition(ItemSpec sourceSpec, ModelId targetType, Color? targetColor)
             {
                 SourceSpec = sourceSpec;
                 TargetType = targetType;
@@ -68,7 +68,7 @@ namespace Infusion.LegacyApi.Filters
 
             public ItemSpec SourceSpec { get; }
             public ModelId TargetType { get; }
-            public Color TargetColor { get; }
+            public Color? TargetColor { get; }
         }
     }
 }

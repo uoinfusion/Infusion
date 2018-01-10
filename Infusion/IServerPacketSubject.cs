@@ -1,5 +1,6 @@
 ﻿using System;
 using Infusion.Packets;
+using Infusion.Packets.Server;
 
 namespace Infusion
 {

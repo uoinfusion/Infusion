@@ -34,9 +34,13 @@ namespace Infusion
             packetHandler.Subscribe(definition, observer);
         }
 
+        public Packet? FilterInput(Packet rawPacket) => packetHandler.Filter(rawPacket);
+
+        public Packet? FilterOutput(Packet rawPacket) => packetHandler.FilterOutput(rawPacket);
+
         public Packet? HandlePacket(Packet rawPacket)
         {
-            var filteredPacket = packetHandler.Filter(rawPacket);
+            var filteredPacket = FilterInput(rawPacket);
             if (!filteredPacket.HasValue)
                 return null;
             rawPacket = filteredPacket.Value;
@@ -106,7 +110,7 @@ namespace Infusion
             else if (rawPacket.Id == PacketDefinitions.GraphicalEffect.Id)
                 packetHandler.Publish<GraphicalEffectPacket>(rawPacket);
 
-            return packetHandler.FilterOutput(rawPacket);
+            return rawPacket;
         }
     }
 }

@@ -275,12 +275,17 @@ namespace Infusion.Proxy
 
         public static void SendToClient(Packet rawPacket)
         {
-            lock (serverConnectionLock)
+            var filteredPacket = serverPacketHandler.FilterOutput(rawPacket);
+
+            if (filteredPacket.HasValue)
             {
-                using (var memoryStream = new MemoryStream(1024))
+                lock (serverConnectionLock)
                 {
-                    clientConnection.Send(rawPacket, memoryStream);
-                    ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                    using (var memoryStream = new MemoryStream(1024))
+                    {
+                        clientConnection.Send(filteredPacket.Value, memoryStream);
+                        ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                    }
                 }
             }
         }

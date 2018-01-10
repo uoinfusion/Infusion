@@ -23,6 +23,17 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
+        public void Contains_checks_whole_message_including_speaker_name()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+
+            journal.Contains("name: this").Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Contains_returns_false_if_journal_doesnt_contains_string()
         {
             var source = new JournalSource();

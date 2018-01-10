@@ -35,7 +35,7 @@ namespace Infusion.LegacyApi
         public bool Contains(params string[] words)
         {
             return source.Where(line => line.Id >= journalEntryStartId)
-                .Any(line => words.Any(w => line.Message.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
+                .Any(line => words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
         public void Delete()

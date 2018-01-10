@@ -378,7 +378,7 @@ public static class Specs
 
     public static readonly ItemSpec Door = new[] { OpenDoor, ClosedDoor };
     
-    public static readonly ItemSpec MagicWall = 0x0080;
+    public static readonly ItemSpec StoneArch = 0x0080;
     public static readonly ItemSpec EnergyField = new[] { 0x3947, 0x3956 };
 
     // Animals

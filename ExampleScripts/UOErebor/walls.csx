@@ -111,7 +111,8 @@ public static class Walls
             .When<SpeechReceivedEvent>(
                 s => IsFailMessage(s.Speech.Message),
                 s => { })
-            .WaitAny();
+            .WhenTimeout(() => UO.ClientPrint("Approve wall timeout"))
+            .WaitAny(TimeSpan.FromSeconds(7.5));
             
         if (targetObjectId.HasValue && targetObjectType.HasValue && targetObject != null)
         {
@@ -128,7 +129,9 @@ public static class Walls
     }
     
     private static bool IsFailMessage(string message)
-        => message.Contains("Kouzlo se nezdarilo") || message.Contains("Target is not in line of sight");
+        => message.Contains("Kouzlo se nezdarilo")
+            || message.Contains("Target is not in line of sight")
+            || message.Contains("You can't see that.the target");
     
     public static void DeletePreview()
     {

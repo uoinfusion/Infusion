@@ -175,6 +175,9 @@ namespace Infusion.LegacyApi
             player.Direction = packet.Direction;
             player.MovementType = packet.MovementType;
             player.PredictedDirection = player.Direction;
+            legacyApi.IsLoginConfirmed = true;
+
+            eventJournalSource.Publish(new LoginConfirmedEvent());
         }
 
         private void HandleDrawGamePlayerPacket(DrawGamePlayerPacket packet)

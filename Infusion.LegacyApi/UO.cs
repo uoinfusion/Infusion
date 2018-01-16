@@ -15,6 +15,8 @@ namespace Infusion.LegacyApi
 
         public static Gump CurrentGump => Current.CurrentGump;
 
+        public static bool IsLoginConfirmed => Current.IsLoginConfirmed;
+
         public static TimeSpan DefaultTimeout
         {
             get => Current.DefaultTimeout;

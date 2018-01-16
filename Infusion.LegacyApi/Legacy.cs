@@ -65,7 +65,7 @@ namespace Infusion.LegacyApi
             soundObserver = new SoundObserver(ultimaServer, eventJournalSource);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
             shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient);
-            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource);
+            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, logger);
             var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);
             dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource);
 
@@ -95,6 +95,8 @@ namespace Infusion.LegacyApi
         public LegacyFilters ClientFilters { get; }
 
         public GlobalTrace Trace { get; }
+
+        public bool IsLoginConfirmed { get; internal set; }
 
         public Gump CurrentGump => gumpObservers.CurrentGump;
 
@@ -175,6 +177,7 @@ namespace Infusion.LegacyApi
         {
             NotifyAction();
 
+            this.logger.Debug(message);
             Server.Say(message);
         }
 
@@ -323,8 +326,8 @@ namespace Infusion.LegacyApi
             while (milliseconds > 0)
             {
                 CheckCancellation();
-                Thread.Sleep(50);
-                milliseconds -= 50;
+                Thread.Sleep(25);
+                milliseconds -= 25;
             }
         }
 

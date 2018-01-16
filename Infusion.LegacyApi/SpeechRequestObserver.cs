@@ -12,11 +12,13 @@ namespace Infusion.LegacyApi
     {
         private readonly CommandHandler commandHandler;
         private readonly IEventJournalSource eventSource;
+        private readonly ILogger logger;
 
-        public SpeechRequestObserver(IClientPacketSubject clientPacketSubject, CommandHandler commandHandler, IEventJournalSource eventSource)
+        public SpeechRequestObserver(IClientPacketSubject clientPacketSubject, CommandHandler commandHandler, IEventJournalSource eventSource, ILogger logger)
         {
             this.commandHandler = commandHandler;
             this.eventSource = eventSource;
+            this.logger = logger;
             clientPacketSubject.RegisterFilter(FilterClientSpeech);
         }
 
@@ -31,12 +33,14 @@ namespace Infusion.LegacyApi
 
                     Task.Run(() =>
                     {
+                        logger.Debug(packet.Text);
                         commandHandler.InvokeSyntax(packet.Text);
                     });
 
                     return null;
                 }
 
+                logger.Debug(packet.Text);
                 eventSource.Publish(new SpeechRequestedEvent(packet.Text));
             }
 

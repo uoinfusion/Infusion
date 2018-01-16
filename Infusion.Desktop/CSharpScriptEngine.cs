@@ -46,11 +46,11 @@ namespace Infusion.Desktop
                 Assembly.Load("Infusion.LegacyApi"));
         }
 
-        public async Task ExecuteScript(string scriptPath)
+        public async Task ExecuteScript(string scriptPath, CancellationTokenSource cancellationTokenSource)
         {
             string scriptText = File.ReadAllText(scriptPath);
 
-            await Execute(scriptText, scriptPath, true);
+            await Execute(scriptText, scriptPath, true, cancellationTokenSource);
         }
 
         private static int submissionNumber = 0;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
@@ -104,7 +105,10 @@ namespace Infusion.Desktop
             {
                 UO.CommandHandler.BeginTerminate(true);
                 _console.ScriptEngine.Reset();
-                await _console.ScriptEngine.ExecuteScript(scriptFileName);
+                using (var tokenSource = new CancellationTokenSource())
+                {
+                    await _console.ScriptEngine.ExecuteScript(scriptFileName, tokenSource);
+                }
             }
             else
                 Program.Console.Error(

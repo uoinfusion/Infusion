@@ -102,9 +102,10 @@ namespace Infusion.Commands
                 {
                     action();
                 }
-                catch (OperationCanceledException)
+                catch (OperationCanceledException oce)
                 {
                     logger.Info($"Command '{invocation.Command.Name}' cancelled.");
+                    logger.Debug(oce.StackTrace);
                 }
                 catch (Exception ex)
                 {

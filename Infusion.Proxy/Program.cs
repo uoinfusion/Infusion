@@ -275,6 +275,9 @@ namespace Infusion.Proxy
 
         public static void SendToClient(Packet rawPacket)
         {
+            if (clientConnection == null || ClientStream == null)
+                return;
+
             var filteredPacket = serverPacketHandler.FilterOutput(rawPacket);
 
             if (filteredPacket.HasValue)
@@ -395,6 +398,9 @@ namespace Infusion.Proxy
 
         public static void SendToServer(Packet rawPacket)
         {
+            if (serverConnection == null)
+                return;
+
             lock (serverStreamLock)
             {
                 using (var memoryStream = new MemoryStream(1024))

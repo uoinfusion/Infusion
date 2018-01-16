@@ -68,6 +68,9 @@ namespace Infusion.IO
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+#if NO_CRYPT
+            BaseStream.Write(buffer, offset, count);
+#else
             var output = new byte[1];
             var input = new byte[1];
 
@@ -79,6 +82,7 @@ namespace Infusion.IO
 
                 BaseStream.WriteByte(output[0]);
             }
+#endif
         }
 
         private void Encrypt(byte[] input, byte[] output, long len)

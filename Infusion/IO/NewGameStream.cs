@@ -129,27 +129,35 @@ namespace Infusion.IO
 
         public override int Read(byte[] buffer, int offset, int count)
         {
+#if NO_CRYPT
+            return BasePullStream.Read(buffer, offset, count);
+#else
             var encrypted = new byte[count + 1];
             var encryptedCount = BasePullStream.Read(encrypted, 0, count);
 
             Decrypt(encrypted, buffer, count);
 
             return encryptedCount;
+#endif
         }
 
         public override int ReadByte()
         {
+#if NO_CRYPT
+            return BasePullStream.ReadByte();
+#else
             var encrypted = new byte[1];
             var value = BasePullStream.ReadByte();
             if ((value < 0) || (value > 255))
                 throw new EndOfStreamException();
 
-            encrypted[0] = (byte) value;
+            encrypted[0] = (byte)value;
 
             var buffer = new byte[1];
             Decrypt(encrypted, buffer, 1);
 
             return buffer[0];
+#endif
         }
 
         public override long Seek(long offset, SeekOrigin origin)
@@ -164,16 +172,20 @@ namespace Infusion.IO
 
         public override void Write(byte[] buffer, int offset, int count)
         {
+#if NO_CRYPT
+            BasePushStream.Write(buffer, offset, count);
+#else
             var encrypted = new byte[1];
             var tmp = new byte[1];
 
             for (var i = offset; i < count; i++)
             {
                 tmp[0] = buffer[i];
-                Encrypt(tmp, encrypted, (long) 1);
+                Encrypt(tmp, encrypted, (long)1);
 
                 BasePushStream.Write(encrypted, 0, 1);
             }
+#endif
         }
     }
 }

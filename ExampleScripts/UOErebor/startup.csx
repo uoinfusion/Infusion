@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Infusion.Commands;
 
 public static class Startup
 {
@@ -35,24 +36,31 @@ public static class Startup
             if (!UO.CommandHandler.IsCommandRunning("startup"))
             {
                 Trace.Log("Starting startup command");
-                UO.CommandHandler.Invoke("startup");
+                UO.CommandHandler.Invoke("startup-handling", CommandExecutionMode.AlwaysParallel);
             }
         }        
     }
     
     public static void Wait()
     {
+        var journal = UO.CreateEventJournal();
+
         if (!UO.IsLoginConfirmed)
         {
-            Trace.Log("Login not confirmed, waiting for confirmation");
-            var journal = UO.CreateEventJournal();
-            
-            journal.When<LoginConfirmedEvent>(ev => {})
-                .WaitAny(TimeSpan.MaxValue);                
+            bool confirmed = false;
+            journal.When<LoginConfirmedEvent>(ev => { confirmed = true;})
+                .All();                
+
+            if (!confirmed)
+            {
+                Trace.Log("Login not confirmed, waiting for confirmation");
+                journal.When<LoginConfirmedEvent>(ev => {})
+                    .WaitAny(TimeSpan.MaxValue);
+            }                
+
+            Trace.Log("Login confirmed, waiting for client stabilization");
+            Thread.Sleep(5000);
         }
-        
-        Trace.Log("Login confirmed, waiting for client stabilization");
-        Thread.Sleep(5000);
 
         Launch();
     }
@@ -63,10 +71,10 @@ public static class Startup
     
         foreach (var command in startupCommands)
         {
-            Trace.Log($"Launching command {command}");
-            UO.CommandHandler.Invoke(command);
+            Trace.Log($"Launching startup command {command}");
+            UO.CommandHandler.Invoke(command, CommandExecutionMode.AlwaysParallel);
         }
     }
 }
 
-UO.RegisterBackgroundCommand("startup", Startup.Wait);
+UO.RegisterCommand("startup-handling", Startup.Wait);

@@ -509,7 +509,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand(command.Command);
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            commandHandler.InvokeSyntax(",cmd1", cancellationTokenSource);
+            commandHandler.InvokeSyntax(",cmd1", null, cancellationTokenSource);
             cancellationTokenSource.Cancel();
 
             command.Finish();
@@ -557,7 +557,7 @@ namespace Infusion.Tests.Commands
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
             // ReSharper disable once MethodSupportsCancellation
-            Task.Run(() => commandHandler.InvokeSyntax(",cmd1", cancellationTokenSource));
+            Task.Run(() => commandHandler.InvokeSyntax(",cmd1", null, cancellationTokenSource));
 
             command.Finish();
             cancellationTokenSource.Cancel();
@@ -619,6 +619,22 @@ namespace Infusion.Tests.Commands
             command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
                 .BeTrue("background command didn't finish");
             commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("backgroundcmd");
+        }
+
+        [TestMethod]
+        public void Invoke_can_override_command_execution_mode()
+        {
+            int commandThreadId = -1;
+
+            var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
+                {
+                    commandThreadId = Thread.CurrentThread.ManagedThreadId;
+                });
+            commandHandler.RegisterCommand(command.Command);
+
+            commandHandler.Invoke("backgroundcmd", CommandExecutionMode.Direct);
+
+            commandThreadId.Should().Be(Thread.CurrentThread.ManagedThreadId);
         }
 
         [TestMethod]

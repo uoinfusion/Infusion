@@ -19,21 +19,21 @@ namespace Infusion.Commands
                 this.logger = logger;
             }
 
-            public void Invoke(Command command, CancellationTokenSource cancellationTokenSource)
+            public void Invoke(Command command, CommandExecutionMode? mode, CancellationTokenSource cancellationTokenSource)
             {
                 commandHandler.CheckIfAlreadyRunning(command);
-                InvokeCore(command.Invoke, command, string.Empty, cancellationTokenSource);
+                InvokeCore(command.Invoke, command, string.Empty, mode, cancellationTokenSource);
             }
 
-            internal void Invoke(Command command, string parameters, CancellationTokenSource cancellationTokenSource)
+            internal void Invoke(Command command, string parameters, CommandExecutionMode? mode, CancellationTokenSource cancellationTokenSource)
             {
                 commandHandler.CheckIfAlreadyRunning(command);
-                InvokeCore(() => command.Invoke(parameters), command, parameters, cancellationTokenSource);
+                InvokeCore(() => command.Invoke(parameters), command, parameters, mode, cancellationTokenSource);
             }
 
-            private void InvokeCore(Action action, Command command, string parameters, CancellationTokenSource cancellationTokenSource)
+            private void InvokeCore(Action action, Command command, string parameters, CommandExecutionMode? mode, CancellationTokenSource cancellationTokenSource)
             {
-                switch (command.ExecutionMode)
+                switch (mode ?? command.ExecutionMode)
                 {
                     case CommandExecutionMode.Direct:
                         NestedAction(action, command, parameters, cancellationTokenSource);

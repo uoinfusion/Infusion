@@ -102,14 +102,14 @@ namespace Infusion.Commands
             return command;
         }
 
-        public void Invoke(string commandName, CancellationTokenSource cancellationTokenSource = null)
+        public void Invoke(string commandName, CommandExecutionMode? mode = null, CancellationTokenSource cancellationTokenSource = null)
         {
             try
             { 
                 if (!commands.TryGetValue(commandName, out Command command))
                     throw new CommandInvocationException($"Unknown command name '{commandName}'");
 
-                invocator.Invoke(command, cancellationTokenSource);
+                invocator.Invoke(command, mode, cancellationTokenSource);
             }
             catch (CommandInvocationException ex)
             {
@@ -118,7 +118,7 @@ namespace Infusion.Commands
 
         }
 
-        public void Invoke(string commandName, string commandParameters,
+        public void Invoke(string commandName, string commandParameters, CommandExecutionMode? mode = null,
             CancellationTokenSource cancellationTokenSource = null)
         {
             try
@@ -127,7 +127,7 @@ namespace Infusion.Commands
                     throw new CommandInvocationException($"Unknown command name '{commandName}'");
 
                 if (command.AcceptsParameters)
-                    invocator.Invoke(command, commandParameters, cancellationTokenSource);
+                    invocator.Invoke(command, commandParameters, mode, cancellationTokenSource);
                 else
                     throw new CommandInvocationException($"Command '{command.Name}' doesn't accept parameters.");
             }
@@ -142,16 +142,16 @@ namespace Infusion.Commands
             }
         }
 
-        public void InvokeSyntax(string commandInvocationSyntax, CancellationTokenSource cancellationTokenSource = null)
+        public void InvokeSyntax(string commandInvocationSyntax, CommandExecutionMode? mode = null, CancellationTokenSource cancellationTokenSource = null)
         {
             var syntax = CommandParser.Parse(commandInvocationSyntax);
             if (!syntax.HasParameters)
             {
-                Invoke(syntax.Name, cancellationTokenSource);
+                Invoke(syntax.Name, mode, cancellationTokenSource);
             }
             else
             {
-                Invoke(syntax.Name, syntax.Parameters, cancellationTokenSource);
+                Invoke(syntax.Name, syntax.Parameters, mode, cancellationTokenSource);
             }
         }
 

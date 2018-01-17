@@ -36,7 +36,7 @@ namespace Infusion.Packets.Both
             this.rawPacket = rawPacket;
 
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Skip(6);
+            reader.Skip(5);
             GumpId = (GumpInstanceId)reader.ReadUInt();
         }
 

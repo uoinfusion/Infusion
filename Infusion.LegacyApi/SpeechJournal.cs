@@ -38,6 +38,16 @@ namespace Infusion.LegacyApi
                 .Any(line => words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
+        public bool Contains(Player player, params string[] words) => Contains(player.PlayerId, words);
+        public bool Contains(Mobile mobile, params string[] words) => Contains(mobile.Id, words);
+        public bool Contains(Item item, params string[] words) => Contains(item.Id, words);
+
+        public bool Contains(ObjectId speakerId, params string[] words)
+        {
+            return source.Where(line => line.Id >= journalEntryStartId)
+                .Any(line => line.SpeakerId == speakerId && words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
+        }
+
         public void Delete()
         {
             journalEntryStartId = source.CurrentJournalEntryId;

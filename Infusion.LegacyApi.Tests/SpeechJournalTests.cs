@@ -45,6 +45,18 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
+        public void Contains_can_restrict_speech_to_specific_speaker()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "same message", new ObjectId(1), 0);
+
+            journal.Contains(1, "same message").Should().BeTrue();
+            journal.Contains(0, "same message").Should().BeFalse();
+        }
+
+        [TestMethod]
         public void Can_await_entries_received_between_lastaction_and_WaitAny()
         {
             bool executed = false;

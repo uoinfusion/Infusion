@@ -4,14 +4,17 @@ namespace Infusion
 {
     public sealed class Mobile : GameObject
     {
+        private byte flags;
+
         public Mobile(ObjectId id, ModelId type, Location3D location, Color? color,
-            Direction? orientation, MovementType? currentMovementType, Notoriety? notoriety)
+            Direction? orientation, MovementType? currentMovementType, Notoriety? notoriety, byte flags = 0)
             : base(id, type, location)
         {
             Color = color;
             Orientation = orientation;
             CurrentMovementType = currentMovementType;
             Notoriety = notoriety;
+            this.flags = flags;
         }
 
         public Mobile(ObjectId id, ModelId type, Location3D location) : base(id, type, location)
@@ -25,6 +28,9 @@ namespace Infusion
 
         public bool IsWalking => CurrentMovementType.HasValue && CurrentMovementType.Value == MovementType.Walk;
         public bool IsRunning => CurrentMovementType.HasValue && CurrentMovementType.Value == MovementType.Run;
+        public bool IsDead => (Type == 0x192);
+        public bool IsPoisoned => (flags & 0x04) != 0;
+        public bool IsInWarMode => (flags & 0x40) != 0;
 
         public override bool IsOnGround => true;
 
@@ -43,6 +49,7 @@ namespace Infusion
                 Notoriety = Notoriety,
                 Name = Name,
                 CanRename = CanRename,
+                flags = flags
             };
         }
 
@@ -55,7 +62,7 @@ namespace Infusion
             return updatedItem;
         }
 
-        public Mobile Update(ModelId type, Location3D location, Color color, Direction? orientation, MovementType? currentMovementType, Notoriety? notoriety)
+        public Mobile Update(ModelId type, Location3D location, Color color, Direction? orientation, MovementType? currentMovementType, Notoriety? notoriety, byte flags)
         {
             var updatedMobile = (Mobile) Duplicate();
             updatedMobile.Location = location;
@@ -64,6 +71,7 @@ namespace Infusion
             updatedMobile.Orientation = orientation;
             updatedMobile.CurrentMovementType = currentMovementType;
             updatedMobile.Notoriety = notoriety;
+            updatedMobile.flags = flags;
 
             return updatedMobile;
         }

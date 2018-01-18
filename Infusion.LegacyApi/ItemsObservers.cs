@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Infusion.LegacyApi.Events;
+﻿using Infusion.LegacyApi.Events;
 using Infusion.Packets;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
+using System;
+using System.Threading;
 
 namespace Infusion.LegacyApi
 {
@@ -151,12 +150,12 @@ namespace Infusion.LegacyApi
                 existingObject is Mobile existingMobile)
             {
                 gameObjects.UpdateObject(existingMobile.Update(packet.Type, packet.Location, packet.Color,
-                    packet.Direction, packet.MovementType, existingMobile.Notoriety));
+                    packet.Direction, packet.MovementType, existingMobile.Notoriety, packet.Flags));
             }
             else
             {
                 gameObjects.UpdateObject(new Mobile(packet.PlayerId, packet.Type, packet.Location, packet.Color,
-                    packet.Direction, packet.MovementType, null));
+                    packet.Direction, packet.MovementType, null, packet.Flags));
             }
         }
 
@@ -227,12 +226,12 @@ namespace Infusion.LegacyApi
 
             if (gameObjects[packet.Id] is Mobile mobile)
                 gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction, packet.MovementType,
-                    packet.Notoriety));
+                    packet.Notoriety, packet.Flags));
             else
             {
                 mobile = new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,
                     packet.Direction, packet.MovementType,
-                    packet.Notoriety);
+                    packet.Notoriety, packet.Flags);
                 gameObjects.AddObject(mobile);
                 OnMobileEnteredView(mobile);
             }

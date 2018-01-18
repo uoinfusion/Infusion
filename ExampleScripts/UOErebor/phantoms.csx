@@ -7,6 +7,8 @@ using System.Collections.Generic;
 
 public static class Phantoms
 {
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
+
     private static List<Phantom> phantoms = new List<Phantom>(); 
 
     public static EventJournal journal = UO.CreateEventJournal();
@@ -160,8 +162,11 @@ public static class Phantoms
         var targetInfo = UO.Info();
         if (targetInfo.HasValue)
         {
-            AddPhantom(targetInfo.Value.Location);
+            Trace.Log($"Phantom location: {targetInfo.Value.Location}");
+            AddPhantomAndSave(targetInfo.Value.Location);
         }
+        else
+            Trace.Log("no targetInfo");
     }
     
     public static void RefreshAll()
@@ -286,13 +291,15 @@ public static class Phantoms
         
         public void UpdateVisibility(Location3D viewCenter)
         {
-            if (viewCenter.GetDistance(Location) < 23)
+            if (viewCenter.WithZ(0).GetDistance(Location.WithZ(0)) < 23)
             {
+                Trace.Log($"Showing at location {Location}, viewCenter {viewCenter}");
                 Show();
             }
             
-            if (Id.HasValue && viewCenter.GetDistance(Location) >= 23)
+            if (Id.HasValue && viewCenter.WithZ(0).GetDistance(Location.WithZ(0)) >= 23)
             {
+                Trace.Log($"Removing at location {Location}, viewCenter {viewCenter}");
                 Remove();
             }
         }

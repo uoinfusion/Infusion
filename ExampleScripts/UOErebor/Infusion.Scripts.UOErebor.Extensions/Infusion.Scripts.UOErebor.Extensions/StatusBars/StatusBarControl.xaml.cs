@@ -12,9 +12,6 @@ using Brushes = System.Windows.Media.Brushes;
 
 namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
 {
-    /// <summary>
-    ///     Interaction logic for StatusBarControl.xaml
-    /// </summary>
     internal partial class StatusBarControl : UserControl
     {
         private static readonly Lazy<Bitmap> friendBackgroundBitmap =
@@ -26,6 +23,8 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
         private static readonly Lazy<Bitmap> petBackgroundBitmap = new Lazy<Bitmap>(() => LoadGump(0x804));
         private static readonly Lazy<Bitmap> emptyBarBitmap = new Lazy<Bitmap>(() => LoadGump(0x805));
         private static readonly Lazy<Bitmap> fullBarBitmap = new Lazy<Bitmap>(() => LoadGump(0x806));
+        private static readonly Lazy<Bitmap> fullBarPoisonedBitmap = new Lazy<Bitmap>(() => LoadGump(0x808));
+        private static readonly Lazy<Bitmap> resurrectionBitmap = new Lazy<Bitmap>(() => LoadGump(0x1B62));
         private Bitmap textBitmap;
 
         public StatusBarControl(StatusBar statusBar)
@@ -100,20 +99,27 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
                     var currentHealth = StatusBar.CurrentHealth <= StatusBar.MaxHealth
                         ? StatusBar.CurrentHealth
                         : StatusBar.MaxHealth;
-                    graphics.DrawImageUnscaledAndClipped(fullBarBitmap.Value,
+
+                    var fbp = StatusBar.IsPoisoned ? fullBarPoisonedBitmap.Value : fullBarBitmap.Value;
+                    graphics.DrawImageUnscaledAndClipped(fbp,
                         new Rectangle(34, 38,
-                            fullBarBitmap.Value.Width * currentHealth / StatusBar.MaxHealth,
-                            fullBarBitmap.Value.Height));
+                            fbp.Width * currentHealth / StatusBar.MaxHealth,
+                            fbp.Height));
                 }
 
                 if (textBitmap == null && !string.IsNullOrEmpty(StatusBar.Name))
-                    textBitmap = RenderName(StatusBar.Name);
+                    textBitmap = RenderName((StatusBar.NamePrefix ?? string.Empty) + StatusBar.Name);
                 if (textBitmap != null)
                     graphics.DrawImage(textBitmap, 17, 9);
+                if (StatusBar.IsDead)
+                    graphics.DrawImage(resurrectionBitmap.Value,
+                        friendBackgroundBitmap.Value.Width - 5 - (int)(resurrectionBitmap.Value.Width * 0.75), 5,
+                        (int)(resurrectionBitmap.Value.Width * 0.75), (int)(resurrectionBitmap.Value.Height * 0.75));
             }
 
             _image.Source = BitmapToImageSource(statusBarBitmap);
             _image.Stretch = Stretch.None;
+            _image.Opacity = StatusBar.IsOutOfSight ? 0.5 : 1;
         }
 
         private BitmapImage BitmapToImageSource(Bitmap bitmap)

@@ -13,15 +13,21 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
         private string name;
         private int maxHealth;
         private int currentHealth;
+        private bool isDead;
+        private bool isPoisoned;
+        private bool isOutOfSight;
 
         public StatusBarType Type { get; set; }
 
         public uint Id { get; }
 
-        public StatusBar(uint id)
+        public StatusBar(uint id, string namePrefix = null)
         {
             Id = id;
+            NamePrefix = namePrefix;
         }
+
+        public string NamePrefix { get; }
 
         public string Name
         {
@@ -49,6 +55,36 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             set
             {
                 currentHealth = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsDead
+        {
+            get => isDead;
+            set
+            {
+                isDead = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsOutOfSight
+        {
+            get => isOutOfSight;
+            set
+            {
+                isOutOfSight = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsPoisoned
+        {
+            get => isPoisoned;
+            set
+            {
+                isPoisoned = value;
                 OnPropertyChanged();
             }
         }

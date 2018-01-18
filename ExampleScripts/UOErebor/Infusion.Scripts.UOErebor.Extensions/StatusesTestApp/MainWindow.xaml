@@ -17,6 +17,12 @@
         <TextBox Text="{Binding Path=FirstStatusBar.MaxHealth}" />
         <TextBlock Text="Visible: " />
         <CheckBox x:Name="_firstStatusBarVisibleCheckBox" Checked="OnFirstStatusBarVisibleCheckBoxChecked" Unchecked="_firstStatusBarVisibleCheckBox_OnUnchecked" />
+        <TextBlock Text="Dead: " />
+        <CheckBox x:Name="_firstStatusBarDeadCheckBox" Checked="OnFirstStatusBarDeadCheckBoxChecked" Unchecked="_firstStatusBarDeadCheckBox_OnUnchecked" />
+        <TextBlock Text="Poisoned: " />
+        <CheckBox x:Name="_firstStatusBarPoisonedCheckBox" Checked="OnFirstStatusBarPoisonedCheckBoxChecked" Unchecked="_firstStatusBarPoisonedCheckBox_OnUnchecked" />
+        <TextBlock Text="Out of sight: " />
+        <CheckBox x:Name="_firstStatusBarOutOfSightCheckBox" Checked="OnFirstStatusBarOutOfSightCheckBoxChecked" Unchecked="_firstStatusBarOutOfSightCheckBox_OnUnchecked" />
 
         <TextBlock Text="Name:" Margin="00 20 0 0" />
         <TextBox Text="{Binding Path=SecondStatusBar.Name}" />

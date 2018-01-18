@@ -51,6 +51,7 @@ public static class Party
         journal
             .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
             .When<MobileEnteredViewEvent>(HandleMobileEnteredView)
+            .When<MobileLeftViewEvent>(HandleMobileLeftView)
             .Incomming();
     }
         
@@ -59,6 +60,15 @@ public static class Party
         if (statuses.Contains(ev.Mobile))
         {
             requestStatusQueue.RequestStatus(ev.Mobile.Id);
+            statuses.SetOutOfSight(ev.Mobile.Id, false);
+        }
+    }
+
+    private static void HandleMobileLeftView(MobileLeftViewEvent ev)
+    {
+        if (statuses.Contains(ev.Mobile))
+        {
+            statuses.SetOutOfSight(ev.Mobile.Id, true);
         }
     }
     
@@ -85,13 +95,13 @@ public static class Party
     }
     
 
-   public static void Add(Mobile newMember)
+   public static void Add(Mobile newMember, string namePrefix = null)
    {
        if (!statuses.Contains(newMember))
        {
            UO.RequestStatus(newMember);
 
-           statuses.Add(newMember, StatusBarType.Friend);
+           statuses.Add(newMember, StatusBarType.Friend, namePrefix);
        }
    }
     

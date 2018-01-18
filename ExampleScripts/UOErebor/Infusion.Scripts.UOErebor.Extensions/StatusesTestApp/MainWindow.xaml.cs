@@ -21,7 +21,7 @@ namespace StatusesTestApp
             InitializeComponent();
 
             viewModel = new StatusesViewModel();
-            viewModel.FirstStatusBar = new StatusBar(1)
+            viewModel.FirstStatusBar = new StatusBar(1, "F1:")
             {
                 CurrentHealth = 0,
                 MaxHealth = 100,
@@ -80,6 +80,36 @@ namespace StatusesTestApp
         private void _thirdStatusBarVisibleCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
         {
             statusBars.Remove(viewModel.ThirdStatusBar);
+        }
+
+        private void OnFirstStatusBarDeadCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            viewModel.FirstStatusBar.IsDead = true;
+        }
+
+        private void _firstStatusBarDeadCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            viewModel.FirstStatusBar.IsDead = false;
+        }
+
+        private void _firstStatusBarOutOfSightCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            viewModel.FirstStatusBar.IsOutOfSight = false;
+        }
+
+        private void OnFirstStatusBarOutOfSightCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            viewModel.FirstStatusBar.IsOutOfSight = true;
+        }
+
+        private void _firstStatusBarPoisonedCheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            viewModel.FirstStatusBar.IsPoisoned = false;
+        }
+
+        private void OnFirstStatusBarPoisonedCheckBoxChecked(object sender, RoutedEventArgs e)
+        {
+            viewModel.FirstStatusBar.IsPoisoned = true;
         }
     }
 

@@ -139,7 +139,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             StatusBars.Add(statusBar);
         }
 
-        public void Add(Mobile mobile, StatusBarType type)
+        public void Add(Mobile mobile, StatusBarType type, string namePrefix = null)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
@@ -150,12 +150,14 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
                 }
                 else
                 {
-                    statusBar = new StatusBar(mobile.Id)
+                    statusBar = new StatusBar(mobile.Id, namePrefix)
                     {
                         Name = mobile.Name,
                         CurrentHealth = mobile.CurrentHealth,
                         MaxHealth = mobile.MaxHealth,
-                        Type = type
+                        Type = type,
+                        IsDead = mobile.IsDead,
+                        IsPoisoned = mobile.IsPoisoned,
                     };
                 }
 
@@ -173,6 +175,16 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             }
         }
 
+        public void SetOutOfSight(ObjectId id, bool isOutOfSight)
+        {
+            var statusBar = Get(id);
+            if (statusBar != null)
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    new Action(() => { statusBar.IsOutOfSight = isOutOfSight; }));
+            }
+        }
+
         public void Remove(Mobile mobile)
         {
             Remove(mobile.Id);
@@ -185,8 +197,11 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             {
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
                 {
+                    statusBar.IsOutOfSight = false;
                     statusBar.CurrentHealth = mobile.CurrentHealth;
                     statusBar.MaxHealth = mobile.MaxHealth;
+                    statusBar.IsDead = mobile.IsDead;
+                    statusBar.IsPoisoned = mobile.IsPoisoned;
                     if (string.IsNullOrEmpty(statusBar.Name) && !string.IsNullOrEmpty(mobile.Name))
                         statusBar.Name = mobile.Name;
                 }));

@@ -85,6 +85,11 @@ public static class Party
         statuses.Open();
     }
     
+    public static void ClearStatuses()
+    {
+        statuses.Clear();
+    }
+    
     public static void Add()
     {
         var newMember = UO.AskForMobile();
@@ -119,6 +124,15 @@ public static class Party
         }
         else
             statuses.Remove(member);
+    }
+    
+    public static void Remove(Mobile removeMember)
+    {
+       if (statuses.Contains(removeMember))
+       {       
+
+           statuses.Remove(removeMember);
+       }
     }
     
     public static void WindowInfo()

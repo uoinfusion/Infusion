@@ -40,6 +40,7 @@ stable on this shard and there is a lot of example scripts you can immediately s
 - [Hiding](ExampleScripts/UOErebor/hidding.csx) with *always walk* feature to utilize stealth. 
 - [Targeting](ExampleScripts/UOErebor/targeting.csx) red karma only, skipping own summon/pets.
 - Fast and reliable [walking](ExampleScripts/UOErebor/walking.csx).
+- Read status of spell [chargers](ExampleScripts/UOErebor/chargers.csx) from script.
 - Damage [notification](ExampleScripts/UOErebor/hpnotify.csx).
 - Show [experience](ExampleScripts/UOErebor/explevel.csx) in game window title.
 - [Open bank](ExampleScripts/UOErebor/banking.csx) using banker or house menu.

@@ -2,18 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Infusion.LegacyApi
 {
     public sealed class SpeechJournal : IEnumerable<JournalEntry>
     {
-        private readonly JournalSource source;
         private readonly Cancellation cancellation;
         private readonly Func<TimeSpan?> defaultTimeout;
+        private readonly JournalSource source;
         private long journalEntryStartId;
 
-        internal SpeechJournal(JournalSource source, Cancellation cancellation = null, Func<TimeSpan?> defaultTimeout = null)
+        internal SpeechJournal(JournalSource source, Cancellation cancellation = null,
+            Func<TimeSpan?> defaultTimeout = null)
         {
             this.source = source;
             this.cancellation = cancellation;
@@ -21,6 +21,8 @@ namespace Infusion.LegacyApi
             journalEntryStartId = source.CurrentJournalEntryId;
             LastWaitEntryId = journalEntryStartId;
         }
+
+        internal long LastWaitEntryId { get; private set; }
 
         public IEnumerator<JournalEntry> GetEnumerator()
         {
@@ -45,7 +47,9 @@ namespace Infusion.LegacyApi
         public bool Contains(ObjectId speakerId, params string[] words)
         {
             return source.Where(line => line.Id >= journalEntryStartId)
-                .Any(line => line.SpeakerId == speakerId && words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
+                .Any(line =>
+                    line.SpeakerId == speakerId &&
+                    words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
         }
 
         public void Delete()
@@ -145,8 +149,6 @@ namespace Infusion.LegacyApi
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 
-        internal long LastWaitEntryId { get; private set; } = 0;
-
         internal void NotifyWait()
         {
             LastWaitEntryId = source.CurrentJournalEntryId;
@@ -154,5 +156,17 @@ namespace Infusion.LegacyApi
 
         internal IEnumerable<JournalEntry> AfterLastAction() =>
             source.AfterLastAction().Where(line => line.Id >= LastWaitEntryId);
+
+        public JournalEntry First(params string[] words)
+        {
+            return source.Where(line => line.Id >= journalEntryStartId)
+                .FirstOrDefault(line => words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
+        }
+
+        public JournalEntry Last(params string[] words)
+        {
+            return source.Where(line => line.Id >= journalEntryStartId)
+                .LastOrDefault(line => words.Any(w => line.Text.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0));
+        }
     }
 }

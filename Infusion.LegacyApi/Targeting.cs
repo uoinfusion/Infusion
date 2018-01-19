@@ -50,6 +50,7 @@ namespace Infusion.LegacyApi
         }
 
         internal AutoResetEvent WaitForTargetStartedEvent { get; } = new AutoResetEvent(false);
+        internal AutoResetEvent AskForTargetStartedEvent { get; } = new AutoResetEvent(false);
 
         private void HanldeServerTargetCursorPacket(TargetCursorPacket packet)
         {
@@ -305,16 +306,24 @@ namespace Infusion.LegacyApi
             Target(gameObject.Id, gameObject.Type, gameObject.Location);
         }
 
-        public ObjectId ItemIdInfo()
+        public ObjectId? ItemIdInfo()
         {
             try
             {
                 targetInfoRequested = true;
+                ClearNextTarget();
                 receivedTargetInfoEvent.Reset();
                 client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
+                var originalTime = lastTargetCursorPacketTime;
+
+                AskForTargetStartedEvent.Set();
+
                 while (!receivedTargetInfoEvent.WaitOne(10))
                 {
+                    if (originalTime != lastTargetCursorPacketTime)
+                        return null;
+
                     cancellation?.Check();
                 }
 
@@ -329,10 +338,19 @@ namespace Infusion.LegacyApi
         public TargetInfo? LocationInfo()
         {
             receivedTargetInfoEvent.Reset();
+            ClearNextTarget();
+
             client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+
+            var originalTime = lastTargetCursorPacketTime;
+
+            AskForTargetStartedEvent.Set();
 
             while (!receivedTargetInfoEvent.WaitOne(10))
             {
+                if (originalTime != lastTargetCursorPacketTime)
+                    return null;
+
                 cancellation?.Check();
             }
 

@@ -237,5 +237,115 @@ namespace Infusion.LegacyApi.Tests
             journal.ContainsAnyWord("message1").Any().Should().BeTrue();
         }
 
+        [TestMethod]
+        public void First_returns_first_entry_with_specified_text()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source);
+
+            source.AddMessage("name", "word5 word6", new ObjectId(2), 0);
+            source.AddMessage("name", "word1 word2", new ObjectId(1), 0);
+            source.AddMessage("name", "word1 word2", new ObjectId(0), 0);
+
+            var entry = journal.First("word3", "word2");
+
+            entry.SpeakerId.Should().Be((ObjectId)1);
+        }
+
+        [TestMethod]
+        public void First_is_case_insensitive()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source);
+
+            source.AddMessage("name", "word5 word6", new ObjectId(2), 0);
+            source.AddMessage("name", "wOrD1 WoRd2", new ObjectId(1), 0);
+            source.AddMessage("name", "word1 word2", new ObjectId(0), 0);
+
+            var entry = journal.First("word3", "word2");
+
+            entry.SpeakerId.Should().Be((ObjectId)1);
+        }
+
+        [TestMethod]
+        public void First_checks_whole_message_including_speaker_name()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+
+            var entry = journal.First("name: this");
+
+            entry.Message.Should().Be("this is an AfK check");
+        }
+
+        [TestMethod]
+        public void First_returns_null_when_message_not_found()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+
+            var entry = journal.First("qwer");
+            entry.Should().BeNull();
+        }
+
+        [TestMethod]
+        public void Last_returns_last_entry_with_specified_text()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source);
+
+            source.AddMessage("name", "word1 word2", new ObjectId(2), 0);
+            source.AddMessage("name", "word1 word2", new ObjectId(1), 0);
+            source.AddMessage("name", "word5 word6", new ObjectId(0), 0);
+
+            var entry = journal.Last("word3", "word2");
+
+            entry.SpeakerId.Should().Be((ObjectId)1);
+        }
+
+        [TestMethod]
+        public void Last_is_case_insensitive()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source);
+
+            source.AddMessage("name", "word1 word2", new ObjectId(2), 0);
+            source.AddMessage("name", "WoRd1 WoRd2", new ObjectId(1), 0);
+            source.AddMessage("name", "word5 word6", new ObjectId(0), 0);
+
+            var entry = journal.Last("word3", "word2");
+
+            entry.SpeakerId.Should().Be((ObjectId)1);
+        }
+
+        [TestMethod]
+        public void Last_checks_whole_message_including_speaker_name()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+
+            var entry = journal.Last("name: this");
+
+            entry.Message.Should().Be("this is an AfK check");
+        }
+
+        [TestMethod]
+        public void Last_returns_null_when_message_not_found()
+        {
+            var source = new JournalSource();
+            var journal = new SpeechJournal(source, null);
+
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+
+            var entry = journal.Last("qwer");
+            entry.Should().BeNull();
+        }
+
     }
 }

@@ -37,6 +37,7 @@ namespace Infusion.LegacyApi
         private readonly DialogBoxObservers dialogBoxObervers;
 
         internal AutoResetEvent WaitForTargetStartedEvent => targeting.WaitForTargetStartedEvent;
+        internal AutoResetEvent AskForTargetStartedEvent => targeting.AskForTargetStartedEvent;
         internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
@@ -476,7 +477,7 @@ namespace Infusion.LegacyApi
         {
             var itemId = targeting.ItemIdInfo();
 
-            if (!GameObjects.TryGet(itemId, out var obj))
+            if (!itemId.HasValue || !GameObjects.TryGet(itemId.Value, out var obj))
                 return null;
 
             return obj as Item;
@@ -486,7 +487,7 @@ namespace Infusion.LegacyApi
         {
             var itemId = targeting.ItemIdInfo();
 
-            if (!GameObjects.TryGet(itemId, out var obj))
+            if (!itemId.HasValue || !GameObjects.TryGet(itemId.Value, out var obj))
                 return null;
 
             return obj as Mobile;

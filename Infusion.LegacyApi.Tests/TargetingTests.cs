@@ -99,6 +99,88 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
+        public void AskForLocation_returns_location_selected_on_client()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            var task = Task.Run(() =>
+            {
+                var result = testProxy.Api.AskForLocation();
+                result.HasValue.Should().BeTrue();
+                result.Value.Location.Should().Be(new Location3D(0x09EC, 0x0CF9, 0));
+            });
+
+            testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x01, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0xEC, 0x0C, 0xF9, 0x00,
+                0x00, 0x00, 0x00,
+            }));
+
+            task.Wait(100).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Cancels_AskForLocation_When_server_requests_target()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var testProxy = new InfusionTestProxy();
+
+                var task = Task.Run(() => { testProxy.Api.AskForLocation().Should().BeNull(); });
+
+                testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
+                {
+                    0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00
+                }));
+
+                task.Wait(100).Should().BeTrue();
+            });
+        }
+
+        [TestMethod]
+        public void Cancels_AfkForItem_When_server_requests_target()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var testProxy = new InfusionTestProxy();
+
+                var task = Task.Run(() => { testProxy.Api.AskForItem().Should().BeNull(); });
+
+                testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
+                {
+                    0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00
+                }));
+
+                task.Wait(100).Should().BeTrue();
+            });
+        }
+
+        [TestMethod]
+        public void Cancels_AfkForMobile_When_server_requests_target()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var testProxy = new InfusionTestProxy();
+
+                var task = Task.Run(() => { testProxy.Api.AskForMobile().Should().BeNull(); });
+
+                testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
+                {
+                    0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00
+                }));
+
+                task.Wait(100).Should().BeTrue();
+            });
+        }
+
+        [TestMethod]
         public void Can_set_future_autotargets()
         {
             ConcurrencyTester.Run(() =>

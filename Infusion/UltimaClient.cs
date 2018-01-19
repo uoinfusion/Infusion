@@ -51,8 +51,8 @@ namespace Infusion
                 Type = type,
                 Color = color,
                 Font = 0x0003,
-                Name = name,
-                Message = message
+                Name = string.IsNullOrEmpty(name) ? "<null>" : name,
+                Message = string.IsNullOrEmpty(message) ? "<null>" : message,
             };
 
             packet.Serialize();

@@ -439,10 +439,16 @@ public static class Specs
     public static readonly ItemSpec HairReceding = 0x2048;
     public static readonly ItemSpec HairPigtails = 0x2049;
     public static readonly ItemSpec HairPonytail = 0x203D;
+    public static readonly ItemSpec HairKrisna = 0x204A;
+    public static readonly ItemSpec HairMohawk = 0x2044;
+    public static readonly ItemSpec BeardMediumShort = 0x204B;
+    public static readonly ItemSpec BeardShort = 0x203F;
+    public static readonly ItemSpec BeardVandyke = 0x204D;
     public static readonly ItemSpec Hairs = new[]
     {
         HairLong, HairShort, HairPageBoy, HairBuns, HairAfro,
-        HairReceding, HairPigtails, HairPonytail
+        HairReceding, HairPigtails, HairPonytail, HairKrisna,
+        HairMohawk, BeardShort, BeardMediumShort, BeardVandyke
     };
 
     public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369 };

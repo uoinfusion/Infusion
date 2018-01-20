@@ -149,13 +149,25 @@ namespace Infusion.LegacyApi
             if (gameObjects.TryGet(packet.PlayerId, out GameObject existingObject) &&
                 existingObject is Mobile existingMobile)
             {
-                gameObjects.UpdateObject(existingMobile.Update(packet.Type, packet.Location, packet.Color,
-                    packet.Direction, packet.MovementType, existingMobile.Notoriety, packet.Flags));
+                var updatedMobile = existingMobile.Update(packet.Type, packet.Location, packet.Color,
+                    packet.Direction, packet.MovementType, existingMobile.Notoriety, packet.Flags);
+                gameObjects.UpdateObject(updatedMobile);
+
+                CheckFlagsChange(existingMobile, updatedMobile);
             }
             else
             {
                 gameObjects.UpdateObject(new Mobile(packet.PlayerId, packet.Type, packet.Location, packet.Color,
                     packet.Direction, packet.MovementType, null, packet.Flags));
+            }
+        }
+
+        private void CheckFlagsChange(Mobile mobile, Mobile updated)
+        {
+            if (mobile.IsDead != updated.IsDead || mobile.IsPoisoned != updated.IsPoisoned ||
+                mobile.IsInWarMode != updated.IsInWarMode)
+            {
+                eventJournalSource.Publish(new MobileFlagsUpdatedEvent(mobile, updated));
             }
         }
 
@@ -225,8 +237,14 @@ namespace Infusion.LegacyApi
                 return;
 
             if (gameObjects[packet.Id] is Mobile mobile)
-                gameObjects.UpdateObject(mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction, packet.MovementType,
-                    packet.Notoriety, packet.Flags));
+            {
+                var updatedMobile = mobile.Update(packet.Type, packet.Location, packet.Color, packet.Direction,
+                    packet.MovementType,
+                    packet.Notoriety, packet.Flags);
+
+                gameObjects.UpdateObject(updatedMobile);
+                CheckFlagsChange(mobile, updatedMobile);
+            }
             else
             {
                 mobile = new Mobile(packet.Id, packet.Type, packet.Location, packet.Color,

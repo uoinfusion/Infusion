@@ -63,6 +63,7 @@
     <Compile Include="Events\GumpReceivedEvent.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\LoginConfirmedEvent.cs" />
+    <Compile Include="Events\MobileFlagsUpdatedEvent.cs" />
     <Compile Include="Events\PlayerMoveAcceptedEvent.cs" />
     <Compile Include="Events\PlayerMoveRejectedEvent.cs" />
     <Compile Include="Events\PlayerMoveRequestedEvent.cs" />

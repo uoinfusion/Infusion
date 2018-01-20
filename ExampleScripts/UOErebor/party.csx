@@ -2,6 +2,7 @@
 #load "RequestStatusQueue.csx"
 
 using System;
+using Infusion.LegacyApi.Events;
 using Infusion.Scripts.UOErebor.Extensions.StatusBars;
 
 public static class Party
@@ -11,6 +12,7 @@ public static class Party
         new RequestStatusQueue();
 
     public static StatusesConfiguration Window => statuses.Configuration;
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     private static ObjectId? lastTargetId = null; 
 
@@ -52,15 +54,27 @@ public static class Party
             .When<CurrentHealthUpdatedEvent>(HandleHealthUpdated)
             .When<MobileEnteredViewEvent>(HandleMobileEnteredView)
             .When<MobileLeftViewEvent>(HandleMobileLeftView)
+            .When<MobileFlagsUpdatedEvent>(HandleMobileFlagsUpdated)
             .Incomming();
     }
-        
+
+    private static void HandleMobileFlagsUpdated(MobileFlagsUpdatedEvent ev)
+    {
+        if (statuses.Contains(ev.Updated))
+        {
+            Trace.Log($"Flags updated: {ev.Updated.IsDead}, {ev.Updated.Type}"); 
+            Trace.Log($"Flags updated: {ev.BeforeUpdate.IsDead}, {ev.BeforeUpdate.Type}"); 
+            statuses.Update(ev.Updated);
+        }
+    }
+
     private static void HandleMobileEnteredView(MobileEnteredViewEvent ev)
     {
         if (statuses.Contains(ev.Mobile))
         {
             requestStatusQueue.RequestStatus(ev.Mobile.Id);
             statuses.SetOutOfSight(ev.Mobile.Id, false);
+            statuses.Update(ev.Mobile);
         }
     }
 

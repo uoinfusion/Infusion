@@ -17,6 +17,7 @@ public static class Pets
 
     public static MobileSpec PetsSpec = new[] { Specs.NecroSummons }; 
     public static StatusesConfiguration Window => statuses.Configuration;
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     public static IMobileLookup MyPets { get; } = new MobileLookupLinqWrapper(
         UO.Mobiles.Matching(PetsSpec).Where(x => x.CanRename));
@@ -110,7 +111,7 @@ public static class Pets
     {
         if (PetsSpec.Matches(mobile) && statuses.Contains(mobile))
         {
-            UO.Log($"Pet left view: {mobile}");
+            Trace.Log($"Pet left view: {mobile}");
             statuses.Remove(mobile);
         }
     }

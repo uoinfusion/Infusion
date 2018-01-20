@@ -291,10 +291,10 @@ public static class Looting
         
             if (!IgnoredLoot.Matches(itemToPickup))
             {
-                UO.ClientPrint($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
+                Trace.Log($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
                 if (!UO.TryMoveItem(itemToPickup, LootContainer))
                 {
-                    UO.ClientPrint("Cannot pickup an item, cancelling loot");
+                    UO.ClientPrint($"Cannot pickup an item {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
                     return;
                 }
 
@@ -310,7 +310,7 @@ public static class Looting
             }
         }
 
-        UO.ClientPrint($"Looting finished, ignoring corpse {container.Id:X8}");
+        UO.ClientPrint("Looting finished", UO.Me, Colors.Green);
         ignoredItems.Ignore(container);
     }
 

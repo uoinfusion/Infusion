@@ -311,15 +311,18 @@ namespace Infusion.LegacyApi
             try
             {
                 targetInfoRequested = true;
-                ClearNextTarget();
                 receivedTargetInfoEvent.Reset();
+                targetFromServerReceivedEvent.Reset();
+                ClearNextTarget();
+
                 client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
 
                 var originalTime = lastTargetCursorPacketTime;
 
                 AskForTargetStartedEvent.Set();
 
-                while (!receivedTargetInfoEvent.WaitOne(10))
+                int receivedTargetInfoEventIndex = 1;
+                while (WaitHandle.WaitAny(new WaitHandle[] { this.targetFromServerReceivedEvent, receivedTargetInfoEvent }, 10) != receivedTargetInfoEventIndex)
                 {
                     if (originalTime != lastTargetCursorPacketTime)
                         return null;
@@ -338,6 +341,7 @@ namespace Infusion.LegacyApi
         public TargetInfo? LocationInfo()
         {
             receivedTargetInfoEvent.Reset();
+            targetFromServerReceivedEvent.Reset();
             ClearNextTarget();
 
             client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
@@ -346,7 +350,8 @@ namespace Infusion.LegacyApi
 
             AskForTargetStartedEvent.Set();
 
-            while (!receivedTargetInfoEvent.WaitOne(10))
+            int receivedTargetInfoEventIndex = 1;
+            while (WaitHandle.WaitAny(new WaitHandle[] { this.targetFromServerReceivedEvent, receivedTargetInfoEvent }, 10) != receivedTargetInfoEventIndex)
             {
                 if (originalTime != lastTargetCursorPacketTime)
                     return null;

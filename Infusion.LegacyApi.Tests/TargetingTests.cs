@@ -141,6 +141,30 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
+        public void AskForLocation_waits_for_target_from_client_When_server_have_asked_for_target_before()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x00, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00,
+            }));
+
+            var task = Task.Run(() => { testProxy.Api.AskForLocation().Value.Location.Should().Be(new Location3D(0x09EC, 0x0CF9, 0)); });
+
+            testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x01, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0xEC, 0x0C, 0xF9, 0x00,
+                0x00, 0x00, 0x00,
+            }));
+
+            task.Wait(100).Should().BeTrue();
+        }
+
+        [TestMethod]
         public void Cancels_AfkForItem_When_server_requests_target()
         {
             ConcurrencyTester.Run(() =>

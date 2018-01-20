@@ -114,14 +114,18 @@ public static class Party
     }
     
 
-   public static void Add(Mobile newMember, string namePrefix = null)
-   {
-       if (!statuses.Contains(newMember))
-       {
-           UO.RequestStatus(newMember);
+    public static void Add(Mobile newMember, string namePrefix = null)
+    {
+        if (!statuses.Contains(newMember))
+        {
+            UO.RequestStatus(newMember);
 
-           statuses.Add(newMember, StatusBarType.Friend, namePrefix);
-       }
+            statuses.Add(newMember, StatusBarType.Friend, namePrefix);
+        }
+        else
+        {
+            statuses.Open();
+        }
    }
     
     public static void Remove()

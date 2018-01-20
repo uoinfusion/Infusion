@@ -15,6 +15,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             if (statusesInstances.TryGetValue(title, out Statuses instance))
             {
                 instance.MobileTargeted = delegate { };
+                instance.Clear();
                 return instance;
             }
 

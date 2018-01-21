@@ -76,7 +76,7 @@ public static class Walls
             return;
         }
         
-        UO.Target(currentTargetInfo.Value);
+        UO.Target(currentTargetInfo.Value.Location);
 
         ObjectId? targetObjectId = null;
         ModelId? targetObjectType = null;

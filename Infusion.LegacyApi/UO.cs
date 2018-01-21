@@ -153,6 +153,9 @@ namespace Infusion.LegacyApi
         public static void Target(Location2D location)
             => Current.Target(location);
 
+        public static void Target(Location3D location)
+            => Current.Target(location);
+
         public static void Target(TargetInfo targetInfo)
             => Current.Target(targetInfo);
 

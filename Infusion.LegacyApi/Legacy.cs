@@ -395,7 +395,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
             NotifyAction();
 
-            targeting.TargetTile(location.X, location.Y, 0, 0);
+            targeting.TargetTile(location.X, location.Y, location.Z, 0);
         }
 
         public void Target(TargetInfo targetInfo)

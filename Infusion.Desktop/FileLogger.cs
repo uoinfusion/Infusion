@@ -29,13 +29,15 @@ namespace Infusion.Desktop
                 lock (logLock)
                 {
                     string logsPath = configuration.LogPath;
+                    var utcTimeStamp = timeStamp.ToUniversalTime();
 
-                    string fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
+                    string fileName = Path.Combine(logsPath, $"{utcTimeStamp:yyyy-MM-dd}.log");
 
+                    bool createdNew = false;
                     if (!File.Exists(fileName))
                     {
                         File.Create(fileName).Dispose();
-                        File.AppendAllText(fileName, $"Infusion {VersionHelpers.ProductVersion}");
+                        createdNew = true;
                     }
 
                     using (var stream =
@@ -43,7 +45,12 @@ namespace Infusion.Desktop
                     {
                         using (var writer = new StreamWriter(stream))
                         {
-                            writer.WriteLine($@"{timeStamp:HH:mm:ss:fffff}: {message}");
+                            if (createdNew)
+                            {
+                                writer.WriteLine($"Log craeted on {utcTimeStamp.Date:d}, using UTC timestamps");
+                                writer.WriteLine($@"Infusion {VersionHelpers.ProductVersion}");
+                            }
+                            writer.WriteLine($@"{utcTimeStamp:HH:mm:ss:fffff}: {message}");
                         }
                     }
                 }

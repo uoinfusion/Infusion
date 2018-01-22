@@ -9,7 +9,7 @@ public static class Startup
     public static bool isReady;
     public static bool waitingStarted;
     public static object waitingLock = new object();
-    public static List<string> startupCommands = new List<string>();
+    public static List<string> startupCommandNames = new List<string>();
     
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
@@ -23,7 +23,7 @@ public static class Startup
         else
         {
             Trace.Log($"Adding command '{commandName}' to queue");
-            startupCommands.Add(commandName);
+            startupCommandNames.Add(commandName);
             
             StartWaiting();
         }
@@ -69,10 +69,18 @@ public static class Startup
     {
         isReady = true;
     
-        foreach (var command in startupCommands)
+        foreach (var commandName in startupCommandNames)
         {
-            Trace.Log($"Launching startup command {command}");
-            UO.CommandHandler.Invoke(command, CommandExecutionMode.AlwaysParallel);
+            if (UO.CommandHandler.TryGetCommand(commandName, out Command command))
+            {
+                Trace.Log($"Launching startup command {commandName}");
+                
+                var mode = (command.ExecutionMode != CommandExecutionMode.Background) 
+                    ? CommandExecutionMode.AlwaysParallel
+                    : CommandExecutionMode.Background;
+
+                UO.CommandHandler.Invoke(commandName, CommandExecutionMode.AlwaysParallel);
+            }
         }
     }
 }

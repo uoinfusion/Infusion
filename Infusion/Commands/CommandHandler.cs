@@ -47,6 +47,9 @@ namespace Infusion.Commands
         internal event EventHandler<CommandInvocation> RunningCommandRemoved;
         internal event EventHandler<CancellationToken> CancellationTokenCreated;
 
+        public bool TryGetCommand(string name, out Command command) =>
+            this.commands.TryGetValue(name, out command);
+
         internal void OnCancellationTokenCreated(CancellationToken token)
         {
             CancellationTokenCreated?.Invoke(this, token);

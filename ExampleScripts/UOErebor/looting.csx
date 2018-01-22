@@ -32,7 +32,7 @@ public static class Looting
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec OnGroundLoot { get; set; } = new[]
     {
-        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Bolt
+        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
     };
 
     public static ObjectId? LootContainerId { get; set; }

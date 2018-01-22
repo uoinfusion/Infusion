@@ -26,10 +26,19 @@ public static class Specs
 
     public static readonly ItemSpec Crossbow = 0x0F4F;
 
-    // Amunition
+    // Ammunition
     public static readonly ItemSpec Arrow = 0x0F3F;
+    public static readonly ItemSpec SpruceArrow = new ItemSpec(0x0F3F, (Color)0x0000);
+    public static readonly ItemSpec ChestnutArrow = new ItemSpec(0x0F3F, (Color)0x05E5);
+    public static readonly ItemSpec OakArrow = new ItemSpec(0x0F3F, (Color)0x05F2);
+    public static readonly ItemSpec TeakArrow = new ItemSpec(0x0F3F, (Color)0x01C4);
     public static readonly ItemSpec Bolt = 0x1BFB;
     public static readonly ItemSpec JaggedBolt = 0x38D8;
+
+    public static readonly ItemSpec Ammunition = new []
+    { 
+        ChestnutArrow, OakArrow, TeakArrow, Bolt, JaggedBolt
+     };
 
     public static readonly ItemSpec TightBoots = 0x1711;
 
@@ -378,7 +387,7 @@ public static class Specs
 
     public static readonly ItemSpec Door = new[] { OpenDoor, ClosedDoor };
     
-    public static readonly ItemSpec StoneArch = 0x0080;
+    public static readonly ItemSpec MagicWall = 0x0080;
     public static readonly ItemSpec EnergyField = new[] { 0x3947, 0x3956 };
 
     // Animals
@@ -439,16 +448,10 @@ public static class Specs
     public static readonly ItemSpec HairReceding = 0x2048;
     public static readonly ItemSpec HairPigtails = 0x2049;
     public static readonly ItemSpec HairPonytail = 0x203D;
-    public static readonly ItemSpec HairKrisna = 0x204A;
-    public static readonly ItemSpec HairMohawk = 0x2044;
-    public static readonly ItemSpec BeardMediumShort = 0x204B;
-    public static readonly ItemSpec BeardShort = 0x203F;
-    public static readonly ItemSpec BeardVandyke = 0x204D;
     public static readonly ItemSpec Hairs = new[]
     {
         HairLong, HairShort, HairPageBoy, HairBuns, HairAfro,
-        HairReceding, HairPigtails, HairPonytail, HairKrisna,
-        HairMohawk, BeardShort, BeardMediumShort, BeardVandyke
+        HairReceding, HairPigtails, HairPonytail
     };
 
     public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369 };

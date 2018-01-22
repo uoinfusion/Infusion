@@ -196,24 +196,8 @@ namespace Infusion.LegacyApi
         public static void DragItem(Item item, ushort amount)
             => Current.DragItem(item, amount);
 
-        public static bool TryMoveItem(Item item, GameObject targetContainer, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null)
-            => Current.TryMoveItem(item, targetContainer, timeout, dropDelay);
-
-        public static bool TryMoveItem(Item item, ObjectId targetContainerId, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null)
-            => Current.TryMoveItem(item, targetContainerId, timeout, dropDelay);
-
-        public static bool TryMoveItem(Item item, ushort amount, GameObject targetContainer, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null)
-            => Current.TryMoveItem(item, amount, targetContainer, timeout, dropDelay);
-
-        public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null)
-            => Current.TryMoveItem(item, amount, targetContainerId, timeout, dropDelay);
-
-        public static DragResult WaitForItemDragged(TimeSpan? timeout = null)
-            => Current.WaitForItemDragged(timeout);
+        public static DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId, TimeSpan? timeout = null)
+            => Current.WaitForItemDragged(awaitedDragObjectId, timeout);
 
         public static void Log(string message)
             => Current.Log(message);
@@ -232,9 +216,6 @@ namespace Infusion.LegacyApi
 
         public static void CloseGump()
             => Current.CloseGump();
-
-        public static bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
-            => Current.TryWear(item, layer, timeout);
 
         public static void Wear(Item item, Layer layer, TimeSpan? timeout = null)
             => Current.Wear(item, layer, timeout);

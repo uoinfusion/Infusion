@@ -39,6 +39,7 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForTargetStartedEvent => targeting.WaitForTargetStartedEvent;
         internal AutoResetEvent AskForTargetStartedEvent => targeting.AskForTargetStartedEvent;
         internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
+        internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
@@ -530,38 +531,12 @@ namespace Infusion.LegacyApi
         public void DragItem(Item item, ushort amount)
         {
             CheckCancellation();
-            itemsObserver.DraggedItemId = item.Id;
-
             Server.DragItem(item.Id, amount);
         }
 
-        public bool TryMoveItem(Item item, GameObject targetContainer, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainer.Id, timeout, dropDelay);
-
-        public bool TryMoveItem(Item item, ObjectId targetContainerId, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainerId, timeout, dropDelay);
-
-        public bool TryMoveItem(Item item, ushort amount, GameObject targetContainer, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null) => TryMoveItem(item, item.Amount, targetContainer.Id, timeout, dropDelay);
-
-        public bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, TimeSpan? timeout = null,
-            TimeSpan? dropDelay = null)
+        public DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId = null, TimeSpan? timeout = null)
         {
-            DragItem(item, amount);
-            if (WaitForItemDragged(timeout ?? DefaultTimeout) != DragResult.Success)
-                return false;
-
-            if (dropDelay.HasValue)
-                Wait(dropDelay.Value);
-
-            DropItem(item, targetContainerId);
-
-            return true;
-        }
-
-        public DragResult WaitForItemDragged(TimeSpan? timeout = null)
-        {
-            return itemsObserver.WaitForItemDragged(timeout ?? DefaultTimeout);
+            return itemsObserver.WaitForItemDragged(awaitedDragObjectId, timeout ?? DefaultTimeout);
         }
 
         public void Log(string message)
@@ -597,19 +572,7 @@ namespace Infusion.LegacyApi
 
         public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
         {
-            if (!TryWear(item, layer, timeout))
-                throw new LegacyException($"Cannot pickup {item}");
-        }
-
-        public bool TryWear(Item item, Layer layer, TimeSpan? timeout = null)
-        {
-            DragItem(item, 1);
-            if (WaitForItemDragged(timeout ?? DefaultTimeout) != DragResult.Success)
-                return false;
-
             Server.Wear(item.Id, layer, Me.PlayerId);
-
-            return true;
         }
 
         public void CastSpell(Spell spell)

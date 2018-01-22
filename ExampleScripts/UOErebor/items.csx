@@ -5,9 +5,77 @@ using System.Linq;
 
 public static class Items
 {
+    private static EventJournal journal = UO.CreateEventJournal();
+
+    public static bool Drag(Item item)
+        => Drag(item, 1);
+    
+
+    public static bool Drag(Item item, ushort amount)
+    {
+        UO.DragItem(item, amount);
+        var dragResult = UO.WaitForItemDragged(item.Id);
+        switch (dragResult)
+        {
+            case DragResult.Success:
+                return true;
+            case DragResult.Timeout:
+                UO.ClientPrint($"Timeout when dragging {item}");
+                return false;
+            default:
+                UO.ClientPrint($"Cannot drag {item}, reason {dragResult}"); 
+                return false;
+        }
+    }
+
+    public static void Wear(Item item, Layer layer)
+    {
+        if (!Drag(item))
+            return;
+
+        UO.Wear(item, layer);
+        journal
+            .When<Infusion.LegacyApi.Events.ItemWornEvent>(
+                x => x.ItemId == item.Id && x.MobileId == UO.Me.PlayerId,
+                x => UO.Log($"Item {item} worn."))
+            .WhenTimeout(() => UO.ClientPrint($"Timeout when wearing {item}"))
+            .WaitAny();
+    }
+
+    public static bool TryMoveItem(Item item, GameObject targetContainer)
+        => TryMoveItem(item, item.Amount, targetContainer.Id);
+
+    public static bool TryMoveItem(Item item, ObjectId targetContainerId)
+        => TryMoveItem(item, item.Amount, targetContainerId);
+
+    public static bool TryMoveItem(Item item, ushort amount, GameObject targetContainer)
+        => TryMoveItem(item, amount, targetContainer.Id);
+    
+    public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId)
+    {
+        if (!Drag(item, amount))
+            return false;
+        
+        UO.DropItem(item, targetContainerId);
+        
+        bool result = false;
+        journal
+            .When<Infusion.LegacyApi.Events.ItemEnteredViewEvent>(
+                e => e.NewItem.Id == item.Id,
+                e => result = true)
+            .WhenTimeout(() =>
+            {
+                result = false;
+                UO.Log("Waiting for drop item timeout");
+            })
+            .WaitAny();
+        
+        return result;
+    }
+    
     public static void Pickup(Item item)
     {
-        UO.TryMoveItem(item, UO.Me.BackPack);
+        TryMoveItem(item, UO.Me.BackPack);
     }
     
     public static void BatchedMove(int totalAmount, int batchSize)
@@ -59,7 +127,7 @@ public static class Items
     {
         foreach (var item in items)
         {
-            UO.TryMoveItem(item, targetContainer);
+            TryMoveItem(item, targetContainer);
         }
     }
     
@@ -78,12 +146,12 @@ public static class Items
             UO.ClientPrint($"Moving item {Specs.TranslateToName(item)}");
             if (item.Amount <= amount)
             {
-                UO.TryMoveItem(item, targetContainerId);
+                TryMoveItem(item, targetContainerId);
                 amount -= item.Amount;
             }
             else
             {
-                UO.TryMoveItem(item, amount, targetContainerId);
+                TryMoveItem(item, amount, targetContainerId);
                 amount = 0;
             }
         }
@@ -302,3 +370,6 @@ UO.RegisterCommand("itemscount-same", Items.CountItemsSame);
 UO.RegisterCommand("itemsamount-same", Items.AmountItemsSame);
 UO.RegisterCommand("itemsamount-all", Items.ItemsAmountAll);
 UO.RegisterCommand("itemsamount-sub", Items.ItemsAmountSub);
+
+//var item = UO.Items[0x4008B909];
+//Items.Wear(item, Layer.TwoHandedWeapon);

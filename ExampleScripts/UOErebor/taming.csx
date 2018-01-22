@@ -1,5 +1,6 @@
 #load "Specs.csx"
 #load "afk.csx"
+#load "items.csx"
 
 static class Taming
 {
@@ -24,7 +25,7 @@ static class Taming
 
                     if (onion != null)
                     {
-                        UO.TryMoveItem(onion, 1, animal.Id);
+                        Items.TryMoveItem(onion, 1, animal.Id);
                         UO.Wait(500);
                         UO.Say("all release");
                     }

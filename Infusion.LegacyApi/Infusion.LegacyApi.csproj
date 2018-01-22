@@ -62,6 +62,9 @@
     <Compile Include="EventJournalSource.cs" />
     <Compile Include="Events\GumpReceivedEvent.cs" />
     <Compile Include="Events\IEvent.cs" />
+    <Compile Include="Events\ItemWornEvent.cs" />
+    <Compile Include="Events\MoveItemRequestRejectedEvent.cs" />
+    <Compile Include="Events\ObjectDeletedEvent.cs" />
     <Compile Include="Events\LoginConfirmedEvent.cs" />
     <Compile Include="Events\MobileFlagsUpdatedEvent.cs" />
     <Compile Include="Events\PlayerMoveAcceptedEvent.cs" />

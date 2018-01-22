@@ -87,9 +87,7 @@ public static class Looting
 
         if (previousEquipment.HasValue)
         {
-            UO.Wait(100);
             Equip.Set(previousEquipment.Value);
-            UO.Wait(100);
         }
 
         LootGround();
@@ -141,9 +139,7 @@ public static class Looting
                 // looting may crash the game client.
                 if (previousEquipment.HasValue)
                 {
-                    UO.Wait(100);
                     Equip.Set(previousEquipment.Value);
-                    UO.Wait(100);
                 }
             }
         }
@@ -239,7 +235,7 @@ public static class Looting
 
         foreach (var item in itemsOnGround)
         {
-            if (!UO.TryMoveItem(item, LootContainer))
+            if (!Items.TryMoveItem(item, LootContainer))
             {
                 UO.ClientPrint("Cannot pickup item, cancelling ground loot");
                 break;
@@ -292,7 +288,7 @@ public static class Looting
             if (!IgnoredLoot.Matches(itemToPickup))
             {
                 Trace.Log($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
-                if (!UO.TryMoveItem(itemToPickup, LootContainer))
+                if (!Items.TryMoveItem(itemToPickup, LootContainer))
                 {
                     UO.ClientPrint($"Cannot pickup an item {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
                     return;
@@ -340,7 +336,6 @@ public static class Looting
             
         return true;
     }
-
 }
 
 UO.RegisterCommand("ripandloot", Looting.RipAndLootNearest);

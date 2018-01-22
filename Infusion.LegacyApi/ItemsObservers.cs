@@ -10,15 +10,18 @@ namespace Infusion.LegacyApi
     internal partial class ItemsObservers
     {
         private readonly GameObjectCollection gameObjects;
-        private readonly ManualResetEvent itemDragResultReceived = new ManualResetEvent(false);
         private readonly Legacy legacyApi;
         private readonly EventJournalSource eventJournalSource;
+        private readonly EventJournal eventJournal;
 
-        private DragResult dragResult = DragResult.None;
+
+        public AutoResetEvent WaitForItemDraggedStartedEvent => eventJournal.AwaitingStarted;
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi, EventJournalSource eventJournalSource)
         {
+            this.eventJournal = new EventJournal(eventJournalSource);
+
             this.gameObjects = gameObjects;
             this.gameObjects.MobileLeftView += (sender, mobile) =>
             {
@@ -60,8 +63,6 @@ namespace Infusion.LegacyApi
         {
             eventJournalSource.Publish(new ItemUseRequestedEvent(request.ItemId));
         }
-
-        public ObjectId? DraggedItemId { get; set; }
 
         private void HandleStatusBarInfo(StatusBarInfoPacket packet)
         {
@@ -127,13 +128,13 @@ namespace Infusion.LegacyApi
         {
             gameObjects.UpdateObject(new Item(packet.ItemId, packet.Type, 1, new Location3D(0, 0, 0), packet.Color,
                 packet.PlayerId, packet.Layer));
+
+            eventJournalSource.Publish(new ItemWornEvent(packet.ItemId, packet.PlayerId, packet.Layer));
         }
 
         private void HandleRejectMoveItemRequestPacket(RejectMoveItemRequestPacket packet)
         {
-            DraggedItemId = null;
-            dragResult = (DragResult) packet.Reason;
-            itemDragResultReceived.Set();
+            eventJournalSource.Publish(new MoveItemRequestRejectedEvent((DragResult)packet.Reason));
         }
 
         private void HandleUpdateCurrentHealthPacket(UpdateCurrentHealthPacket packet)
@@ -181,8 +182,10 @@ namespace Infusion.LegacyApi
             }
             else
             {
-                gameObjects.AddObject(new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
-                    packet.Color, packet.ContainerId, null));
+                var item = new Item(packet.ItemId, packet.Type, packet.Amount, (Location3D) packet.Location,
+                    packet.Color, packet.ContainerId, null);
+                gameObjects.AddObject(item);
+                OnItemEnteredView(item);
             }
         }
 
@@ -196,16 +199,8 @@ namespace Infusion.LegacyApi
             if (packet.Id == legacyApi.Me.PlayerId)
                 return;
 
-            var itemId = DraggedItemId;
-
-            if (itemId.HasValue && packet.Id == itemId.Value)
-            {
-                DraggedItemId = null;
-                dragResult = DragResult.Success;
-                itemDragResultReceived.Set();
-            }
-
             gameObjects.RemoveItem(packet.Id);
+            eventJournalSource.Publish(new ObjectDeletedEvent(packet.Id));
         }
 
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
@@ -267,27 +262,19 @@ namespace Infusion.LegacyApi
             gameObjects.PurgeUnreachableItems(newPosition, 25);
         }
 
-        public DragResult WaitForItemDragged(TimeSpan? timeout)
+        public DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId, TimeSpan? timeout)
         {
-            dragResult = DragResult.None;
-            itemDragResultReceived.Reset();
+            WaitForItemDraggedStartedEvent.Set();
 
-            var timeSpentWaiting = new TimeSpan();
-            var sleepSpan = TimeSpan.FromMilliseconds(100);
+            var result = DragResult.None;
+            eventJournal.When<ObjectDeletedEvent>(
+                    e => awaitedDragObjectId.HasValue && awaitedDragObjectId.Value == e.DeletedObjectId,
+                    e => result = DragResult.Success)
+                .When<MoveItemRequestRejectedEvent>(e => result = e.Reason)
+                .WhenTimeout(() => result = DragResult.Timeout)
+                .WaitAny(timeout);
 
-            while (!itemDragResultReceived.WaitOne(sleepSpan))
-            {
-                legacyApi.CheckCancellation();
-
-                if (timeout.HasValue)
-                {
-                    timeSpentWaiting += sleepSpan;
-                    if (timeSpentWaiting > timeout.Value)
-                        return DragResult.Timeout;
-                }
-            }
-
-            return dragResult;
+            return result;
         }
     }
 }

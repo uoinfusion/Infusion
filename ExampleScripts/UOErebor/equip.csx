@@ -1,9 +1,11 @@
+#load "items.csx"
+
 public static class Equip
 {
     public static Equipment GetHand()
     {
         Layer itemInHandLayer;
-        
+
         var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
         if (itemInHand == null)
         {
@@ -15,13 +17,13 @@ public static class Equip
             itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
             itemInHandLayer = Layer.OneHandedWeapon;
         }
-    
+
         if (itemInHand != null)
             return new Equipment(itemInHand.Id, itemInHandLayer);
         else
             return Equipment.None;
     }
-    
+
     public static void Set(Equipment equipment)
     {
         if (equipment.Equals(Equipment.None))
@@ -29,16 +31,15 @@ public static class Equip
             UO.ClientPrint("No item to equip");
             return;
         }
-        
+
         var item = UO.Items[equipment.Id];
         if (item == null)
         {
             UO.ClientPrint($"Cannot find item {equipment.Id}.");
-            return;            
+            return;
         }
 
-        UO.TryWear(item, equipment.Layer);
-        UO.Wait(100);
+        Items.Wear(item, equipment.Layer);
     }
 }
 

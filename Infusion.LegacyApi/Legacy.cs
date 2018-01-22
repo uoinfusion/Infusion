@@ -520,6 +520,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
+            NotifyAction();
             Server.DropItem(itemId, targetContainerId);
         }
 
@@ -531,6 +532,8 @@ namespace Infusion.LegacyApi
         public void DragItem(Item item, ushort amount)
         {
             CheckCancellation();
+
+            NotifyAction();
             Server.DragItem(item.Id, amount);
         }
 
@@ -546,6 +549,8 @@ namespace Infusion.LegacyApi
 
         public void TriggerGump(GumpControlId triggerId)
         {
+            NotifyAction();
+
             gumpObservers.TriggerGump(triggerId);
         }
 
@@ -556,6 +561,8 @@ namespace Infusion.LegacyApi
 
         public void SelectGumpButton(string buttonLabel, GumpLabelPosition labelPosition)
         {
+            NotifyAction();
+
             gumpObservers.SelectGumpButton(buttonLabel, labelPosition);
         }
 
@@ -572,6 +579,8 @@ namespace Infusion.LegacyApi
 
         public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
         {
+            NotifyAction();
+
             Server.Wear(item.Id, layer, Me.PlayerId);
         }
 
@@ -592,6 +601,8 @@ namespace Infusion.LegacyApi
 
         public void OpenDoor()
         {
+            NotifyAction();
+
             Server.OpenDoor();
         }
 

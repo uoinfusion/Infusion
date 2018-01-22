@@ -39,7 +39,7 @@ stable on this shard and there is a lot of example scripts you can immediately s
 - Display [status bar](ExampleScripts/UOErebor/party.csx) of your friends in an external window. These status bars never disappear so you always see how many HP your friends have.
 - [Hiding](ExampleScripts/UOErebor/hidding.csx) with *always walk* feature to utilize stealth. 
 - [Targeting](ExampleScripts/UOErebor/targeting.csx) red karma only, skipping own summon/pets.
-- Fast and reliable [walking](ExampleScripts/UOErebor/walking.csx).
+- Fast and reliable [walking](ExampleScripts/UOErebor/walking.csx) from script.
 - Read status of spell [chargers](ExampleScripts/UOErebor/chargers.csx) from script.
 - Damage [notification](ExampleScripts/UOErebor/hpnotify.csx).
 - Show [experience](ExampleScripts/UOErebor/explevel.csx) in game window title.

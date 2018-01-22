@@ -1,4 +1,7 @@
+
 #load "items.csx"
+
+using System;
 
 public static class Equip
 {
@@ -24,7 +27,7 @@ public static class Equip
             return Equipment.None;
     }
 
-    public static void Set(Equipment equipment)
+    public static void Set(Equipment equipment, TimeSpan? timeout = null)
     {
         if (equipment.Equals(Equipment.None))
         {
@@ -33,13 +36,15 @@ public static class Equip
         }
 
         var item = UO.Items[equipment.Id];
+
         if (item == null)
         {
             UO.ClientPrint($"Cannot find item {equipment.Id}.");
             return;
+            return;
         }
 
-        Items.Wear(item, equipment.Layer);
+        Items.Wear(item, equipment.Layer, timeout);
     }
 }
 

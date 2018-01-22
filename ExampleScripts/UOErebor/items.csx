@@ -1,5 +1,6 @@
 #load "Specs.csx"
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +29,7 @@ public static class Items
         }
     }
 
-    public static void Wear(Item item, Layer layer)
+    public static void Wear(Item item, Layer layer, TimeSpan? timeout = null)
     {
         if (!Drag(item))
             return;
@@ -39,7 +40,7 @@ public static class Items
                 x => x.ItemId == item.Id && x.MobileId == UO.Me.PlayerId,
                 x => UO.Log($"Item {item} worn."))
             .WhenTimeout(() => UO.ClientPrint($"Timeout when wearing {item}"))
-            .WaitAny();
+            .WaitAny(timeout);
     }
 
     public static bool TryMoveItem(Item item, GameObject targetContainer)

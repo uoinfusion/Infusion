@@ -33,10 +33,11 @@ public static class Startup
     {
         lock (waitingLock)
         {
-            if (!UO.CommandHandler.IsCommandRunning("startup"))
+            if (!waitingStarted)
             {
                 Trace.Log("Starting startup command");
                 UO.CommandHandler.Invoke("startup-handling", CommandExecutionMode.AlwaysParallel);
+                waitingStarted = true;
             }
         }        
     }

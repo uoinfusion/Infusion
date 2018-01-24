@@ -1,4 +1,5 @@
 #load "Specs.csx"
+#load "startup.csx"
 
 using System;
 using System.Linq;
@@ -26,7 +27,7 @@ public static class Title
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke("title");
+        Startup.RegisterStartupCommand("title");
     }
     
     public static void Disable()

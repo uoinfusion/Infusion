@@ -6,12 +6,16 @@ using System.Linq;
 
 public static class Items
 {
+    public static ScriptTrace Trace { get; } = UO.Trace.Create();
     private static EventJournal journal = UO.CreateEventJournal();
+
+    public static string GetName(Item item)
+        => string.IsNullOrEmpty(item.Name) ? Specs.TranslateToName(item) : item.Name;
+    
 
     public static bool Drag(Item item)
         => Drag(item, 1);
     
-
     public static bool Drag(Item item, ushort amount)
     {
         UO.DragItem(item, amount);
@@ -21,26 +25,44 @@ public static class Items
             case DragResult.Success:
                 return true;
             case DragResult.Timeout:
-                UO.ClientPrint($"Timeout when dragging {item}");
+                UO.ClientPrint($"Timeout when dragging {GetName(item)}");
                 return false;
             default:
-                UO.ClientPrint($"Cannot drag {item}, reason {dragResult}"); 
+                UO.ClientPrint($"Cannot drag {GetName(item)}, reason: {dragResult}"); 
                 return false;
         }
     }
 
-    public static void Wear(Item item, Layer layer, TimeSpan? timeout = null)
+    public static bool Wear(Item item, Layer layer, TimeSpan? timeout = null)
     {
+        bool result = false;
+
         if (!Drag(item))
-            return;
+            return false;
 
         UO.Wear(item, layer);
+        
         journal
-            .When<Infusion.LegacyApi.Events.ItemWornEvent>(
+            .When<ItemWornEvent>(
                 x => x.ItemId == item.Id && x.MobileId == UO.Me.PlayerId,
-                x => UO.Log($"Item {item} worn."))
-            .WhenTimeout(() => UO.ClientPrint($"Timeout when wearing {item}"))
+                x =>
+                {
+                    Trace.Log($"Item {item} worn.");
+                    result = true;
+                })
+            .When<MoveItemRequestRejectedEvent>(x =>
+            {
+                UO.ClientPrint($"Wear request rejected: {GetName(item)}, reason: {x.Reason}");
+                result = false;
+            })
+            .WhenTimeout(() =>
+            {
+                UO.ClientPrint($"Timeout when wearing {GetName(item)}");
+                result = false;
+            })
             .WaitAny(timeout);
+            
+        return result;
     }
 
     public static bool TryMoveItem(Item item, GameObject targetContainer)
@@ -54,30 +76,38 @@ public static class Items
     
     public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId)
     {
+        bool result = false;
+    
         if (!Drag(item, amount))
             return false;
         
         UO.DropItem(item, targetContainerId);
         
-        bool result = false;
         journal
             .When<Infusion.LegacyApi.Events.ItemEnteredViewEvent>(
                 e => e.NewItem.Id == item.Id,
-                e => result = true)
+                e =>
+                {
+                    result = true;
+                    Trace.Log($"Item drop confirmed: {item}");
+                })
+            .When<MoveItemRequestRejectedEvent>(x =>
+            {
+                Trace.Log($"Item drop rejected: {item}");
+                result = false;
+            })
             .WhenTimeout(() =>
             {
                 result = false;
-                UO.Log("Waiting for drop item timeout");
+                Trace.Log("Waiting for drop item timeout");
             })
             .WaitAny();
         
         return result;
     }
     
-    public static void Pickup(Item item)
-    {
-        TryMoveItem(item, UO.Me.BackPack);
-    }
+    public static bool Pickup(Item item)
+        => TryMoveItem(item, UO.Me.BackPack);
     
     public static void BatchedMove(int totalAmount, int batchSize)
     {

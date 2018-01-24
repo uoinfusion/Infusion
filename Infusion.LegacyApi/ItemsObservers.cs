@@ -13,14 +13,16 @@ namespace Infusion.LegacyApi
         private readonly Legacy legacyApi;
         private readonly EventJournalSource eventJournalSource;
         private readonly EventJournal eventJournal;
+        private readonly EventJournal waitForItemDraggedJournal;
 
 
-        public AutoResetEvent WaitForItemDraggedStartedEvent => eventJournal.AwaitingStarted;
+        public AutoResetEvent WaitForItemDraggedStartedEvent => waitForItemDraggedJournal.AwaitingStarted;
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi, EventJournalSource eventJournalSource)
         {
             this.eventJournal = new EventJournal(eventJournalSource);
+            this.waitForItemDraggedJournal = new EventJournal(eventJournalSource);
 
             this.gameObjects = gameObjects;
             this.gameObjects.MobileLeftView += (sender, mobile) =>
@@ -264,10 +266,8 @@ namespace Infusion.LegacyApi
 
         public DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId, TimeSpan? timeout)
         {
-            WaitForItemDraggedStartedEvent.Set();
-
             var result = DragResult.None;
-            eventJournal.When<ObjectDeletedEvent>(
+            waitForItemDraggedJournal.When<ObjectDeletedEvent>(
                     e => awaitedDragObjectId.HasValue && awaitedDragObjectId.Value == e.DeletedObjectId,
                     e => result = DragResult.Success)
                 .When<MoveItemRequestRejectedEvent>(e => result = e.Reason)

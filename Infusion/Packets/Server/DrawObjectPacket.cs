@@ -27,7 +27,7 @@ namespace Infusion.Packets.Server
 
             Id = reader.ReadObjectId();
             Type = reader.ReadModelId();
-            Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadByte());
+            Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadSByte());
             (Direction, MovementType) = reader.ReadDirection();
             Color = (Color) reader.ReadUShort();
             Flags = reader.ReadByte();

@@ -89,8 +89,7 @@ namespace Infusion
             else
                 throw new ArgumentOutOfRangeException(nameof(direction), $"Unknown direction {direction}");
 
-            return new Location3D((ushort) (X + directionVector.X), (ushort) (Y + directionVector.Y),
-                (byte) (Z + directionVector.Z));
+            return new Location3D(X + directionVector.X, Y + directionVector.Y, Z + directionVector.Z);
         }
     }
 }

@@ -68,7 +68,7 @@ namespace Infusion.Packets.Server
             var yloc = reader.ReadUShort();
             reader.Skip(2); // unknown
             (Direction, MovementType) = reader.ReadDirection();
-            var zloc = reader.ReadByte();
+            var zloc = reader.ReadSByte();
 
             Location = new Location3D(xloc, yloc, zloc);
         }

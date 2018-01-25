@@ -23,7 +23,7 @@ namespace Infusion.Packets.Server
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();
             (Direction, MovementType) = reader.ReadDirection();
-            byte zloc = reader.ReadByte();
+            sbyte zloc = reader.ReadSByte();
 
             Location = new Location3D(xloc, yloc, zloc);
         }

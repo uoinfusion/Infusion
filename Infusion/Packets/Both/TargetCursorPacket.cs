@@ -49,7 +49,7 @@ namespace Infusion.Packets.Both
             ushort xloc = reader.ReadUShort();
             ushort yloc = reader.ReadUShort();
             byte unknown = reader.ReadByte();
-            byte zloc = reader.ReadByte();
+            sbyte zloc = reader.ReadSByte();
 
             Location = new Location3D(xloc, yloc, zloc);
 

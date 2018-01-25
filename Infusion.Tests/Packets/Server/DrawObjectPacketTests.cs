@@ -80,6 +80,43 @@ namespace Infusion.Tests.Packets.Server
         }
 
         [TestMethod]
+        public void Can_deserialize_object_on_negative_z_coord()
+        {
+            var drawObjectPacketWithoutItems = FakePackets.Instantiate(source: new byte[]
+            {
+                0x78, // packet
+                0x00, 0x17, // length
+                0x00, 0x00, 0x00, 0x01, // id
+                0x01, 0x90, // type
+                0x12, 0x9B, // xpos
+                0x05, 0x53, // ypos
+                0xF0, // zpos
+                0x07, // direction/facing
+                0x83, 0xEA, // color
+                0x00, // status flag
+                0x01, // notoriety
+                0x00, 0x00, 0x00, 0x00 // EOF
+            });
+
+            var drawObjectPacket = new DrawObjectPacket();
+            drawObjectPacket.Deserialize(drawObjectPacketWithoutItems);
+
+            drawObjectPacket.Id.Should().Be(new ObjectId(0x00000001));
+            drawObjectPacket.Type.Should().Be((ModelId)0x0190);
+            drawObjectPacket.Location.X.Should().Be(0x129B);
+            drawObjectPacket.Location.Y.Should().Be(0x0553);
+            unchecked
+            {
+                drawObjectPacket.Location.Z.Should().Be((sbyte)0xF0);
+            }
+            drawObjectPacket.Direction.Should().Be(Direction.Northwest);
+            drawObjectPacket.MovementType.Should().Be(MovementType.Walk);
+            drawObjectPacket.Notoriety.Should().Be(Notoriety.Innocent);
+            drawObjectPacket.Color.Should().Be((Color)0x83EA);
+            drawObjectPacket.Items.Should().BeEmpty();
+        }
+
+        [TestMethod]
         public void Can_deserialize_object_without_items()
         {
             var drawObjectPacketWithoutItems = FakePackets.Instantiate(source: new byte[]

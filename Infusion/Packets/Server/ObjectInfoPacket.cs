@@ -84,7 +84,7 @@ namespace Infusion.Packets.Server
                 (Facing, _) = reader.ReadDirection();
             }
 
-            byte zloc = reader.ReadByte();
+            sbyte zloc = reader.ReadSByte();
 
             if ((yloc & 0x8000) != 0)
             {
@@ -98,7 +98,7 @@ namespace Infusion.Packets.Server
                 Flags = (ObjectFlag)reader.ReadByte();
             }
 
-            Location = new Location3D(xloc, yloc, (sbyte)zloc);
+            Location = new Location3D(xloc, yloc, zloc);
         }
 
         public Color Dye { get; private set; }

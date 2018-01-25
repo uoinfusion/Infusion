@@ -38,5 +38,32 @@ namespace Infusion.Tests.Packets.Server
             packet.MovementType.Should().Be(MovementType.Walk);
             packet.Direction.Should().Be(Direction.South);
         }
+
+        [TestMethod]
+        public void Can_deserialize_packet_with_negative_z_coord()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x20, // packet
+                0x00, 0x00, 0x00, 0x01, // id
+                0x01, 0x90, // body type
+                0x00, // unknown
+                0x83, 0xEA, // skin color hue
+                0x00, // flag byte
+                0x12, 0x9C, // xloc
+                0x05, 0x52, // yloc
+                0x00, 0x00, // unknown
+                0x04, // direction
+                0xF0, // zloc
+            });
+
+            var packet = new DrawGamePlayerPacket();
+            packet.Deserialize(rawPacket);
+
+            unchecked
+            {
+                packet.Location.Z.Should().Be((sbyte)0xF0);
+            }
+        }
     }
 }

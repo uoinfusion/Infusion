@@ -15,10 +15,9 @@ namespace Infusion.IO
 
         public int Position { get; private set; }
 
-        public byte ReadByte()
-        {
-            return array[Position++];
-        }
+        public byte ReadByte() => array[Position++];
+
+        public sbyte ReadSByte() => (sbyte)ReadByte();
 
         public ushort ReadUShort()
         {

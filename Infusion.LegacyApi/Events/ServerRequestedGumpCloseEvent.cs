@@ -8,11 +8,11 @@ namespace Infusion.LegacyApi.Events
 {
     public sealed class ServerRequestedGumpCloseEvent : IEvent
     {
-        public GumpInstanceId GumpId { get; }
+        public GumpTypeId GumpTypeId { get; }
 
-        internal ServerRequestedGumpCloseEvent(GumpInstanceId gumpId)
+        internal ServerRequestedGumpCloseEvent(GumpTypeId gumpTypeId)
         {
-            GumpId = gumpId;
+            GumpTypeId = gumpTypeId;
         }
     }
 }

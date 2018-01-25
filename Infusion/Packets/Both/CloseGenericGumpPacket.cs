@@ -9,15 +9,15 @@ namespace Infusion.Packets.Both
 {
     internal sealed class CloseGenericGumpPacket
     {
-        public GumpInstanceId GumpId { get; private set; }
+        public GumpTypeId GumpTypeId { get; private set; }
 
         public CloseGenericGumpPacket()
         {
         }
 
-        public CloseGenericGumpPacket(GumpInstanceId gumpId)
+        public CloseGenericGumpPacket(GumpTypeId gumpTypeId)
         {
-            GumpId = gumpId;
+            GumpTypeId = gumpTypeId;
 
             byte[] payload = new byte[13];
             var writer = new ArrayPacketWriter(payload);
@@ -25,7 +25,7 @@ namespace Infusion.Packets.Both
             writer.WriteByte((byte)PacketDefinitions.GeneralInformationPacket.Id);
             writer.WriteUShort(13); // length
             writer.WriteUShort(4); // subcommand
-            writer.WriteUInt(gumpId.Value);
+            writer.WriteUInt(gumpTypeId.Value);
             writer.WriteUInt(0);
 
             rawPacket = new Packet(PacketDefinitions.GeneralInformationPacket.Id, payload);
@@ -37,7 +37,7 @@ namespace Infusion.Packets.Both
 
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(5);
-            GumpId = (GumpInstanceId)reader.ReadUInt();
+            GumpTypeId = (GumpTypeId)reader.ReadUInt();
         }
 
         private Packet rawPacket;

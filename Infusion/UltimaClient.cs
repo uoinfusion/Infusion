@@ -65,9 +65,9 @@ namespace Infusion
             Send(new UpdateCurrentStaminaPacket(playerId, currentStamina, maxStamina).RawPacket);
         }
 
-        internal void CloseGump(GumpInstanceId gumpId)
+        internal void CloseGump(GumpTypeId gumpTypeId)
         {
-            Send(new CloseGenericGumpPacket(gumpId).RawPacket);
+            Send(new CloseGenericGumpPacket(gumpTypeId).RawPacket);
         }
 
         public void DrawGamePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, MovementType movementType, Color color)

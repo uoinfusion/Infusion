@@ -12,11 +12,11 @@ namespace Infusion.Packets.Client
         {
         }
 
-        public GumpMenuSelectionRequest(GumpTypeId id, GumpInstanceId gumpId, GumpControlId triggerId,
+        public GumpMenuSelectionRequest(GumpTypeId gumpTypeId, GumpInstanceId id, GumpControlId triggerId,
             GumpControlId[] selectedCheckBoxeIds, Tuple<ushort, string>[] textEntries)
         {
+            GumpTypeId = gumpTypeId;
             Id = id;
-            GumpId = gumpId;
             TriggerId = triggerId;
 
             var packetLength = (ushort) (23 + selectedCheckBoxeIds.Length * 4 +
@@ -28,7 +28,7 @@ namespace Infusion.Packets.Client
             writer.WriteByte((byte) PacketDefinitions.GumpMenuSelection.Id);
             writer.WriteUShort(packetLength);
             writer.WriteUInt(id.Value);
-            writer.WriteUInt(gumpId.Value);
+            writer.WriteUInt(gumpTypeId.Value);
             writer.WriteUInt(triggerId.Value);
             writer.WriteUInt((uint) selectedCheckBoxeIds.Length);
             foreach (var checkBoxId in selectedCheckBoxeIds)
@@ -48,9 +48,9 @@ namespace Infusion.Packets.Client
 
         public GumpControlId TriggerId { get; private set; }
 
-        public GumpInstanceId GumpId { get; private set; }
+        public GumpInstanceId Id { get; private set; }
 
-        public GumpTypeId Id { get; private set; }
+        public GumpTypeId GumpTypeId { get; private set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -58,8 +58,8 @@ namespace Infusion.Packets.Client
             var reader = new ArrayPacketReader(rawPacket.Payload);
 
             reader.Skip(3);
-            Id = new GumpTypeId(reader.ReadUInt());
-            GumpId = new GumpInstanceId(reader.ReadUInt());
+            Id = new GumpInstanceId(reader.ReadUInt());
+            GumpTypeId = new GumpTypeId(reader.ReadUInt());
             TriggerId = new GumpControlId(reader.ReadUInt());
         }
     }

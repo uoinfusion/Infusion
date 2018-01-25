@@ -7,8 +7,8 @@ public static class Chargers
 
     private static EventJournal journal = UO.CreateEventJournal();    
 
-    private static Charger fireCharger = new Charger((GumpInstanceId)0x9600057B, 2257, 6254, Trace);
-    private static Charger energyCharger = new Charger((GumpInstanceId)0x9600057B, 2281, 6256, Trace);
+    private static Charger fireCharger = new Charger((GumpTypeId)0x9600057B, 2257, 6254, Trace);
+    private static Charger energyCharger = new Charger((GumpTypeId)0x9600057B, 2281, 6256, Trace);
 
     private static int GetLevel(Charger charger)
     {
@@ -44,12 +44,12 @@ public static class Chargers
     {
         public int Level { get; private set; }
         
-        private readonly GumpInstanceId chargerGumpId = (GumpInstanceId)0x9600057B;
+        private readonly GumpTypeId chargerGumpId = (GumpTypeId)0x9600057B;
         private readonly int tilePicHueId;
         private readonly int gumpPicId;
         private readonly ScriptTrace trace;
     
-        public Charger(GumpInstanceId gumpId, int gumpPicId, int tilePicHueId, ScriptTrace trace)
+        public Charger(GumpTypeId gumpId, int gumpPicId, int tilePicHueId, ScriptTrace trace)
         {
             this.chargerGumpId = gumpId;
             this.tilePicHueId = tilePicHueId;
@@ -59,7 +59,7 @@ public static class Chargers
         
         public void ProcessGump(GumpReceivedEvent ev)
         {
-            if (ev.Gump.GumpId != chargerGumpId)
+            if (ev.Gump.GumpTypeId != chargerGumpId)
                 return;
         
             trace.Log("ProcessGump");
@@ -75,8 +75,8 @@ public static class Chargers
     
         public void ProcessCloseRequest(ServerRequestedGumpCloseEvent ev)
         {
-            Level = ev.GumpId == chargerGumpId ? 0 : Level;
-            trace.Log($"Processing close request {ev.GumpId}, Level={Level}");
+            Level = ev.GumpTypeId == chargerGumpId ? 0 : Level;
+            trace.Log($"Processing close request {ev.GumpTypeId}, Level={Level}");
         }
     
         private class ChargerGumpProcessor : IProcessGumpPic, IProcessTilePicHue

@@ -15,7 +15,7 @@ public static class ExplevelTracker
     
     private const string expGainMessageSuffix = " zkusenosti"; 
     private const string expGainMessagePrefix = "Ziskal jsi ";
-    private static readonly GumpInstanceId explevelGumpId = (GumpInstanceId)0x96000553;    
+    private static readonly GumpTypeId explevelGumpId = (GumpTypeId)0x96000553;    
 
     public static void Enable()
     {
@@ -36,7 +36,11 @@ public static class ExplevelTracker
                 e => e.Speech.Message.StartsWith(expGainMessagePrefix),
                 e => ParseExpGainMessage(e.Speech.Message))
             .When<GumpReceivedEvent>(
-                e => e.Gump.GumpId.Equals(explevelGumpId),
+                e =>
+                {
+                    UO.Log($"{e.Gump.Id}, {e.Gump.GumpTypeId}");
+                    return e.Gump.GumpTypeId.Equals(explevelGumpId);
+                },
                 e => Parse(e.Gump))
             .Incomming();
     }
@@ -79,7 +83,7 @@ public static class ExplevelTracker
 
     public static void Parse(Gump gump)
     {
-        if (gump == null && !gump.GumpId.Equals(explevelGumpId))
+        if (gump == null && !gump.GumpTypeId.Equals(explevelGumpId))
         {
             UO.Log("The gump is not .explevel gump");
             return;

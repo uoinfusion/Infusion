@@ -290,7 +290,7 @@ namespace Infusion.Tests.Gumps
             var packet = new SendGumpMenuDialogPacket();
             packet.Deserialize(rawPacket);
 
-            var gump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+            var gump = new Gump(packet.GumpTypeId, packet.GumpId, packet.Commands, packet.TextLines);
             parser.Parse(gump);
             string description = processor.GetDescription();
 

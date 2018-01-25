@@ -108,7 +108,7 @@ namespace Infusion.Tests.Gumps
             };
 
             GumpMenuSelectionRequest resultPacket = null;
-            var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495),
+            var gump = new Gump(new GumpTypeId(0x96000495), new GumpInstanceId(0x40000DA7),
                 "{Text 50 215 955 0}{TextEntry 41 130 40 20 2301 5 10}",
                 new[] { "test label" });
 

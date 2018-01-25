@@ -43,7 +43,7 @@ namespace Infusion.LegacyApi
         {
             lock (gumpLock)
             {
-                if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpId == CurrentGump.GumpId)
+                if (CurrentGump != null && packet.Id == CurrentGump.Id && packet.GumpTypeId == CurrentGump.GumpTypeId)
                     CurrentGump = null;
             }
         }
@@ -57,7 +57,7 @@ namespace Infusion.LegacyApi
                     var packet = PacketDefinitionRegistry.Materialize<GumpMenuSelectionRequest>(rawPacket);
                     var gumpId = nextBlockedCancellationGumpId.Value;
                     nextBlockedCancellationGumpId = null;
-                    if (gumpId == packet.Id)
+                    if (gumpId == packet.GumpTypeId)
                         return null;
                 }
             }
@@ -72,7 +72,7 @@ namespace Infusion.LegacyApi
                 var packet = new CloseGenericGumpPacket();
                 packet.Deserialize(rawPacket);
 
-                eventSource.Publish(new ServerRequestedGumpCloseEvent(packet.GumpId));
+                eventSource.Publish(new ServerRequestedGumpCloseEvent(packet.GumpTypeId));
             }
             if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
@@ -81,7 +81,7 @@ namespace Infusion.LegacyApi
                 lock (gumpLock)
                 {
                     var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
-                    var gump = new Gump(packet.Id, packet.GumpId, packet.Commands, packet.TextLines);
+                    var gump = new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
                     CurrentGump = gump;
                     eventSource.Publish(new GumpReceivedEvent(gump));
 
@@ -153,8 +153,8 @@ namespace Infusion.LegacyApi
             {
                 if (currentGumpVisible)
                 {
-                    nextBlockedCancellationGumpId = packet.Id;
-                    client.CloseGump(CurrentGump.GumpId);
+                    nextBlockedCancellationGumpId = packet.GumpTypeId;
+                    client.CloseGump(CurrentGump.GumpTypeId);
                 }
 
                 server.RequestGumpSelection(packet);
@@ -194,7 +194,7 @@ namespace Infusion.LegacyApi
                 parser.Parse(CurrentGump);
 
                 var builder = new StringBuilder();
-                builder.AppendLine($"Id {CurrentGump.Id}, GumpId {CurrentGump.GumpId}");
+                builder.AppendLine($"Id {CurrentGump.Id}, GumpId {CurrentGump.GumpTypeId}");
                 builder.AppendLine(CurrentGump.Commands);
                 builder.AppendLine("-----------------");
                 builder.AppendLine(processor.GetDescription());

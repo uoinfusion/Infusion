@@ -4,10 +4,15 @@ namespace Infusion.Gumps
 {
     public sealed class Gump
     {
-        public Gump(GumpTypeId id, GumpInstanceId gumpId, string commands, string[] textLines)
+        public Gump(GumpTypeId gumpTypeId, GumpInstanceId id, string commands, string[] textLines)
+            : this(id, gumpTypeId, commands, textLines)
+        {
+
+        }
+        public Gump(GumpInstanceId id, GumpTypeId gumpTypeId, string commands, string[] textLines)
         {
             Id = id;
-            GumpId = gumpId;
+            GumpTypeId = gumpTypeId;
             Commands = commands;
             TextLines = textLines;
         }
@@ -16,8 +21,8 @@ namespace Infusion.Gumps
 
         public string[] TextLines { get; }
 
-        public GumpTypeId Id { get; set; }
+        public GumpInstanceId Id { get; set; }
 
-        public GumpInstanceId GumpId { get; set; }
+        public GumpTypeId GumpTypeId { get; set; }
     }
 }

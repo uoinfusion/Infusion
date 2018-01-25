@@ -27,7 +27,7 @@ namespace Infusion.Tests.Packets.Server
             var packet = new CloseGenericGumpPacket();
             packet.Deserialize(rawPacket);
 
-            packet.GumpId.Should().Be((GumpInstanceId)0x9600057B);
+            packet.GumpTypeId.Should().Be((GumpTypeId)0x9600057B);
         }
     }
 }

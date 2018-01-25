@@ -5,7 +5,7 @@ namespace Infusion.Packets.Server
     internal sealed class SendGumpMenuDialogPacket : MaterializedPacket
     {
         private Packet rawPacket;
-        public GumpTypeId Id { get; private set; }
+        public GumpTypeId GumpTypeId { get; private set; }
         public GumpInstanceId GumpId { get; private set; }
         public uint X { get; private set; }
         public uint Y { get; private set; }
@@ -21,8 +21,8 @@ namespace Infusion.Packets.Server
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(3);
 
-            Id = new GumpTypeId(reader.ReadUInt());
             GumpId = new GumpInstanceId(reader.ReadUInt());
+            GumpTypeId = new GumpTypeId(reader.ReadUInt());
             X = reader.ReadUInt();
             Y = reader.ReadUInt();
 

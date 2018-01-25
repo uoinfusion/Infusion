@@ -23,7 +23,7 @@ namespace Infusion.Gumps
 
         public override void Execute()
         {
-            triggerGump(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, selectedTriggerId, selectedCheckBoxIds,
+            triggerGump(new GumpMenuSelectionRequest(Gump.GumpTypeId, Gump.Id, selectedTriggerId, selectedCheckBoxIds,
                 textEntries));
         }
     }

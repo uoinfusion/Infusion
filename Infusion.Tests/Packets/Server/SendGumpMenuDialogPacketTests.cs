@@ -188,8 +188,8 @@ namespace Infusion.Tests.Packets.Server
             var packet = new SendGumpMenuDialogPacket();
             packet.Deserialize(rawPacket);
 
-            packet.Id.Should().Be(new GumpTypeId(0x40000da7u));
-            packet.GumpId.Should().Be(new GumpInstanceId(0x96000495u));
+            packet.GumpId.Should().Be(new GumpInstanceId(0x40000da7u));
+            packet.GumpTypeId.Should().Be(new GumpTypeId(0x96000495u));
             packet.X.Should().Be(0x0000001e);
             packet.Y.Should().Be(0);
             packet.Commands.Should().Be(

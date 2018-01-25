@@ -15,7 +15,7 @@ namespace Infusion.Gumps
 
         public override void Execute()
         {
-            triggerGump(new GumpMenuSelectionRequest(Gump.Id, Gump.GumpId, new GumpControlId(0), new GumpControlId[] { }, new Tuple<ushort, string>[] { }));
+            triggerGump(new GumpMenuSelectionRequest(Gump.GumpTypeId, Gump.Id, new GumpControlId(0), new GumpControlId[] { }, new Tuple<ushort, string>[] { }));
         }
     }
 }

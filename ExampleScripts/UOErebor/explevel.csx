@@ -36,11 +36,7 @@ public static class ExplevelTracker
                 e => e.Speech.Message.StartsWith(expGainMessagePrefix),
                 e => ParseExpGainMessage(e.Speech.Message))
             .When<GumpReceivedEvent>(
-                e =>
-                {
-                    UO.Log($"{e.Gump.Id}, {e.Gump.GumpTypeId}");
-                    return e.Gump.GumpTypeId.Equals(explevelGumpId);
-                },
+                e => e.Gump.GumpTypeId.Equals(explevelGumpId),
                 e => Parse(e.Gump))
             .Incomming();
     }

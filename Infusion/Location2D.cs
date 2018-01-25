@@ -4,14 +4,17 @@ namespace Infusion
 {
     public struct Location2D
     {
-        public Location2D(ushort x, ushort y)
+        public Location2D(int x, int y)
         {
+            Coordinate.CheckCoordValue(nameof(x), x, ushort.MinValue, ushort.MaxValue);
+            Coordinate.CheckCoordValue(nameof(y), y, ushort.MinValue, ushort.MaxValue);
+
             X = x;
             Y = y;
         }
 
-        public ushort X { get; }
-        public ushort Y { get; }
+        public int X { get; }
+        public int Y { get; }
 
         public override bool Equals(object obj)
         {

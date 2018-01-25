@@ -34,10 +34,10 @@ namespace Infusion.Packets.Server
             writer.WriteUShort(packetLength);
             writer.WriteId(id);
             writer.WriteModelId(type);
-            writer.WriteUShort(location.X);
-            ushort y = color.HasValue ? (ushort)(location.Y | 0x8000) : location.Y;
+            writer.WriteUShort((ushort)location.X);
+            ushort y = (ushort)(color.HasValue ? location.Y | 0x8000 : location.Y);
             writer.WriteUShort(y);
-            writer.WriteByte(location.Z);
+            writer.WriteSByte((sbyte)location.Z);
 
             if (color.HasValue)
                 writer.WriteColor(color.Value);
@@ -98,7 +98,7 @@ namespace Infusion.Packets.Server
                 Flags = (ObjectFlag)reader.ReadByte();
             }
 
-            Location = new Location3D(xloc, yloc, zloc);
+            Location = new Location3D(xloc, yloc, (sbyte)zloc);
         }
 
         public Color Dye { get; private set; }

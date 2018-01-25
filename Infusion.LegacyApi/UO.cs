@@ -193,7 +193,7 @@ namespace Infusion.LegacyApi
         public static void DragItem(Item item)
             => Current.DragItem(item);
 
-        public static void DragItem(Item item, ushort amount)
+        public static void DragItem(Item item, int amount)
             => Current.DragItem(item, amount);
 
         public static DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId, TimeSpan? timeout = null)

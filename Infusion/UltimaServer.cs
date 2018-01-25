@@ -87,9 +87,12 @@ namespace Infusion
             Send(dropPacket.RawPacket);
         }
 
-        public void DragItem(ObjectId itemId, ushort amount)
+        public void DragItem(ObjectId itemId, int amount)
         {
-            var pickupPacket = new PickupItemRequest(itemId, amount);
+            if (amount < ushort.MinValue || amount > ushort.MaxValue)
+                throw new ArgumentOutOfRangeException(nameof(amount), $"amount cannot be less than {ushort.MinValue} or more than {ushort.MaxValue}, current value is {amount}");
+
+            var pickupPacket = new PickupItemRequest(itemId, (ushort)amount);
             Send(pickupPacket.RawPacket);
         }
 

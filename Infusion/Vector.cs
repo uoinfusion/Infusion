@@ -14,10 +14,10 @@ namespace Infusion
         public static readonly Vector NorthwestVector = new Vector(-1, -1, 0);
         public static readonly Vector NullVector = new Vector(0, 0, 0);
  
-        public short X { get; }
-        public short Y { get; }
-        public byte Z { get; }
-        public ushort Length => (ushort)Math.Sqrt(X * X + Y * Y + Z * Z);
+        public int X { get; }
+        public int Y { get; }
+        public int Z { get; }
+        public int Length => (int)Math.Sqrt(X * X + Y * Y + Z * Z);
 
         public Vector RemoveZ()
         {
@@ -36,9 +36,9 @@ namespace Infusion
                 return this;
             }
 
-            short normalizedX;
-            short normalizedY;
-            byte normalizedZ;
+            int normalizedX;
+            int normalizedY;
+            int normalizedZ;
 
             if (X == 0)
                 normalizedX = 0;
@@ -113,7 +113,7 @@ namespace Infusion
 
         public static bool operator !=(Vector vector1, Vector vector2) => !vector1.Equals(vector2);
 
-        public Vector(short x, short y, byte z)
+        public Vector(int x, int y, int z)
         {
             X = x;
             Y = y;

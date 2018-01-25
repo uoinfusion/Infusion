@@ -112,5 +112,32 @@ namespace Infusion.Tests.Packets.Server
             packet.Location.Z.Should().Be(0x06);
             packet.Dye.Should().Be((Color) 0x0980);
         }
+
+        [TestMethod]
+        public void Can_deserialize_packet_with_negative_zcoord()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x1A,
+                0x00, 0x0E,
+                0x40, 0x00, 0x11, 0x37,
+                0x0E, 0x80,
+                0x0A, 0xAB,
+                0x0C, 0xB5,
+                0xF0,
+            });
+
+            var packet = new ObjectInfoPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.Id.Should().Be(new ObjectId(0x40001137));
+            packet.Type.Should().Be((ModelId)0x0E80);
+            packet.Location.X.Should().Be(0x0AAB);
+            packet.Location.Y.Should().Be(0x0CB5);
+            unchecked
+            {
+                packet.Location.Z.Should().Be((sbyte)0xF0);
+            }
+        }
     }
 }

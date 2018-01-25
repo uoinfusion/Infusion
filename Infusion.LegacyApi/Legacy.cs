@@ -529,7 +529,7 @@ namespace Infusion.LegacyApi
             DragItem(item, item.Amount);
         }
 
-        public void DragItem(Item item, ushort amount)
+        public void DragItem(Item item, int amount)
         {
             CheckCancellation();
 

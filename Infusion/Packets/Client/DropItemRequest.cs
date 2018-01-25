@@ -26,9 +26,9 @@ namespace Infusion.Packets.Client
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte) PacketDefinitions.DropItem.Id);
             writer.WriteId(ItemId);
-            writer.WriteUShort(Location.X);
-            writer.WriteUShort(Location.Y);
-            writer.WriteByte(Location.Z);
+            writer.WriteUShort((ushort)Location.X);
+            writer.WriteUShort((ushort)Location.Y);
+            writer.WriteSByte((sbyte)Location.Z);
             writer.WriteId(ContainerId);
 
             return new Packet(PacketDefinitions.DropItem.Id, payload);

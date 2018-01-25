@@ -246,7 +246,7 @@ namespace Infusion.LegacyApi
             TargetTile(xloc, yloc, zloc, rawType);
         }
 
-        public void TargetTile(ushort xloc, ushort yloc, byte zloc, ModelId tileType)
+        public void TargetTile(int xloc, int yloc, int zloc, ModelId tileType)
         {
             TargetTile(new Location3D(xloc, yloc, zloc), tileType);
         }

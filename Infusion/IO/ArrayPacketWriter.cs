@@ -32,6 +32,11 @@ namespace Infusion.IO
             array[Position++] = value;
         }
 
+        public void WriteSByte(sbyte value)
+        {
+            array[Position++] = (byte)value;
+        }
+
         public void WriteInt(int value)
         {
             array[Position++] = (byte) ((value >> 24) & 0xFF);

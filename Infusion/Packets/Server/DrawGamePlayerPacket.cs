@@ -26,11 +26,11 @@ namespace Infusion.Packets.Server
             writer.WriteByte(0); // unknown
             writer.WriteColor(color);
             writer.WriteByte(0); // flag, alway 0
-            writer.WriteUShort(location.X);
-            writer.WriteUShort(location.Y);
+            writer.WriteUShort((ushort)location.X);
+            writer.WriteUShort((ushort)location.Y);
             writer.WriteUShort(0); // unknown
             writer.WriteMovement(direction, movementType);
-            writer.WriteByte(location.Z);
+            writer.WriteSByte((sbyte)location.Z);
 
             rawPacket = new Packet(PacketDefinitions.DrawGamePlayer.Id, payload);
         }

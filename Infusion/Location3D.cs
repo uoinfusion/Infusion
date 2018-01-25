@@ -4,8 +4,12 @@ namespace Infusion
 {
     public struct Location3D
     {
-        public Location3D(ushort x, ushort y, byte z)
+        public Location3D(int x, int y, int z)
         {
+            Coordinate.CheckCoordValue(nameof(x), x, 0, ushort.MaxValue);
+            Coordinate.CheckCoordValue(nameof(y), y, 0, ushort.MaxValue);
+            Coordinate.CheckCoordValue(nameof(z), z, sbyte.MinValue, sbyte.MaxValue);
+
             X = x;
             Y = y;
             Z = z;
@@ -54,9 +58,9 @@ namespace Infusion
             }
         }
 
-        public ushort X { get; }
-        public ushort Y { get; }
-        public byte Z { get; }
+        public int X { get; }
+        public int Y { get; }
+        public int Z { get; }
 
         public Location3D WithZ(byte z) => new Location3D(X, Y, z);
 

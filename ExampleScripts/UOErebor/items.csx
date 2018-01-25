@@ -16,7 +16,7 @@ public static class Items
     public static bool Drag(Item item)
         => Drag(item, 1);
     
-    public static bool Drag(Item item, ushort amount)
+    public static bool Drag(Item item, int amount)
     {
         UO.DragItem(item, amount);
         var dragResult = UO.WaitForItemDragged(item.Id);

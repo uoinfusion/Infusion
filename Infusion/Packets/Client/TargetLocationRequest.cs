@@ -14,10 +14,10 @@ namespace Infusion.Packets.Client
             writer.WriteUInt(cursorId.Value);
             writer.WriteByte((byte) cursorType);
             writer.WriteInt(0); // clicked on item = 0 (using location click)
-            writer.WriteUShort(location.X);
-            writer.WriteUShort(location.Y);
+            writer.WriteUShort((ushort)location.X);
+            writer.WriteUShort((ushort)location.Y);
             writer.WriteByte(0); // unknown
-            writer.WriteByte(location.Z);
+            writer.WriteSByte((sbyte)location.Z);
             writer.WriteModelId(tileType);
 
             RawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);
@@ -34,10 +34,10 @@ namespace Infusion.Packets.Client
             writer.WriteUInt(cursorId.Value);
             writer.WriteByte((byte) cursorType);
             writer.WriteId(itemId);
-            writer.WriteUShort(location.X);
-            writer.WriteUShort(location.Y);
+            writer.WriteUShort((ushort)location.X);
+            writer.WriteUShort((ushort)location.Y);
             writer.WriteByte(0); // unknown
-            writer.WriteByte(location.Z);
+            writer.WriteSByte((sbyte)location.Z);
             writer.WriteModelId(itemType);
 
             RawPacket = new Packet(PacketDefinitions.TargetCursor.Id, payload);

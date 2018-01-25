@@ -43,8 +43,8 @@ public static class Walls
         for (int i = -3; i <= 3; ++i)
         {    
             Location3D loc = new Location3D(
-                (dx > dy) ? targetLocation.X : (ushort)(targetLocation.X + i),
-                (dx > dy) ? (ushort)(targetLocation.Y + i) : targetLocation.Y,
+                (dx > dy) ? targetLocation.X : targetLocation.X + i,
+                (dx > dy) ? targetLocation.Y + i : targetLocation.Y,
                 targetLocation.Z);
         
             ObjectId wallId = (uint)(0x5FFFFFFF - i);

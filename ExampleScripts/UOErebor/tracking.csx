@@ -2,9 +2,12 @@ public static class Tracking
 {
     public static void Track(string kind)
     {
+        UO.WarModeOff();
         UO.UseSkill(Skill.Tracking);
-        UO.WaitForDialogBox();
-        UO.TriggerDialogBox(kind);
+        if (UO.WaitForDialogBox("You are preoccupied with thoughts of battle.") != null)
+        {
+            UO.TriggerDialogBox(kind);
+        }
     }
 }
 

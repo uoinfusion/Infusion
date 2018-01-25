@@ -12,6 +12,7 @@ namespace Infusion.Desktop
         private readonly Configuration configuration;
         private readonly CircuitBreaker loggingBreaker;
         private object logLock = new object();
+        private bool firstWrite = true;
 
         public FileLogger(Configuration configuration, CircuitBreaker loggingBreaker)
         {
@@ -29,9 +30,8 @@ namespace Infusion.Desktop
                 lock (logLock)
                 {
                     string logsPath = configuration.LogPath;
-                    var utcTimeStamp = timeStamp.ToUniversalTime();
 
-                    string fileName = Path.Combine(logsPath, $"{utcTimeStamp:yyyy-MM-dd}.log");
+                    string fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
 
                     bool createdNew = false;
                     if (!File.Exists(fileName))
@@ -45,12 +45,25 @@ namespace Infusion.Desktop
                     {
                         using (var writer = new StreamWriter(stream))
                         {
-                            if (createdNew)
+                            if (firstWrite || createdNew)
                             {
-                                writer.WriteLine($"Log craeted on {utcTimeStamp.Date:d}, using UTC timestamps");
+                                if (TimeZone.CurrentTimeZone != null)
+                                {
+                                    var utcHoursDiff = TimeZone.CurrentTimeZone.GetUtcOffset(timeStamp).TotalHours;
+                                    var utcHoursDiffStr = utcHoursDiff >= 0 ? $"+{utcHoursDiff}" : $"-{utcHoursDiff}";
+                                    writer.WriteLine(
+                                        $"Log craeted on {timeStamp.Date:d}, using {TimeZone.CurrentTimeZone.StandardName} timezone (UTC {utcHoursDiffStr} h)");
+                                }
+                                else
+                                {
+                                    writer.WriteLine(
+                                        $"Log craeted on {timeStamp.Date:d}, unknown timezone");
+                                }
+
                                 writer.WriteLine($@"Infusion {VersionHelpers.ProductVersion}");
+                                firstWrite = false;
                             }
-                            writer.WriteLine($@"{utcTimeStamp:HH:mm:ss:fffff}: {message}");
+                            writer.WriteLine($@"{timeStamp:HH:mm:ss:fffff}: {message}");
                         }
                     }
                 }

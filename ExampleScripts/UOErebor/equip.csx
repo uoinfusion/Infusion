@@ -41,10 +41,27 @@ public static class Equip
         {
             UO.ClientPrint($"Cannot find item {equipment.Id}.");
             return;
-            return;
         }
-
-        Items.Wear(item, equipment.Layer, timeout);
+        
+        if (item.Layer != equipment.Layer)
+            Items.Wear(item, equipment.Layer, timeout);
+    }
+    
+    public static void UndressJewelry()
+    {
+        Undress(Layer.Bracelet);
+        Undress(Layer.Earrings);
+        Undress(Layer.Neck);
+        Undress(Layer.Ring);
+    }
+    
+    public static void Undress(Layer layer)
+    {
+        foreach (var item in UO.Items.OnLayer(layer))
+        {
+            if (Items.Drag(item))
+                UO.DropItem(item, UO.Me.BackPack);
+        }
     }
 }
 
@@ -63,3 +80,7 @@ public struct Equipment
 
     public override string ToString() => $"{Id}, {Layer}";
 }
+
+UO.RegisterCommand("undress-jewelry", Equip.UndressJewelry);
+UO.RegisterCommand("undress-ring", () => Equip.Undress(Layer.Ring));
+UO.RegisterCommand("undress-earrings", () => Equip.Undress(Layer.Earrings));

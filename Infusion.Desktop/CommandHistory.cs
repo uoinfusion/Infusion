@@ -25,11 +25,12 @@ namespace Infusion.Desktop
 
             command = command.Trim();
 
-            if (currentHistoryIndex < 1 || !history.Any() || history.ElementAt(currentHistoryIndex - 1) != command)
+            if (!history.Any() || history.Last() != command)
             {
                 history.Enqueue(command);
-                currentHistoryIndex = history.Count;
             }
+
+            currentHistoryIndex = history.Count;
         }
 
         public string GetOlder()

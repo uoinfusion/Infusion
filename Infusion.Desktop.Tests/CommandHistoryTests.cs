@@ -93,6 +93,23 @@ namespace Infusion.Desktop.Tests
         }
 
         [TestMethod]
+        public void Doesnt_duplicate_last_command()
+        {
+            var history = new CommandHistory();
+            history.EnterCommand("command1");
+            history.EnterCommand("command2");
+            history.EnterCommand("command1");
+
+            history.GetOlder();
+            history.GetOlder();
+            history.EnterCommand(history.GetOlder());
+
+            history.GetOlder().Should().Be("command1");
+            history.GetOlder().Should().Be("command2");
+            history.GetOlder().Should().Be("command1");
+        }
+
+        [TestMethod]
         public void Can_handle_older_command_request_when_there_is_no_command()
         {
             var history = new CommandHistory();

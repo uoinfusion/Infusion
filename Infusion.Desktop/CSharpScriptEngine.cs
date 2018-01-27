@@ -64,15 +64,29 @@ namespace Infusion.Desktop
         {
             string binDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
 
-            string scriptDirectory = Path.GetDirectoryName(filePath);
+            bool fileExists;
+            string scriptDirectory;
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            {
+                scriptDirectory = ScriptRootPath;
+                fileExists = false;
+            }
+            else
+            {
+                scriptDirectory = Path.GetDirectoryName(filePath);
+                fileExists = true;
+            }
 
-            scriptOptions = scriptOptions
-                .WithSourceResolver(ScriptSourceResolver.Default
-                    .WithSearchPaths(scriptDirectory)
-                    .WithBaseDirectory(scriptDirectory))
-                .WithMetadataResolver(ScriptMetadataResolver.Default
-                    .WithSearchPaths(scriptDirectory, binDirectory)
-                    .WithBaseDirectory(scriptDirectory));
+            if (!string.IsNullOrEmpty(scriptDirectory))
+            {
+                scriptOptions = scriptOptions
+                    .WithSourceResolver(ScriptSourceResolver.Default
+                        .WithSearchPaths(scriptDirectory)
+                        .WithBaseDirectory(scriptDirectory))
+                    .WithMetadataResolver(ScriptMetadataResolver.Default
+                        .WithSearchPaths(scriptDirectory, binDirectory)
+                        .WithBaseDirectory(scriptDirectory));
+            }
 
             if (!string.IsNullOrEmpty(ScriptRootPath))
                 Directory.SetCurrentDirectory(ScriptRootPath);
@@ -86,7 +100,7 @@ namespace Infusion.Desktop
 
                 var command = new Command(commandName, () =>
                 {
-                    if (fullFile)
+                    if (fullFile && fileExists)
                         scriptOutput.Info($"Executing file {filePath}.");
                     else
                         scriptOutput.Echo(code);

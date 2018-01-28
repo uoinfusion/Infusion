@@ -313,19 +313,22 @@ public static class Looting
     public static bool Rip(Item container)
     {
         UO.ClientPrint("Ripping");
+        UO.WaitTargetObject(container);
         if (!UO.TryUse(KnivesSpec))
         {
             UO.Alert("Cannot find any knife");
             return false;
         }
-
-        UO.WaitForTarget();
-        UO.Target(container);
-        
+      
         bool result = false;
         
         journal
             .When("Rozrezal jsi mrtvolu.", () => result = true)
+            .When("You are frozen and can not move.", "you can't reach anything in your state.", () => 
+            {
+                result = false;
+                UO.ClientPrint("I'm paralyzed, cannot loot.", UO.Me);
+            })
             .When("Unexpected target info", () => 
             {
                 UO.Log("Warning: unexpected target info when targeting a body");
@@ -333,6 +336,8 @@ public static class Looting
                 result = false;
             })
             .WaitAny();
+            
+        UO.ClearTargetObject();
             
         return true;
     }

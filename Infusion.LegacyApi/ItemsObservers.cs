@@ -180,7 +180,7 @@ namespace Infusion.LegacyApi
             {
                 gameObjects.UpdateObject(existingItem.Update(packet.Type, packet.Amount, (Location3D) packet.Location,
                     packet.Color,
-                    packet.ContainerId));
+                    packet.ContainerId, null));
             }
             else
             {

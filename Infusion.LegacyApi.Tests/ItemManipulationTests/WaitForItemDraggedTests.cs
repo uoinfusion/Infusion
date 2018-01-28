@@ -5,10 +5,10 @@ using Infusion.LegacyApi.Tests.Packets;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Infusion.LegacyApi.Tests
+namespace Infusion.LegacyApi.Tests.ItemManipulationTests
 {
     [TestClass]
-    public class ItemManipulationTests
+    public class WaitForItemDraggedTests
     {
         [TestMethod]
         public void WaitForItemDragged_waits_until_any_item_move_request_is_refused()

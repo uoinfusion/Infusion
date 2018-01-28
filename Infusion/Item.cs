@@ -46,6 +46,15 @@
             };
         }
 
+        internal Item Update(ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId,
+            Layer? layer)
+        {
+            var updatedItem = Update(type, amount, location, color, containerId);
+            updatedItem.Layer = layer;
+
+            return updatedItem;
+        }
+
         internal Item Update(ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId)
         {
             var updatedItem = (Item)Duplicate();

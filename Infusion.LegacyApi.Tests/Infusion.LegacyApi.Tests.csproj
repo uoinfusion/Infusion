@@ -63,7 +63,8 @@
     <Compile Include="EventJournalTests\EnumerationTests.cs" />
     <Compile Include="EventJournalTests\IncommingTests.cs" />
     <Compile Include="EventJournalTests\WaitAnyTests.cs" />
-    <Compile Include="ItemManipulationTests.cs" />
+    <Compile Include="ItemManipulationTests\LayerHandlingTests.cs" />
+    <Compile Include="ItemManipulationTests\WaitForItemDraggedTests.cs" />
     <Compile Include="Packets\GumpMenuSelectionRequests.cs" />
     <Compile Include="GumpObserversTests.cs" />
     <Compile Include="Packets\RejectMoveItemRequestPackets.cs" />

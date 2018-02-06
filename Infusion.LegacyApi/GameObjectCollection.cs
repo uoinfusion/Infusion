@@ -51,17 +51,6 @@ namespace Infusion.LegacyApi
             return null;
         }
 
-        public GameObject RefreshObject(GameObject item)
-        {
-            GameObject newItemVersion;
-            if (gameObjects.TryGetValue(item.Id, out newItemVersion))
-            {
-                return newItemVersion;
-            }
-
-            return null;
-        }
-
         public void UpdateObject(GameObject gameObject)
         {
             AddObject(gameObject);

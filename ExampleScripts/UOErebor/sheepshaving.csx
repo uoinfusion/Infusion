@@ -12,7 +12,7 @@ public static class SheepShaving
             while (sheep != null && sheep.GetDistance(UO.Me.Location) > 1)
             {
                 Walking.StepToward(sheep);
-                sheep = UO.Mobiles.Refresh(sheep);
+                sheep = UO.Mobiles[sheep.Id];
             }
             
             if (sheep != null)

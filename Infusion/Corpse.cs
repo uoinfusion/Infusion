@@ -19,5 +19,11 @@
 
             return duplicate;
         }
+
+        public override string ToString()
+        {
+            return
+                $"Id: {Id}; CorpseType {CorpseType}; Name: {Name}; Location: {Location}; Color: {Color}; ";
+        }
     }
 }

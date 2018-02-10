@@ -48,6 +48,19 @@ namespace Infusion.LegacyApi
             throw new NotImplementedException();
         }
 
+        public bool Matches(Corpse corpse)
+        {
+            if (Type.HasValue)
+                return corpse.CorpseType == Type && (!Color.HasValue || Color == corpse.Color);
+            if (childSpecs != null && childSpecs.Length > 0)
+                return childSpecs.Any(s => s.Matches(corpse));
+
+            if (Name != null)
+                return corpse.Name == Name;
+
+            throw new NotImplementedException();
+        }
+
         public bool Matches(ModelId type)
         {
             if (Type.HasValue)

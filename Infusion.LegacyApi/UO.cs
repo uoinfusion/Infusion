@@ -40,6 +40,7 @@ namespace Infusion.LegacyApi
 
         internal static GameObjectCollection GameObjects => Current.GameObjects;
         public static ItemCollection Items => Current.Items;
+        public static CorpseCollection Corpses => Current.Corpses;
         public static MobileCollection Mobiles => Current.Mobiles;
 
         public static Player Me => Current.Me;

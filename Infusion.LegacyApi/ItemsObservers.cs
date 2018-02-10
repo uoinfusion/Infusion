@@ -215,7 +215,9 @@ namespace Infusion.LegacyApi
             }
             else
             {
-                var item = new Item(packet.Id, packet.Type, packet.Amount, packet.Location, packet.Dye, null, null);
+                var item = packet.Type == 0x2006
+                    ? new Corpse(packet.Id, packet.Type, packet.Amount, packet.Location, packet.Dye, null, null)
+                    : new Item(packet.Id, packet.Type, packet.Amount, packet.Location, packet.Dye, null, null);
                 gameObjects.AddObject(item);
                 OnItemEnteredView(item);
             }

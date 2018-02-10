@@ -43,8 +43,7 @@ public static class Looting
 
     public static IEnumerable<Item> GetLootableCorpses()
     {
-        var corpses = UO.Items
-            .Matching(Specs.Corpse)
+        var corpses = UO.Corpses
             .MaxDistance(20)
             .Where(x => !ignoredItems.IsIgnored(x))
             .OrderByDistance().ToArray();
@@ -202,7 +201,7 @@ public static class Looting
     {
         get
         {
-            if (lootContainer == null || UO.Items.Refresh(lootContainer) == null)
+            if (lootContainer == null || UO.Items[lootContainer.Id] == null)
             {
                 if (LootContainerId.HasValue)
                 {

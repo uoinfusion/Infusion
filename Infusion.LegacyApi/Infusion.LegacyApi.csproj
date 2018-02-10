@@ -84,6 +84,7 @@
     <Compile Include="Filters\ISoundFilter.cs" />
     <Compile Include="Filters\IStaminaFilter.cs" />
     <Compile Include="InfusionTestProxy.cs" />
+    <Compile Include="CorpseCollection.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
     <Compile Include="Filters\IWeatherFilter.cs" />
     <Compile Include="KeyCode.cs" />

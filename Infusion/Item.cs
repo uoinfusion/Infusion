@@ -1,6 +1,7 @@
 ﻿namespace Infusion
 {
-    public sealed class Item : GameObject
+
+    public class Item : GameObject
     {
         public Item(ObjectId id, ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId, Layer? layer)
             : base(id, type, location)
@@ -17,7 +18,7 @@
 
         public override bool IsOnGround => !Layer.HasValue && !ContainerId.HasValue;
 
-        public ushort Amount { get; private set; }
+        public virtual ushort Amount { get; private set; }
 
         public ObjectId? ContainerId { get; private set; }
 
@@ -35,15 +36,21 @@
 
         protected override GameObject Duplicate()
         {
-            return new Item(Id, Type, Location)
-            {
-                Color = Color,
-                Amount = Amount,
-                ContainerId = ContainerId,
-                Layer = Layer,
-                Name = Name,
-                CanRename =  CanRename,
-            };
+            var duplicate = new Item(Id, Type, Location);
+
+            duplicate.CopyFrom(this);
+
+            return duplicate;
+        }
+
+        protected virtual void CopyFrom(Item template)
+        {
+            Color = template.Color;
+            Amount = template.Amount;
+            ContainerId = template.ContainerId;
+            Layer = template.Layer;
+            Name = template.Name;
+            CanRename = template.CanRename;
         }
 
         internal Item Update(ModelId type, ushort amount, Location3D location, Color? color, ObjectId? containerId,

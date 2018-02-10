@@ -72,6 +72,7 @@
     <Compile Include="Commands\CommandSyntax.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Coordinate.cs" />
+    <Compile Include="Corpse.cs" />
     <Compile Include="CursorId.cs" />
     <Compile Include="Diagnostic\BinaryPacketFileParser.cs" />
     <Compile Include="DialogBox.cs" />

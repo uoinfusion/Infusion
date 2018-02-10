@@ -52,6 +52,7 @@ namespace Infusion.LegacyApi
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
+            Corpses = new CorpseCollection(GameObjects);
             itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this, eventJournalSource);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
             journalSource = new JournalSource();
@@ -115,6 +116,7 @@ namespace Infusion.LegacyApi
         internal GameObjectCollection GameObjects { get; }
         public ItemCollection Items { get; }
         public MobileCollection Mobiles { get; }
+        public CorpseCollection Corpses { get; }
 
         public Player Me { get; }
 

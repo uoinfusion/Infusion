@@ -16,57 +16,73 @@ public class TwoStateAbility : ITwoStateAbility
     
     public void TurnOn()
     {
-        if (IsTurnedOn.HasValue && IsTurnedOn.Value)
+        try
         {
-            // doesn't work if this method is called rarelly,
-            // so a message is scrolled out from the journal
-            if (!abilityJournal.Contains(TurnedOffMessage))
+            if (IsTurnedOn.HasValue && IsTurnedOn.Value)
             {
-                abilityJournal.Delete();
-                return;
+                // doesn't work if this method is called rarelly,
+                // so a message is scrolled out from the journal
+                if (!abilityJournal.Contains(TurnedOffMessage))
+                {
+                    abilityJournal.Delete();
+                    return;
+                }
             }
-        }
+        
+            UO.Say(ToggleCommand);
+            abilityJournal
+                .When(TurnedOnMessage, () => { })
+                .When(TurnedOffMessage, () =>
+                {
+                    UO.Say(ToggleCommand);
+                    abilityJournal
+                        .When(TurnedOffMessage, () => UO.Alert($"Waning: cannot turn on {ToggleCommand}"))
+                        .When(TurnedOnMessage, () => { })
+                        .WaitAny();
+                })
+                .WaitAny();
     
-        UO.Say(ToggleCommand);
-        abilityJournal
-            .When(TurnedOnMessage, () => { })
-            .When(TurnedOffMessage, () =>
-            {
-                UO.Say(ToggleCommand);
-                abilityJournal
-                    .When(TurnedOffMessage, () => UO.Alert($"Waning: cannot turn on {ToggleCommand}"))
-                    .When(TurnedOnMessage, () => { })
-                    .WaitAny();
-            })
-            .WaitAny();
-
-        IsTurnedOn = true;
-        abilityJournal.Delete();
+            IsTurnedOn = true;
+            abilityJournal.Delete();
+        }
+        catch (System.Exception ex)
+        {
+            UO.Log(ex.ToString());
+            throw;
+        }
     }
     
     public void TurnOff()
     {
-        if (IsTurnedOn.HasValue && !IsTurnedOn.Value)
+        try
         {
-            if (!abilityJournal.Contains(TurnedOnMessage))
-                return;
-        }
-
-        UO.Say(ToggleCommand);
-        abilityJournal
-            .When(TurnedOnMessage, () =>
+            if (IsTurnedOn.HasValue && !IsTurnedOn.Value)
             {
-                UO.Say(ToggleCommand);
-                abilityJournal
-                    .When(TurnedOnMessage, () => UO.Log($"Warning: cannot turn off {ToggleCommand}"))
-                    .When(TurnedOffMessage, () => { })
-                    .WaitAny();
-            })
-            .When(TurnedOffMessage, () => { })
-            .WaitAny();
-
-        IsTurnedOn = false;
-        abilityJournal.Delete();
+                if (!abilityJournal.Contains(TurnedOnMessage))
+                    return;
+            }
+    
+            UO.Say(ToggleCommand);
+            abilityJournal
+                .When(TurnedOnMessage, () =>
+                {
+                    UO.Say(ToggleCommand);
+                    abilityJournal
+                        .When(TurnedOnMessage, () => UO.Log($"Warning: cannot turn off {ToggleCommand}"))
+                        .When(TurnedOffMessage, () => { })
+                        .WaitAny();
+                })
+                .When(TurnedOffMessage, () => { })
+                .WaitAny();
+    
+            IsTurnedOn = false;
+            abilityJournal.Delete();
+        }
+        catch (System.Exception ex)
+        {
+            UO.Log(ex.ToString());
+            throw;
+        }
     }
 }
 

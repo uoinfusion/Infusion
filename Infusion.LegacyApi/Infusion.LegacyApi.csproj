@@ -73,6 +73,7 @@
     <Compile Include="Events\PlayerLocationChangedEvent.cs" />
     <Compile Include="Events\ServerRequestedGumpCloseEvent.cs" />
     <Compile Include="Events\ServerRequestedTargetEvent.cs" />
+    <Compile Include="Events\SkillChangedEvent.cs" />
     <Compile Include="Filters\IShapeshiftingFilter.cs" />
     <Compile Include="Filters\ShapeshiftingFilter.cs" />
     <Compile Include="Events\GraphicalEffectStartedEvent.cs" />

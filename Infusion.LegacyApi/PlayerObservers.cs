@@ -104,6 +104,11 @@ namespace Infusion.LegacyApi
             {
                 if (player.Skills.TryGetValue(packet.Values[0].Skill, out var currentSkillValue))
                 {
+                    if (currentSkillValue.Value != packet.Values[0].Value)
+                    {
+                        eventJournalSource.Publish(new SkillChangedEvent(packet.Values[0].Skill, currentSkillValue.Value, packet.Values[0].Value));
+                    }
+
                     if (currentSkillValue.Value < packet.Values[0].Value)
                     {
                         var delta = packet.Values[0].Percentage - currentSkillValue.Percentage;

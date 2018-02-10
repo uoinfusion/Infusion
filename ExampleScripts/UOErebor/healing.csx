@@ -39,7 +39,7 @@ public static class Healing
             bool result = true;
             UO.Journal
                 .When("You are frozen and can not move.", () => result = false)
-                .When("byl uspesne osetren", "Leceni se ti nepovedlo.", "neni zranen.", () => result = true)
+                .When("byl uspesne osetren", "Leceni se ti nepovedlo.", "neni zranen.", "prestal krvacet.", "prestala krvacet.", () => result = true)
                 .WaitAny();
 
             if (ReEquip)

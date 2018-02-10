@@ -26,6 +26,8 @@ public static class Looting
         // ignoring some "invisible" items
         Specs.Hairs
     };
+    
+    public static MobileSpec NotRippableCorpses = new[] { Specs.Mounts };
 
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
@@ -41,7 +43,7 @@ public static class Looting
     
     public static IgnoredItems ignoredItems = new IgnoredItems();
 
-    public static IEnumerable<Item> GetLootableCorpses()
+    public static IEnumerable<Corpse> GetLootableCorpses()
     {
         var corpses = UO.Corpses
             .MaxDistance(20)
@@ -53,7 +55,7 @@ public static class Looting
     
     private static Equipment? previousEquipment;
     
-    public static void RipAndLoot(Item corpse)
+    public static void RipAndLoot(Corpse corpse)
     {
         var handEquipment = Equip.GetHand();
         var handEquipmentItem = UO.Items[handEquipment.Id];
@@ -309,10 +311,15 @@ public static class Looting
         ignoredItems.Ignore(container);
     }
 
-    public static bool Rip(Item container)
+    public static bool Rip(Corpse corpse)
     {
-        UO.ClientPrint("Ripping");
-        UO.WaitTargetObject(container);
+        if (NotRippableCorpses.Matches(corpse))
+        {
+            UO.ClientPrint($"Not ripping {Specs.TranslateToName(corpse)}, it is ignored");
+            return true;
+        }
+    
+        UO.WaitTargetObject(corpse);
         if (!UO.TryUse(KnivesSpec))
         {
             UO.Alert("Cannot find any knife");
@@ -331,7 +338,7 @@ public static class Looting
             .When("Unexpected target info", () => 
             {
                 UO.Log("Warning: unexpected target info when targeting a body");
-                UO.Log(container.ToString());
+                UO.Log(corpse.ToString());
                 result = false;
             })
             .WaitAny();

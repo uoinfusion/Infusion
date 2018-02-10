@@ -7,7 +7,7 @@ using System.Reflection;
 public static class Specs
 {
     public static readonly MobileSpec Player = new[] { 0x0190, 0x0191, 0x0192 };
-    public static readonly ItemSpec RippadbleBody = 0x2006;
+    public static readonly ItemSpec RippableBody = 0x2006;
     public static readonly ItemSpec Corpse = 0x2006;
     public static readonly ItemSpec HorseShoes = 0x0FB6;
 
@@ -409,6 +409,15 @@ public static class Specs
     public static readonly MobileSpec Prase = 0x00CB;
     public static readonly MobileSpec SedyVlk = new [] {0x00E1, 0x03B3};
     public static readonly MobileSpec SneznyLeopard = new MobileSpec(0x00D6, (Color)0x0482);
+    
+    // Mounts
+    public static readonly MobileSpec Lama = 0x00DC;
+    public static readonly MobileSpec Mustang = 0x00E2;
+    public static readonly MobileSpec Horse = new[] { 0x00C8, 0x00CC, 0x00E4 };
+    public static readonly MobileSpec Oclock = 0x00D2;
+    public static readonly MobileSpec Orn = 0x00DB;
+    
+    public static readonly MobileSpec Mounts = new[] { Lama, Mustang, Horse, Oclock, Orn };
 
     // Monsters
     public static readonly MobileSpec Troll = new[] {0x0035, 0x0036};
@@ -478,15 +487,26 @@ public static class Specs
         return item.Type.ToString();
     }
 
-    public static string TranslateToName(Mobile item)
+    public static string TranslateToName(Mobile mobile)
     {
         foreach (var spec in mobileSpecs.Value)
         {
-            if (spec.Value.Matches(item))
+            if (spec.Value.Matches(mobile))
                 return spec.Key;
         }
 
-        return item.Type.ToString();
+        return mobile.Type.ToString();
+    }
+    
+    public static string TranslateToName(Corpse corpse)
+    {
+        foreach (var spec in mobileSpecs.Value)
+        {
+            if (spec.Value.Matches(corpse))
+                return spec.Key;
+        }
+
+        return corpse.Type.ToString();
     }
     
     public static string TranslateToName(ItemSpec targetSpec)

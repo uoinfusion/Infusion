@@ -8,8 +8,13 @@ using System.IO;
 
 public static class Screenshot
 {
-    public static string ScreenshotPath = string.Empty;
+    public static string ScreenshotPath;
     public static string ScreenshotPrefix = "inf";
+
+    static Screenshot()
+    {
+        ScreenshotPath = Path.Combine(Directory.GetCurrentDirectory(), @"..\screenshots");
+    }
 
     private static Bitmap CaptureWindow(IntPtr handle)
     {

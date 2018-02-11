@@ -1,7 +1,11 @@
-﻿namespace Infusion.LegacyApi
+﻿using System;
+
+namespace Infusion.LegacyApi
 {
     public class NullUltimaClientWindow : IUltimaClientWindow
     {
+        public IntPtr Handle => IntPtr.Zero;
+
         public void SetTitle(string title)
         {
         }

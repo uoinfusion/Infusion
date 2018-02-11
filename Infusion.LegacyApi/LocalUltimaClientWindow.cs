@@ -9,6 +9,8 @@ namespace Infusion.LegacyApi
     {
         private readonly Process ultimaClientProcess;
 
+        public IntPtr Handle => ultimaClientProcess.MainWindowHandle;
+
         public LocalUltimaClientWindow(Process ultimaClientProcess)
         {
             this.ultimaClientProcess = ultimaClientProcess;

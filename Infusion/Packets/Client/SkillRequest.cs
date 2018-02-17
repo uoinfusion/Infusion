@@ -8,6 +8,7 @@ namespace Infusion.Packets.Client
     {
         private static readonly Dictionary<Skill, string> skills = new Dictionary<Skill, string>
         {
+            {Infusion.Skill.None, "0 0" },
             {Infusion.Skill.Anatomy, "1 0"},
             {Infusion.Skill.AnimalLore, "2 0"},
             {Infusion.Skill.ItemIdentification, "3 0"},

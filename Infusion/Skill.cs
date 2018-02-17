@@ -2,6 +2,7 @@
 {
     public enum Skill
     {
+        None = 0,
         Alchemy = 1,
         Anatomy = 2,
         AnimalLore = 3,

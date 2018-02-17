@@ -18,7 +18,7 @@ public static class Startup
         if (isReady)
         {
             Trace.Log($"Invoking command '{commandName}' directly");
-            UO.CommandHandler.Invoke(commandName);
+            Invoke(commandName);
         }
         else
         {
@@ -72,16 +72,25 @@ public static class Startup
     
         foreach (var commandName in startupCommandNames)
         {
-            if (UO.CommandHandler.TryGetCommand(commandName, out Command command))
-            {
-                Trace.Log($"Launching startup command {commandName}");
-                
-                var mode = (command.ExecutionMode != CommandExecutionMode.Background) 
-                    ? CommandExecutionMode.AlwaysParallel
-                    : CommandExecutionMode.Background;
+            Invoke(commandName);
+        }
+    }
+    
+    private static void Invoke(string commandName)
+    {
+        if (UO.CommandHandler.TryGetCommand(commandName, out Command command))
+        {
+            Trace.Log($"Launching startup command {commandName}");
+            
+            var mode = (command.ExecutionMode != CommandExecutionMode.Background) 
+                ? CommandExecutionMode.AlwaysParallel
+                : CommandExecutionMode.Background;
 
-                UO.CommandHandler.Invoke(commandName, CommandExecutionMode.AlwaysParallel);
-            }
+            UO.CommandHandler.Invoke(commandName, CommandExecutionMode.AlwaysParallel);
+        }
+        else
+        {
+            UO.Log($"Cannot invoke unknown command '{commandName}'."); 
         }
     }
 }

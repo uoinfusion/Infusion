@@ -471,7 +471,7 @@ public static class Specs
         BeardMediumLong
     };
 
-    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369 };
+    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369, 0x135A };
 
     private static Lazy<Dictionary<string, ItemSpec>> itemSpecs = new Lazy<Dictionary<string, ItemSpec>>(GetItemSpecs, true);
     private static Lazy<Dictionary<string, MobileSpec>> mobileSpecs = new Lazy<Dictionary<string, MobileSpec>>(GetMobileSpecs, true);

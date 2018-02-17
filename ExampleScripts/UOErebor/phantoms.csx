@@ -71,7 +71,7 @@ public static class Phantoms
         return new Location3D(
             ushort.Parse(coordinates[0].Trim()),
             ushort.Parse(coordinates[1].Trim()),
-            byte.Parse(coordinates[2].Trim()));
+            sbyte.Parse(coordinates[2].Trim()));
     }
     
     public static void Save(string fileName)
@@ -106,7 +106,10 @@ public static class Phantoms
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke("phantoms");
+        if (!UO.CommandHandler.IsCommandRunning("phantoms"))
+        {
+            UO.CommandHandler.Invoke("phantoms");
+        }
     }
     
     public static void Disable()

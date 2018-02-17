@@ -126,6 +126,8 @@ namespace Infusion.Desktop
                 notifyIcon = null;
             }
 
+            _console.Dispose();
+
             Application.Current.Shutdown();
         }
 

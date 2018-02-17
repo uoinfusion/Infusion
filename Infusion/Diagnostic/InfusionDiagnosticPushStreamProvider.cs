@@ -76,7 +76,7 @@ namespace Infusion.Diagnostic
                             $"{DateTime.UtcNow:yyyyMMdd-HH.mm.ss.ffff}.packets");
                         outputStream =
                             new BinaryDiagnosticPushStream(
-                                new SynchronizedPushStream(new StreamToPushStreamAdapter(File.OpenWrite(fileName))), loggingBreaker);
+                                new SynchronizedPushStream(new StreamToPushStreamAdapter(new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Read))), loggingBreaker);
                     }
 
                     result = outputStream;

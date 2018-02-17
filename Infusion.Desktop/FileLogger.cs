@@ -7,17 +7,37 @@ using Infusion.Utilities;
 
 namespace Infusion.Desktop
 {
-    internal sealed class FileLogger : ITimestampedLogger
+    internal sealed class FileLogger : ITimestampedLogger, IDisposable
     {
         private readonly Configuration configuration;
         private readonly CircuitBreaker loggingBreaker;
         private object logLock = new object();
         private bool firstWrite = true;
+        private FileStream stream;
+        private StreamWriter writer;
 
         public FileLogger(Configuration configuration, CircuitBreaker loggingBreaker)
         {
             this.configuration = configuration;
             this.loggingBreaker = loggingBreaker;
+        }
+
+        public void Dispose()
+        {
+            lock (logLock)
+            {
+                if (writer != null)
+                {
+                    writer.Dispose();
+                    writer = null;
+                }
+
+                if (stream != null)
+                {
+                    stream.Dispose();
+                    stream = null;
+                }
+            }
         }
 
         private void WriteLine(DateTime timeStamp, string message)
@@ -40,32 +60,32 @@ namespace Infusion.Desktop
                         createdNew = true;
                     }
 
-                    using (var stream =
-                        new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+                    if (stream == null)
                     {
-                        using (var writer = new StreamWriter(stream))
-                        {
-                            if (firstWrite || createdNew)
-                            {
-                                if (TimeZone.CurrentTimeZone != null)
-                                {
-                                    var utcHoursDiff = TimeZone.CurrentTimeZone.GetUtcOffset(timeStamp).TotalHours;
-                                    var utcHoursDiffStr = utcHoursDiff >= 0 ? $"+{utcHoursDiff}" : $"-{utcHoursDiff}";
-                                    writer.WriteLine(
-                                        $"Log craeted on {timeStamp.Date:d}, using {TimeZone.CurrentTimeZone.StandardName} timezone (UTC {utcHoursDiffStr} h)");
-                                }
-                                else
-                                {
-                                    writer.WriteLine(
-                                        $"Log craeted on {timeStamp.Date:d}, unknown timezone");
-                                }
-
-                                writer.WriteLine($@"Infusion {VersionHelpers.ProductVersion}");
-                                firstWrite = false;
-                            }
-                            writer.WriteLine($@"{timeStamp:HH:mm:ss:fffff}: {message}");
-                        }
+                        stream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.Read);
+                        writer = new StreamWriter(stream);
                     }
+
+                    if (firstWrite || createdNew)
+                    {
+                        if (TimeZone.CurrentTimeZone != null)
+                        {
+                            var utcHoursDiff = TimeZone.CurrentTimeZone.GetUtcOffset(timeStamp).TotalHours;
+                            var utcHoursDiffStr = utcHoursDiff >= 0 ? $"+{utcHoursDiff}" : $"-{utcHoursDiff}";
+                            writer.WriteLine(
+                                $"Log craeted on {timeStamp.Date:d}, using {TimeZone.CurrentTimeZone.StandardName} timezone (UTC {utcHoursDiffStr} h)");
+                        }
+                        else
+                        {
+                            writer.WriteLine(
+                                $"Log craeted on {timeStamp.Date:d}, unknown timezone");
+                        }
+
+                        writer.WriteLine($@"Infusion {VersionHelpers.ProductVersion}");
+                        firstWrite = false;
+                    }
+                    writer.WriteLine($@"{timeStamp:HH:mm:ss:fffff}: {message}");
+                    writer.Flush();
                 }
             });
         }

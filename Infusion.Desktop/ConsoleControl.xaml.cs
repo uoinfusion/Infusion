@@ -16,13 +16,14 @@ using Infusion.Utilities;
 
 namespace Infusion.Desktop
 {
-    public partial class ConsoleControl : UserControl
+    public partial class ConsoleControl : UserControl, IDisposable
     {
         private readonly CommandAutocompleter completer;
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
         private readonly CommandHistory history = new CommandHistory();
         private readonly FlowDocument outputDocument;
+        private readonly FileLogger fileLogger;
 
         private void HandleFileLoggingException(Exception ex)
         {
@@ -51,8 +52,8 @@ namespace Infusion.Desktop
 
             var infusionConsoleLogger = new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration);
 
-            Program.Console = new AsyncLogger(new MultiplexLogger(infusionConsoleLogger,
-                new FileLogger(Program.Configuration, new CircuitBreaker(HandleFileLoggingException))));
+            fileLogger = new FileLogger(Program.Configuration, new CircuitBreaker(HandleFileLoggingException));
+            Program.Console = new AsyncLogger(new MultiplexLogger(infusionConsoleLogger, fileLogger));
             var commandHandler = new CommandHandler(Program.Console);
 
             Program.Initialize(commandHandler);
@@ -63,6 +64,11 @@ namespace Infusion.Desktop
 
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
+        }
+
+        public void Dispose()
+        {
+
         }
 
         public CSharpScriptEngine ScriptEngine { get; }

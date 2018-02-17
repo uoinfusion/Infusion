@@ -109,7 +109,6 @@
     <Compile Include="ItemsObservers.cs" />
     <Compile Include="ItemSpec.cs" />
     <Compile Include="Events\ItemUseRequestedEvent.cs" />
-    <Compile Include="JournalAwaiter.cs" />
     <Compile Include="JournalEntriesExtensions.cs" />
     <Compile Include="JournalEntry.cs" />
     <Compile Include="JournalObservers.cs" />
@@ -125,6 +124,7 @@
     <Compile Include="Filters\SoundObserver.cs" />
     <Compile Include="SpecSpecificity.cs" />
     <Compile Include="Events\SpeechRequestedEvent.cs" />
+    <Compile Include="SpeechJournalAwaiter.cs" />
     <Compile Include="SpeechRequestObserver.cs" />
     <Compile Include="Filters\StaminaFilter.cs" />
     <Compile Include="TargetInfo.cs" />

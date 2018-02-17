@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Infusion.LegacyApi
 {
-    public sealed class JournalAwaiter
+    public sealed class SpeechJournalAwaiter
     {
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
         private readonly SpeechJournal journal;
@@ -22,7 +22,7 @@ namespace Infusion.LegacyApi
 
         private Action timeoutAction;
 
-        internal JournalAwaiter(Cancellation cancellation, JournalSource journalSource = null,
+        internal SpeechJournalAwaiter(Cancellation cancellation, JournalSource journalSource = null,
             SpeechJournal journal = null, Func<TimeSpan?> defaultTimeout = null)
         {
             this.cancellation = cancellation;
@@ -46,35 +46,35 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public JournalAwaiter When(string awaitedWord1, Action whenAction)
+        public SpeechJournalAwaiter When(string awaitedWord1, Action whenAction)
         {
             whenActions[new[] {awaitedWord1}] = entry => whenAction();
 
             return this;
         }
 
-        public JournalAwaiter When(string[] awaitedWords, Action whenAction)
+        public SpeechJournalAwaiter When(string[] awaitedWords, Action whenAction)
         {
             whenActions[awaitedWords] = entry => whenAction();
 
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, Action whenAction)
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, Action whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2}] = entry => whenAction();
 
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, Action whenAction)
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, Action whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2, awaitedWord3}] = entry => whenAction();
 
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4}] = entry => whenAction();
@@ -82,7 +82,7 @@ namespace Infusion.LegacyApi
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5}] =
@@ -91,28 +91,28 @@ namespace Infusion.LegacyApi
             return this;
         }
 
-        public JournalAwaiter When(string[] awaitedWords, Action<JournalEntry> whenAction)
+        public SpeechJournalAwaiter When(string[] awaitedWords, Action<JournalEntry> whenAction)
         {
             whenActions[awaitedWords] = whenAction;
 
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, Action<JournalEntry> whenAction)
+        public SpeechJournalAwaiter When(string awaitedWord1, Action<JournalEntry> whenAction)
         {
             whenActions[new[] {awaitedWord1}] = whenAction;
 
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, Action<JournalEntry> whenAction)
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, Action<JournalEntry> whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2}] = whenAction;
 
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3,
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3,
             Action<JournalEntry> whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2, awaitedWord3}] = whenAction;
@@ -120,7 +120,7 @@ namespace Infusion.LegacyApi
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action<JournalEntry> whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4}] = whenAction;
@@ -128,7 +128,7 @@ namespace Infusion.LegacyApi
             return this;
         }
 
-        public JournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
+        public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action<JournalEntry> whenAction)
         {
             whenActions[new[] {awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5}] = whenAction;
@@ -244,7 +244,7 @@ namespace Infusion.LegacyApi
             ReceiveJournalEntry(journalEntry);
         }
 
-        public JournalAwaiter WhenTimeout(Action timeoutAction)
+        public SpeechJournalAwaiter WhenTimeout(Action timeoutAction)
         {
             this.timeoutAction = timeoutAction;
 

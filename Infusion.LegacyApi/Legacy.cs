@@ -266,7 +266,7 @@ namespace Infusion.LegacyApi
         public void Use(ItemSpec spec)
         {
             if (!TryUse(spec))
-                throw new LegacyException($"Cannot find item {spec}.");
+                throw new LegacyException($"Cannot use requested item because you cannot see any such item, or no such item is in your backpack.");
         }
 
         public bool TryUse(ModelId type)

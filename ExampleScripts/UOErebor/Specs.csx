@@ -118,6 +118,7 @@ public static class Specs
 
     public static readonly ItemSpec NightsightKeg = new ItemSpec(0x1AD6, (Color)0x0980);
     public static readonly ItemSpec GreaterHealKeg = new ItemSpec(0x1AD6, (Color)0x0160);
+    public static readonly ItemSpec RefreshKeg = new ItemSpec(0x1AD7, (Color)0x0027);
     
     public static readonly ItemSpec NightsighPoition = new ItemSpec(0x0F0E, (Color)0x0980);
     public static readonly ItemSpec DispellExplosionPotion = new ItemSpec(0x0F0E, (Color)0x0993);

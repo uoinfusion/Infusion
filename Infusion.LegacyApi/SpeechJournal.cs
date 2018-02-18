@@ -9,10 +9,10 @@ namespace Infusion.LegacyApi
     {
         private readonly Cancellation cancellation;
         private readonly Func<TimeSpan?> defaultTimeout;
-        private readonly JournalSource source;
+        private readonly SpeechJournalSource source;
         private long journalEntryStartId;
 
-        internal SpeechJournal(JournalSource source, Cancellation cancellation = null,
+        internal SpeechJournal(SpeechJournalSource source, Cancellation cancellation = null,
             Func<TimeSpan?> defaultTimeout = null)
         {
             this.source = source;

@@ -12,7 +12,7 @@ namespace Infusion.LegacyApi
         private readonly SpeechJournal journal;
         private readonly Func<TimeSpan?> defaultTimeout;
         private readonly Cancellation cancellation;
-        private readonly JournalSource journalSource;
+        private readonly SpeechJournalSource journalSource;
 
         private readonly Dictionary<string[], Action<JournalEntry>> whenActions =
             new Dictionary<string[], Action<JournalEntry>>();
@@ -22,7 +22,7 @@ namespace Infusion.LegacyApi
 
         private Action timeoutAction;
 
-        internal SpeechJournalAwaiter(Cancellation cancellation, JournalSource journalSource = null,
+        internal SpeechJournalAwaiter(Cancellation cancellation, SpeechJournalSource journalSource = null,
             SpeechJournal journal = null, Func<TimeSpan?> defaultTimeout = null)
         {
             this.cancellation = cancellation;

@@ -8,7 +8,7 @@ using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
-    internal sealed class JournalSource : IEnumerable<JournalEntry>
+    internal sealed class SpeechJournalSource : IEnumerable<JournalEntry>
     {
         private readonly object sourceLock = new object();
         internal const int MaxLength = 256;
@@ -16,7 +16,7 @@ namespace Infusion.LegacyApi
 
         private readonly ThreadLocal<long> lastActionJournalEntryId;
 
-        internal JournalSource()
+        internal SpeechJournalSource()
         {
             lastActionJournalEntryId = new ThreadLocal<long>(false);
         }

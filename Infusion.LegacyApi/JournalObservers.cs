@@ -6,10 +6,10 @@ namespace Infusion.LegacyApi
 {
     internal sealed class JournalObservers
     {
-        private readonly JournalSource journalSource;
+        private readonly SpeechJournalSource journalSource;
         private static readonly StringList clilocDictionary = new StringList("ENU");
 
-        public JournalObservers(JournalSource journalSource, IServerPacketSubject serverPacketSubject)
+        public JournalObservers(SpeechJournalSource journalSource, IServerPacketSubject serverPacketSubject)
         {
             this.journalSource = journalSource;
             serverPacketSubject.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);

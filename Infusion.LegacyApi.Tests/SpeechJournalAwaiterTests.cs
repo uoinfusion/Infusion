@@ -23,7 +23,7 @@ namespace Infusion.LegacyApi.Tests
         [TestMethod]
         public void When_is_case_insensitive_by_default_when_waiting_and_already_in_journal()
         {
-            var source = new JournalSource();
+            var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source);
 
             source.AddMessage("name", "cas InSeNsItIvE", new ObjectId(0), 0);
@@ -39,7 +39,7 @@ namespace Infusion.LegacyApi.Tests
         [TestMethod]
         public void When_is_case_insensitive_by_default_when_waiting()
         {
-            var source = new JournalSource();
+            var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
             bool executed = false;
@@ -163,7 +163,7 @@ namespace Infusion.LegacyApi.Tests
         [TestMethod]
         public void Throws_exception_When_awaiting_timeouts_and_no_timeout_action()
         {
-            var source = new JournalSource();
+            var source = new SpeechJournalSource();
             var awaiter = new SpeechJournalAwaiter(cancellation, source);
             source.AddMessage("name1", "message1", 0x12345, 0x1234);
 

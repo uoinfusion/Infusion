@@ -21,7 +21,7 @@ namespace Infusion.LegacyApi
         private readonly JournalObservers journalObservers;
         private readonly EventJournal legacyEventJournal;
 
-        private readonly JournalSource journalSource;
+        private readonly SpeechJournalSource journalSource;
         private readonly LightObserver lightObserver;
 
         private readonly ILogger logger;
@@ -55,7 +55,7 @@ namespace Infusion.LegacyApi
             Corpses = new CorpseCollection(GameObjects);
             itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this, eventJournalSource);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
-            journalSource = new JournalSource();
+            journalSource = new SpeechJournalSource();
             journalSource.NewMessageReceived +=
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);

@@ -12,18 +12,18 @@ namespace Infusion.LegacyApi.Benchmarks
     public class SpeechJournalBenchmarks
     {
         private readonly SpeechJournal emptyJournal;
-        private readonly JournalSource emptySource;
+        private readonly SpeechJournalSource emptySource;
 
         private readonly SpeechJournal fullJournal;
-        private readonly JournalSource fullSource;
+        private readonly SpeechJournalSource fullSource;
 
         public SpeechJournalBenchmarks()
         {
-            emptySource = new JournalSource();
+            emptySource = new SpeechJournalSource();
             emptyJournal = new SpeechJournal(emptySource);
 
-            fullSource = new JournalSource();
-            for (int i = 0; i <= JournalSource.MaxLength; i++)
+            fullSource = new SpeechJournalSource();
+            for (int i = 0; i <= SpeechJournalSource.MaxLength; i++)
                 fullSource.AddMessage("name", "message", 0, 0);
             fullJournal = new SpeechJournal(fullSource);
         }

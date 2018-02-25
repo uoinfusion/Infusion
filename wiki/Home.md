@@ -1,4 +1,4 @@
-- [[Getting Started|getting-started]]
+- [Getting Started](Getting-started)
 - [[Scripting Basics|Scripting-Basics]]
 - [[Commands|Commands]]
 - [[Comparison with Injection|Comparison-with-Injection]]

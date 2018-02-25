@@ -7,6 +7,8 @@ public class TwoStateAbility : ITwoStateAbility
     public string TurnedOnMessage { get; }
     public string ToggleCommand { get; }
     
+    public int LowStaminaThreshold { get; set; } = 15;
+    
     public TwoStateAbility(string toggleCommand, string turnedOnMessage, string turnedOffMessage)
     {
         ToggleCommand = toggleCommand;
@@ -16,6 +18,12 @@ public class TwoStateAbility : ITwoStateAbility
     
     public void TurnOn()
     {
+        if (UO.Me.CurrentStamina <= LowStaminaThreshold)
+        {
+            UO.Log("Low stamina, cannot turn on the ability.");
+            return;
+        }
+    
         try
         {
             if (IsTurnedOn.HasValue && IsTurnedOn.Value)

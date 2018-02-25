@@ -365,7 +365,7 @@ namespace Infusion.Proxy
                             // just swallow this exception, wait for the next batch
                         }
                     }
-                    Thread.Yield();
+                    Thread.Sleep(1);
                 }
             }
             catch (Exception ex)

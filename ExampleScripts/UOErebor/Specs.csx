@@ -35,10 +35,10 @@ public static class Specs
     public static readonly ItemSpec Bolt = 0x1BFB;
     public static readonly ItemSpec JaggedBolt = 0x38D8;
 
-    public static readonly ItemSpec Ammunition = new []
-    { 
+    public static readonly ItemSpec Ammunition = new[]
+    {
         ChestnutArrow, OakArrow, TeakArrow, Bolt, JaggedBolt
-     };
+    };
 
     public static readonly ItemSpec TightBoots = 0x1711;
 
@@ -119,7 +119,7 @@ public static class Specs
     public static readonly ItemSpec NightsightKeg = new ItemSpec(0x1AD6, (Color)0x0980);
     public static readonly ItemSpec GreaterHealKeg = new ItemSpec(0x1AD6, (Color)0x0160);
     public static readonly ItemSpec RefreshKeg = new ItemSpec(0x1AD7, (Color)0x0027);
-    
+
     public static readonly ItemSpec NightsighPoition = new ItemSpec(0x0F0E, (Color)0x0980);
     public static readonly ItemSpec DispellExplosionPotion = new ItemSpec(0x0F0E, (Color)0x0993);
     public static readonly ItemSpec ExplosionLesserPotion = new ItemSpec(0x0F0E, (Color)0x00E2);
@@ -208,8 +208,8 @@ public static class Specs
     public static readonly ItemSpec Sapphire = new[] { 0x0F11, 0x0f19 };
     public static readonly ItemSpec StarSapphire = 0x0F0F;
 
-    public static readonly ItemSpec Gem = new []
-    { 
+    public static readonly ItemSpec Gem = new[]
+    {
         Sapphire, Ruby, Diamond, Tourmaline, Citrine, Amethyst,
         Emerald, Sapphire, StarSapphire
      };
@@ -366,7 +366,7 @@ public static class Specs
     public static readonly ItemSpec ClosedDoor = new[] { DoorSecretStone1, DoorSecretStone2, DoorSecretStone3, DoorSecretWood1, DoorSecretWood2, DoorSecretStone4, DoorMetal, DoorMetalBar, DoorRattan, DoorWood, DoorWood4, DoorMetal2, DoorWood2, DoorWood3 };
 
     public static readonly ItemSpec Packa = 0x1091;
-    public static readonly ItemSpec SpiderWeb = new[] {0x0EE3, 0x0EE4, 0x0EE5, 0x0EE6};
+    public static readonly ItemSpec SpiderWeb = new[] { 0x0EE3, 0x0EE4, 0x0EE5, 0x0EE6 };
 
     public static readonly ItemSpec OpenDoor = new[]
     {
@@ -387,7 +387,16 @@ public static class Specs
     };
 
     public static readonly ItemSpec Door = new[] { OpenDoor, ClosedDoor };
-    
+
+    public static readonly ItemSpec FireColumn = new[]
+    {
+        0x03709, 0x370a,0x0370b,0x0370c,0x0370d,0x0370e,0x0370f,0x03710,
+        0x03711,0x03712,0x03713,0x03714,0x03715,0x03716,0x03717,0x03718,
+        0x03719,0x0371a,0x0371b,0x0371c,0x0371d,0x0371e,0x0371f,0x03720,
+        0x03721,0x03722,0x03723,0x03724,0x03725,0x03726,0x03727
+    };
+
+
     public static readonly ItemSpec MagicWall = 0x0080;
     public static readonly ItemSpec EnergyField = new[] { 0x3947, 0x3956 };
 
@@ -408,25 +417,25 @@ public static class Specs
     public static readonly MobileSpec Hrabos = 0x00D7;
     public static readonly MobileSpec Had = 0x0034;
     public static readonly MobileSpec Prase = 0x00CB;
-    public static readonly MobileSpec SedyVlk = new [] {0x00E1, 0x03B3};
+    public static readonly MobileSpec SedyVlk = new[] { 0x00E1, 0x03B3 };
     public static readonly MobileSpec SneznyLeopard = new MobileSpec(0x00D6, (Color)0x0482);
-    
+
     // Mounts
     public static readonly MobileSpec Lama = 0x00DC;
     public static readonly MobileSpec Mustang = 0x00E2;
     public static readonly MobileSpec Horse = new[] { 0x00C8, 0x00CC, 0x00E4 };
     public static readonly MobileSpec Oclock = 0x00D2;
     public static readonly MobileSpec Orn = 0x00DB;
-    
+
     public static readonly MobileSpec Mounts = new[] { Lama, Mustang, Horse, Oclock, Orn };
 
     // Monsters
-    public static readonly MobileSpec Troll = new[] {0x0035, 0x0036};
+    public static readonly MobileSpec Troll = new[] { 0x0035, 0x0036 };
     public static readonly MobileSpec Ghost = 0x03CA;
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
     public static readonly MobileSpec ElementalKamene = new MobileSpec("Elemental Kamene");
-    
+
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
 
     // Summons
@@ -472,7 +481,13 @@ public static class Specs
         BeardMediumLong
     };
 
-    public static readonly ItemSpec Rocks = new[] { 0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A, 0x1369, 0x135A };
+    public static readonly ItemSpec Rocks = new[]
+    {
+        0x1368, 0x136D, 0x136C, 0x1364, 0x1367, 0x136B, 0x1366, 0x1363, 0x1365, 0x136A,
+        0x1369, 0x134F, 0x1350, 0x1351, 0x1352, 0x1353, 0x1354, 0x1355, 0x1356, 0x1357,
+        0x1358, 0x1359, 0x135A, 0x135B, 0x135C, 0x135D, 0x135E, 0x135F, 0x1360, 0x1361,
+        0x1362
+    };
 
     private static Lazy<Dictionary<string, ItemSpec>> itemSpecs = new Lazy<Dictionary<string, ItemSpec>>(GetItemSpecs, true);
     private static Lazy<Dictionary<string, MobileSpec>> mobileSpecs = new Lazy<Dictionary<string, MobileSpec>>(GetMobileSpecs, true);
@@ -498,7 +513,7 @@ public static class Specs
 
         return mobile.Type.ToString();
     }
-    
+
     public static string TranslateToName(Corpse corpse)
     {
         foreach (var spec in mobileSpecs.Value)
@@ -509,7 +524,7 @@ public static class Specs
 
         return corpse.Type.ToString();
     }
-    
+
     public static string TranslateToName(ItemSpec targetSpec)
     {
         foreach (var spec in itemSpecs.Value)
@@ -519,7 +534,7 @@ public static class Specs
                 return spec.Key;
             }
         }
-        
+
         return null;
     }
 

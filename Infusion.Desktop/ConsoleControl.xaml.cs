@@ -132,6 +132,9 @@ namespace Infusion.Desktop
         private void RunCommand()
         {
             var text = _inputBlock.Text;
+            if (string.IsNullOrEmpty(text))
+                return;
+
             history.EnterCommand(text);
 
             OnCommandEntered(text);

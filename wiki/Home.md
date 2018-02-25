@@ -1,4 +1,0 @@
-- [Getting Started](Getting-started.md)
-- [[Scripting Basics|Scripting-Basics]]
-- [[Commands|Commands]]
-- [[Comparison with Injection|Comparison-with-Injection]]

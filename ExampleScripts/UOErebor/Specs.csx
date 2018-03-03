@@ -402,15 +402,22 @@ public static class Specs
 
     // Animals
     public static readonly MobileSpec Bird = 0x0006;
+    public static readonly MobileSpec Ptacek = 0x0006;
     public static readonly MobileSpec Eagle = 0x0005;
+    public static readonly MobileSpec Orel = 0x0005;
     public static readonly MobileSpec Rabbit = 0x00CD;
     public static readonly MobileSpec Sheep = 0x00CF;
+    public static readonly MobileSpec Ovce = 0x00CF;
     public static readonly MobileSpec Cow = new[] { 0x00E7, 0x00D8 };
+    public static readonly MobileSpec Krava = new[] { 0x00E7, 0x00D8 };
     public static readonly MobileSpec Bull = new[] { 0x00E8, 0x00E9 };
+    public static readonly MobileSpec Byk = new[] { 0x00E8, 0x00E9 };
     public static readonly MobileSpec Rat = 0x00EE;
     public static readonly MobileSpec Dog = 0x00D9;
     public static readonly MobileSpec Deer = 0x00ED;
+    public static readonly MobileSpec Srnec = 0x00ED;
     public static readonly MobileSpec Hart = 0x00EA;
+    public static readonly MobileSpec Jelen = 0x00EA;
     public static readonly MobileSpec Bear = 0x00D3;
     public static readonly MobileSpec Grizzlik = 0x00D4;
     public static readonly MobileSpec Vlcek = 0x00E1;

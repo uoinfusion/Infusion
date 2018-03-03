@@ -11,7 +11,7 @@ public static class Hiding
     // Injection.
     private static SpeechJournal hidingJournal = UO.CreateSpeechJournal();
     
-    public static bool AlwaysWalkEnabled { get; set; } = true;
+    public static bool AlwaysWalkEnabled { get; set; } = false;
     public static TimeSpan AlwaysWalkDelayTime { get; set; } = TimeSpan.FromMilliseconds(1800);
     public static ScriptTrace Trace = UO.Trace.Create();
 

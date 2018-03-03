@@ -27,11 +27,12 @@ public static class Looting
         Specs.Hairs
     };
     
-    public static MobileSpec NotRippableCorpses = new[] { Specs.Mounts };
+    public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };
 
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
+    public static ItemSpec AllowedLoot { get; set; } = null;
     public static ItemSpec OnGroundLoot { get; set; } = new[]
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
@@ -157,14 +158,20 @@ public static class Looting
 
         LootGround();
     }
+    
+    private static IEnumerable<Item> GetLootableItems(Item corpse) =>
+        UO.Items.InContainer(corpse)
+                .Where(i => IsLootable(i));
+        
+    private static bool IsLootable(Item item)
+        => AllowedLoot != null ? AllowedLoot.Matches(item) : !IgnoredLoot.Matches(item);    
 
     public static void HighlightLootableCorpses(IEnumerable<Item> lootableCorpses)
     {
         UO.ClientPrint($"{lootableCorpses.Count()} corpses to loot remaining");
         foreach (var corpse in lootableCorpses)
         {
-            int lootableItemsCount = UO.Items.InContainer(corpse)
-                .NotMatching(IgnoredLoot).Count();
+            int lootableItemsCount = GetLootableItems(corpse).Count();
             UO.ClientPrint($"--{lootableItemsCount}--", "System", corpse.Id, corpse.Type,
                 SpeechType.Speech, Colors.Green, log: false);
         }
@@ -286,7 +293,7 @@ public static class Looting
                 return;
             }
         
-            if (!IgnoredLoot.Matches(itemToPickup))
+            if (IsLootable(itemToPickup))
             {
                 Trace.Log($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
                 if (!Items.TryMoveItem(itemToPickup, LootContainer))
@@ -303,7 +310,7 @@ public static class Looting
             }
             else
             {
-                UO.ClientPrint($"Ignoring {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
+                Trace.Log($"Ignoring {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
             }
         }
 

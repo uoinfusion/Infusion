@@ -128,5 +128,11 @@ namespace Infusion
             var packet = new AllowRefuseAttackPacket(id);
             Send(packet.RawPacket);
         }
+
+        public void CancelQuest()
+        {
+            var packet = new QuestArrowPacket(new Location2D(0, 0), false);
+            Send(packet.RawPacket);
+        }
     }
 }

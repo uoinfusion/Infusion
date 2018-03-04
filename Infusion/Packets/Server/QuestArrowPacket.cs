@@ -25,5 +25,25 @@ namespace Infusion.Packets.Server
 
             Location = new Location2D(reader.ReadUShort(), reader.ReadUShort());
         }
+
+        public QuestArrowPacket()
+        {
+        }
+
+        public QuestArrowPacket(Location2D location, bool active)
+        {
+            Location = location;
+            Active = active;
+
+            var payload = new byte[6];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.QuestArrow.Id);
+            writer.WriteByte((byte)(active ? 1 : 0));
+            writer.WriteUShort((ushort)location.X);
+            writer.WriteUShort((ushort)location.Y);
+
+            rawPacket = new Packet(payload[0], payload);
+        }
     }
 }

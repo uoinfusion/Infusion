@@ -1,3 +1,5 @@
+#load "uoam.csx"
+
 // Mentioned on wiki\Commands.md
 
 using System;
@@ -22,6 +24,7 @@ public static class QuestArrow
         {
             currentArrowLocation = e.Location;            
             message = CurrentQuestDescription;
+            Uoam.SetMarker(e.Location);
         }
         else
         {
@@ -52,9 +55,15 @@ public static class QuestArrow
     {
         UO.CommandHandler.Invoke("questarrow");
     }
+    
+    public static void Cancel()
+    {
+        UO.Client.CancelQuest();
+    }
 }
 
 UO.RegisterBackgroundCommand("questarrow", QuestArrow.Run);
 UO.RegisterCommand("questarrow-enable", QuestArrow.Enable);
 UO.RegisterCommand("questarrow-disable", QuestArrow.Disable);
 UO.RegisterCommand("questarrow-last", QuestArrow.Last);
+UO.RegisterCommand("questarrow-cancel", QuestArrow.Cancel);

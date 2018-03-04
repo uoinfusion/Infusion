@@ -9,15 +9,17 @@ namespace Infusion.LegacyApi
     {
         private readonly Cancellation cancellation;
         private readonly Func<TimeSpan?> defaultTimeout;
+        private readonly DiagnosticTrace trace;
         private readonly SpeechJournalSource source;
         private long journalEntryStartId;
 
         internal SpeechJournal(SpeechJournalSource source, Cancellation cancellation = null,
-            Func<TimeSpan?> defaultTimeout = null)
+            Func<TimeSpan?> defaultTimeout = null, DiagnosticTrace trace = null)
         {
             this.source = source;
             this.cancellation = cancellation;
             this.defaultTimeout = defaultTimeout;
+            this.trace = trace;
             journalEntryStartId = source.CurrentJournalEntryId;
             LastWaitEntryId = journalEntryStartId;
         }
@@ -54,6 +56,10 @@ namespace Infusion.LegacyApi
 
         public void Delete()
         {
+#if DEBUG
+            if (journalEntryStartId != source.CurrentJournalEntryId || LastWaitEntryId != journalEntryStartId)
+                trace?.Log($"Delete {journalEntryStartId} -> {source.CurrentJournalEntryId}, {LastWaitEntryId} -> {journalEntryStartId}");
+#endif
             journalEntryStartId = source.CurrentJournalEntryId;
             LastWaitEntryId = journalEntryStartId;
         }
@@ -151,6 +157,7 @@ namespace Infusion.LegacyApi
 
         internal void NotifyWait()
         {
+            trace?.Log($"{LastWaitEntryId} -> {source.CurrentJournalEntryId}");
             LastWaitEntryId = source.CurrentJournalEntryId;
         }
 

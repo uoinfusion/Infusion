@@ -11,6 +11,7 @@ namespace Infusion.LegacyApi
         internal GlobalTrace(ILogger baseLogger)
         {
             logger = new ScriptTraceLogger(baseLogger);
+            JournalTrace = new DiagnosticTrace(baseLogger);
         }
 
         public ScriptTrace Create() => new ScriptTrace(logger);
@@ -25,5 +26,7 @@ namespace Infusion.LegacyApi
         {
             logger.Debug(message);
         }
+
+        public DiagnosticTrace JournalTrace { get; }
     }
 }

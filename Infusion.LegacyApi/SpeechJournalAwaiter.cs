@@ -11,6 +11,7 @@ namespace Infusion.LegacyApi
         private readonly EventWaitHandle entryReceivedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
         private readonly SpeechJournal journal;
         private readonly Func<TimeSpan?> defaultTimeout;
+        private readonly DiagnosticTrace trace;
         private readonly Cancellation cancellation;
         private readonly SpeechJournalSource journalSource;
 
@@ -23,12 +24,13 @@ namespace Infusion.LegacyApi
         private Action timeoutAction;
 
         internal SpeechJournalAwaiter(Cancellation cancellation, SpeechJournalSource journalSource = null,
-            SpeechJournal journal = null, Func<TimeSpan?> defaultTimeout = null)
+            SpeechJournal journal = null, Func<TimeSpan?> defaultTimeout = null, DiagnosticTrace trace = null)
         {
             this.cancellation = cancellation;
             this.journalSource = journalSource;
             this.journal = journal;
             this.defaultTimeout = defaultTimeout;
+            this.trace = trace;
         }
 
         internal void ReceiveJournalEntry(JournalEntry entry)
@@ -142,15 +144,22 @@ namespace Infusion.LegacyApi
 
             JournalEntry beforeWaitAny = null;
             long? lastWaitEntryId = null;
+            long? lastActionEntryId = null;
+
 
             if (journalSource != null)
             {
+                lastActionEntryId = journalSource.LastActionJournalEntryId;
+                trace?.Log($"WaitAny {lastWaitEntryId}, {lastActionEntryId}");
+
                 journalSource.NewMessageReceived += JournalEntriesOnNewMessageReceived;
                 beforeWaitAny = journalSource.LastOrDefault();
             }
 
             if (journal != null)
             {
+                trace?.Log($"WaitAny - preprocessing");
+
                 lastWaitEntryId = journal.LastWaitEntryId;
                 foreach (var entry in journal.AfterLastAction())
                 {
@@ -166,6 +175,8 @@ namespace Infusion.LegacyApi
                 }
             }
 
+            trace?.Log($"WaitAny - starting awaiting");
+
             try
             {
                 var totalWaitingMillieseconds = 0;
@@ -177,8 +188,8 @@ namespace Infusion.LegacyApi
                         if (timeoutAction != null)
                             timeoutAction.Invoke();
                         else
-                            throw new TimeoutException(BuildTimeoutDiagnosticInfo(beforeWaitAny, timeout,
-                                lastWaitEntryId));
+                            throw new TimeoutException(message: BuildTimeoutDiagnosticInfo(beforeWaitAny, timeout,
+                                lastWaitEntryId, lastActionEntryId));
 
                         return;
                     }
@@ -203,13 +214,15 @@ namespace Infusion.LegacyApi
             }
         }
 
-        private string BuildTimeoutDiagnosticInfo(JournalEntry beforeWaitAny, TimeSpan? timeout, long? lastWaitEntryId)
+        private string BuildTimeoutDiagnosticInfo(JournalEntry beforeWaitAny, TimeSpan? timeout, long? lastWaitEntryId, long? lastActionEntryId)
         {
             var info = new StringBuilder();
 
             info.AppendLine(timeout.HasValue ? $"Journal WaitAny timeout after {timeout.Value}" : "Journal WaitAny timeout after unspecified TimeSpan");
             if (lastWaitEntryId.HasValue)
                 info.AppendLine($"Jurnal's LastWaitEntryId is {lastWaitEntryId.Value}");
+            if (lastActionEntryId.HasValue)
+                info.AppendLine($"Journal source's LastActionEntryId is {lastActionEntryId.Value}");
 
             if (beforeWaitAny != null)
             {

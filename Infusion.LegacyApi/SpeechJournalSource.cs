@@ -15,10 +15,12 @@ namespace Infusion.LegacyApi
         private ImmutableQueue<JournalEntry> journal = ImmutableQueue.Create<JournalEntry>();
 
         private readonly ThreadLocal<long> lastActionJournalEntryId;
+        private readonly DiagnosticTrace trace;
 
-        internal SpeechJournalSource()
+        internal SpeechJournalSource(DiagnosticTrace trace = null)
         {
             lastActionJournalEntryId = new ThreadLocal<long>(false);
+            this.trace = trace;
         }
 
         internal long LastActionJournalEntryId
@@ -46,6 +48,7 @@ namespace Infusion.LegacyApi
 
         public void NotifyAction()
         {
+            trace?.Log($"NotifyAction {LastActionJournalEntryId} -> {CurrentJournalEntryId}");
             LastActionJournalEntryId = CurrentJournalEntryId;
         }
 

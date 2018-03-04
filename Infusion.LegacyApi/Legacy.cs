@@ -44,6 +44,8 @@ namespace Infusion.LegacyApi
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
         {
+            Trace = new GlobalTrace(logger);
+
             cancellation = new Cancellation(() => CancellationToken);
             eventJournalSource = new EventJournalSource();
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
@@ -84,8 +86,6 @@ namespace Infusion.LegacyApi
 
             Configuration = configuration;
             legacyEventJournal = CreateEventJournal();
-
-            Trace = new GlobalTrace(logger);
 
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
@@ -174,7 +174,7 @@ namespace Infusion.LegacyApi
             CommandHandler.RegisterCommand(new Command("filter-weather", ClientFilters.Weather.Toggle));
         }
 
-        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);
+        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
         public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, cancellation, () => DefaultTimeout);
 
         public void Say(string message)

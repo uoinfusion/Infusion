@@ -188,14 +188,26 @@ namespace Infusion.LegacyApi
         public static void DropItem(Item item, ObjectId targetContainerId)
             => Current.DropItem(item, targetContainerId);
 
+        public static void DropItem(Item item, Location3D location)
+            => Current.DropItem(item, location);
+
         public static void DropItem(ObjectId itemId, ObjectId targetContainerId)
             => Current.DropItem(itemId, targetContainerId);
+
+        public static void DropItem(ObjectId itemId, Location3D location)
+            => Current.DropItem(itemId, location);
 
         public static void DragItem(Item item)
             => Current.DragItem(item);
 
+        public static void DragItem(ObjectId itemId)
+            => Current.DragItem(itemId);
+
         public static void DragItem(Item item, int amount)
             => Current.DragItem(item, amount);
+
+        public static void DragItem(ObjectId itemId, int amount)
+            => Current.DragItem(itemId, amount);
 
         public static DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId, TimeSpan? timeout = null)
             => Current.WaitForItemDragged(awaitedDragObjectId, timeout);

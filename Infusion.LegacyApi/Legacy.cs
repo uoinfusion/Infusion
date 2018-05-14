@@ -508,17 +508,11 @@ namespace Infusion.LegacyApi
             return targeting.WaitForTarget(timeout ?? DefaultTimeout, failMessages);
         }
 
-        public void DropItem(Item item, Item targetContainer)
-        {
-            DropItem(item.Id, targetContainer.Id);
-        }
+        public void DropItem(Item item, Item targetContainer) => DropItem(item.Id, targetContainer.Id);
+        public void DropItem(Item item, ObjectId targetContainerId) => DropItem(item.Id, targetContainerId);
+        public void DropItem(Item item, Location3D location) => DropItem(item.Id, location);
 
-        internal void DropItem(Item item, ObjectId targetContainerId)
-        {
-            DropItem(item.Id, targetContainerId);
-        }
-
-        internal void DropItem(ObjectId itemId, ObjectId targetContainerId)
+        public void DropItem(ObjectId itemId, ObjectId targetContainerId)
         {
             CheckCancellation();
 
@@ -526,17 +520,25 @@ namespace Infusion.LegacyApi
             Server.DropItem(itemId, targetContainerId);
         }
 
-        public void DragItem(Item item)
-        {
-            DragItem(item, item.Amount);
-        }
-
-        public void DragItem(Item item, int amount)
+        public void DropItem(ObjectId itemId, Location3D location)
         {
             CheckCancellation();
 
             NotifyAction();
-            Server.DragItem(item.Id, amount);
+            Server.DropItem(itemId, location);
+        }
+
+        public void DragItem(Item item) => DragItem(item.Id, item.Amount);
+        public void DragItem(Item item, int amount) => DragItem(item.Id, amount);
+        public void DragItem(ObjectId itemId) => DragItem(itemId, 1);
+
+
+        public void DragItem(ObjectId itemId, int amount)
+        {
+            CheckCancellation();
+
+            NotifyAction();
+            Server.DragItem(itemId, amount);
         }
 
         public DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId = null, TimeSpan? timeout = null)

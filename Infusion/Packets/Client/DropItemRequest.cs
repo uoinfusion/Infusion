@@ -11,10 +11,20 @@ namespace Infusion.Packets.Client
         public ObjectId ContainerId { get; }
 
         public DropItemRequest(ObjectId itemId, ObjectId containerId)
+            : this(itemId, containerId, new Location3D(0xFFFF, 0xFFFF, 0x00))
+        {
+        }
+
+        public DropItemRequest(ObjectId itemId, Location3D location)
+            : this(itemId, 0xFFFFFF, location)
+        {
+        }
+
+        private DropItemRequest(ObjectId itemId, ObjectId containerId, Location3D location)
         {
             ItemId = itemId;
             ContainerId = containerId;
-            Location = new Location3D(0xFFFF, 0xFFFF, 0x00);
+            Location = location;
 
             RawPacket = Serialize();
         }

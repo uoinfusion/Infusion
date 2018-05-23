@@ -108,6 +108,58 @@ public static class Items
     
     public static bool Pickup(Item item)
         => TryMoveItem(item, UO.Me.BackPack);
+
+    public static bool DropFromBackPack(ItemSpec itemSpec, bool all = false)
+        => DropFromBackPack(itemSpec, UO.Me.Location, all);    
+
+    public static bool DropFromBackPack(ItemSpec itemSpec, Location3D location, bool all = false)
+    {
+        var potentialItems = UO.Items.Matching(itemSpec).InBackPack();
+        
+        if (!potentialItems.Any())
+        {
+            UO.ClientPrint($"Cannot find any {Specs.TranslateToName(itemSpec)} in your backpack");
+            return false;
+        }
+        
+        if (all)
+        {
+            foreach (var item in potentialItems)
+            {
+                UO.Trace.Log($"Dropping {Specs.TranslateToName(item)} ({item.Id})");
+                if (!Drop(item, location))
+                    return false;
+            }
+            
+            return true;
+        }
+        else
+        {
+            return Drop(potentialItems.First(), location);
+        }
+    }
+
+    public static bool Drop(Item item)
+        => Drop(item, UO.Me.Location);
+    
+    public static bool Drop(Item item, Location3D location)
+    {
+        if (item != null)
+        {
+            UO.DragItem(item);
+            var result = UO.WaitForItemDragged(item.Id);
+            if (result != DragResult.Success)
+            {
+                UO.ClientPrint($"Cannot drop item (reason: {result})");
+                return false;
+            }
+            UO.DropItem(item, location);
+            
+            return true;
+        }
+        
+        return false;
+    }
     
     public static void BatchedMove(int totalAmount, int batchSize)
     {

@@ -44,6 +44,12 @@ public static class Specs
 
     // Containers
     public static readonly ItemSpec BackPack = 0xE75;
+    public static readonly ItemSpec MagickyPytlik = new ItemSpec(0x0E76, (Color)0x0430);
+    public static readonly ItemSpec MagickyVacek = new[]
+    {
+        new ItemSpec(0x09B0, (Color)0x0430),
+        new ItemSpec(0x0E79, (Color)0x0430)
+    };
 
     // Tools
     public static readonly ItemSpec Knives = new[] { CopperVikingSword, VeriteVikingSword, Dagger };
@@ -59,6 +65,7 @@ public static class Specs
     public static readonly ItemSpec Saw = 0x1034;
     public static readonly ItemSpec Torch = 0x0F64;
     public static readonly ItemSpec BurningTorch = 0x0A12;
+    public static readonly ItemSpec Mortar = 0x0E9B;
 
     // Armor
     public static readonly ItemSpec BoneHelmet = 0x1451;
@@ -399,7 +406,10 @@ public static class Specs
 
     public static readonly ItemSpec MagicWall = 0x0080;
     public static readonly ItemSpec EnergyField = new[] { 0x3947, 0x3956 };
-
+    
+    //furniture
+    public static readonly ItemSpec WaterTrough = new[] { 0x0b41, 0x0b42, 0x0b43, 0x0b44 };
+    
     // Animals
     public static readonly MobileSpec Bird = 0x0006;
     public static readonly MobileSpec Ptacek = 0x0006;
@@ -435,6 +445,12 @@ public static class Specs
     public static readonly MobileSpec Orn = 0x00DB;
 
     public static readonly MobileSpec Mounts = new[] { Lama, Mustang, Horse, Oclock, Orn };
+    
+    // Shrink Animals
+    public static readonly ItemSpec VlkodavShrink = new ItemSpec(0x20EA, (Color)0x0979);
+    public static readonly ItemSpec KrvavyDrapacShrink = new ItemSpec(0x20EA, (Color)0x098C);
+    
+    public static readonly ItemSpec CombatAnimals = new[] { VlkodavShrink, KrvavyDrapacShrink };
 
     // Monsters
     public static readonly MobileSpec Troll = new[] { 0x0035, 0x0036 };
@@ -444,6 +460,7 @@ public static class Specs
     public static readonly MobileSpec ElementalKamene = new MobileSpec("Elemental Kamene");
 
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
+    
 
     // Summons
     public static readonly MobileSpec Satan = 0x0310;

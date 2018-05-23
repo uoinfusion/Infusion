@@ -35,8 +35,9 @@ public static class Looting
     public static ItemSpec AllowedLoot { get; set; } = null;
     public static ItemSpec OnGroundLoot { get; set; } = new[]
     {
-        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
+        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition, Specs.MagickyPytlik, Specs.MagickyVacek
     };
+    public static ItemSpec HumanCorpseLoot { get; set; } = OnGroundLoot;
 
     public static ObjectId? LootContainerId { get; set; }
     public static ItemSpec LootContainerSpec { get; set; }
@@ -77,10 +78,21 @@ public static class Looting
         else
             UO.Log("Cannot find equipment item.");
 
+
+        bool humanCorpseLooting = Specs.Player.Matches(corpse.CorpseType);
+
         try
         {
-            Rip(corpse);
-            Loot(corpse);
+            if (!humanCorpseLooting)
+            {
+                Rip(corpse);
+                Loot(corpse);
+            }
+            else
+            {
+                Loot(corpse);
+                Rip(corpse);
+            }
         }
         catch (Exception ex)
         {
@@ -121,10 +133,21 @@ public static class Looting
             else
                 UO.Log("Cannot find equipment item.");
 
+
+            bool humanCorpseLooting = Specs.Player.Matches(corpse.CorpseType);
+
             try
             {
-                Rip(corpse);
-                Loot(corpse);
+                if (humanCorpseLooting)
+                {
+                    Loot(corpse);
+                    Rip(corpse);
+                }
+                else
+                {
+                    Rip(corpse);
+                    Loot(corpse);
+                }
                 if (corpses.Length - 1 > 0)
                     HighlightLootableCorpses(corpses.Except(new[] { corpse }));
                 else
@@ -164,7 +187,10 @@ public static class Looting
                 .Where(i => IsLootable(i));
         
     private static bool IsLootable(Item item)
-        => AllowedLoot != null ? AllowedLoot.Matches(item) : !IgnoredLoot.Matches(item);    
+        => AllowedLoot != null ? AllowedLoot.Matches(item) : !IgnoredLoot.Matches(item);
+
+    private static bool IsLootableFromHuman(Item item)
+        => AllowedLoot != null ? AllowedLoot.Matches(item) : !IgnoredLoot.Matches(item) && HumanCorpseLoot.Matches(item);
 
     public static void HighlightLootableCorpses(IEnumerable<Item> lootableCorpses)
     {
@@ -285,6 +311,16 @@ public static class Looting
 
         UO.ClientPrint($"Number of items in container: {UO.Items.InContainer(container).Count()}");
 
+        Func<Item, bool> isLootableFunc = IsLootable;
+        if (container is Corpse containerCorpse)
+        {
+            UO.Log(containerCorpse.CorpseType.ToString());
+            if (Specs.Player.Matches(containerCorpse.CorpseType))
+            {
+                isLootableFunc = IsLootableFromHuman;
+            }
+        }
+
         foreach (var itemToPickup in UO.Items.InContainer(container).ToArray())
         {
             if (container.GetDistance(UO.Me.Location) > 4)
@@ -293,7 +329,7 @@ public static class Looting
                 return;
             }
         
-            if (IsLootable(itemToPickup))
+            if (isLootableFunc(itemToPickup))
             {
                 Trace.Log($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
                 if (!Items.TryMoveItem(itemToPickup, LootContainer))

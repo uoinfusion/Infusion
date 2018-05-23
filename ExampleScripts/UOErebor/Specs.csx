@@ -408,7 +408,8 @@ public static class Specs
     public static readonly ItemSpec EnergyField = new[] { 0x3947, 0x3956 };
     
     //furniture
-    public static readonly ItemSpec WaterTrough = new[] { 0x0b41, 0x0b42, 0x0b43, 0x0b44 };
+    public static readonly ItemSpec WaterTrough = 0x0B41;
+    public static readonly ItemSpec WaterTroughAll = new[] { 0x0B41, 0x0B42, 0x0B43, 0x0B44 };
     
     // Animals
     public static readonly MobileSpec Bird = 0x0006;

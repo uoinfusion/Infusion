@@ -106,11 +106,15 @@ public static class Party
     
     public static void Add()
     {
-        var newMember = UO.AskForMobile();
-        if (newMember == null)
-            return;
-
-        Add(newMember);
+        while (true)
+        {
+            UO.ClientPrint("Select a new party member, or press escape to cancel");
+            var newMember = UO.AskForMobile();
+            if (newMember == null)
+                break;
+    
+            Add(newMember);
+        }
     }
     
 

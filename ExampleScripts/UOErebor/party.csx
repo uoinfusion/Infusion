@@ -2,6 +2,8 @@
 #load "RequestStatusQueue.csx"
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Infusion.LegacyApi.Events;
 using Infusion.Scripts.UOErebor.Extensions.StatusBars;
 
@@ -13,6 +15,8 @@ public static class Party
 
     public static StatusesConfiguration Window => statuses.Configuration;
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
+
+    private static Dictionary<ObjectId, string> memberIds = new Dictionary<ObjectId, string>();
 
     private static ObjectId? lastTargetId = null; 
 
@@ -76,6 +80,13 @@ public static class Party
             statuses.SetOutOfSight(ev.Mobile.Id, false);
             statuses.Update(ev.Mobile);
         }
+        else
+        {
+            if (memberIds.TryGetValue(ev.Mobile.Id, out string prefix))
+            {
+                Add(ev.Mobile, prefix);
+            }
+        }
     }
 
     private static void HandleMobileLeftView(MobileLeftViewEvent ev)
@@ -124,13 +135,30 @@ public static class Party
         {
             UO.RequestStatus(newMember);
 
+            UO.Log(namePrefix);
             statuses.Add(newMember, StatusBarType.Friend, namePrefix);
         }
         else
         {
             statuses.Open();
         }
-   }
+    }
+    
+    public static void Add(params ObjectId[] ids)
+    {
+        foreach (var id in ids) 
+            memberIds[id] = null;
+    }
+    
+    public static void Add(ObjectId id, string prefix)
+    {
+        memberIds[id] = prefix;
+    }
+    
+    public static void ClearMembers()
+    {
+        memberIds.Clear();
+    }
     
     public static void Remove()
     {
@@ -139,13 +167,17 @@ public static class Party
         {
             if (lastTargetId.HasValue)
             {
+                memberIds.Remove(lastTargetId.Value);
                 statuses.Remove(lastTargetId.Value);
                 lastTargetId = null;
             }
             return;
         }
         else
+        {
             statuses.Remove(member);
+            memberIds.Remove(member.Id);
+        }
     }
     
     public static void Remove(Mobile removeMember)

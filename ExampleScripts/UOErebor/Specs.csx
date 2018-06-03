@@ -90,6 +90,7 @@ public static class Specs
     public static readonly ItemSpec BlankScroll = 0x0E34;
     public static readonly ItemSpec Paper = 0x14ED;
     public static readonly ItemSpec BlankMap = 0x14EB;
+    public static readonly ItemSpec TajemnaMapa = 0x14EB;
 
     public static readonly ItemSpec PlayingCards = 0x0FA2;
 

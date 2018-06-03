@@ -27,16 +27,19 @@ public static class Looting
         Specs.Hairs
     };
     
+    public static ItemSpec InterestingLoot { get; } = new[]
+    {
+        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
+        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa
+    };
+    
     public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };
 
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     public static ItemSpec IgnoredLoot { get; set; } = UselessLoot;
     public static ItemSpec AllowedLoot { get; set; } = null;
-    public static ItemSpec OnGroundLoot { get; set; } = new[]
-    {
-        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition, Specs.MagickyPytlik, Specs.MagickyVacek
-    };
+    public static ItemSpec OnGroundLoot { get; set; } = InterestingLoot;
     public static ItemSpec HumanCorpseLoot { get; set; } = OnGroundLoot;
 
     public static ObjectId? LootContainerId { get; set; }

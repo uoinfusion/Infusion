@@ -43,6 +43,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
                 return ASCIIText.DrawText(10, string.Empty);
 
             name = name.Length <= 12 ? name : name.Substring(0, 12) + "...";
+            name = (StatusBar.NamePrefix ?? string.Empty) + name;
 
             return ASCIIText.DrawText(10, name);
         }
@@ -108,7 +109,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
                 }
 
                 if (textBitmap == null && !string.IsNullOrEmpty(StatusBar.Name))
-                    textBitmap = RenderName((StatusBar.NamePrefix ?? string.Empty) + StatusBar.Name);
+                    textBitmap = RenderName(StatusBar.Name);
                 if (textBitmap != null)
                     graphics.DrawImage(textBitmap, 17, 9);
                 if (StatusBar.IsDead)

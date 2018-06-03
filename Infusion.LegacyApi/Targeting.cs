@@ -25,7 +25,7 @@ namespace Infusion.LegacyApi
 
         private DateTime lastActionTime;
         private CursorId lastCursorId = new CursorId(0x00000025);
-        private ObjectId lastItemIdInfo;
+        private ObjectId? lastItemIdInfo;
         private DateTime lastTargetCursorPacketTime;
 
         private TargetInfo? lastTargetInfo;
@@ -111,6 +111,7 @@ namespace Infusion.LegacyApi
                     packet.ClickedOnId.Value == 0)
                 {
                     lastTargetInfo = null;
+                    lastItemIdInfo = null;
                     receivedTargetInfoEvent.Set();
                     return null;
                 }

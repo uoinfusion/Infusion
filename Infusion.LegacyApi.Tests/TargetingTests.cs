@@ -145,10 +145,10 @@ namespace Infusion.LegacyApi.Tests
         {
             var testProxy = new InfusionTestProxy();
 
-            testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
             {
-                0x6C, 0x00, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00,
+                0x6C, 0x00, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x06, 0x39, 0x0E, 0x0A, 0x75, 0x0C, 0x92, 0x00,
+                0x00, 0x01, 0x90,
             }));
 
             var task = Task.Run(() => { testProxy.Api.AskForLocation().Value.Location.Should().Be(new Location3D(0x09EC, 0x0CF9, 0)); });
@@ -185,7 +185,7 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
-        public void Cancels_AfkForMobile_When_server_requests_target()
+        public void Cancels_AskForMobile_When_server_requests_target()
         {
             ConcurrencyTester.Run(() =>
             {
@@ -202,6 +202,29 @@ namespace Infusion.LegacyApi.Tests
 
                 task.Wait(100).Should().BeTrue();
             });
+        }
+
+        [TestMethod]
+        public void AskForMobile_returns_null_When_client_cancels_target_and_some_target_was_already_selected()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x00, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x11, 0x12, 0x13, 0x14, 0x09, 0xEC, 0x0C, 0xF9, 0x00,
+                0x00, 0x00, 0x00,
+            }));
+
+            var task = Task.Run(() => { testProxy.Api.AskForMobile().Should().BeNull(); });
+
+            testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x01, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00,
+            }));
+
+            task.Wait(100).Should().BeTrue();
         }
 
         [TestMethod]

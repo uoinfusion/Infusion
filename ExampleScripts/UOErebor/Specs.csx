@@ -409,8 +409,7 @@ public static class Specs
     public static readonly ItemSpec EnergyField = new[] { 0x3947, 0x3956 };
     
     //furniture
-    public static readonly ItemSpec WaterTrough = 0x0B41;
-    public static readonly ItemSpec WaterTroughAll = new[] { 0x0B41, 0x0B42, 0x0B43, 0x0B44 };
+    public static readonly ItemSpec WaterTrough = new[] { 0x0b41, 0x0b42, 0x0b43, 0x0b44 };
     
     // Animals
     public static readonly MobileSpec Bird = 0x0006;
@@ -450,9 +449,10 @@ public static class Specs
     
     // Shrink Animals
     public static readonly ItemSpec VlkodavShrink = new ItemSpec(0x20EA, (Color)0x0979);
+    public static readonly ItemSpec DrapacShrink = new ItemSpec(0x20EA, (Color)0x0980);
     public static readonly ItemSpec KrvavyDrapacShrink = new ItemSpec(0x20EA, (Color)0x098C);
     
-    public static readonly ItemSpec CombatAnimals = new[] { VlkodavShrink, KrvavyDrapacShrink };
+    public static readonly ItemSpec CombatAnimals = new[] { VlkodavShrink, DrapacShrink, KrvavyDrapacShrink };
 
     // Monsters
     public static readonly MobileSpec Troll = new[] { 0x0035, 0x0036 };

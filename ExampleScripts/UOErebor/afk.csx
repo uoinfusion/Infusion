@@ -25,6 +25,8 @@ public static class Afk
     
     public static string[] IgnoredNames { get; set; } = { };
     
+    public static string FileAlertPath { get; set; }
+    
     private static SpeechJournal afkCheckJournal = UO.CreateSpeechJournal();
  
     public static IDisposable Start()
@@ -79,7 +81,17 @@ public static class Afk
 
     public static void DoAlert()
     {
-        System.Media.SystemSounds.Asterisk.Play();
+        if(!string.IsNullOrEmpty(FileAlertPath))
+        {
+            System.Media.SoundPlayer player = new System.Media.SoundPlayer(FileAlertPath);    
+            player.Play();
+        }
+        else
+        {
+            System.Media.SystemSounds.Asterisk.Play();
+        }            
+
+        
         UO.Alert("Afk kontrola");
 
         UO.Wait(1000);

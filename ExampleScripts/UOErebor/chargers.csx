@@ -7,8 +7,8 @@ public static class Chargers
 
     private static EventJournal journal = UO.CreateEventJournal();    
 
-    private static Charger fireCharger = new Charger((GumpTypeId)0x9600057B, 2257, 6254, Trace);
-    private static Charger energyCharger = new Charger((GumpTypeId)0x9600057B, 2281, 6256, Trace);
+    private static Charger fireCharger = new Charger((GumpTypeId)0x9600057E, 2257, 6254, Trace);
+    private static Charger energyCharger = new Charger((GumpTypeId)0x9600057E, 2281, 6256, Trace);
 
     private static int GetLevel(Charger charger)
     {

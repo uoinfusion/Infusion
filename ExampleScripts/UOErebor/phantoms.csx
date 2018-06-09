@@ -76,7 +76,8 @@ public static class Phantoms
     
     public static void Save(string fileName)
     {
-        currentFileName = fileName;
+        if (!string.IsNullOrEmpty(fileName))
+            currentFileName = fileName;
         Save();
     }
     
@@ -95,6 +96,7 @@ public static class Phantoms
             content.AppendLine(phantom.Location.ToString());
         }
         
+        UO.Log($"Saving to {currentFileName}");
         File.WriteAllText(currentFileName, content.ToString());
     }
 
@@ -162,14 +164,16 @@ public static class Phantoms
     
     public static void AddPhantomCommand()
     {
+        UO.ClientPrint("Select positions to add phantoms, press esc to cancel phantoms adding");
         var targetInfo = UO.Info();
-        if (targetInfo.HasValue)
+        while (targetInfo.HasValue)
         {
             Trace.Log($"Phantom location: {targetInfo.Value.Location}");
             AddPhantomAndSave(targetInfo.Value.Location);
+            targetInfo = UO.Info();
         }
-        else
-            Trace.Log("no targetInfo");
+        
+        Trace.Log("no targetInfo");
     }
     
     public static void RefreshAll()
@@ -191,30 +195,44 @@ public static class Phantoms
     public static void AddPhantom(Location3D location)
     {
         var phantom = new Phantom(location, currentType, currentColor);
-        phantoms.Add(phantom);
+        
+        var existingPhantom = phantoms.FirstOrDefault(x => x.Location == location);
+        if (existingPhantom != null)
+        {
+            UO.Log($"Phantom already exists at location {location}, replacing it");
+            phantoms.Remove(existingPhantom);
+        }
+        
+        phantoms.Add(phantom);        
         phantom.UpdateVisibility(UO.Me.Location);
     }
 
     public static void RemovePhantomCommand()
     {
+        UO.ClientPrint("Select phantoms to remove, press esc to cancel phantoms removing");
+
+        bool anyChange = false;
         var targetInfo = UO.Info();
-        if (!targetInfo.HasValue)
+
+        while (targetInfo.HasValue)
         {
-            UO.Log("targeting cancelled");
-            return;
-        }
-        
-        var phantomsToRemove = (targetInfo?.Id != null) ?
+            var phantomsToRemove = (targetInfo?.Id != null) ?
             phantoms.Where(x => x.Id == targetInfo.Value.Id) :
             phantoms.Where(x => (Location2D)x.Location == (Location2D)targetInfo.Value.Location);
+    
+            foreach (var phantom in phantomsToRemove.ToArray())
+            {
+                phantom.Remove();
+                phantoms.Remove(phantom);
+            }
 
-        foreach (var phantom in phantomsToRemove.ToArray())
-        {
-            phantom.Remove();
-            phantoms.Remove(phantom);
+            anyChange = true;
+            targetInfo = UO.Info();
         }
 
-        Save();
+        UO.Log("targeting cancelled");
+        if (anyChange)
+            Save();        
     }
 
     public static void MakeWalkable()

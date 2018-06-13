@@ -187,8 +187,13 @@ public static class Targeting
             return;
         }
 
-        if (UO.TryAttack(target) != AttackResult.Accepted)
-            UO.ClientPrint($"Cannot attack {target}"); 
+        var attackResult = UO.TryAttack(target); 
+        if (attackResult != AttackResult.Accepted)
+        {
+            UO.ClientPrint($"Cannot attack {target.Name ?? "last target"}");
+            if (Trace.Enabled)
+                Trace.Log($"AttackResult is {attackResult}, target: {target}");
+        }            
 
         alreadyTargeted.Clear();
         alreadyTargeted.Push(target.Id);

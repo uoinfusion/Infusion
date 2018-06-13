@@ -8,7 +8,7 @@ using Infusion.LegacyApi;
 
 public static class HitPointNotifier
 {
-    public static IPrintHitPointNotification Mode = HitPointNotificationModes.AboveAllMobiles;
+    public static IPrintHitPointNotification Mode = HitPointNotificationModes.Standard;
 
     public static void Run()
     {

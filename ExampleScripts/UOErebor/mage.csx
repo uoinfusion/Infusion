@@ -16,5 +16,17 @@ public static class Mage
         "Nyni budes kouzlit s vetsim usilim.", "Tve usili polevilo.");
         
     public static int FireChargerLevel => Chargers.FireLevel;
-    public static int EnergyChargerLevel => Chargers.EnergyLevel;    
+    public static int EnergyChargerLevel => Chargers.EnergyLevel;
+    
+    public static bool SummonDaemon() => Summons.SummonCreature(Spell.SummonDaemon, Specs.Daemon);
+    public static bool SummonElementalVzduchu() => Summons.SummonCreature(Spell.SummonAirElemental, Specs.ElementalVzduchu);
+    public static bool SummonElementalZeme() => Summons.SummonCreature(Spell.SummonEarthElemental, Specs.ElementalZeme);
+    public static bool SummonElementalOhne() => Summons.SummonCreature(Spell.SummonFireElemental, Specs.ElementalOhne);
+    public static bool SummonElementalVody() => Summons.SummonCreature(Spell.SummonWaterElemental, Specs.ElementalVody);
 }
+
+UO.RegisterCommand("summon-daemon", () => Mage.SummonDaemon());
+UO.RegisterCommand("summon-elemvzduchu", () => Mage.SummonElementalVzduchu());
+UO.RegisterCommand("summon-elemvzeme", () => Mage.SummonElementalZeme());
+UO.RegisterCommand("summon-elemohne", () => Mage.SummonElementalOhne());
+UO.RegisterCommand("summon-elemvody", () => Mage.SummonElementalVody());

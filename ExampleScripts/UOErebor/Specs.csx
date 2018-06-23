@@ -472,8 +472,16 @@ public static class Specs
     public static readonly MobileSpec Vampir = new MobileSpec(0x0004, (Color)0x0021);
     public static readonly MobileSpec LicheLord = new MobileSpec(0x0018, (Color)0x098A);
     public static readonly MobileSpec TemnyVampir = new MobileSpec(0x0004, (Color)0x0981);
+    
+    public static readonly MobileSpec ElementalVzduchu = new MobileSpec(0x000D, (Color)0x0985);
+    public static readonly MobileSpec Daemon = new MobileSpec(0x000A, (Color)0x0000);
+    public static readonly MobileSpec ElementalZeme = new MobileSpec(0x000E, (Color)0x0709);
+    public static readonly MobileSpec ElementalOhne = new MobileSpec(0x000F, (Color)0x0000);
+    public static readonly MobileSpec ElementalVody = new MobileSpec(0x0010, (Color)0x0000);
 
     public static readonly MobileSpec NecroSummons = new[] { Satan, Mumie, KostlivyLucistnik, Liche, Vampir, LicheLord, TemnyVampir };
+    public static readonly MobileSpec MageSummons = new[] { ElementalVzduchu, Daemon, ElementalZeme, ElementalOhne, ElementalVody };
+    public static readonly MobileSpec Summons = NecroSummons.Including(MageSummons);
 
     public static readonly ItemSpec Torsos = new[]
     {

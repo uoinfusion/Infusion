@@ -548,6 +548,8 @@ namespace Infusion.LegacyApi
 
         public void Log(string message)
         {
+            CheckCancellation();
+
             logger.Info(message);
         }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
 {
-    internal sealed class StatusBar : INotifyPropertyChanged
+    public sealed class StatusBar : INotifyPropertyChanged
     {
         private string name;
         private int maxHealth;

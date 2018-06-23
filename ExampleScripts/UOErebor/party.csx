@@ -17,6 +17,10 @@ public static class Party
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
     private static Dictionary<ObjectId, string> memberIds = new Dictionary<ObjectId, string>();
+    public static IEnumerable<ObjectId> VisibleMemberIds 
+        => statuses.StatusBars
+            .Where(x => UO.Mobiles[x.Id] != null)
+            .Select(x => (ObjectId)x.Id).ToArray();
 
     private static ObjectId? lastTargetId = null; 
 

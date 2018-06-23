@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
 
         public int Count => StatusBars.Count;
 
-        internal ObservableCollection<StatusBar> StatusBars { get; } = new ObservableCollection<StatusBar>();
+        public ObservableCollection<StatusBar> StatusBars { get; } = new ObservableCollection<StatusBar>();
 
         private bool NeedsReopen =>
             statusesWindow == null || PresentationSource.FromVisual(statusesWindow) == null ||

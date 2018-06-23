@@ -20,10 +20,7 @@
             return duplicate;
         }
 
-        public override string ToString()
-        {
-            return
-                $"Id: {Id}; CorpseType {CorpseType}; Name: {Name}; Location: {Location}; Color: {Color}; ";
-        }
+        public override string ToString() 
+            => $"Id: {Id}; Type: {Type}; CorpseType: {CorpseType}; Name: {Name}; Location: {Location}; Color: {Color}; ";
     }
 }

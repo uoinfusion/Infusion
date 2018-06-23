@@ -1,6 +1,7 @@
 #load "Specs.csx"
 #load "TwoStateAbility.csx"
 #load "chargers.csx"
+#load "summons.csx"
 
 using System;
 using System.Linq;

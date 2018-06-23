@@ -468,12 +468,12 @@ public static class Specs
     public static readonly MobileSpec Satan = 0x0310;
     public static readonly MobileSpec Mumie = new MobileSpec(0x009A, (Color)0x0481);
     public static readonly MobileSpec KostlivyLucistnik = new MobileSpec(0x0038, (Color)0x098F);
-    public static readonly MobileSpec Lich = new MobileSpec(0x0018, (Color)0x0000);
+    public static readonly MobileSpec Liche = new MobileSpec(0x0018, (Color)0x0000);
     public static readonly MobileSpec Vampir = new MobileSpec(0x0004, (Color)0x0021);
-    public static readonly MobileSpec LordLich = new MobileSpec(0x0018, (Color)0x098A);
+    public static readonly MobileSpec LicheLord = new MobileSpec(0x0018, (Color)0x098A);
     public static readonly MobileSpec TemnyVampir = new MobileSpec(0x0004, (Color)0x0981);
 
-    public static readonly MobileSpec NecroSummons = new[] { Satan, Mumie, KostlivyLucistnik, Lich, Vampir, LordLich, TemnyVampir };
+    public static readonly MobileSpec NecroSummons = new[] { Satan, Mumie, KostlivyLucistnik, Liche, Vampir, LicheLord, TemnyVampir };
 
     public static readonly ItemSpec Torsos = new[]
     {

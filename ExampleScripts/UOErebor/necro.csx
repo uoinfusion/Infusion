@@ -1,6 +1,7 @@
 #load "Specs.csx"
 #load "party.csx"
 #load "TwoStateAbility.csx"
+#load "summons.csx"
 
 using System;
 
@@ -13,56 +14,21 @@ public static class Necro
     public static TwoStateAbility StandCast { get; } = new TwoStateAbility(".standcast",
         "Nyni budes kouzlit s vetsim usilim.", "Tve usili polevilo.");
     
-    
-    public static void SummonCreature(string creatureName)
-    {
-        UO.Log($"Where do you want to summon {creatureName}"); 
-        var targetInfo = UO.AskForLocation();
-        if (!targetInfo.HasValue)
-        {
-            UO.Log("Targeting cancelled");
-            return;
-        }
-        
-        UO.WarModeOff();
-        UO.CastSpell(Spell.SummonCreature);
-
-        if (UO.WaitForDialogBox("You lack ", "You can't make anything with what you have.", "You don't know that spell.") == null)
-        {
-            UO.Log("Cannot open summon dialog box");
-            return;
-        }
-        
-        if (!UO.TriggerDialogBox(creatureName))
-        {
-            UO.Log($"{creatureName} not in the dialog box.");
-            UO.CloseDialogBox();
-            return;            
-        }
-        
-        UO.WaitForTarget();
-        UO.Target(targetInfo.Value);
-        
-        bool spellFailed = false;
-        
-        eventJournal
-            .When<MobileEnteredViewEvent>(
-                e => Specs.Satan.Matches(e.Mobile) 
-                        && (Location2D)e.Mobile.Location == (Location2D)targetInfo.Value.Location,
-                e => spellFailed = false)
-            .When<SpeechReceivedEvent>(
-                e => IsFailMessage(e.Speech.Message), e => spellFailed = true)
-            .WaitAny();
-        
-        if (spellFailed)
-            return;
-            
-        UO.Say("all stay");
-    }
-    
     private static bool IsFailMessage(string message) =>
         message.Contains("Target is not in line of sight") || message.Contains("Kouzlo se nezdarilo.")
         || message.Contains("You can't make anything with what you have.");
+        
+    public static bool SummonSatan() => Summons.SummonCreature("Satan", Specs.Satan);
+    public static bool SummonTemnyVampir() => Summons.SummonCreature("Temny Vampir", Specs.TemnyVampir);
+    public static bool SummonMumie() => Summons.SummonCreature("Mummy", Specs.Mumie);
+    public static bool SummonLicheLord() => Summons.SummonCreature("Liche Lord", Specs.LicheLord);
+    public static bool SummonHorse() => Summons.SummonCreature("Bone Horse", Specs.Horse);
+    public static bool SummonLucistnik() => Summons.SummonCreature("Skeleton Archer", Specs.KostlivyLucistnik);
 }
 
-UO.RegisterCommand("summon-satan", () => Necro.SummonCreature("Satan"));
+UO.RegisterCommand("summon-satan", () => Necro.SummonSatan());
+UO.RegisterCommand("summon-temnyvampir", () => Necro.SummonTemnyVampir());
+UO.RegisterCommand("summon-mumie", () => Necro.SummonMumie());
+UO.RegisterCommand("summon-lichelord", () => Necro.SummonLicheLord());
+UO.RegisterCommand("summon-horse", () => Necro.SummonHorse());
+UO.RegisterCommand("summon-lucistnik", () => Necro.SummonLucistnik());

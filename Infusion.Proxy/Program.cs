@@ -45,7 +45,7 @@ namespace Infusion.Proxy
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
-        private static readonly StringList clilocDictionary = new StringList("ENU");
+        private static readonly Lazy<StringList> clilocDictionary = new Lazy<StringList>(() => new StringList("ENU"));
 
         private static ushort proxyLocalPort;
         private static CommandHandler commandHandler;
@@ -124,7 +124,7 @@ namespace Infusion.Proxy
             var message = new SpeechMessage
             {
                 Type = SpeechType.Speech,
-                Message = clilocDictionary.GetString(packet.MessageId.Value) + packet.Affix,
+                Message = clilocDictionary.Value.GetString(packet.MessageId.Value) + packet.Affix,
                 Name = packet.Name,
                 SpeakerId = packet.SpeakerId
             };
@@ -137,7 +137,7 @@ namespace Infusion.Proxy
             var message = new SpeechMessage
             {
                 Type = SpeechType.Speech,
-                Message = clilocDictionary.GetString(packet.MessageId.Value),
+                Message = clilocDictionary.Value.GetString(packet.MessageId.Value),
                 Name = packet.Name,
                 SpeakerId = packet.SpeakerId
             };

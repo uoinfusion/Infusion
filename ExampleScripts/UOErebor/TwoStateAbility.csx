@@ -1,3 +1,5 @@
+using System;
+
 public class TwoStateAbility : ITwoStateAbility
 {
     public bool? IsTurnedOn { get; private set; }
@@ -5,15 +7,22 @@ public class TwoStateAbility : ITwoStateAbility
     
     public string TurnedOffMessage { get; }
     public string TurnedOnMessage { get; }
+    public string[] FailMessages { get; }
     public string ToggleCommand { get; }
     
     public int LowStaminaThreshold { get; set; } = 15;
     
     public TwoStateAbility(string toggleCommand, string turnedOnMessage, string turnedOffMessage)
+        : this(toggleCommand, turnedOnMessage, turnedOffMessage, Array.Empty<string>())
+    {
+    }
+    
+    public TwoStateAbility(string toggleCommand, string turnedOnMessage, string turnedOffMessage, string[] failMessages)
     {
         ToggleCommand = toggleCommand;
         TurnedOnMessage = turnedOnMessage;
         TurnedOffMessage = turnedOffMessage;
+        FailMessages = failMessages;
     }
     
     public void TurnOn()
@@ -46,8 +55,10 @@ public class TwoStateAbility : ITwoStateAbility
                     abilityJournal
                         .When(TurnedOffMessage, () => UO.Alert($"Waning: cannot turn on {ToggleCommand}"))
                         .When(TurnedOnMessage, () => { })
+                        .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
                         .WaitAny();
                 })
+                .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
                 .WaitAny();
     
             IsTurnedOn = true;
@@ -78,9 +89,11 @@ public class TwoStateAbility : ITwoStateAbility
                     abilityJournal
                         .When(TurnedOnMessage, () => UO.Log($"Warning: cannot turn off {ToggleCommand}"))
                         .When(TurnedOffMessage, () => { })
+                        .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
                         .WaitAny();
                 })
                 .When(TurnedOffMessage, () => { })
+                .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
                 .WaitAny();
     
             IsTurnedOn = false;

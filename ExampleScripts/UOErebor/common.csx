@@ -38,12 +38,22 @@ public static class Common
             throw new CommandInvocationException("Expecting hexadecimal id of a container.");
         }
         
+        OpenContainer(containerId);
+    }
+    
+    public static void OpenContainer(ObjectId containerId)
+    {
         var container = UO.Items[containerId];
         if (container == null)
         {
             throw new CommandInvocationException($"Cannot find container {containerId}.");
         }
         
+        OpenContainer(container);
+    }
+    
+    public static void OpenContainer(GameObject container)
+    {
         UO.Use(container);
         if (!WaitForContainer())
         {

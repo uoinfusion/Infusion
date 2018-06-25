@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Infusion.Commands;
 
 public static class Items
 {
@@ -161,6 +162,13 @@ public static class Items
         return false;
     }
     
+    public static void BatchMoveAllCommand(string parameters)
+    {
+        int batchSize = new CommandParameterParser(parameters).ParseInt();
+        
+        BatchedMove(-1, batchSize);
+    }
+    
     public static void BatchedMove(int totalAmount, int batchSize)
     {
         UO.Log("Select item to move");
@@ -179,12 +187,18 @@ public static class Items
             return;
         }
         
+        totalAmount = totalAmount > 0 ? totalAmount : itemTemplate.Amount; 
+        
         while (totalAmount > 0)
         {
             var itemsToMove = UO.Items.OfColor(itemTemplate.Color).OfType(itemTemplate.Type);
             if (itemTemplate.ContainerId.HasValue)
             {
                 itemsToMove = itemsToMove.InContainer(itemTemplate.ContainerId.Value);
+            }
+            else
+            {
+                itemsToMove = itemsToMove.OnGround();
             }
             
             var itemsToMoveOnSamePosition = itemsToMove.Where(x => x.Location == itemTemplate.Location).ToArray();
@@ -237,6 +251,23 @@ public static class Items
                 TryMoveItem(item, amount, targetContainerId);
                 amount = 0;
             }
+        }
+    }
+    
+    public static void ClickAllItems()
+    {
+        UO.ClientPrint("Select container");
+        var sourceContainer = UO.AskForItem();
+        if (sourceContainer == null)
+        {
+            UO.ClientPrint("Targeting canelled");
+            return;
+        }
+        
+        foreach (var item in UO.Items.InContainer(sourceContainer))
+        {
+            UO.Click(item);
+            UO.Wait(100);
         }
     }
     
@@ -447,12 +478,11 @@ public static class Items
 
 UO.RegisterCommand("moveitems-same", Items.MoveSameItems);
 UO.RegisterCommand("moveitems-all", Items.MoveAllItems);
+UO.RegisterCommand("clickitems-all", Items.ClickAllItems);
 UO.RegisterCommand("moveregs", Items.MoveRegs);
 UO.RegisterCommand("movefood", Items.MoveFood );
 UO.RegisterCommand("itemscount-same", Items.CountItemsSame);
 UO.RegisterCommand("itemsamount-same", Items.AmountItemsSame);
 UO.RegisterCommand("itemsamount-all", Items.ItemsAmountAll);
 UO.RegisterCommand("itemsamount-sub", Items.ItemsAmountSub);
-
-//var item = UO.Items[0x4008B909];
-//Items.Wear(item, Layer.TwoHandedWeapon);
+UO.RegisterCommand("batchmove", Items.BatchMoveAllCommand);

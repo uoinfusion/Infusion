@@ -538,7 +538,8 @@ namespace Infusion.LegacyApi
             CheckCancellation();
 
             NotifyAction();
-            Server.DragItem(itemId, amount);
+
+            itemsObserver.DragItem(itemId, amount);
         }
 
         public DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId = null, TimeSpan? timeout = null)

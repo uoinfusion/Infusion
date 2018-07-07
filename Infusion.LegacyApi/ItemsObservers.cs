@@ -15,8 +15,8 @@ namespace Infusion.LegacyApi
         private readonly EventJournal eventJournal;
         private readonly EventJournal waitForItemDraggedJournal;
 
-
         public AutoResetEvent WaitForItemDraggedStartedEvent => waitForItemDraggedJournal.AwaitingStarted;
+        private ObjectId? itemIdPickedUpInfusion;
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi, EventJournalSource eventJournalSource)
@@ -52,6 +52,20 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfo);
             serverPacketSubject.Subscribe(PacketDefinitions.GraphicalEffect, HandleGraphicalEffect);
             clientPacketSubject.Subscribe(PacketDefinitions.DoubleClick, HandleDoubleClick);
+
+            serverPacketSubject.RegisterOutputFilter(FilterServerPackets);
+        }
+
+        private Packet? FilterServerPackets(Packet rawPacket)
+        {
+            if (itemIdPickedUpInfusion.HasValue && rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
+            {
+                var packet = PacketDefinitionRegistry.Materialize<RejectMoveItemRequestPacket>(rawPacket);
+                itemIdPickedUpInfusion = null;
+                return null;
+            }
+
+            return rawPacket;
         }
 
         private void HandleGraphicalEffect(GraphicalEffectPacket packet)
@@ -264,6 +278,12 @@ namespace Infusion.LegacyApi
             var newPosition = (Location2D) e;
 
             gameObjects.PurgeUnreachableItems(newPosition, 25);
+        }
+
+        public void DragItem(ObjectId id, int amount)
+        {
+            itemIdPickedUpInfusion = id;
+            legacyApi.Server.DragItem(id, amount);
         }
 
         public DragResult WaitForItemDragged(ObjectId? awaitedDragObjectId, TimeSpan? timeout)

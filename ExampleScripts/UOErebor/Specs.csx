@@ -297,8 +297,31 @@ public static class Specs
     public static readonly ItemSpec ScrollXGreen2 = 0x1f6d;
     public static readonly ItemSpec ScrollXTeal2 = 0x1f6f;
     public static readonly ItemSpec ScrollXBrown2 = 0x1f71;
+    
+    public static readonly ItemSpec ScrollManaShield = new ItemSpec(0x0E34, (Color)0x044D);
 
-    public static readonly ItemSpec Scrolls = new[] { ScrollReactiveArmor, ScrollClumsy, ScrollCreateFood, ScrollFeeblemind, ScrollHeal, ScrollMagicArrow, ScrollNightSight, ScrollWeaken, ScrollAgility, ScrollCunning, ScrollCure, ScrollHarm, ScrollMagicTrap, ScrollMagicUntrap, ScrollProtection, ScrollStrength, ScrollBless, ScrollFireball, ScrollMagicLock, ScrollPoison, ScrollTelekinesis, ScrollTeleport, ScrollUnlock, ScrollWallOfStone, ScrollArchcure, ScrollArchprotection, ScrollCurse, ScrollFireField, ScrollGreaterHeal, ScrollLightning, ScrollManaDrain, ScrollRecall, ScrollBladeSpirits, ScrollDispelField, ScrollIncognito, ScrollMagicReflection, ScrollMindBlast, ScrollParalyze, ScrollPoisonField, ScrollSummonCreature, ScrollDispel, ScrollEnergyBolt, ScrollExplosion, ScrollInvisibility, ScrollMark, ScrollMassCurse, ScrollParalyzeField, ScrollReveal, ScrollChainLightning, ScrollEnergyField, ScrollFlamestrike, ScrollGateTravel, ScrollManaVampire, ScrollMassDispel, ScrollMeteorSwarm, ScrollPolymorph, ScrollEarthquake, ScrollEnergyVortex, ScrollResurrection, ScrollSummonElemAir, ScrollSummonDaemon, ScrollSummonElemEarth, ScrollSummonElemFire, ScrollSummonElemWater, ScrollXGreen2, ScrollXTeal2, ScrollXBrown2 };
+    public static readonly ItemSpec ScrollOfLight = new ItemSpec(0x1F34, (Color)0x0774);
+    public static readonly ItemSpec NecroScrolls = new[] { ScrollOfLight };   
+
+    public static readonly ItemSpec Scrolls = new[]
+    {
+        ScrollReactiveArmor, ScrollClumsy, ScrollCreateFood, ScrollFeeblemind, ScrollHeal,
+        ScrollMagicArrow, ScrollNightSight, ScrollWeaken, ScrollAgility, ScrollCunning,
+        ScrollCure, ScrollHarm, ScrollMagicTrap, ScrollMagicUntrap, ScrollProtection, ScrollStrength,
+        ScrollBless, ScrollFireball, ScrollMagicLock, ScrollPoison, ScrollTelekinesis, ScrollTeleport,
+        ScrollUnlock, ScrollWallOfStone, ScrollArchcure, ScrollArchprotection, ScrollCurse,
+        ScrollFireField, ScrollGreaterHeal, ScrollLightning, ScrollManaDrain, ScrollRecall,
+        ScrollBladeSpirits, ScrollDispelField, ScrollIncognito, ScrollMagicReflection, ScrollMindBlast,
+        ScrollParalyze, ScrollPoisonField, ScrollSummonCreature, ScrollDispel, ScrollEnergyBolt,
+        ScrollExplosion, ScrollInvisibility, ScrollMark, ScrollMassCurse, ScrollParalyzeField,
+        ScrollReveal, ScrollChainLightning, ScrollEnergyField, ScrollFlamestrike, ScrollGateTravel,
+        ScrollManaVampire, ScrollMassDispel, ScrollMeteorSwarm, ScrollPolymorph, ScrollEarthquake,
+        ScrollEnergyVortex, ScrollResurrection, ScrollSummonElemAir, ScrollSummonDaemon,
+        ScrollSummonElemEarth, ScrollSummonElemFire, ScrollSummonElemWater, ScrollXGreen2, ScrollXTeal2,
+        ScrollXBrown2,
+        NecroScrolls,
+        ScrollManaShield,
+    };
 
     // Food
     public static readonly ItemSpec Fishes = new[] { 0x09CF, 0x09CD, 0x09CC, 0x09CE };

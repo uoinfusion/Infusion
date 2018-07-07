@@ -60,7 +60,6 @@ namespace Infusion.LegacyApi
         {
             if (itemIdPickedUpInfusion.HasValue && rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<RejectMoveItemRequestPacket>(rawPacket);
                 itemIdPickedUpInfusion = null;
                 return null;
             }

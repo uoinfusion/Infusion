@@ -99,6 +99,21 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
+        public void WaitForTarget_resets_WaitTargetObject()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            testProxy.Api.WaitTargetObject(0x40001234);
+
+            var task = Task.Run(() => testProxy.Api.WaitForTarget(TimeSpan.MaxValue));
+            testProxy.Api.WaitForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.ServerPacketHandler.HandlePacket(TargetCursorPackets.TargetCursor);
+
+            task.Wait(100).Should().BeTrue();
+
+        }
+
+        [TestMethod]
         public void AskForLocation_returns_location_selected_on_client()
         {
             var testProxy = new InfusionTestProxy();

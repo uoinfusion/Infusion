@@ -145,6 +145,7 @@ namespace Infusion.LegacyApi
                     return;
             }
 
+            ClearNextTarget();
             targetFromServerReceivedEvent.Reset();
             var totalWaitingMillieseconds = 0;
 

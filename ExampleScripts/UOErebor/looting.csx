@@ -30,7 +30,8 @@ public static class Looting
     public static ItemSpec InterestingLoot { get; } = new[]
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
-        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa
+        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa,
+        Specs.Food
     };
     
     public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };

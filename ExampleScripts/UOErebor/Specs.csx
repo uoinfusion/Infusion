@@ -218,7 +218,7 @@ public static class Specs
 
     public static readonly ItemSpec Gem = new[]
     {
-        Sapphire, Ruby, Diamond, Tourmaline, Citrine, Amethyst,
+        Ruby, Diamond, Tourmaline, Citrine, Amethyst,
         Emerald, Sapphire, StarSapphire
      };
 

@@ -16,7 +16,7 @@ namespace Infusion.LegacyApi
         private readonly EventJournal waitForItemDraggedJournal;
 
         public AutoResetEvent WaitForItemDraggedStartedEvent => waitForItemDraggedJournal.AwaitingStarted;
-        private ObjectId? itemIdPickedUpInfusion;
+        private ObjectId? itemIdDraggedByScript;
 
         public ItemsObservers(GameObjectCollection gameObjects, IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
             Legacy legacyApi, EventJournalSource eventJournalSource)
@@ -58,9 +58,9 @@ namespace Infusion.LegacyApi
 
         private Packet? FilterServerPackets(Packet rawPacket)
         {
-            if (itemIdPickedUpInfusion.HasValue && rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
+            if (itemIdDraggedByScript.HasValue && rawPacket.Id == PacketDefinitions.RejectMoveItemRequest.Id)
             {
-                itemIdPickedUpInfusion = null;
+                itemIdDraggedByScript = null;
                 return null;
             }
 
@@ -214,6 +214,9 @@ namespace Infusion.LegacyApi
             if (packet.Id == legacyApi.Me.PlayerId)
                 return;
 
+            if (itemIdDraggedByScript.HasValue && packet.Id == itemIdDraggedByScript.Value)
+                itemIdDraggedByScript = null;
+
             gameObjects.RemoveItem(packet.Id);
             eventJournalSource.Publish(new ObjectDeletedEvent(packet.Id));
         }
@@ -281,7 +284,7 @@ namespace Infusion.LegacyApi
 
         public void DragItem(ObjectId id, int amount)
         {
-            itemIdPickedUpInfusion = id;
+            itemIdDraggedByScript = id;
             legacyApi.Server.DragItem(id, amount);
         }
 

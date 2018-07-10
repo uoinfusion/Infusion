@@ -58,7 +58,7 @@ namespace Infusion.LegacyApi
         {
 #if DEBUG
             if (journalEntryStartId != source.CurrentJournalEntryId || LastWaitEntryId != journalEntryStartId)
-                trace?.Log($"Delete {journalEntryStartId} -> {source.CurrentJournalEntryId}, {LastWaitEntryId} -> {journalEntryStartId}");
+                trace?.Log($"Delete (thread {System.Threading.Thread.CurrentThread.ManagedThreadId}) {journalEntryStartId} -> {source.CurrentJournalEntryId}, {LastWaitEntryId} -> {journalEntryStartId}");
 #endif
             journalEntryStartId = source.CurrentJournalEntryId;
             LastWaitEntryId = journalEntryStartId;
@@ -66,98 +66,98 @@ namespace Infusion.LegacyApi
 
         public void WaitAny(params string[] words)
         {
-            new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(words, () => { })
                 .WaitAny();
         }
 
         public void WaitAny(TimeSpan timeout, params string[] words)
         {
-            new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(words, () => { })
                 .WaitAny(timeout);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, Action whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, Action whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, Action whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 
         public SpeechJournalAwaiter When(string[] awaitedWords, Action whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWords, whenAction);
         }
 
         public SpeechJournalAwaiter When(string[] awaitedWords, Action<JournalEntry> whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWords, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, Action<JournalEntry> whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, Action<JournalEntry> whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3,
             Action<JournalEntry> whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             Action<JournalEntry> whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, whenAction);
         }
 
         public SpeechJournalAwaiter When(string awaitedWord1, string awaitedWord2, string awaitedWord3, string awaitedWord4,
             string awaitedWord5, Action<JournalEntry> whenAction)
         {
-            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout)
+            return new SpeechJournalAwaiter(cancellation, source, this, defaultTimeout, trace)
                 .When(awaitedWord1, awaitedWord2, awaitedWord3, awaitedWord4, awaitedWord5, whenAction);
         }
 
         internal void NotifyWait()
         {
-            trace?.Log($"{LastWaitEntryId} -> {source.CurrentJournalEntryId}");
+            trace?.Log($"NotifyWait LastWaitEntryId {LastWaitEntryId} -> CurrentJournalEntryId {source.CurrentJournalEntryId}");
             LastWaitEntryId = source.CurrentJournalEntryId;
         }
 

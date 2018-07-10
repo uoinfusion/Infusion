@@ -48,7 +48,7 @@ namespace Infusion.LegacyApi
 
         public void NotifyAction()
         {
-            trace?.Log($"NotifyAction {LastActionJournalEntryId} -> {CurrentJournalEntryId}");
+            trace?.Log($"NotifyAction LastActionJournalEntryId {LastActionJournalEntryId} -> CurrentJournalEntryId {CurrentJournalEntryId}");
             LastActionJournalEntryId = CurrentJournalEntryId;
         }
 

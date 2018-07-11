@@ -1,29 +1,17 @@
+#load "TwoStateAbility.csx"
+
 public static class Craft
 {
+    public static TwoStateAbility Vigour { get; } = new TwoStateAbility(".vigour",
+        "Nyni jsi schopen nalezt lepsi materialy.", "Jsi zpatky v normalnim stavu.");
+        
     public static void VigourOn()
     {
-        UO.Say(".vigour");
-        UO.Journal
-            .When("Nyni jsi schopen nalezt lepsi materialy.", () => { })
-            .When("Jsi zpatky v normalnim stavu.", () =>
-            {
-                UO.Say(".vigour");
-                UO.Journal.WaitAny("Nyni jsi schopen nalezt lepsi materialy.",
-                    "Jsi zpatky v normalnim stavu.");
-            })
-            .WaitAny();
+        Vigour.TurnOn();
     }
 
     public static void VigourOff()
     {
-        UO.Say(".vigour");
-        UO.Journal
-            .When("Nyni jsi schopen nalezt lepsi materialy.", () =>
-            {
-                UO.Say(".vigour");
-                UO.Journal.WaitAny("Nyni jsi schopen nalezt lepsi materialy.");
-            })
-            .When("Jsi zpatky v normalnim stavu.", () => { })
-            .WaitAny();
+        Vigour.TurnOff();
     }
 }

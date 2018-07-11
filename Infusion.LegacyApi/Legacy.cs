@@ -60,7 +60,7 @@ namespace Infusion.LegacyApi
             journalSource = new SpeechJournalSource();
             journalSource.NewMessageReceived +=
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
-            Journal = new SpeechJournal(journalSource, cancellation, () => DefaultTimeout);
+            Journal = new SpeechJournal(journalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
             journalObservers = new JournalObservers(journalSource, ultimaServer);
             targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource);
 

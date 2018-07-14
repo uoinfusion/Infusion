@@ -7,8 +7,8 @@ public static class Chargers
 
     private static EventJournal journal = UO.CreateEventJournal();    
 
-    private static Charger fireCharger = new Charger((GumpTypeId)0x9600057E, 2257, 6254, Trace);
-    private static Charger energyCharger = new Charger((GumpTypeId)0x9600057E, 2281, 6256, Trace);
+    private static Charger fireCharger = new Charger(2257, 6254, Trace);
+    private static Charger energyCharger = new Charger(2281, 6256, Trace);
 
     private static int GetLevel(Charger charger)
     {
@@ -44,14 +44,13 @@ public static class Chargers
     {
         public int Level { get; private set; }
         
-        private readonly GumpTypeId chargerGumpId = (GumpTypeId)0x9600057B;
+        private GumpTypeId chargerGumpId;
         private readonly int tilePicHueId;
         private readonly int gumpPicId;
         private readonly ScriptTrace trace;
     
-        public Charger(GumpTypeId gumpId, int gumpPicId, int tilePicHueId, ScriptTrace trace)
+        public Charger(int gumpPicId, int tilePicHueId, ScriptTrace trace)
         {
-            this.chargerGumpId = gumpId;
             this.tilePicHueId = tilePicHueId;
             this.gumpPicId = gumpPicId;
             this.trace = trace;
@@ -59,16 +58,17 @@ public static class Chargers
         
         public void ProcessGump(GumpReceivedEvent ev)
         {
-            if (ev.Gump.GumpTypeId != chargerGumpId)
-                return;
-        
             trace.Log("ProcessGump");
             var processor = new ChargerGumpProcessor(gumpPicId, tilePicHueId);
             var parser = new GumpParser(processor);
             
             parser.Parse(ev.Gump);
             
-            Level = processor.IsChargerGump ? processor.ChargerLevel : Level;
+            if (processor.IsChargerGump)
+            {
+                chargerGumpId = ev.Gump.GumpTypeId;
+                Level = processor.ChargerLevel;
+            }
     
             if (trace.Enabled) trace.Log($"IsCharger: {processor.IsChargerGump}, Level: {processor.ChargerLevel}, lastCharger: {Level}");                     
         }
@@ -83,18 +83,18 @@ public static class Chargers
         {
             public int ChargerLevel { get; private set; }
             public bool IsChargerGump { get; private set; }
-            private readonly int chargerGumpId;
+            private readonly int chargerGumpPicId;
             private readonly int tilePicHueId;
             
-            public ChargerGumpProcessor(int chargerGumpId, int tilePicHueId)
+            public ChargerGumpProcessor(int chargerGumpPicId, int tilePicHueId)
             {
-                this.chargerGumpId = chargerGumpId;
+                this.chargerGumpPicId = chargerGumpPicId;
                 this.tilePicHueId = tilePicHueId;
             }
         
             public void OnGumpPic(int x, int y, int gumpId)
             { 
-                if (chargerGumpId == gumpId)
+                if (chargerGumpPicId == gumpId)
                     IsChargerGump = true;
             }
     

@@ -18,13 +18,13 @@ public static class Specs
     public static readonly ItemSpec Hatchet = new[] { 0x0F44, 0x0F43 };
     public static readonly ItemSpec CopperExecutionersAxe = new[] { 0x0F45, 0x0F46 };
 
-    public static readonly ItemSpec CopperVikingSword = 0x13B9;
-    public static readonly ItemSpec VeriteVikingSword = 0x13BA;
-    public static readonly ItemSpec Dagger = 0x0F51;
-    public static readonly ItemSpec WarMace = 0x1406;
-    public static readonly ItemSpec Club = 0x13B3;
+    // Weapon
+    public static readonly ItemSpec VikingSword = new[] { 0x13B9, 0x13BA };
+    public static readonly ItemSpec Dagger = new[] { 0x0F51, 0x0F52 };
+    public static readonly ItemSpec WarMace = new[] { 0x1406, 0x1407 };
+    public static readonly ItemSpec Club = new[] { 0x13B3, 0x013B4 };
 
-    public static readonly ItemSpec Crossbow = 0x0F4F;
+    public static readonly ItemSpec Crossbow = new[] { 0x0F4F, 0x0F50 };
 
     // Ammunition
     public static readonly ItemSpec Arrow = 0x0F3F;
@@ -52,8 +52,8 @@ public static class Specs
     };
 
     // Tools
-    public static readonly ItemSpec Knives = new[] { CopperVikingSword, VeriteVikingSword, Dagger };
-    public static readonly ItemSpec PickAxe = 0x0E86;
+    public static readonly ItemSpec Knives = new[] { VikingSword, Dagger };
+    public static readonly ItemSpec PickAxe = new[] { 0x0E85, 0x0E86 };
     public static readonly ItemSpec FishingPole = 0x0DBF;
     public static readonly ItemSpec Hatchets = new[] { Hatchet, CopperExecutionersAxe };
     public static readonly ItemSpec Campfire = 0x0DE3;
@@ -61,7 +61,7 @@ public static class Specs
     public static readonly ItemSpec CookingPlaces = new[] { Campfire, Forge, };
     public static readonly ItemSpec Loom = 0x1062;
     public static readonly ItemSpec TinkeringTools = 0x1EBC;
-    public static readonly ItemSpec SmithsHammer = 0x13E3;
+    public static readonly ItemSpec SmithsHammer = new[] { 0x13E3, 0x013E4 };
     public static readonly ItemSpec Saw = 0x1034;
     public static readonly ItemSpec Torch = 0x0F64;
     public static readonly ItemSpec BurningTorch = 0x0A12;
@@ -109,6 +109,10 @@ public static class Specs
     public static readonly ItemSpec ValoriteIngot = new ItemSpec(0x1BF2, (Color)0x0985);
     public static readonly ItemSpec ObsidianOre = new ItemSpec(0x19B7, (Color)0x09BD);
     public static readonly ItemSpec ObsidianIngot = new ItemSpec(0x1BF2, (Color)0x0989);
+    public static readonly ItemSpec AdamantiumOre = new ItemSpec(0x19B7, (Color)0x0026);
+    public static readonly ItemSpec AdamantiumIngot = new ItemSpec(0x1BF2, (Color)0x0999);
+    public static readonly ItemSpec MithrilOre = new ItemSpec(0x19B7, (Color)0x098B);
+    public static readonly ItemSpec MithrilIngot = new ItemSpec(0x1BF2, (Color)0x098B);
 
     // Logs
     public static readonly ItemSpec Log = 0x1BDD;

@@ -300,8 +300,9 @@ public static class Specs
     
     public static readonly ItemSpec ScrollManaShield = new ItemSpec(0x0E34, (Color)0x044D);
 
-    public static readonly ItemSpec ScrollOfLight = new ItemSpec(0x1F34, (Color)0x0774);
-    public static readonly ItemSpec NecroScrolls = new[] { ScrollOfLight };   
+    public static readonly ItemSpec NecroScrollOfLight = new ItemSpec(0x1F34, (Color)0x0774);
+    public static readonly ItemSpec NecroScrollOfBoneArmor = new ItemSpec(0x1F33, (Color)0x0774);
+    public static readonly ItemSpec NecroScrolls = new[] { NecroScrollOfLight, NecroScrollOfBoneArmor };   
 
     public static readonly ItemSpec Scrolls = new[]
     {

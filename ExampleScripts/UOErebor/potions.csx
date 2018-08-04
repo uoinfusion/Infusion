@@ -10,7 +10,7 @@ public static class Potions
 {
     private static Countdown cooldownCountdown; 
     
-    public static readonly TimeSpan SlowCooldown = TimeSpan.FromSeconds(20);
+    public static readonly TimeSpan SlowCooldown = TimeSpan.FromSeconds(21);
     public static readonly TimeSpan FastCooldown = TimeSpan.FromSeconds(5);
     public static readonly TimeSpan NoDuration = TimeSpan.FromSeconds(0);
     
@@ -30,6 +30,9 @@ public static class Potions
     public static readonly Potion CurePotion = new Potion(Specs.CurePotion, SlowCooldown, NoDuration, ".potioncure");
     public static readonly Potion CureGreaterPotion = new Potion(Specs.CureGreaterPotion, SlowCooldown, NoDuration, ".potioncure");
     public static readonly Potion NightsightPotion = new Potion(Specs.NightsighPoition, FastCooldown, NoDuration, ".potionnightsight");
+    public static readonly Potion StregthGreaterPotion = new Potion(Specs.StrengthGreaterPotion, SlowCooldown, NoDuration, ".potionstrength");
+    public static readonly Potion AgilityGreaterPotion = new Potion(Specs.AgilityGreaterPotion, SlowCooldown, NoDuration, ".potionagility");
+    public static readonly Potion MobilityPotion = new Potion(Specs.MobilityPotion, FastCooldown, NoDuration, ".potionmobility");
     
     public static Color CountdownColor { get; set; } = Colors.Purple;
     public static CountdownStage[] CooldownStages = new[] { new CountdownStage(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1)) };
@@ -46,6 +49,7 @@ public static class Potions
         ClevernessGreaterPotion, ClevernessPotion, ClevernessLesserPotion,
         CureGreaterPotion, CurePotion, CureLesserPotion,
         InvisPotion, NightsightPotion,
+	    StregthGreaterPotion, AgilityGreaterPotion, MobilityPotion,
     };
     
     public static void Enable()

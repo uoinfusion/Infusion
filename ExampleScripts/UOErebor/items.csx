@@ -171,19 +171,19 @@ public static class Items
     
     public static void BatchedMove(int totalAmount, int batchSize)
     {
-        UO.Log("Select item to move");
+        UO.ClientPrint("Select item to move");
         var itemTemplate = UO.AskForItem();
         if (itemTemplate == null)
         {
-            UO.Log("Moving cancelled");
+            UO.ClientPrint("Moving cancelled");
             return;
         }
         
-        UO.Log("Select target container");
+        UO.ClientPrint("Select target container");
         var targetContainer = UO.AskForItem();
         if (targetContainer == null)
         {
-            UO.Log("Moving cancelled");
+            UO.ClientPrint("Moving cancelled");
             return;
         }
         
@@ -208,13 +208,13 @@ public static class Items
             var itemToMove = itemsToMove.FirstOrDefault();
             if (itemToMove == null)
             {
-                UO.Log("No item to move found");
+                UO.ClientPrint("No item to move found");
                 break;
             }
             var amount = batchSize > totalAmount ? totalAmount : batchSize;
             amount = amount > itemToMove.Amount ? itemToMove.Amount : amount;
             
-            UO.Log($"Moving {amount}, {totalAmount} to move");
+            UO.ClientPrint($"Moving {amount}, {totalAmount} to move");
             Items.MoveItems(itemsToMove, (ushort)amount, targetContainer);
             totalAmount -= amount;   
         }
@@ -435,11 +435,8 @@ public static class Items
         Dictionary<string, int> amounts = new Dictionary<string, int>();
         ItemsAmountAll(container, amounts, sub);
 
-        string description = amounts
-            .OrderBy(x => x.Key)
-            .Select(x => $"{x.Key}: {x.Value}")
-            .Aggregate((l, r) => l + "\n" + r);
-        UO.Log(description);
+        foreach (var am in amounts)
+            UO.ClientPrint($"{am.Key}: {am.Value}");
     }
     
     private static void ItemsAmountAll(Item container, Dictionary<string, int> amounts, bool sub)
@@ -473,6 +470,44 @@ public static class Items
             if (sub)
                 ItemsAmountAll(item, amounts, sub);
         }
+    }
+    
+    public static bool Reload(ObjectId sourceContainerId, ushort targetAmount, params ItemSpec[] typesToReload)
+    {
+        var sourceContainer = UO.Items[sourceContainerId];
+        if (sourceContainer == null)
+        {
+            UO.ClientPrint($"Cannot find {sourceContainerId} container.");
+            return false;
+        }
+        
+        return Reload(sourceContainer, targetAmount, typesToReload);
+    }
+    
+    public static bool Reload(Item sourceContainer, ushort targetAmount, params ItemSpec[] typesToReload)
+    {
+        UO.Log("Reloading");
+    
+        var currentItemsAmount = UO.Items.InContainer(UO.Me.BackPack).Matching(typesToReload).Sum(i => i.Amount);
+        if (currentItemsAmount >= targetAmount)
+        {
+            UO.Log(
+                $"Current amount ({currentItemsAmount}) is higher than or equal to target amount ({targetAmount}), no reloading");
+            return true;
+        }
+    
+        var sourceItemsToReload = UO.Items.InContainer(sourceContainer).Matching(typesToReload).ToArray();
+        if (sourceItemsToReload.Length <= 0)
+        {
+            UO.Log($"No items to reload found in {sourceContainer}");
+            return false;
+        }
+    
+        Items.MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), UO.Me.BackPack);
+        
+        UO.Wait(100);
+        
+        return true;
     }
 }
 

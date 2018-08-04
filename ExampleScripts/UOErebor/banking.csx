@@ -1,4 +1,6 @@
 #load "Specs.csx"
+#load "common.csx"
+#load "container.csx"
 
 using System;
 using Infusion.Commands;
@@ -52,5 +54,21 @@ public static class Banking
         
         UO.WaitForGump();
         UO.SelectGumpButton("Otevrit banku", GumpLabelPosition.Before);
+    }
+}
+
+public class BankContainer : IContainer
+{
+    public ObjectId Id => UO.Me.BankBox.Id;
+
+    public Item Item => UO.Me.BankBox;
+
+    public void Open()
+    {
+        if (UO.Me.BankBox == null || !OpenContainerTracker.IsOpen(UO.Me.BankBox.Id))
+        {
+            Banking.OpenBankViaHouseMenu(".equip1");
+            OpenContainerTracker.SetOpen(UO.Me.BankBox.Id);
+        }
     }
 }

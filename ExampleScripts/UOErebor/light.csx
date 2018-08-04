@@ -58,8 +58,8 @@ public static class Light
     {
         if (IsLightNeeded)
         {
-            lightCheckJournal.Delete();
             MakeLight();
+            lightCheckJournal.Delete();
             return true;
         }
         

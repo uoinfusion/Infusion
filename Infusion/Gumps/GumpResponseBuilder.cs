@@ -50,7 +50,14 @@ namespace Infusion.Gumps
             parser.Parse(gump);
 
             if (processor.SelectedControldId.HasValue)
-                selectedCheckBoxes.Add(processor.SelectedControldId.Value);
+                return SelectCheckBox(processor.SelectedControldId.Value);
+
+            return this;
+        }
+
+        public GumpResponseBuilder SelectCheckBox(GumpControlId id)
+        {
+            selectedCheckBoxes.Add(id);
 
             return this;
         }

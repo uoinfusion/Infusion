@@ -6,6 +6,7 @@
 #load "eating.csx"
 #load "items.csx"
 #load "warehouse.csx"
+#load "CraftMenu.csx"
 
 using System;
 using System.Collections.Generic;
@@ -30,11 +31,11 @@ public static class Inscription
 
     public static class Circle2
     {
-        public static InscriptionScroll Weaken = new InscriptionScroll(Specs.ScrollStrength, "Kruh 2", "Strength Scroll");
-        public static InscriptionScroll NightSight = new InscriptionScroll(Specs.ScrollHarm, "Kruh 2", "Harm Scroll");
-        public static InscriptionScroll MagicArrow = new InscriptionScroll(Specs.ScrollCure, "Kruh 2", "Cure Scroll");
-        public static InscriptionScroll Feeblemind = new InscriptionScroll(Specs.ScrollCunning, "Kruh 2", "Cunning Scroll");
-        public static InscriptionScroll Clumsy = new InscriptionScroll(Specs.ScrollAgility, "Kruh 2", "Agility Scroll");
+        public static InscriptionScroll Strength = new InscriptionScroll(Specs.ScrollStrength, "Kruh 2", "Strength Scroll");
+        public static InscriptionScroll Harm = new InscriptionScroll(Specs.ScrollHarm, "Kruh 2", "Harm Scroll");
+        public static InscriptionScroll Cure = new InscriptionScroll(Specs.ScrollCure, "Kruh 2", "Cure Scroll");
+        public static InscriptionScroll Cunnig = new InscriptionScroll(Specs.ScrollCunning, "Kruh 2", "Cunning Scroll");
+        public static InscriptionScroll Agility = new InscriptionScroll(Specs.ScrollAgility, "Kruh 2", "Agility Scroll");
     }
     
     public static class Circle3
@@ -55,6 +56,7 @@ public static class Inscription
     {
         public static InscriptionScroll SummonCreature = new InscriptionScroll(Specs.ScrollSummonCreature, "Kruh 5", "Summon Creature Sc");
         public static InscriptionScroll Paralyze = new InscriptionScroll(Specs.ScrollParalyze, "Kruh 5", "Paralyze Scroll");
+        public static InscriptionScroll MagicReflection = new InscriptionScroll(Specs.ScrollMagicReflection, "Kruh 5", "Magic Reflection");
     }
     
     public static class Necromancery
@@ -69,7 +71,7 @@ public static class Inscription
     {
         string productDescription = string.Join("/", scroll.Path);
         UO.ClientPrint($"Inscribing {productDescription}");
-    
+        
         var scrollContainer = Warehouse.GetContainer(scroll.Spec);
         var blankScrollContainer = Warehouse.GetContainer(Specs.BlankScroll);
         var foodContainer = Warehouse.GetContainer(Specs.Food);
@@ -108,15 +110,11 @@ public static class Inscription
                     UO.ClientPrint($"selecting {menuItemName} from the menu");
                     if (menuItemName == lastItemName)
                     {
-                        UO.GumpResponse()
-                            .SelectCheckBox(menuItemName, Infusion.Gumps.GumpLabelPosition.Before)
-                            .SetTextEntry("Mnozstvi k vyrobeni", BatchSize.ToString(), Infusion.Gumps.GumpLabelPosition.After)
-                            .Trigger((GumpControlId)2);
+                        CraftMenu.SelectItem(menuItemName, BatchSize);
                     }
                     else
                     {
-                        UO.GumpResponse()
-                            .PushButton(menuItemName, Infusion.Gumps.GumpLabelPosition.Before);
+                        CraftMenu.SelectSection(menuItemName);
                     }
                 }
                 

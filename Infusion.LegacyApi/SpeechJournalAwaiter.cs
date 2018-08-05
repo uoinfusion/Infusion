@@ -43,7 +43,6 @@ namespace Infusion.LegacyApi
                 receivedAction = keyValuePair.Value;
                 receivedJournalEntry = entry;
 
-                journal?.NotifyWait();
                 entryReceivedEvent.Set();
             }
         }
@@ -211,6 +210,7 @@ namespace Infusion.LegacyApi
             {
                 if (journalSource != null)
                     journalSource.NewMessageReceived -= JournalEntriesOnNewMessageReceived;
+                journal?.NotifyWait();
             }
         }
 

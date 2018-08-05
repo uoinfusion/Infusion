@@ -13,6 +13,18 @@ public static class Potions
     public static readonly TimeSpan SlowCooldown = TimeSpan.FromSeconds(21);
     public static readonly TimeSpan FastCooldown = TimeSpan.FromSeconds(5);
     public static readonly TimeSpan NoDuration = TimeSpan.FromSeconds(0);
+    public static CountdownStage[] CooldownStages = new[] { new CountdownStage(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1)) };
+    public static CountdownStage[] ImportantDurationStages = new[]
+    {
+        new CountdownStage(TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(5)),
+        new CountdownStage(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1))
+    };
+    public static CountdownStage[] NormalDurationStages = new[]
+    {
+        new CountdownStage(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1))
+    };
+    public static Color CooldownColor { get; set; } = Colors.Purple;
+    public static Color DurationColor { get; set; } = Colors.Purple;
     
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
     
@@ -22,20 +34,17 @@ public static class Potions
     public static readonly Potion RefreshLesserPotion = new Potion(Specs.RefreshLesserPotion, SlowCooldown, NoDuration, ".potionrefresh");
     public static readonly Potion RefreshPotion = new Potion(Specs.RefreshPotion, SlowCooldown, NoDuration, ".potionrefresh");
     public static readonly Potion RefreshGreaterPotion = new Potion(Specs.RefreshGreaterPotion, SlowCooldown, NoDuration, ".potionrefresh");
-    public static readonly Potion InvisPotion = new Potion(Specs.InvisibilityPotion, SlowCooldown, TimeSpan.FromSeconds(220), ".potioninvis");
-    public static readonly Potion ClevernessLesserPotion = new Potion(Specs.ClevernessLesserPotion, SlowCooldown, NoDuration, ".potionclever");
-    public static readonly Potion ClevernessPotion = new Potion(Specs.ClevernessPotion, SlowCooldown, NoDuration, ".potionclever");
-    public static readonly Potion ClevernessGreaterPotion = new Potion(Specs.ClevernessGreaterPotion, SlowCooldown, NoDuration, ".potionclever");
+    public static readonly Potion InvisPotion = new Potion(Specs.InvisibilityPotion, SlowCooldown, TimeSpan.FromSeconds(190), ".potioninvis", "invis", ImportantDurationStages);
+    public static readonly Potion ClevernessLesserPotion = new Potion(Specs.ClevernessLesserPotion, SlowCooldown, TimeSpan.FromSeconds(120), ".potionclever", "cleverness", NormalDurationStages);
+    public static readonly Potion ClevernessPotion = new Potion(Specs.ClevernessPotion, SlowCooldown, TimeSpan.FromSeconds(330), ".potionclever", "cleverness", NormalDurationStages);
+    public static readonly Potion ClevernessGreaterPotion = new Potion(Specs.ClevernessGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(600), ".potionclever", "cleverness", NormalDurationStages);
     public static readonly Potion CureLesserPotion = new Potion(Specs.CureLesserPotion, SlowCooldown, NoDuration, ".potioncure");
     public static readonly Potion CurePotion = new Potion(Specs.CurePotion, SlowCooldown, NoDuration, ".potioncure");
     public static readonly Potion CureGreaterPotion = new Potion(Specs.CureGreaterPotion, SlowCooldown, NoDuration, ".potioncure");
-    public static readonly Potion NightsightPotion = new Potion(Specs.NightsighPoition, FastCooldown, NoDuration, ".potionnightsight");
-    public static readonly Potion StregthGreaterPotion = new Potion(Specs.StrengthGreaterPotion, SlowCooldown, NoDuration, ".potionstrength");
-    public static readonly Potion AgilityGreaterPotion = new Potion(Specs.AgilityGreaterPotion, SlowCooldown, NoDuration, ".potionagility");
-    public static readonly Potion MobilityPotion = new Potion(Specs.MobilityPotion, FastCooldown, NoDuration, ".potionmobility");
-    
-    public static Color CountdownColor { get; set; } = Colors.Purple;
-    public static CountdownStage[] CooldownStages = new[] { new CountdownStage(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(1)) };
+    public static readonly Potion NightsightPotion = new Potion(Specs.NightsighPoition, FastCooldown, TimeSpan.FromSeconds(1800), ".potionnightsight", "nightsight", NormalDurationStages);
+    public static readonly Potion StregthGreaterPotion = new Potion(Specs.StrengthGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(600), ".potionstrength", "strength", NormalDurationStages);
+    public static readonly Potion AgilityGreaterPotion = new Potion(Specs.AgilityGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(600), ".potionagility", "agility", NormalDurationStages);
+    public static readonly Potion MobilityPotion = new Potion(Specs.MobilityPotion, FastCooldown, TimeSpan.FromSeconds(30), ".potionmobility", "mobility", ImportantDurationStages);
     
     // Order of potions in potions array is important!
     // It is because command handling and potion consumption order on server.
@@ -93,7 +102,7 @@ public static class Potions
                 if (UO.Items.InBackPack().Matching(potion.Spec).Any())
                 {
                     Trace.Log("potion found in backpack");
-                    StartCountdown(potion);
+                    StartPotion(potion);
                 }
                 else
                 {
@@ -117,35 +126,62 @@ public static class Potions
         {
             if (potion.Spec.Matches(bottle))
             {
-                StartCountdown(potion);
+                StartPotion(potion);
             }
         }
     }
     
-    private static void StartCountdown(Potion potion)
+    private static void StartPotion(Potion potion)
     {
+        if (cooldownCountdown == null || cooldownCountdown.Expired)
+        {
+            potion.StartDuration();
+        }
+    
         if (cooldownCountdown != null)
             cooldownCountdown.Cancel();
         
-        cooldownCountdown = new Countdown(potion.Cooldown, "potion cooldown", CountdownColor,  CooldownStages);
+        cooldownCountdown = new Countdown(potion.Cooldown, "potion cooldown", CooldownColor,  CooldownStages);
         cooldownCountdown.Start();
     }
 }
 
 public class Potion
 {
-    public TimeSpan Cooldown { get; }
-    public TimeSpan Duration { get; }
+    private Countdown potionDurationCountdown;
+
+    public TimeSpan Cooldown { get; set; }
+    public TimeSpan Duration { get; set; }
+    public CountdownStage[] DurationStages { get; set; }
     
     public ItemSpec Spec { get; }
     public string Command { get; }
+    public string Name { get; set; }
     
-    public Potion(ItemSpec spec, TimeSpan cooldown, TimeSpan duration, string command)
+    public Potion(ItemSpec spec, TimeSpan cooldown, TimeSpan duration, string command, string name = null, CountdownStage[] durationStages = null)
     {
         this.Spec = spec;
         this.Cooldown = cooldown;
         this.Duration = duration;
         this.Command = command;
+        this.DurationStages = durationStages;
+        
+        Name = name ?? "potion";
+    }
+    
+    public void StartDuration()
+    {
+        if (Duration.TotalMilliseconds > 0)
+        {
+            if (potionDurationCountdown != null)
+                potionDurationCountdown.Cancel();
+        
+            Potions.Trace.Log($"{Name} DurationStages length {this.DurationStages?.Length.ToString() ?? "null"}");
+            var stages = this.DurationStages ?? Potions.NormalDurationStages;
+            potionDurationCountdown = new Countdown(Duration, Name, Potions.DurationColor, stages);
+            potionDurationCountdown.Start();
+            Potions.Trace.Log($"{Name} duration ({Duration}) countdown started with {potionDurationCountdown.Stages.Length} stages");
+        }            
     }
 }
 

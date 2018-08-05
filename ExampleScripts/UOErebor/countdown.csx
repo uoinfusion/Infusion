@@ -7,7 +7,7 @@ public class Countdown : IDisposable
 {
     public static ScriptTrace Trace = UO.Trace.Create();
 
-    private static CountdownStage[] defaultStages = new[] { new CountdownStage(TimeSpan.MaxValue, TimeSpan.FromSeconds(1)) }; 
+    private static CountdownStage[] defaultStages = new[] { new CountdownStage(TimeSpan.MaxValue, TimeSpan.FromSeconds(1)) };
     private Timer timer;
     private object countdownLock = new object();
     private DateTime timerStarted;
@@ -20,17 +20,19 @@ public class Countdown : IDisposable
     public Color Color { get; }
     public ObjectId TargetObjectId { get; }
     public ModelId TargetObjectType { get; }
-    
+
     public CountdownStage[] Stages { get; }
-    
+
+    public bool Expired { get; private set; }
+
     public Countdown(TimeSpan timeout, string name, Color color, IEnumerable<CountdownStage> stages)
     {
         this.Timeout = timeout;
         this.Name = name;
         this.Color = color;
-        
+
         this.Stages = stages.OrderByDescending(x => x.StartBeforeTimeout).ToArray();
-        
+
         this.TargetObjectId = UO.Me.PlayerId;
         this.TargetObjectType = UO.Me.BodyType;
     }
@@ -49,7 +51,7 @@ public class Countdown : IDisposable
         this.TargetObjectId = targetObjectId;
         this.TargetObjectType = targetObjectType;
     }
-    
+
     public void Start()
     {
         lock (countdownLock)
@@ -59,24 +61,23 @@ public class Countdown : IDisposable
                 timer.Dispose();
                 timer = null;
             }
-            
+
             currentStageIndex = 0;
             timer = new Timer();
             timer.Interval = countdownPrecission.TotalMilliseconds;
             timer.Elapsed += (sender, args) => CountdownTick();
             timer.Enabled = true;
             timerStarted = DateTime.UtcNow;
-            
-//            string text = string.IsNullOrEmpty(this.Name) ?
-//                $"{Timeout.TotalSeconds:F0}" :
-//                $"{this.Name}: {Timeout.TotalSeconds:F0}";
-            string text = $"{Timeout.TotalSeconds:F0}";
+
+            string text = string.IsNullOrEmpty(this.Name) ?
+                $"{Timeout.TotalSeconds:F0}" :
+                $"{this.Name}: {Timeout.TotalSeconds:F0}";
             UO.ClientPrint(text, this.Name, TargetObjectId, TargetObjectType,
                 SpeechType.Speech, this.Color, false);
             lastNotificationTime = timerStarted;
         }
     }
-    
+
     private void CountdownTick()
     {
         var targetObject = (GameObject)UO.Mobiles[TargetObjectId] ?? UO.Items[TargetObjectId];
@@ -85,11 +86,11 @@ public class Countdown : IDisposable
             Trace.Log($"Cannot see {TargetObjectId}.");
             return;
         }
-    
+
         var now = DateTime.UtcNow;
         var elapsed = now - this.timerStarted;
         var timeLeft = this.Timeout - elapsed;
-        
+
         if (timeLeft < countdownPrecission)
         {
             UO.ClientPrint($"{this.Name} !!!", this.Name, targetObject.Id, targetObject.Type,
@@ -97,36 +98,40 @@ public class Countdown : IDisposable
             this.Dispose();
             return;
         }
-        
-        if (Stages.Any())
+
+        if (Stages != null && Stages.Any())
         {
             if (currentStageIndex + 1 < Stages.Length && timeLeft < Stages[currentStageIndex + 1].StartBeforeTimeout)
             {
                 currentStageIndex++;
                 Trace.Log($"currentStageIndex: {currentStageIndex}");
             }
-            
+
             if (Trace.Enabled)
             {
                 Trace.Log($"{timeLeft} < {Stages[currentStageIndex].StartBeforeTimeout}");
                 Trace.Log($"currentIndex: {currentStageIndex}, {now - lastNotificationTime} > {Stages[currentStageIndex].NotificationPeriod}");
             }
-        
-            if (timeLeft < Stages[currentStageIndex].StartBeforeTimeout 
+
+            if (timeLeft < Stages[currentStageIndex].StartBeforeTimeout
                 && now - lastNotificationTime > Stages[currentStageIndex].NotificationPeriod)
             {
-                UO.ClientPrint($"{Math.Round(timeLeft.TotalSeconds):F0}", this.Name, TargetObjectId, TargetObjectType,
+                string text = string.IsNullOrEmpty(this.Name) ?
+                    $"{Math.Round(timeLeft.TotalSeconds):F0}" :
+                    $"{this.Name}: {Math.Round(timeLeft.TotalSeconds):F0}";
+
+                UO.ClientPrint(text, this.Name, TargetObjectId, TargetObjectType,
                     SpeechType.Speech, this.Color, false);
                 lastNotificationTime = now;
             }
-         }
+        }
     }
-    
+
     public void Cancel()
     {
         Dispose();
     }
-    
+
     public void Dispose()
     {
         lock (countdownLock)
@@ -137,6 +142,7 @@ public class Countdown : IDisposable
                 timer.Dispose();
                 timer = null;
             }
+            Expired = true;
         }
     }
 }
@@ -145,7 +151,7 @@ public class CountdownStage
 {
     public TimeSpan StartBeforeTimeout { get; }
     public TimeSpan NotificationPeriod { get; }
-    
+
     public CountdownStage(TimeSpan startBeforeTimeout, TimeSpan notificationPeriod)
     {
         this.StartBeforeTimeout = startBeforeTimeout;

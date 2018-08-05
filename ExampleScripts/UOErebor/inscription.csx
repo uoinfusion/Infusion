@@ -42,11 +42,12 @@ public static class Inscription
         public static InscriptionScroll WallOfStone = new InscriptionScroll(Specs.ScrollWallOfStone, "Kruh 3", "Wall of Stone Scro");
         public static InscriptionScroll Poison = new InscriptionScroll(Specs.Poison, "Kruh 3", "Poison Scroll");
         public static InscriptionScroll Fireball = new InscriptionScroll(Specs.ScrollFireball, "Kruh 3", "Fireball Scroll");
+        public static InscriptionScroll Teleport = new InscriptionScroll(Specs.ScrollTeleport, "Kruh 3", "Teleport Scroll");
     }
 
     public static class Circle4
     {
-        public static InscriptionScroll Recall = new InscriptionScroll(Specs.ScrollRecall, "Kruh 4", "Recall Scroll");
+        public static InscriptionScroll Recall = new InscriptionScroll(Specs.ScrollRecall, "Kruh 4", "Recall");
         public static InscriptionScroll ManaDrain = new InscriptionScroll(Specs.ScrollManaDrain, "Kruh 4", "ManaDrain Scroll");
     }
 

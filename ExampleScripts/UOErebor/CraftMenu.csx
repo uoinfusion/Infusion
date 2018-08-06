@@ -43,7 +43,11 @@ public static class CraftMenu
             Trace.Log($"Text: {text}; skipText: {skipText}; gumpItemName: {GumpItemName}");
         
             if (skipText)
+            {
+                if (text.Equals("info", StringComparison.OrdinalIgnoreCase))
+                    skipText = false;
                 return;
+            }
                 
             if (!GumpItemCheckBoxId.HasValue && text.Equals(GumpItemName, StringComparison.OrdinalIgnoreCase))
                 found = true;

@@ -57,8 +57,9 @@ public static class Inscription
         public static InscriptionScroll SummonCreature = new InscriptionScroll(Specs.ScrollSummonCreature, "Kruh 5", "Summon Creature Sc");
         public static InscriptionScroll Paralyze = new InscriptionScroll(Specs.ScrollParalyze, "Kruh 5", "Paralyze Scroll");
         public static InscriptionScroll MagicReflection = new InscriptionScroll(Specs.ScrollMagicReflection, "Kruh 5", "Magic Reflection");
+        public static InscriptionScroll DispelField = new InscriptionScroll(Specs.ScrollDispelField, "Kruh 5", "Dispel Field Scrol");
     }
-    
+        
     public static class Necromancery
     {
         public static InscriptionScroll Light = new InscriptionScroll(Specs.NecroScrollOfLight, "Necromancery", "Scroll of Light");

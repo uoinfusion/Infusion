@@ -73,9 +73,9 @@ public static class Inscription
         string productDescription = string.Join("/", scroll.Path);
         UO.ClientPrint($"Inscribing {productDescription}");
         
-        var scrollContainer = Warehouse.GetContainer(scroll.Spec);
-        var blankScrollContainer = Warehouse.GetContainer(Specs.BlankScroll);
-        var foodContainer = Warehouse.GetContainer(Specs.Food);
+        var scrollContainer = Warehouse.Global.GetContainer(scroll.Spec);
+        var blankScrollContainer = Warehouse.Global.GetContainer(Specs.BlankScroll);
+        var foodContainer = Warehouse.Global.GetContainer(Specs.Food);
 
         scrollContainer.Open();
         blankScrollContainer.Open();

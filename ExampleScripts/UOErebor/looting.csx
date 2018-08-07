@@ -3,6 +3,7 @@
 #load "Specs.csx"
 #load "ignore.csx"
 #load "equip.csx"
+#load "warehouse.csx"
 
 using System;
 using System.Linq;
@@ -19,6 +20,8 @@ public static class Looting
     // It means, that you don't need tricks like UO.SetJournalLine(number,text) in
     // Injection.
     private static SpeechJournal journal = UO.CreateSpeechJournal();
+
+    public static Warehouse Warehouse { get; set; } = new Warehouse();
 
     public static ItemSpec UselessLoot { get; } = new[]
     {
@@ -394,7 +397,14 @@ public static class Looting
             
         return true;
     }
+    
+    public static void UnloadLoot()
+    {
+        Common.OpenContainer(LootContainer.Id);
+        Warehouse.Sort(LootContainer.Id);
+    }
 }
 
 UO.RegisterCommand("ripandloot", Looting.RipAndLootNearest);
 UO.RegisterCommand("loot", Looting.LootNearest);
+UO.RegisterCommand("loot-unload", Looting.UnloadLoot);

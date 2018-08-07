@@ -227,7 +227,7 @@ public static class Items
             TryMoveItem(item, targetContainer);
         }
     }
-    
+        
     public static void MoveItems(IEnumerable<Item> items, ushort amount, Item targetContainer)
     {
         MoveItems(items, amount, targetContainer.Id);
@@ -240,14 +240,15 @@ public static class Items
             if (amount == 0)
                 break;
     
-            UO.ClientPrint($"Moving item {Specs.TranslateToName(item)}");
             if (item.Amount <= amount)
             {
+                UO.ClientPrint($"Moving item {item.Amount} {Specs.TranslateToName(item)}");
                 TryMoveItem(item, targetContainerId);
                 amount -= item.Amount;
             }
             else
             {
+                UO.ClientPrint($"Moving item {amount} {Specs.TranslateToName(item)}");
                 TryMoveItem(item, amount, targetContainerId);
                 amount = 0;
             }
@@ -484,11 +485,33 @@ public static class Items
         return Reload(sourceContainer, targetAmount, typesToReload);
     }
     
+    public static bool Reload(ObjectId sourceContainerId, ObjectId targetContainerId, int targetAmount, params ItemSpec[] typesToReload)
+    {
+        var sourceContainer = UO.Items[sourceContainerId];
+        if (sourceContainer == null)
+        {
+            UO.ClientPrint($"Cannot find source container {sourceContainerId}.");
+            return false;
+        }
+
+        var targetContainer = UO.Items[targetContainerId];
+        if (targetContainer == null)
+        {
+            UO.ClientPrint($"Cannot find target container {targetContainer}.");
+            return false;
+        }
+        
+        return Reload(sourceContainer, targetContainer, targetAmount, typesToReload);
+    }
+
     public static bool Reload(Item sourceContainer, ushort targetAmount, params ItemSpec[] typesToReload)
+        => Reload(sourceContainer, UO.Me.BackPack, targetAmount, typesToReload);
+
+    public static bool Reload(Item sourceContainer, Item targetContainer, int targetAmount, params ItemSpec[] typesToReload)
     {
         UO.Log("Reloading");
     
-        var currentItemsAmount = UO.Items.InContainer(UO.Me.BackPack).Matching(typesToReload).Sum(i => i.Amount);
+        var currentItemsAmount = UO.Items.InContainer(targetContainer).Matching(typesToReload).Sum(i => i.Amount);
         if (currentItemsAmount >= targetAmount)
         {
             UO.Log(
@@ -503,7 +526,7 @@ public static class Items
             return false;
         }
     
-        Items.MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), UO.Me.BackPack);
+        Items.MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), targetContainer);
         
         UO.Wait(100);
         

@@ -125,5 +125,113 @@ namespace Infusion.LegacyApi.Tests
             withTypeAndColor.Specificity.Should().BeGreaterThan(withSubspecs.Specificity);
             withTypeAndColor.Specificity.Should().BeGreaterThan(withType.Specificity);
         }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_is_kind_of_Spec2_with_same_ModelId()
+        {
+            var spec1 = new ItemSpec(0x1111);
+            var spec2 = new ItemSpec(0x1111);
+
+            spec1.IsKindOf(spec2).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_isnt_kindof_Spec2_with_differrent_ModelId()
+        {
+            var spec1 = new ItemSpec(0x1111);
+            var spec2 = new ItemSpec(0x2222);
+
+            spec1.IsKindOf(spec2).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_without_color_isnt_kindof_Spec2_with_same_ModelId_with_color()
+        {
+            var spec1 = new ItemSpec(0x1111);
+            var spec2 = new ItemSpec(0x1111, (Color)0x1234);
+
+            spec1.IsKindOf(spec2).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_and_color_is_kindof_Spec2_with_same_ModelId_without_color()
+        {
+            var spec1 = new ItemSpec(0x1111, (Color)0x1234);
+            var spec2 = new ItemSpec(0x1111);
+
+            spec1.IsKindOf(spec2).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_and_color_is_kindof_Spec2_with_same_ModelId_and_color()
+        {
+            var spec1 = new ItemSpec(0x1111, (Color)0x1234);
+            var spec2 = new ItemSpec(0x1111, (Color)0x1234);
+
+            spec1.IsKindOf(spec2).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_and_color_isnt_kindof_Spec2_with_different_ModelId_and_same_color()
+        {
+            var spec1 = new ItemSpec(0x1111, (Color)0x1234);
+            var spec2 = new ItemSpec(0x9999, (Color)0x1234);
+
+            spec1.IsKindOf(spec2).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_and_color_isnt_kindof_Spec2_with_same_ModelId_and_different_color()
+        {
+            var spec1 = new ItemSpec(0x1111, (Color)0x1234);
+            var spec2 = new ItemSpec(0x1111, (Color)0x4321);
+
+            spec1.IsKindOf(spec2).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Spec1_with_ModelId_is_kindof_Spec2_with_matching_subspec()
+        {
+            var spec1 = new ItemSpec(0x1111);
+            var spec2 = new ItemSpec(0x2222, 0x1111);
+
+            spec1.IsKindOf(spec2).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec1_with_matching_subspec_isnt_kindof_Spec2_with_nonmatching_ModelId()
+        {
+            var spec1 = new ItemSpec(0x2222, 0x1111);
+            var spec2 = new ItemSpec(0x1111);
+
+            spec1.IsKindOf(spec2).Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Spec1_with_subspecs_is_kindof_Spec2_with_same_subspecs()
+        {
+            var spec1 = new ItemSpec(0x2222, 0x1111);
+            var spec2 = new ItemSpec(0x2222, 0x1111);
+
+            spec1.IsKindOf(spec2).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec1_with_subspecs_is_kindof_Spec2_with_same_subspecs_in_different_order()
+        {
+            var spec1 = new ItemSpec(0x2222, 0x1111);
+            var spec2 = new ItemSpec(0x1111, 0x2222);
+
+            spec1.IsKindOf(spec2).Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void Spec1_with_subspecs_isnt_kindof_Spec2_with_different_subspecs()
+        {
+            var spec1 = new ItemSpec(0x2222, 0x1111);
+            var spec2 = new ItemSpec(0x3333, 0x4444);
+
+            spec1.IsKindOf(spec2).Should().BeFalse();
+        }
     }
 }

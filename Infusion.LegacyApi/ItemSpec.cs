@@ -36,6 +36,32 @@ namespace Infusion.LegacyApi
             throw new NotImplementedException();
         }
 
+        public bool IsKindOf(ItemSpec spec)
+        {
+            if (Type.HasValue && spec.Type.HasValue)
+            {
+                if (spec.Color.HasValue)
+                {
+                    if (!Color.HasValue)
+                        return false;
+
+                    return spec.Type.Value == Type.Value && Color.Value == spec.Color.Value;
+                }
+
+                return spec.Type.Value == Type.Value;
+            }
+
+            if (spec.childSpecs != null && spec.childSpecs.Length > 0)
+            {
+                if ((childSpecs == null || childSpecs.Length == 0))
+                    return spec.childSpecs.Any(s => s.IsKindOf(this));
+                else
+                    return spec.childSpecs.All(s => childSpecs.Any(x => s.IsKindOf(x)));
+            }
+
+            return false;
+        }
+
         public bool Matches(ModelId type)
         {
             if (Type.HasValue)

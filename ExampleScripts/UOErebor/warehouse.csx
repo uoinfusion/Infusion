@@ -21,7 +21,7 @@ public class Warehouse
     {
         foreach (var locationPair in locations)
         {
-            if (locationPair.Key.Equals(requestedSpec))
+            if (requestedSpec.IsKindOf(locationPair.Key))
             {
                 return locationPair.Value;
             }

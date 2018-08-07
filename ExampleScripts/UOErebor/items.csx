@@ -69,20 +69,35 @@ public static class Items
     public static bool TryMoveItem(Item item, GameObject targetContainer)
         => TryMoveItem(item, item.Amount, targetContainer.Id);
 
+    public static bool TryMoveItem(Item item, GameObject targetContainer, Location2D? location)
+        => TryMoveItem(item, item.Amount, targetContainer.Id, location);
+
     public static bool TryMoveItem(Item item, ObjectId targetContainerId)
         => TryMoveItem(item, item.Amount, targetContainerId);
+
+    public static bool TryMoveItem(Item item, ObjectId targetContainerId, Location2D? location)
+        => TryMoveItem(item, item.Amount, targetContainerId, location);
+
+    public static bool TryMoveItem(ObjectId itemId, ObjectId targetContainerId, Location2D? location)
+        => TryMoveItem(itemId, targetContainerId, location);
 
     public static bool TryMoveItem(Item item, ushort amount, GameObject targetContainer)
         => TryMoveItem(item, amount, targetContainer.Id);
     
     public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId)
+        => TryMoveItem(item, amount, targetContainerId, null);
+
+    public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, Location2D? location)
     {
         bool result = false;
     
         if (!Drag(item, amount))
             return false;
         
-        UO.DropItem(item, targetContainerId);
+        if (location.HasValue)
+            UO.DropItem(item.Id, targetContainerId, location.Value);
+        else
+            UO.DropItem(item, targetContainerId);
         
         journal
             .When<Infusion.LegacyApi.Events.ItemEnteredViewEvent>(
@@ -229,11 +244,11 @@ public static class Items
     }
         
     public static void MoveItems(IEnumerable<Item> items, ushort amount, Item targetContainer)
-    {
-        MoveItems(items, amount, targetContainer.Id);
-    }
-    
+        => MoveItems(items, amount, targetContainer.Id, null);
     public static void MoveItems(IEnumerable<Item> items, ushort amount, ObjectId targetContainerId)
+        => MoveItems(items, amount, targetContainerId, null);
+    
+    public static void MoveItems(IEnumerable<Item> items, ushort amount, ObjectId targetContainerId, Location2D? location)
     {
         foreach (var item in items)
         {
@@ -243,13 +258,13 @@ public static class Items
             if (item.Amount <= amount)
             {
                 UO.ClientPrint($"Moving item {item.Amount} {Specs.TranslateToName(item)}");
-                TryMoveItem(item, targetContainerId);
+                TryMoveItem(item, targetContainerId, location);
                 amount -= item.Amount;
             }
             else
             {
                 UO.ClientPrint($"Moving item {amount} {Specs.TranslateToName(item)}");
-                TryMoveItem(item, amount, targetContainerId);
+                TryMoveItem(item, amount, targetContainerId, location);
                 amount = 0;
             }
         }
@@ -501,17 +516,20 @@ public static class Items
             return false;
         }
         
-        return Reload(sourceContainer, targetContainer, targetAmount, typesToReload);
+        return Reload(sourceContainer, targetContainer, targetAmount, null, typesToReload);
     }
 
     public static bool Reload(Item sourceContainer, ushort targetAmount, params ItemSpec[] typesToReload)
-        => Reload(sourceContainer, UO.Me.BackPack, targetAmount, typesToReload);
+        => Reload(sourceContainer, UO.Me.BackPack, targetAmount, null, typesToReload);
 
-    public static bool Reload(Item sourceContainer, Item targetContainer, int targetAmount, params ItemSpec[] typesToReload)
+    public static bool Reload(Item sourceContainer, Item targetContainer, int targetAmount, Location2D? location, params ItemSpec[] typesToReload)
+        => Reload(sourceContainer.Id, targetContainer.Id, targetAmount, location, typesToReload);
+    
+    public static bool Reload(ObjectId sourceContainerId, ObjectId targetContainerId, int targetAmount, Location2D? location, params ItemSpec[] typesToReload)
     {
         UO.Log("Reloading");
     
-        var currentItemsAmount = UO.Items.InContainer(targetContainer).Matching(typesToReload).Sum(i => i.Amount);
+        var currentItemsAmount = UO.Items.InContainer(targetContainerId).Matching(typesToReload).Sum(i => i.Amount);
         if (currentItemsAmount >= targetAmount)
         {
             UO.Log(
@@ -519,14 +537,14 @@ public static class Items
             return true;
         }
     
-        var sourceItemsToReload = UO.Items.InContainer(sourceContainer).Matching(typesToReload).ToArray();
+        var sourceItemsToReload = UO.Items.InContainer(sourceContainerId).Matching(typesToReload).ToArray();
         if (sourceItemsToReload.Length <= 0)
         {
-            UO.Log($"No items to reload found in {sourceContainer}");
+            UO.Log($"No items to reload found in {sourceContainerId}");
             return false;
         }
     
-        Items.MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), targetContainer);
+        Items.MoveItems(sourceItemsToReload, (ushort)(targetAmount - currentItemsAmount), targetContainerId, location);
         
         UO.Wait(100);
         

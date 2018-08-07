@@ -203,6 +203,9 @@ namespace Infusion.LegacyApi
         public static void DragItem(ObjectId itemId)
             => Current.DragItem(itemId);
 
+        public static void DropItem(ObjectId itemId, ObjectId targetContainerId, Location2D targetContainerLocation)
+            => Current.DropItem(itemId, targetContainerId, targetContainerLocation);
+
         public static void DragItem(Item item, int amount)
             => Current.DragItem(item, amount);
 
@@ -302,6 +305,5 @@ namespace Infusion.LegacyApi
         public static void WaitTargetObject(params Mobile[] mobile) => Current.WaitTargetObject(mobile);
         public static void WaitTargetObject(Player player) => Current.WaitTargetObject(player);
         public static void ClearTargetObject() => Current.ClearTargetObject();
-
     }
 }

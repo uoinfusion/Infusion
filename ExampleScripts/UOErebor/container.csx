@@ -1,5 +1,6 @@
 #load "common.csx"
 
+using System.Linq;
 using System.Collections.Generic;
 
 public interface IContainer
@@ -76,7 +77,6 @@ public class Container : IContainer
         OpenContainerTracker.SetOpen(Id);
     }
 }
-
 
 UO.RegisterBackgroundCommand("container-track", OpenContainerTracker.Track);
 UO.CommandHandler.Invoke("container-track");

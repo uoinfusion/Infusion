@@ -520,12 +520,20 @@ namespace Infusion.LegacyApi
             Server.DropItem(itemId, targetContainerId);
         }
 
-        public void DropItem(ObjectId itemId, Location3D location)
+        public void DropItem(ObjectId itemId, ObjectId targetContainerId, Location2D targetContainerLocation)
         {
             CheckCancellation();
 
             NotifyAction();
-            Server.DropItem(itemId, location);
+            Server.DropItem(itemId, targetContainerId, targetContainerLocation);
+        }
+
+        public void DropItem(ObjectId itemId, Location3D targetLocation)
+        {
+            CheckCancellation();
+
+            NotifyAction();
+            Server.DropItem(itemId, targetLocation);
         }
 
         public void DragItem(Item item) => DragItem(item.Id, item.Amount);

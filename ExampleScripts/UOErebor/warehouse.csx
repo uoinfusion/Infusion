@@ -1,6 +1,7 @@
 #load "Specs.csx"
 #load "items.csx"
 #load "container.csx"
+#load "ContainerLayout.csx"
 
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ public class Warehouse
     
     public static Warehouse Global = new Warehouse();
 
-    public void AddLocation(ItemSpec spec, IContainer container)
+    public void AddContainer(ItemSpec spec, IContainer container)
     {
         locations.Add(spec, container);
     }
@@ -68,17 +69,29 @@ public class Warehouse
     }
     
     public void Reload(ObjectId targetContainerId, ItemSpec spec, int targetAmount)
+        => Reload(targetContainerId, null, spec, targetAmount);
+
+    public void Reload(ObjectId targetContainerId, ContainerLayout layout, ItemSpec spec, int targetAmount)
     {
         var currentAmount = UO.Items.InContainer(targetContainerId)
             .Matching(spec)
             .Sum(x => x.Amount);
             
         if (currentAmount >= targetAmount)
+        {
+            UO.Log($"No need to reload {Specs.TranslateToName(spec)}, current amount {currentAmount} is sufficient");
             return;
+        }
             
         var container = GetContainer(spec);
         container.Open();
         
-        Items.Reload(container.Id, targetContainerId, targetAmount, spec);
+        if (layout != null)
+        {
+            if (layout.TryGetContainerLocation(spec, out Location2D location))
+                Items.Reload(container.Id, targetContainerId, targetAmount, location, spec);
+        }
+        else
+            Items.Reload(container.Id, targetContainerId, targetAmount, spec);
     }
 }

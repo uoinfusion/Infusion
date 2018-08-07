@@ -15,6 +15,11 @@ namespace Infusion.Packets.Client
         {
         }
 
+        public DropItemRequest(ObjectId itemId, ObjectId containerId, Location2D containerLocation)
+            : this(itemId, containerId, new Location3D(containerLocation.X, containerLocation.Y, 0))
+        {
+        }
+
         public DropItemRequest(ObjectId itemId, Location3D location)
             : this(itemId, 0xFFFFFF, location)
         {

@@ -1,3 +1,5 @@
+#load "Specs.csx"
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +63,26 @@ public static class Common
         {
             throw new CommandInvocationException($"Cannot open container {container}");
         }
+    }
+    
+    public static Item AskForContainer(string prompt)
+    {
+        UO.ClientPrint(prompt);
+        var item = UO.AskForItem();
+        
+        if (item == null)
+        {
+            UO.ClientPrint("Targeting canceled");
+            return null;
+        }
+        
+        if (!Specs.Container.Matches(item))
+        {
+            UO.ClientPrint("Selected item is not a container");
+            return null;
+        }
+        
+        return item;
     }
     
     public static void WaitCommand(string parameters)

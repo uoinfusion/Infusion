@@ -93,6 +93,12 @@ namespace Infusion
             Send(dropPacket.RawPacket);
         }
 
+        public void DropItem(ObjectId itemId, ObjectId targetContainerId, Location2D targetContainerLocation)
+        {
+            var dropPacket = new DropItemRequest(itemId, targetContainerId, targetContainerLocation);
+            Send(dropPacket.RawPacket);
+        }
+
         public void DragItem(ObjectId itemId, int amount)
         {
             if (amount < ushort.MinValue || amount > ushort.MaxValue)

@@ -50,6 +50,11 @@ public static class Specs
         new ItemSpec(0x09B0, (Color)0x0430),
         new ItemSpec(0x0E79, (Color)0x0430)
     };
+    
+    public static readonly ItemSpec Container = new[]
+    {
+        0xE75, 0x0E76, 0x0E42, 0x0E43, 0x0E7D, 0x09AA, 0x09B0, 0x0E79
+    };
 
     // Tools
     public static readonly ItemSpec Knives = new[] { VikingSword, Dagger };
@@ -158,6 +163,7 @@ public static class Specs
     public static readonly ItemSpec ClevernessLesserPotion = new ItemSpec(0x0F0E, (Color)0x06C2);
     public static readonly ItemSpec ClevernessPotion = new ItemSpec(0x0F0E, (Color)0x073E);
     public static readonly ItemSpec ClevernessGreaterPotion = new ItemSpec(0x0F0E, (Color)0x047D);
+    public static readonly ItemSpec ClevernessPotions = new[] { ClevernessLesserPotion, ClevernessPotion, ClevernessGreaterPotion };
     public static readonly ItemSpec StoneskinPotion = new ItemSpec(0x0F0E, (Color)0x0999);
     public static readonly ItemSpec MobilityPotion = new ItemSpec(0x0F0E, (Color)0x000F);
     public static readonly ItemSpec EnergyLesserPotion = new ItemSpec(0x0F0E, (Color)0x0060);
@@ -327,6 +333,10 @@ public static class Specs
         NecroScrolls,
         ScrollManaShield,
     };
+
+    // SpellBooks
+    public static readonly ItemSpec NecroSpellBook = new ItemSpec(0x0EFA, (Color)0x038D);
+    public static readonly ItemSpec SpellBook = new[] { NecroSpellBook };
 
     // Food
     public static readonly ItemSpec Fishes = new[] { 0x09CF, 0x09CD, 0x09CC, 0x09CE };

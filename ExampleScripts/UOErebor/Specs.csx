@@ -248,7 +248,7 @@ public static class Specs
     public static readonly ItemSpec ScrollMagicArrow = 0x1f32;
     public static readonly ItemSpec ScrollNightSight = 0x1f33;
     public static readonly ItemSpec ScrollWeaken = 0x1f34;
-    public static readonly ItemSpec ScrollAgility = 0x1f35;
+    public static readonly ItemSpec ScrollAgility = new ItemSpec(0x1f35, (Color)0x0000);
     public static readonly ItemSpec ScrollCunning = 0x1f36;
     public static readonly ItemSpec ScrollCure = 0x1f37;
     public static readonly ItemSpec ScrollHarm = 0x1f38;
@@ -309,10 +309,12 @@ public static class Specs
     public static readonly ItemSpec ScrollXBrown2 = 0x1f71;
     
     public static readonly ItemSpec ScrollManaShield = new ItemSpec(0x0E34, (Color)0x044D);
+    public static readonly ItemSpec ScrollFrostBolt = new ItemSpec(0x0E34, (Color)0x044D);
 
     public static readonly ItemSpec NecroScrollOfLight = new ItemSpec(0x1F34, (Color)0x0774);
     public static readonly ItemSpec NecroScrollOfBoneArmor = new ItemSpec(0x1F33, (Color)0x0774);
-    public static readonly ItemSpec NecroScrolls = new[] { NecroScrollOfLight, NecroScrollOfBoneArmor };   
+    public static readonly ItemSpec NecroScrollOfFireBolt = new ItemSpec(0x1F35, (Color)0x0774);
+    public static readonly ItemSpec NecroScrolls = new[] { NecroScrollOfLight, NecroScrollOfBoneArmor, ScrollFrostBolt };   
 
     public static readonly ItemSpec Scrolls = new[]
     {

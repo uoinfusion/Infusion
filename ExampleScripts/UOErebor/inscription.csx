@@ -64,9 +64,11 @@ public static class Inscription
     {
         public static InscriptionScroll Light = new InscriptionScroll(Specs.NecroScrollOfLight, "Necromancery", "Scroll of Light");
         public static InscriptionScroll BoneArmor = new InscriptionScroll(Specs.NecroScrollOfBoneArmor, "Necromancery", "Scroll of Bone Armor");
+        public static InscriptionScroll FireBolt = new InscriptionScroll(Specs.NecroScrollOfFireBolt, "Necromancery", "Scroll of Fire Bolt");
     }
     
     public static InscriptionScroll ManaShield = new InscriptionScroll(Specs.ScrollManaShield, "Mana Shield Scroll");
+    public static InscriptionScroll FrostBolt = new InscriptionScroll(Specs.ScrollFrostBolt, "Frost Bolt Scroll");
 
     public static void Inscribe(InscriptionScroll scroll)
     {

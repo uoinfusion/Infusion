@@ -20,15 +20,25 @@ public class Warehouse
     
     public IContainer GetContainer(ItemSpec requestedSpec)
     {
+        if (TryGetContainer(requestedSpec, out IContainer container))
+            return container;
+        
+        throw new InvalidOperationException($"No registered container for {Specs.TranslateToName(requestedSpec)} in your warehouse."); 
+    }
+
+    public bool TryGetContainer(ItemSpec requestedSpec, out IContainer container)
+    {
         foreach (var locationPair in locations)
         {
             if (requestedSpec.IsKindOf(locationPair.Key))
             {
-                return locationPair.Value;
+                container = locationPair.Value; 
+                return true;
             }
         }
         
-        throw new InvalidOperationException($"No registered container for {Specs.TranslateToName(requestedSpec)} in your warehouse."); 
+        container = null;
+        return false; 
     }
     
     public IContainer GetContainer(Item item)

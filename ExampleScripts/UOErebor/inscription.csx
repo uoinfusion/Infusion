@@ -74,20 +74,39 @@ public static class Inscription
     {
         string productDescription = string.Join("/", scroll.Path);
         UO.ClientPrint($"Inscribing {productDescription}");
-        
-        var scrollContainer = Warehouse.Global.GetContainer(scroll.Spec);
-        var blankScrollContainer = Warehouse.Global.GetContainer(Specs.BlankScroll);
-        var foodContainer = Warehouse.Global.GetContainer(Specs.Food);
 
-        scrollContainer.Open();
-        blankScrollContainer.Open();
-        foodContainer.Open();
+        Item scrollContainerItem;
+        if (Warehouse.Global.TryGetContainer(scroll.Spec, out IContainer scrollContainer))
+        {
+            scrollContainer.Open();
+            scrollContainerItem = scrollContainer.Item;
+        }
+        else
+            scrollContainerItem = Common.AskForContainer("Select container to unload scrolls.");
+        
+        Item blankScrollContainerItem;
+        if (Warehouse.Global.TryGetContainer(Specs.BlankScroll, out IContainer blankScrollContainer))
+        {
+            blankScrollContainer.Open();
+            blankScrollContainerItem = blankScrollContainer.Item;
+        }
+        else
+            blankScrollContainerItem = Common.AskForContainer("Select container with blank scrolls");
+        
+        Item foodContainerItem;
+        if (Warehouse.Global.TryGetContainer(Specs.Food, out IContainer foodContainer))
+        {
+            foodContainer.Open();
+            foodContainerItem = foodContainer.Item;
+        }
+        else
+            blankScrollContainerItem = Common.AskForContainer("Select container with food");
     
         while (true)
         {
             UO.ClientPrint("reloading");
-            Items.MoveItems(UO.Items.Matching(scroll.Spec).InContainer(UO.Me.BackPack), scrollContainer.Item);
-            Items.Reload(blankScrollContainer.Item, BatchSize, Specs.BlankScroll);
+            Items.MoveItems(UO.Items.Matching(scroll.Spec).InContainer(UO.Me.BackPack), scrollContainerItem);
+            Items.Reload(blankScrollContainerItem, BatchSize, Specs.BlankScroll);
             Items.Reload(foodContainer.Item, 5, Specs.Food);
     
             UO.Wait(1000);

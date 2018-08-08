@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using Infusion;
 using Infusion.Commands;
 
 public static class Banking
@@ -103,6 +104,9 @@ public class BankContainer : IContainer
     public ObjectId Id => UO.Me.BankBox.Id;
 
     public Item Item => UO.Me.BankBox;
+
+    public bool Contains(Item item)
+        => item.ContainerId.HasValue && item.ContainerId.Value == Id;
 
     public void Open()
     {

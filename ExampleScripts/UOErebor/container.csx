@@ -7,7 +7,9 @@ public interface IContainer
 {
     ObjectId Id { get; }
     Item Item { get; }
+
     void Open();
+    bool Contains(Item item);
 }
 
 public static class OpenContainerTracker
@@ -49,8 +51,7 @@ public static class OpenContainerTracker
 
 public class Container : IContainer
 {
-    private readonly IContainer parentContainer;
-
+    public IContainer Parent { get; }
     public ObjectId Id { get; }
     public Item Item => UO.Items[Id];
 
@@ -62,7 +63,7 @@ public class Container : IContainer
     public Container(IContainer parentContainer, ObjectId containerId)
         : this(containerId)
     {
-        this.parentContainer = parentContainer;
+        this.Parent = parentContainer;
     }
 
     public void Open()
@@ -70,12 +71,19 @@ public class Container : IContainer
         if (OpenContainerTracker.IsOpen(Id))
             return;
     
-        if (parentContainer != null)
-            parentContainer.Open();
+        if (Parent != null)
+            Parent.Open();
 
         Common.OpenContainer(Id);
         OpenContainerTracker.SetOpen(Id);
     }
+    
+    public bool Contains(Item item)
+        => item.ContainerId.HasValue && item.ContainerId.Value == Id;
+        
+    public bool InParentContainer
+        => (Parent == null && !Item.ContainerId.HasValue)
+            || (Parent != null && Parent.Contains(Item));
 }
 
 UO.RegisterBackgroundCommand("container-track", OpenContainerTracker.Track);

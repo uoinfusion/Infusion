@@ -27,6 +27,8 @@ public static class Inscription
         public static InscriptionScroll MagicArrow = new InscriptionScroll(Specs.ScrollMagicArrow, "Kruh 1", "Magic Arrow Scroll");
         public static InscriptionScroll Feeblemind = new InscriptionScroll(Specs.ScrollFeeblemind, "Kruh 1", "Feeblemind Scroll");
         public static InscriptionScroll Clumsy = new InscriptionScroll(Specs.ScrollClumsy, "Kruh 1", "Clumsy Scroll");
+        public static InscriptionScroll ReactiveArmor = new InscriptionScroll(Specs.ScrollReactiveArmor, "Kruh 1", "Reactive Armor Scr");
+        public static InscriptionScroll Heal = new InscriptionScroll(Specs.ScrollHeal, "Kruh 1", "Heal Scroll");
     }
 
     public static class Circle2
@@ -36,6 +38,7 @@ public static class Inscription
         public static InscriptionScroll Cure = new InscriptionScroll(Specs.ScrollCure, "Kruh 2", "Cure Scroll");
         public static InscriptionScroll Cunnig = new InscriptionScroll(Specs.ScrollCunning, "Kruh 2", "Cunning Scroll");
         public static InscriptionScroll Agility = new InscriptionScroll(Specs.ScrollAgility, "Kruh 2", "Agility Scroll");
+        public static InscriptionScroll Protection = new InscriptionScroll(Specs.ScrollProtection, "Kruh 2", "Protection Scroll");
     }
     
     public static class Circle3
@@ -44,12 +47,16 @@ public static class Inscription
         public static InscriptionScroll Poison = new InscriptionScroll(Specs.Poison, "Kruh 3", "Poison Scroll");
         public static InscriptionScroll Fireball = new InscriptionScroll(Specs.ScrollFireball, "Kruh 3", "Fireball Scroll");
         public static InscriptionScroll Teleport = new InscriptionScroll(Specs.ScrollTeleport, "Kruh 3", "Teleport Scroll");
+        public static InscriptionScroll Bless = new InscriptionScroll(Specs.ScrollBless, "Kruh 3", "Bless Scroll");
     }
 
     public static class Circle4
     {
         public static InscriptionScroll Recall = new InscriptionScroll(Specs.ScrollRecall, "Kruh 4", "Recall");
         public static InscriptionScroll ManaDrain = new InscriptionScroll(Specs.ScrollManaDrain, "Kruh 4", "ManaDrain Scroll");
+        public static InscriptionScroll GreaterHeal = new InscriptionScroll(Specs.ScrollGreaterHeal, "Kruh 4", "Greater Heal Scrol");
+        public static InscriptionScroll ArchProtection = new InscriptionScroll(Specs.ScrollArchprotection, "Kruh 4", "Arch Protection Sc");
+        public static InscriptionScroll ArchCure = new InscriptionScroll(Specs.ScrollArchcure, "Kruh 4", "Archcure Scroll");
     }
 
     public static class Circle5
@@ -59,7 +66,28 @@ public static class Inscription
         public static InscriptionScroll MagicReflection = new InscriptionScroll(Specs.ScrollMagicReflection, "Kruh 5", "Magic Reflection");
         public static InscriptionScroll DispelField = new InscriptionScroll(Specs.ScrollDispelField, "Kruh 5", "Dispel Field Scrol");
     }
-        
+
+    public static class Circle6
+    {
+        public static InscriptionScroll Reveal = new InscriptionScroll(Specs.ScrollReveal, "Kruh 6", "Reveal Scroll");
+        public static InscriptionScroll Dispel = new InscriptionScroll(Specs.ScrollDispel, "Kruh 6", "Dispel Scroll");
+        public static InscriptionScroll Mark = new InscriptionScroll(Specs.ScrollMark, "Kruh 6", "Mark Scroll");
+        public static InscriptionScroll ParalyzeField = new InscriptionScroll(Specs.ScrollParalyzeField, "Kruh 6", "Paralyze Field Scr");
+    }
+
+    public static class Circle7
+    {
+        public static InscriptionScroll Flamestrike = new InscriptionScroll(Specs.ScrollFlamestrike, "Kruh 7", "Flamestrike Scroll");
+        public static InscriptionScroll MassDispel = new InscriptionScroll(Specs.ScrollMassDispel, "Kruh 7", "Mass Dispel Scrol");
+        public static InscriptionScroll EnergyFied = new InscriptionScroll(Specs.EnergyField, "Kruh 7", "Energy Fied Scroll");
+        public static InscriptionScroll GateTravel = new InscriptionScroll(Specs.ScrollGateTravel, "Kruh 7", "Gate Travel Scroll");
+    }
+    
+    public static class Circle8
+    {
+        public static InscriptionScroll Resurrection = new InscriptionScroll(Specs.ScrollResurrection, "Kruh 8", "Resurrection Scrol");
+    }
+
     public static class Necromancery
     {
         public static InscriptionScroll Light = new InscriptionScroll(Specs.NecroScrollOfLight, "Necromancery", "Scroll of Light");
@@ -141,7 +169,7 @@ public static class Inscription
                 }
                 
                 UO.ClientPrint("crafting...");
-                while (!journal.Contains("S tim co mas nevyrobis nic.","Vyroba zrusena", "Vyroba ukoncena.", "Nebyl zadan zadny predmet k vyrobe","Nemas dost many."))
+                while (!journal.Contains("S tim co mas nevyrobis nic.","Vyroba zrusena", "Vyroba ukoncena.", "Nebyl zadan zadny predmet k vyrobe","Nemas dost many.","Nemas dost svitku."))
                 {
                     if (journal.Contains("Nebyl zadan zadny predmet k vyrobe"))
                     {

@@ -48,7 +48,9 @@ public static class Specs
     public static readonly ItemSpec MagickyVacek = new[]
     {
         new ItemSpec(0x09B0, (Color)0x0430),
-        new ItemSpec(0x0E79, (Color)0x0430)
+        new ItemSpec(0x0E79, (Color)0x0430),
+        new ItemSpec(0x0E79, (Color)0x045D),
+        new ItemSpec(0x09B0, (Color)0x045D)
     };
     
     public static readonly ItemSpec Container = new[]
@@ -277,7 +279,7 @@ public static class Specs
     public static readonly ItemSpec ScrollIncognito = 0x1f4f;
     public static readonly ItemSpec ScrollMagicReflection = 0x1f50;
     public static readonly ItemSpec ScrollMindBlast = 0x1f51;
-    public static readonly ItemSpec ScrollParalyze = 0x1f52;
+    public static readonly ItemSpec ScrollParalyze = new ItemSpec(0x1f52, (Color)0x0000);
     public static readonly ItemSpec ScrollPoisonField = 0x1f53;
     public static readonly ItemSpec ScrollSummonCreature = 0x1f54;
     public static readonly ItemSpec ScrollDispel = 0x1f55;
@@ -286,7 +288,7 @@ public static class Specs
     public static readonly ItemSpec ScrollInvisibility = 0x1f58;
     public static readonly ItemSpec ScrollMark = 0x1f59;
     public static readonly ItemSpec ScrollMassCurse = 0x1f5a;
-    public static readonly ItemSpec ScrollParalyzeField = 0x1f5b;
+    public static readonly ItemSpec ScrollParalyzeField = new ItemSpec(0x1f5b, (Color)0x0000);
     public static readonly ItemSpec ScrollReveal = 0x1f5c;
     public static readonly ItemSpec ScrollChainLightning = 0x1f5d;
     public static readonly ItemSpec ScrollEnergyField = 0x1f5e;

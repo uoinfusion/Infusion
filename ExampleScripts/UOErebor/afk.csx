@@ -26,6 +26,7 @@ public static class Afk
     public static string[] IgnoredNames { get; set; } = { };
     
     public static string FileAlertPath { get; set; }
+    public static TimeSpan AlertLength { get; set; } = TimeSpan.FromSeconds(1);
     
     private static SpeechJournal afkCheckJournal = UO.CreateSpeechJournal();
  
@@ -94,7 +95,7 @@ public static class Afk
         
         UO.Alert("Afk kontrola");
 
-        UO.Wait(1000);
+        UO.Wait(AlertLength);
     }
 
     public static void TestAlert()

@@ -60,8 +60,9 @@ namespace Infusion.Desktop
                         createdNew = true;
                     }
 
-                    if (stream == null)
+                    if (stream == null || createdNew)
                     {
+                        stream?.Dispose();
                         stream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.Read);
                         writer = new StreamWriter(stream);
                     }
@@ -73,12 +74,12 @@ namespace Infusion.Desktop
                             var utcHoursDiff = TimeZone.CurrentTimeZone.GetUtcOffset(timeStamp).TotalHours;
                             var utcHoursDiffStr = utcHoursDiff >= 0 ? $"+{utcHoursDiff}" : $"-{utcHoursDiff}";
                             writer.WriteLine(
-                                $"Log craeted on {timeStamp.Date:d}, using {TimeZone.CurrentTimeZone.StandardName} timezone (UTC {utcHoursDiffStr} h)");
+                                $"Log created on {timeStamp.Date:d}, using {TimeZone.CurrentTimeZone.StandardName} timezone (UTC {utcHoursDiffStr} h)");
                         }
                         else
                         {
                             writer.WriteLine(
-                                $"Log craeted on {timeStamp.Date:d}, unknown timezone");
+                                $"Log created on {timeStamp.Date:d}, unknown timezone");
                         }
 
                         writer.WriteLine($@"Infusion {VersionHelpers.ProductVersion}");

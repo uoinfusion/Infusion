@@ -80,6 +80,7 @@ public static class Specs
     // Resources
     public static readonly ItemSpec Shaft = 0x1BD4;
     public static readonly ItemSpec Wire = 0x1879;
+    public static readonly ItemSpec CopperWire = new ItemSpec(0x1879, (Color)0x0000);
     public static readonly ItemSpec Feathers = 0x1BD1;
     public static readonly ItemSpec PileOfHides = 0x1078;
     public static readonly ItemSpec Furs = new[] { 0x11F6, 0x11F4 };

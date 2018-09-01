@@ -1,10 +1,5 @@
-#load "banking.csx"
 #load "common.csx"
-#load "light.csx"
-#load "afk.csx"
-#load "eating.csx"
 #load "items.csx"
-#load "warehouse.csx"
 #load "CraftMenu.csx"
 
 using System;
@@ -27,26 +22,7 @@ public static class Carpentry
 
     public static void Produce(CraftProduct product)
     {
-        var saw = UO.Items.Matching(Specs.Saw).InBackPack().FirstOrDefault();
-        if (saw == null)
-        {
-            UO.ClientPrint("Select a saw to start carpentry");
-            saw = UO.AskForItem();
-            if (saw == null)
-            {
-                UO.ClientPrint("Carpentry canceled");
-                return;
-            }
-            
-            if (!Specs.Saw.Matches(saw))
-            {
-                UO.ClientPrint($"Selected item ({Specs.TranslateToName(saw)}) is not a saw. Carpentry canceled.");
-                return;
-            }
-            
-            if (saw.ContainerId != UO.Me.BackPack.Id)
-                Items.Pickup(saw);
-        }
+        var saw = CraftProducer.AskForItem(Specs.Saw);
         
         var producer = new CraftProducer(product);
         producer.BatchSize = BatchSize;

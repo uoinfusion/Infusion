@@ -76,10 +76,30 @@ public sealed class CraftProducer
 {
     private readonly SpeechJournal journal = UO.CreateSpeechJournal();
     private readonly CraftProduct product;
-    Dictionary<ItemSpec, Item> containersBySpec = new Dictionary<ItemSpec, Item>();
+    private readonly Dictionary<ItemSpec, Item> containersBySpec = new Dictionary<ItemSpec, Item>();
     public int BatchSize { get; set; } = 75;
     public Action StartCycle { get; set; } = () => { throw new NotImplementedException(); };
     public string[] AdditionalCycleEndPhrases { get; set; } = Array.Empty<string>();
+
+    public static Item AskForItem(ItemSpec spec)
+    {
+        var item = UO.Items.Matching(spec).InBackPack().FirstOrDefault();
+        if (item == null)
+        {
+            UO.ClientPrint($"Select a {Specs.TranslateToName(spec)} to start crafting");
+            item = UO.AskForItem();
+            if (item == null)
+                throw new InvalidOperationException("Crafting canceled");
+            
+            if (!Specs.Saw.Matches(item))
+                throw new InvalidOperationException($"Selected item ({Specs.TranslateToName(item)}) is not a {Specs.TranslateToName(spec)}. Crafting canceled.");
+            
+            if (item.ContainerId != UO.Me.BackPack.Id)
+                Items.Pickup(item);
+        }
+        
+        return item;
+    }
 
     public CraftProducer(CraftProduct product)
     {

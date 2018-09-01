@@ -675,7 +675,6 @@ namespace Infusion.Tests.Commands
             commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("normalcmd");
         }
 
-
         private sealed class TestCommand
         {
             private readonly Action additionalAction;

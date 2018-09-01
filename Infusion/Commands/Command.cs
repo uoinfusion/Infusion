@@ -29,11 +29,27 @@ namespace Infusion.Commands
             ExecutionMode = executionMode;
         }
 
+        internal Command(string name, Action<string> commandAction, bool terminable, string summary = null, string description = null,
+            CommandExecutionMode executionMode = CommandExecutionMode.Normal)
+            : this(name, commandAction, summary, description, executionMode)
+        {
+            Terminable = terminable;
+        }
+
+        internal Command(string name, Action commandAction, bool terminable, string summary = null, string description = null,
+            CommandExecutionMode executionMode = CommandExecutionMode.Normal)
+            : this(name, commandAction, summary, description, executionMode)
+        {
+            Terminable = terminable;
+        }
+
         public string Summary { get; }
         public string Description { get; }
         public CommandExecutionMode ExecutionMode { get; }
 
         public string Name { get; }
+
+        internal bool Terminable { get; } = true;
 
         internal void Invoke()
         {

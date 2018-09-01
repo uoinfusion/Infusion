@@ -188,6 +188,9 @@ namespace Infusion.Commands
             {
                 if (runningCommands.TryGetValue(commandName, out CommandInvocation invocation))
                 {
+                    if (!invocation.Terminable)
+                        return;
+
                     awaitedInvocation = invocation;
                     invocation.CancellationTokenSource?.Cancel();
                 }
@@ -212,7 +215,7 @@ namespace Infusion.Commands
 
             lock (runningCommandsLock)
             {
-                invocations = runningCommands.Values.Where(x => force || x.Mode != CommandExecutionMode.Background);
+                invocations = runningCommands.Values.Where(x => x.Terminable && (force || x.Mode != CommandExecutionMode.Background));
             }
 
             foreach (var invocation in invocations)

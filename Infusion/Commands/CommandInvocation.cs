@@ -24,6 +24,7 @@ namespace Infusion.Commands
         public CommandExecutionMode Mode { get; }
         internal Command Command { get; }
         internal int NestingLevel { get; }
+        internal bool Terminable => Command.Terminable;
         internal CancellationTokenSource CancellationTokenSource { get; }
         internal Task Task { get; set; }
     }

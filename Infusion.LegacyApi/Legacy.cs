@@ -166,10 +166,10 @@ namespace Infusion.LegacyApi
                 "War mode on."));
             CommandHandler.RegisterCommand(new Command("warmode-off", WarModeOff,
                 "War mode off."));
-            CommandHandler.RegisterCommand(new Command("terminate", Terminate,
-                "Terminates all running commands excluding background commands.", executionMode: CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("terminate-all", CommandHandler.TerminateAll,
-                "Terminates all running commands.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("terminate", Terminate, false,
+                summary: "Terminates all running commands excluding background commands.", executionMode: CommandExecutionMode.Direct));
+            CommandHandler.RegisterCommand(new Command("terminate-all", CommandHandler.TerminateAll, false,
+                summary: "Terminates all running commands.", executionMode: CommandExecutionMode.Direct));
             CommandHandler.RegisterCommand(new Command("filter-light", ClientFilters.Light.Toggle));
             CommandHandler.RegisterCommand(new Command("filter-weather", ClientFilters.Weather.Toggle));
         }

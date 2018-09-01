@@ -74,6 +74,8 @@ namespace Infusion.Commands
 
                 if (cancellationTokenSource != null)
                     commandHandler.OnCancellationTokenCreated(cancellationTokenSource.Token);
+                else
+                    commandHandler.OnCancellationTokenCreated(CancellationToken.None);
 
                 nestingLevel.Value += 1;
                 try

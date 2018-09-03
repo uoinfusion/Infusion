@@ -72,8 +72,11 @@ namespace Infusion.Commands
                     cancellationTokenSource);
                 var commandAdded = AddCommandInvocation(command, invocation);
 
-                if (cancellationTokenSource != null)
-                    commandHandler.OnCancellationTokenCreated(cancellationTokenSource.Token);
+                if (command.Terminable)
+                {
+                    if (cancellationTokenSource != null)
+                        commandHandler.OnCancellationTokenCreated(cancellationTokenSource.Token);
+                }
                 else
                     commandHandler.OnCancellationTokenCreated(CancellationToken.None);
 

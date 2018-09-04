@@ -7,10 +7,46 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Infusion.Gumps;
+using Infusion;
 
 public static class CraftMenu
 {
     public static ScriptTrace Trace = UO.Trace.Create();
+
+    public static void Select(int amount, params string[] gumpItemPath)
+    {
+        foreach (var pathSegment in gumpItemPath.Take(gumpItemPath.Length - 1))
+        {
+            var sectionProcessor = new GumpSplitProcessor();
+            var sectionParser = new GumpParser(sectionProcessor);
+            sectionParser.Parse(UO.CurrentGump);
+
+            if (sectionProcessor.Buttons.TryGetValue(pathSegment, out GumpControlId buttonId))
+            {
+                UO.GumpResponse().Trigger(buttonId);
+                UO.WaitForGump();
+                UO.Wait(100);
+            }
+        }
+        
+        var itemProcessor = new GumpSplitProcessor();
+        var itemParser = new GumpParser(itemProcessor);
+        itemParser.Parse(UO.CurrentGump);
+        
+        var lastSegment = gumpItemPath.Last();
+        if (itemProcessor.CheckBoxes.TryGetValue(lastSegment, out GumpControlId checkBoxId))
+        {
+            Trace.Log($"Selecting {checkBoxId}, amount {amount}");
+            UO.GumpResponse()
+                .SelectCheckBox(checkBoxId)
+                .SetTextEntry("Mnozstvi k vyrobeni", amount.ToString(), Infusion.Gumps.GumpLabelPosition.After)
+                .Trigger((GumpControlId)2);
+            return;
+        }
+
+        
+        throw new InvalidOperationException("Cannot select item");                
+    }
 
     public static void SelectItem(string gumpItemName, int amount)
     {
@@ -38,16 +74,81 @@ public static class CraftMenu
             .PushButton(menuItemName, Infusion.Gumps.GumpLabelPosition.Before);
     }
 
+    private class GumpSplitProcessor : IProcessText, IProcessCheckBox, IProcessButton
+    {
+        private bool skipText = true;
+        private string lastLabel;
+        public string[] CurrentPath { get; private set; }
+        public Dictionary<string, GumpControlId> CheckBoxes { get; private set; } =
+            new Dictionary<string, GumpControlId>();
+        public Dictionary<string, GumpControlId> Buttons { get; private set; } =
+            new Dictionary<string, GumpControlId>();
+    
+        void IProcessCheckBox.OnCheckBox(int x, int y, GumpControlId id, int uncheckId, int checkId, bool initialState)
+        {
+            CheckBoxes.Add(lastLabel, id);
+        
+            Trace.Log($"CheckBox {id}"); 
+        }
+
+        void IProcessText.OnText(int x, int y, uint hue, string text)
+        {
+            Trace.Log($"Text: {text}; skipText: {skipText};");
+
+            if (CurrentPath == null)
+            {
+                CurrentPath = text.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries)
+                    .Skip(1)
+                    .ToArray();
+                
+                if (Trace.Enabled)
+                {
+                    if (CurrentPath.Any())
+                    {
+                        var description = CurrentPath.Aggregate(string.Empty, (l, r) => l + "," + r);
+                        Trace.Log($"CurrentPath: {description}");
+                    }
+                    else
+                        Trace.Log("Root gump");
+                }
+            }
+            
+            if (skipText)
+            {
+                if (text.Equals("info", StringComparison.OrdinalIgnoreCase))
+                    skipText = false;
+                return;
+            }
+
+            lastLabel = text;
+        }
+
+        public void OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId)
+        {
+            if (!string.IsNullOrEmpty(lastLabel))
+                Buttons[lastLabel] = triggerId;
+        
+            Trace.Log($"Button {triggerId}"); 
+        }
+    }
+
     private class GumpProcessor : IProcessText, IProcessCheckBox
     {
         private bool skipText = true;
         private bool found = false;
+        private string title;
         public string GumpItemName { get; set; }
         public GumpControlId? GumpItemCheckBoxId { get; private set; }
     
         void IProcessText.OnText(int x, int y, uint hue, string text)
         {
             Trace.Log($"Text: {text}; skipText: {skipText}; gumpItemName: {GumpItemName}");
+        
+            if (string.IsNullOrEmpty(title))
+            {
+                title = text;
+                UO.Log(title);
+            }
         
             if (skipText)
             {
@@ -158,25 +259,11 @@ public sealed class CraftProducer
                 Light.Check();
                 Eating.EatFull();
                 StartCycle();
+                UO.WaitForGump();
                 
                 var lastItemName = product.Path.Last();
     
-                foreach (var menuItemName in product.Path)
-                {
-                    UO.ClientPrint("waiting for crafting menu");
-                    UO.WaitForGump();
-                    UO.Wait(500);
-        
-                    UO.ClientPrint($"selecting {menuItemName} from the menu");
-                    if (menuItemName == lastItemName)
-                    {
-                        CraftMenu.SelectItem(menuItemName, BatchSize);
-                    }
-                    else
-                    {
-                        CraftMenu.SelectSection(menuItemName);
-                    }
-                }
+                CraftMenu.Select(BatchSize, product.Path);
                 
                 UO.ClientPrint("crafting...");
                 while (!journal.Contains("S tim co mas nevyrobis nic.","Vyroba zrusena", "Vyroba ukoncena.", "Nebyl zadan zadny predmet k vyrobe")

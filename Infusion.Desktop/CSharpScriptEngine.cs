@@ -128,12 +128,12 @@ namespace Infusion.Desktop
                     catch (AggregateException ex)
                     {
                         scriptOutput.Error(ex.InnerExceptions
-                            .Select(inner => inner.Message)
+                            .Select(inner => inner.ToString())
                             .Aggregate((l, r) => l + Environment.NewLine + r));
                     }
                     catch (Exception ex)
                     {
-                        scriptOutput.Error(ex.Message);
+                        scriptOutput.Error(ex.ToString());
                     }
 
                     result = null;

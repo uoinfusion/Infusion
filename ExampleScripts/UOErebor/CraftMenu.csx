@@ -25,7 +25,7 @@ public static class CraftMenu
             {
                 UO.GumpResponse().Trigger(buttonId);
                 UO.WaitForGump();
-                UO.Wait(100);
+                UO.Wait(500);
             }
         }
         
@@ -45,7 +45,7 @@ public static class CraftMenu
         }
 
         
-        throw new InvalidOperationException("Cannot select item");                
+        throw new InvalidOperationException($"Cannot select item {gumpItemPath.Last()}");                
     }
 
     public static void SelectItem(string gumpItemName, int amount)
@@ -260,6 +260,7 @@ public sealed class CraftProducer
                 Eating.EatFull();
                 StartCycle();
                 UO.WaitForGump();
+                UO.Wait(500);
                 
                 var lastItemName = product.Path.Last();
     

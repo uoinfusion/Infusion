@@ -55,7 +55,7 @@ public static class InscriptionMenu
 
     public static InscriptionScroll Flamestrike = new InscriptionScroll(Specs.ScrollFlamestrike, "Kruh 7", "Flamestrike Scroll");
     public static InscriptionScroll MassDispel = new InscriptionScroll(Specs.ScrollMassDispel, "Kruh 7", "Mass Dispel Scrol");
-    public static InscriptionScroll EnergyFied = new InscriptionScroll(Specs.EnergyField, "Kruh 7", "Energy Fied Scroll");
+    public static InscriptionScroll EnergyFied = new InscriptionScroll(Specs.ScrollEnergyField, "Kruh 7", "Energy Fied Scroll");
     public static InscriptionScroll GateTravel = new InscriptionScroll(Specs.ScrollGateTravel, "Kruh 7", "Gate Travel Scroll");
 
     public static InscriptionScroll Resurrection = new InscriptionScroll(Specs.ScrollResurrection, "Kruh 8", "Resurrection Scrol");

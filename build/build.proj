@@ -6,10 +6,10 @@
         <ItemGroup>
             <LauncherFile Include="..\Infusion.Launcher\bin\release\Infusion.exe" />
             <BinFiles Include="..\Infusion.Desktop\bin\release\**\*.*" /> 
-            <ScriptFiles Include="..\ExampleScripts\**\*.*" />
         </ItemGroup>
         <PropertyGroup>
             <MSTestPath>$(VS150COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
+            <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
         </PropertyGroup>
 
         <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts;.\testresults" />
@@ -20,12 +20,22 @@
 
         <Copy SourceFiles="@(LauncherFile)" DestinationFolder=".\release\" />
         <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
+
+        <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
+        <Exec Command="git checkout-index -a -f --prefix $(MSBuildProjectDirectory)\" WorkingDirectory="..\ExampleScripts" />
+
+        <ItemGroup>
+            <ScriptFiles Include=".\ExampleScripts\**\*.*" />
+            <UOEreborScriptExtensionBinaryFiles Include="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions\bin\Release\Infusion.Scripts.UOErebor.Extensions.dll" />
+        </ItemGroup>
+
         <Copy SourceFiles="@(ScriptFiles)" DestinationFolder=".\release\scripts\%(RecursiveDir)" />
+        <Copy SourceFiles="@(UOEreborScriptExtensionBinaryFiles)" DestinationFolder=".\release\scripts\UOErebor\%(RecursiveDir)" />
     </Target>
 
     <Target Name="Clean">
         <ItemGroup>
-          <DirsToClean Include=".\release;.\testresults" />
+          <DirsToClean Include=".\release;.\testresults;.\ExampleScripts" />
         </ItemGroup>
         <RemoveDir Directories="@(DirsToClean)" />
     </Target>

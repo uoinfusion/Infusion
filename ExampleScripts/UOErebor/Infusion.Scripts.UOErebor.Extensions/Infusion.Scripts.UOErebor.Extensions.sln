@@ -5,13 +5,13 @@ VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Scripts.UOErebor.Extensions", "Infusion.Scripts.UOErebor.Extensions\Infusion.Scripts.UOErebor.Extensions.csproj", "{C90DCBD3-9AEA-40F1-9BC1-5E1DD40CB9BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ultima", "..\..\..\src\UltimaSdk\Ultima.csproj", "{5D66ACE6-B2A4-400F-B5A5-24525959AC5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ultima", "..\..\..\UltimaSdk\Ultima.csproj", "{5D66ACE6-B2A4-400F-B5A5-24525959AC5C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatusesTestApp", "StatusesTestApp\StatusesTestApp.csproj", "{E65C6187-EC73-41B9-AC91-61E91D4C0C47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion", "..\..\..\src\Infusion\Infusion.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion", "..\..\..\Infusion\Infusion.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.LegacyApi", "..\..\..\src\Infusion.LegacyApi\Infusion.LegacyApi.csproj", "{28A5CECE-9E74-4524-9DFD-238ED4DF12BA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.LegacyApi", "..\..\..\Infusion.LegacyApi\Infusion.LegacyApi.csproj", "{28A5CECE-9E74-4524-9DFD-238ED4DF12BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

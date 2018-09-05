@@ -100,15 +100,15 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\src\Infusion.LegacyApi\Infusion.LegacyApi.csproj">
+    <ProjectReference Include="..\..\..\..\Infusion.LegacyApi\Infusion.LegacyApi.csproj">
       <Project>{28a5cece-9e74-4524-9dfd-238ed4df12ba}</Project>
       <Name>Infusion.LegacyApi</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\Infusion\Infusion.csproj">
+    <ProjectReference Include="..\..\..\..\Infusion\Infusion.csproj">
       <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
       <Name>Infusion</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\src\UltimaSdk\Ultima.csproj">
+    <ProjectReference Include="..\..\..\..\UltimaSdk\Ultima.csproj">
       <Project>{5d66ace6-b2a4-400f-b5a5-24525959ac5c}</Project>
       <Name>Ultima</Name>
     </ProjectReference>

@@ -8,6 +8,7 @@ using Infusion.LegacyApi;
 
 public static class HitPointNotifier
 {
+    public static ScriptTrace Trace = UO.Trace.Create();
     public static IPrintHitPointNotification Mode = HitPointNotificationModes.Standard;
 
     public static void Run()
@@ -112,16 +113,25 @@ public class StandardPrinter : IPrintHitPointNotification
         prefixes[id] = prefix;
     }
 
-    public Color HealColor { get; set; } = Colors.LightBlue;
-
-    public Color HarmColor { get; set; } = Colors.Red;
+    public Color PlayerHealColor { get; set; } = Colors.LightBlue;
+    public Color PlayerHarmColor { get; set; } = Colors.Red;
+    public Color OthersHealColor { get; set; } = Colors.None;
+    public Color OthersHarmColor { get; set; } = Colors.None;
    
     public bool MeAndTargetOnly { get; set; } = true;
 
     public void Print(int delta, Mobile mobile)
     {
+        if (UO.Me.PlayerId == mobile.Id && delta < 0 && mobile.CurrentHealth >= mobile.MaxHealth)
+        {
+            HitPointNotifier.Trace.Log($"Correction detected: delta {delta}; current {mobile.CurrentHealth}; max {mobile.MaxHealth}");
+            return;
+        }            
+    
         var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
-        var textColor = (delta > 0) ? HealColor : HarmColor;
+        var textColor = mobile.Id == UO.Me.PlayerId ? 
+            ((delta > 0) ? PlayerHealColor : PlayerHarmColor) :
+            ((delta > 0) ? OthersHealColor : OthersHarmColor);
        
         if (MeAndTargetOnly && mobile.Id != UO.Me.PlayerId
             && Targeting.SelectedTarget.HasValue && mobile.Id != Targeting.SelectedTarget.Value)

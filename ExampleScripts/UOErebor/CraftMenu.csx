@@ -23,6 +23,7 @@ public static class CraftMenu
 
             if (sectionProcessor.Buttons.TryGetValue(pathSegment, out GumpControlId buttonId))
             {
+                Trace.Log($"Triggering {buttonId} for {pathSegment}");
                 UO.GumpResponse().Trigger(buttonId);
                 UO.WaitForGump();
                 UO.Wait(500);
@@ -126,7 +127,10 @@ public static class CraftMenu
         public void OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId)
         {
             if (!string.IsNullOrEmpty(lastLabel))
+            {
                 Buttons[lastLabel] = triggerId;
+                lastLabel = null;
+            }
         
             Trace.Log($"Button {triggerId}"); 
         }

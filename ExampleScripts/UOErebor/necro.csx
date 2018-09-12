@@ -28,6 +28,7 @@
 #load "vetesnik.csx"
 #load "banking.csx"
 #load "inscription.csx"
+#load "alchemy.csx"
 #load "uoam.csx"
 #load "warehouse.csx"
 #load "EquipSet.csx"

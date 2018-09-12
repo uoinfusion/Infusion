@@ -248,7 +248,7 @@ public static class Specs
     public static readonly ItemSpec ScrollCreateFood = 0x1f2f;
     public static readonly ItemSpec ScrollFeeblemind = 0x1f30;
     public static readonly ItemSpec ScrollHeal = 0x1f31;
-    public static readonly ItemSpec ScrollMagicArrow = 0x1f32;
+    public static readonly ItemSpec ScrollMagicArrow = new ItemSpec(0x1f32, (Color)0x0000);
     public static readonly ItemSpec ScrollNightSight = 0x1f33;
     public static readonly ItemSpec ScrollWeaken = 0x1f34;
     public static readonly ItemSpec ScrollAgility = new ItemSpec(0x1f35, (Color)0x0000);
@@ -317,6 +317,7 @@ public static class Specs
     public static readonly ItemSpec NecroScrollOfLight = new ItemSpec(0x1F34, (Color)0x0774);
     public static readonly ItemSpec NecroScrollOfBoneArmor = new ItemSpec(0x1F33, (Color)0x0774);
     public static readonly ItemSpec NecroScrollOfFireBolt = new ItemSpec(0x1F35, (Color)0x0774);
+    public static readonly ItemSpec NecroScrollOfAnimateDead = new ItemSpec(0x1F32, (Color)0x0774);
     public static readonly ItemSpec NecroScrolls = new[] { NecroScrollOfLight, NecroScrollOfBoneArmor, ScrollFrostBolt };   
 
     public static readonly ItemSpec Scrolls = new[]
@@ -503,6 +504,7 @@ public static class Specs
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
     public static readonly MobileSpec ElementalKamene = new MobileSpec("Elemental Kamene");
+    public static readonly MobileSpec ForrestElemental = new MobileSpec(0x0008);
 
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
     

@@ -63,6 +63,9 @@ public static class InscriptionMenu
     public static InscriptionScroll NecroLight = new InscriptionScroll(Specs.NecroScrollOfLight, "Necromancery", "Scroll of Light");
     public static InscriptionScroll NecroBoneArmor = new InscriptionScroll(Specs.NecroScrollOfBoneArmor, "Necromancery", "Scroll of Bone Armor");
     public static InscriptionScroll NecroFireBolt = new InscriptionScroll(Specs.NecroScrollOfFireBolt, "Necromancery", "Scroll of Fire Bolt");
+    public static InscriptionScroll AnimateDead = new InscriptionScroll(Specs.NecroScrollOfAnimateDead,
+        new CraftResource[] { new CraftResource(Specs.BlankScroll, 1), new CraftResource(Specs.Bone, 3) },
+        "Necromancery", "Scroll of Animate Dead");
 
     public static InscriptionScroll ManaShield = new InscriptionScroll(Specs.ScrollManaShield, "Mana Shield Scroll");
     public static InscriptionScroll FrostBolt = new InscriptionScroll(Specs.ScrollFrostBolt, "Frost Bolt Scroll");
@@ -89,8 +92,13 @@ public static class Inscription
 
 public sealed class InscriptionScroll : CraftProduct 
 {
-    public InscriptionScroll(ItemSpec spec, params string[] name)
-        : base(spec, new CraftResource(Specs.BlankScroll, 1), name)
+    public InscriptionScroll(ItemSpec spec, params string[] path)
+        : base(spec, new CraftResource(Specs.BlankScroll, 1), path)
+    {
+    }
+    
+    public InscriptionScroll(ItemSpec spec, CraftResource[] resources, params string[] path)
+        : base(spec, resources, path)
     {
     }
 }

@@ -81,7 +81,8 @@ public class Warehouse
     public void Reload(ObjectId targetContainerId, ItemSpec spec, int targetAmount)
         => Reload(targetContainerId, null, spec, targetAmount);
 
-    public void Reload(ObjectId targetContainerId, ContainerLayout layout, ItemSpec spec, int targetAmount)
+    public void Reload(ObjectId targetContainerId, ContainerLayout layout, ItemSpec spec,
+        int targetAmount, bool forceLayout = false)
     {
         var currentAmount = UO.Items.InContainer(targetContainerId)
             .Matching(spec)
@@ -96,12 +97,15 @@ public class Warehouse
         var container = GetContainer(spec);
         container.Open();
         
-        if (layout != null)
+        bool doLayout = forceLayout || !UO.Items.InContainer(targetContainerId).Matching(spec).Any();
+        doLayout &= layout != null;         
+        if (doLayout && layout.TryGetContainerLocation(spec, out Location2D location))
         {
-            if (layout.TryGetContainerLocation(spec, out Location2D location))
-                Items.Reload(container.Id, targetContainerId, targetAmount, location, spec);
+            Items.Reload(container.Id, targetContainerId, targetAmount, location, spec);
         }
         else
+        {
             Items.Reload(container.Id, targetContainerId, targetAmount, spec);
+        }
     }
 }

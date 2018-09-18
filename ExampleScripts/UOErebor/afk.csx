@@ -103,6 +103,16 @@ public static class Afk
         for (int i = 0; i < 2; i++)
             DoAlert();
     }
+    
+    public static void Run()
+    {
+        while (true)
+        {
+            UO.Wait(1000);
+            Check();
+        }
+    }
 }
 
-UO.RegisterCommand("testafk", Afk.TestAlert);
+UO.RegisterCommand("afk-test", Afk.TestAlert);
+UO.RegisterBackgroundCommand("afk-run", Afk.Run);

@@ -74,10 +74,12 @@ public static class InscriptionMenu
 public static class Inscription
 {
     public static ushort BatchSize { get; set; } = 75;
+    public static Action OnStart { get; set; }
     
     public static void Inscribe(InscriptionScroll scroll)
     {
         var producer = new CraftProducer(scroll);
+        producer.OnStart = OnStart;
         producer.AdditionalCycleEndPhrases = new[] { "Nemas dost many.","Nemas dost svitku." };
         producer.BatchSize = BatchSize;
         producer.StartCycle = () =>
@@ -102,3 +104,7 @@ public sealed class InscriptionScroll : CraftProduct
     {
     }
 }
+
+UO.RegisterCommand("inscription-gate", () => Inscription.Inscribe(InscriptionMenu.GateTravel));
+UO.RegisterCommand("inscription-recall", () => Inscription.Inscribe(InscriptionMenu.Recall));
+UO.RegisterCommand("inscription-mark", () => Inscription.Inscribe(InscriptionMenu.Mark));

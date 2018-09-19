@@ -19,6 +19,7 @@ public static class CarpentryMenu
 public static class Carpentry
 {
     public static ushort BatchSize { get; set; } = 75;
+    public static Action OnStart { get; set; }
 
     public static void Produce(CraftProduct product)
     {
@@ -26,6 +27,7 @@ public static class Carpentry
         
         var producer = new CraftProducer(product);
         producer.BatchSize = BatchSize;
+        producer.OnStart = OnStart;
         producer.StartCycle = () => UO.Use(saw);
         
         producer.Produce();

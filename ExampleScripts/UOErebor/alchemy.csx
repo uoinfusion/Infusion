@@ -35,6 +35,7 @@ public static class AlchemyMenu
 public static class Alchemy
 {
     public static ushort BatchSize { get; set; } = 10;
+    public static Action OnStart { get; set; }
 
     public static void Produce(CraftProduct product)
     {
@@ -42,6 +43,7 @@ public static class Alchemy
         
         var producer = new CraftProducer(product);
         producer.BatchSize = BatchSize;
+        producer.OnStart = OnStart;
         producer.StartCycle = () => UO.Use(mortar);
         
         producer.Produce();

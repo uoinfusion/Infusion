@@ -184,6 +184,7 @@ public sealed class CraftProducer
     private readonly Dictionary<ItemSpec, Item> containersBySpec = new Dictionary<ItemSpec, Item>();
     public int BatchSize { get; set; } = 75;
     public Action StartCycle { get; set; } = () => { throw new NotImplementedException(); };
+    public Action OnStart { get; set; }
     public string[] AdditionalCycleEndPhrases { get; set; } = Array.Empty<string>();
 
     public static Item AskForItem(ItemSpec spec)
@@ -236,6 +237,8 @@ public sealed class CraftProducer
     
     public void Produce()
     {
+        if (OnStart != null)
+            OnStart();
         AskForResourceContainers();
         var productContainerItem = AskForContainer(product.Spec, $"Select container to unload {Specs.TranslateToName(product.Spec)}.");
         var foodContainerItem = AskForContainer(Specs.Food, "Select container with food");

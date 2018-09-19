@@ -7,7 +7,7 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    public class GraphicalEffectPacket : MaterializedPacket
+    internal sealed class GraphicalEffectPacket : MaterializedPacket
     {
         public EffectDirectionType DirectionType { get; private set; }
         public ObjectId CharacterId { get; private set; }
@@ -20,6 +20,50 @@ namespace Infusion.Packets.Server
         public byte Duration { get; private set; }
         public bool AdjustDirection { get; private set; }
         public bool ExplodeOnImpact { get; private set; }
+
+        public GraphicalEffectPacket()
+        {
+        }
+
+        public GraphicalEffectPacket(ObjectId characterId, ObjectId targetId, ModelId type, Location3D location,
+            Location3D targetLocation, byte animationSpeed, EffectDirectionType directionType, byte duration, bool adjustDirection, bool explodeOnImpact)
+        {
+            DirectionType = directionType;
+            CharacterId = characterId;
+            TargetId = targetId;
+            Type = type;
+            Location = location;
+            TargetLocation = targetLocation;
+            AnimationSpeed = animationSpeed;
+            AdjustDirection = adjustDirection;
+            ExplodeOnImpact = explodeOnImpact;
+
+            var payload = new byte[28];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.GraphicalEffect.Id);
+            writer.WriteByte((byte)DirectionType);
+            writer.WriteId(characterId);
+            writer.WriteId(targetId);
+            writer.WriteModelId(type);
+
+            writer.WriteUShort((ushort)location.X);
+            writer.WriteUShort((ushort)location.Y);
+            writer.WriteByte((byte)location.Z);
+
+            writer.WriteUShort((ushort)targetLocation.X);
+            writer.WriteUShort((ushort)targetLocation.Y);
+            writer.WriteByte((byte)targetLocation.Z);
+
+            writer.WriteByte(animationSpeed);
+            writer.WriteByte(duration);
+            writer.WriteUShort(0); // unknwon
+            writer.WriteByte((byte)(adjustDirection ? 1 : 0));
+            writer.WriteByte((byte)(explodeOnImpact ? 1 : 0));
+
+            rawPacket = new Packet(PacketDefinitions.GraphicalEffect.Id, payload);
+
+        }
 
         public override void Deserialize(Packet rawPacket)
         {

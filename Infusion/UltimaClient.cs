@@ -1,8 +1,8 @@
-﻿using System;
-using Infusion.Packets;
+﻿using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
+using System;
 
 namespace Infusion
 {
@@ -44,7 +44,7 @@ namespace Infusion
 
         public void SendSpeech(string message, string name, ObjectId itemId, ModelId itemModel, SpeechType type, Color color)
         {
-            var packet = new SendSpeechPacket
+            SendSpeechPacket packet = new SendSpeechPacket
             {
                 Id = itemId,
                 Model = itemModel,
@@ -72,39 +72,39 @@ namespace Infusion
 
         public void DrawGamePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, MovementType movementType, Color color)
         {
-            var drawGamePlayerPacket = new DrawGamePlayerPacket(playerId, bodyType,
+            DrawGamePlayerPacket drawGamePlayerPacket = new DrawGamePlayerPacket(playerId, bodyType,
                 location, direction, movementType, color);
             Send(drawGamePlayerPacket.RawPacket);
         }
 
         public void TargetCursor(CursorTarget location, CursorId cursorId, CursorType type)
         {
-            var packet = new TargetCursorPacket(location, cursorId, type);
+            TargetCursorPacket packet = new TargetCursorPacket(location, cursorId, type);
             Send(packet.RawPacket);
         }
 
         public void TargetLocation(CursorId cursorId, Location3D location, ModelId tileType, CursorType cursorType)
         {
-            var targetRequest = new TargetLocationRequest(cursorId, location, tileType, cursorType);
+            TargetLocationRequest targetRequest = new TargetLocationRequest(cursorId, location, tileType, cursorType);
             Send(targetRequest.RawPacket);
         }
 
         public void CancelTarget(CursorId lastCursorId, ObjectId itemId, Location3D location, ModelId type)
         {
-            var cancelRequest = new TargetLocationRequest(lastCursorId, itemId, CursorType.Cancel, location,
+            TargetLocationRequest cancelRequest = new TargetLocationRequest(lastCursorId, itemId, CursorType.Cancel, location,
                 type);
             Send(cancelRequest.RawPacket);
         }
 
         public void ObjectInfo(ObjectId id, ModelId type, Location3D location, Color? color)
         {
-            var packet = new ObjectInfoPacket(id, type, location, color);
+            ObjectInfoPacket packet = new ObjectInfoPacket(id, type, location, color);
             Send(packet.RawPacket);
         }
 
         public Item CreatePhantom(ObjectId id, ModelId modelId, Location3D location, Color? color)
         {
-            var item = new Item(id, modelId, 1, location, color, null, null);
+            Item item = new Item(id, modelId, 1, location, color, null, null);
 
             ObjectInfo(id, modelId, location, color);
 
@@ -113,25 +113,33 @@ namespace Infusion
 
         public void DeleteItem(ObjectId id)
         {
-            var packet = new DeleteObjectPacket(id);
+            DeleteObjectPacket packet = new DeleteObjectPacket(id);
             Send(packet.RawPacket);
         }
 
         internal void PauseClient(PauseClientChoice pause)
         {
-            var packet = new PauseClientPacket(pause);
+            PauseClientPacket packet = new PauseClientPacket(pause);
             Send(packet.RawPacket);
         }
 
         public void AllowAttack(ObjectId id)
         {
-            var packet = new AllowRefuseAttackPacket(id);
+            AllowRefuseAttackPacket packet = new AllowRefuseAttackPacket(id);
             Send(packet.RawPacket);
         }
 
         public void CancelQuest()
         {
-            var packet = new QuestArrowPacket(new Location2D(0, 0), false);
+            QuestArrowPacket packet = new QuestArrowPacket(new Location2D(0, 0), false);
+            Send(packet.RawPacket);
+        }
+
+        public void PlayGraphicalEffect(EffectDirectionType directionType, ObjectId characterId, ModelId type,
+            Location3D location, byte animationSpeed, byte duration, bool adjustDirection, bool explodeOnImpact)
+        {
+            GraphicalEffectPacket packet = new GraphicalEffectPacket(characterId, 0, type, location, location,
+                animationSpeed, directionType, duration, adjustDirection, explodeOnImpact);
             Send(packet.RawPacket);
         }
     }

@@ -121,6 +121,8 @@ public static class Specs
     public static readonly ItemSpec AdamantiumIngot = new ItemSpec(0x1BF2, (Color)0x0999);
     public static readonly ItemSpec MithrilOre = new ItemSpec(0x19B7, (Color)0x098B);
     public static readonly ItemSpec MithrilIngot = new ItemSpec(0x1BF2, (Color)0x098B);
+    
+    public static readonly ItemSpec Mramor = new ItemSpec(0x1363, (Color)0x0481);
 
     // Logs
     public static readonly ItemSpec Log = 0x1BDD;
@@ -347,6 +349,7 @@ public static class Specs
     // Food
     public static readonly ItemSpec Fishes = new[] { 0x09CF, 0x09CD, 0x09CC, 0x09CE };
     public static readonly ItemSpec RawFishSteak = 0x097A;
+    public static readonly ItemSpec FishSteak = 0x097B;
     public static readonly ItemSpec RawBird = 0x09B9;
     public static readonly ItemSpec CookedBird = 0x09B7;
     public static readonly ItemSpec RawRibs = 0x09F1;
@@ -387,7 +390,7 @@ public static class Specs
     public static readonly ItemSpec Limes = 0x172A;
 
     public static readonly ItemSpec RawFood = new[] { RawBird, RawFishSteak, RawRibs };
-    public static readonly ItemSpec Food = new[] { Ribs, CookedBird,
+    public static readonly ItemSpec Food = new[] { FishSteak, Ribs, CookedBird,
         BunchOfDates, Muffin, GrapeBunch, Gourd, Watermelon, HoneydewMelon,
         JarOfHoney, FrenchBread, Cake, BakedPie, Pizza, Turnip, Apple, Peache,
         Onion, Pear, LegOfLamb, Sausage, EarOfCorn, Pumpkin, WheelOfCheese, Squash,
@@ -503,7 +506,28 @@ public static class Specs
     public static readonly MobileSpec Ghost = 0x03CA;
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
-    public static readonly MobileSpec ElementalKamene = new MobileSpec("Elemental Kamene");
+    
+    public static readonly MobileSpec ElementalKamene = new[]
+    {
+       new MobileSpec(0x000E, (Color)0x0539),
+       new MobileSpec(0x000E, (Color)0x053a),
+       new MobileSpec(0x000E, (Color)0x053b),
+       new MobileSpec(0x000E, (Color)0x053c),
+       new MobileSpec(0x000E, (Color)0x053d),
+       new MobileSpec(0x000E, (Color)0x053e),
+       new MobileSpec(0x000E, (Color)0x053f),
+       new MobileSpec(0x000E, (Color)0x0540),
+       new MobileSpec(0x000E, (Color)0x0541),
+       new MobileSpec(0x000E, (Color)0x0542),
+       new MobileSpec(0x000E, (Color)0x0543),
+       new MobileSpec(0x000E, (Color)0x0544),
+       new MobileSpec(0x000E, (Color)0x0545),
+       new MobileSpec(0x000E, (Color)0x0546),
+       new MobileSpec(0x000E, (Color)0x0547),
+       new MobileSpec(0x000E, (Color)0x0548),
+       new MobileSpec(0x000E, (Color)0x0549),
+       new MobileSpec(0x000E, (Color)0x054a)
+    };   
     public static readonly MobileSpec ForrestElemental = new MobileSpec(0x0008);
 
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);

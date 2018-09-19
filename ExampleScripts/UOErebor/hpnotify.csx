@@ -1,5 +1,6 @@
 #load "colors.csx"
 #load "targeting.csx"
+#load "graphicseffects.csx"
 
 using System;
 using System.Collections.Generic;
@@ -112,9 +113,13 @@ public class StandardPrinter : IPrintHitPointNotification
     {
         prefixes[id] = prefix;
     }
+    
+    public bool PlayerHealEnabled { get; set; } = false;
+    public bool OthersHealEnabled { get; set; } = false;
 
-    public Color PlayerHealColor { get; set; } = Colors.LightBlue;
+    public Color PlayerHealColor { get; set; } = Colors.None;
     public Color PlayerHarmColor { get; set; } = Colors.Red;
+    public GraphicsEffect PlayerHarmEffect { get; set; }
     public Color OthersHealColor { get; set; } = Colors.None;
     public Color OthersHarmColor { get; set; } = Colors.None;
    
@@ -127,6 +132,14 @@ public class StandardPrinter : IPrintHitPointNotification
             HitPointNotifier.Trace.Log($"Correction detected: delta {delta}; current {mobile.CurrentHealth}; max {mobile.MaxHealth}");
             return;
         }            
+    
+        if (delta > 0 && UO.Me.PlayerId == mobile.Id && !PlayerHealEnabled)
+            return;
+        if (delta > 0 && UO.Me.PlayerId != mobile.Id && !OthersHealEnabled)
+            return;
+            
+        if (UO.Me.PlayerId == mobile.Id && PlayerHarmEffect != null)
+            PlayerHarmEffect.PlayOverPlayer();
     
         var deltaText = (delta > 0) ? "+" + delta.ToString() : delta.ToString();
         var textColor = mobile.Id == UO.Me.PlayerId ? 

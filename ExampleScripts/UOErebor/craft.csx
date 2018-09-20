@@ -1,4 +1,18 @@
 #load "TwoStateAbility.csx"
+#load "blacksmith.csx"
+#load "carpentry.csx"
+#load "tinkering.csx"
+#load "doors.csx"
+#load "looting.csx"
+#load "hpnotify.csx"
+#load "hiding.csx"
+#load "light.csx"
+#load "magery.csx"
+#load "party.csx"
+#load "questarrow.csx"
+#load "title.csx"
+#load "healing.csx"
+
 
 public static class Craft
 {

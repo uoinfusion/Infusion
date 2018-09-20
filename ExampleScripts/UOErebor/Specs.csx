@@ -6,7 +6,13 @@ using System.Reflection;
 
 public static class Specs
 {
-    public static readonly MobileSpec Player = new[] { 0x0190, 0x0191, 0x0192 };
+    public static readonly MobileSpec Man = 0x0190;
+    public static readonly MobileSpec Woman = 0x0191;
+    public static readonly MobileSpec GhostMan = 0x0192;
+    public static readonly MobileSpec GhostWoman = 0x0193;
+    public static readonly MobileSpec Player = new[] { Man, Woman };
+    public static readonly MobileSpec PlayerGhost = new[] { GhostMan, GhostWoman };
+    
     public static readonly ItemSpec RippableBody = 0x2006;
     public static readonly ItemSpec Corpse = 0x2006;
     public static readonly ItemSpec HorseShoes = 0x0FB6;

@@ -30,7 +30,7 @@ public static class Common
             .When<SpeechReceivedEvent>(e => e.Speech.Message.Contains("You can't see that"), e => result = false)
             .WaitAny();
 
-        UO.Wait(250);
+        UO.Wait(50);
             
         return result;
     }

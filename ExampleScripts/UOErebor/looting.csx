@@ -80,7 +80,7 @@ public static class Looting
                 }
             }
             else
-                UO.Log("Holding knife, will not requip");
+                UO.Log("Holding knife, will not reequip");
         }
         else
             UO.Log("Cannot find equipment item.");
@@ -314,7 +314,6 @@ public static class Looting
             UO.Log("Cannot open body, maybe it is not possible to loot the body");
             return;
         }
-        UO.Wait(250);
 
         UO.ClientPrint($"Number of items in container: {UO.Items.InContainer(container).Count()}");
 
@@ -369,33 +368,38 @@ public static class Looting
             return true;
         }
     
-        UO.WaitTargetObject(corpse);
-        if (!UO.TryUse(KnivesSpec))
+        try
         {
-            UO.Alert("Cannot find any knife");
-            return false;
+            UO.WaitTargetObject(corpse);
+            if (!UO.TryUse(KnivesSpec))
+            {
+                UO.Alert("Cannot find any knife");
+                return false;
+            }
+          
+            bool result = false;
+            
+            journal
+                .When("Rozrezal jsi mrtvolu.", () => result = true)
+                .When("You are frozen and can not move.", "you can't reach anything in your state.", () => 
+                {
+                    result = false;
+                    UO.ClientPrint("I'm paralyzed, cannot loot.", UO.Me);
+                })
+                .When("Unexpected target info", () => 
+                {
+                    UO.Log("Warning: unexpected target info when targeting a body");
+                    UO.Log(corpse.ToString());
+                    result = false;
+                })
+                .WaitAny();
+                
+            return result;
         }
-      
-        bool result = false;
-        
-        journal
-            .When("Rozrezal jsi mrtvolu.", () => result = true)
-            .When("You are frozen and can not move.", "you can't reach anything in your state.", () => 
-            {
-                result = false;
-                UO.ClientPrint("I'm paralyzed, cannot loot.", UO.Me);
-            })
-            .When("Unexpected target info", () => 
-            {
-                UO.Log("Warning: unexpected target info when targeting a body");
-                UO.Log(corpse.ToString());
-                result = false;
-            })
-            .WaitAny();
-            
-        UO.ClearTargetObject();
-            
-        return true;
+        finally
+        {        
+            UO.ClearTargetObject();
+        }
     }
     
     public static void UnloadLoot()

@@ -11,6 +11,9 @@ public static class Meditation
         UO.WarModeOff();
         UO.Wait(100);
     
+        if (manaMinimum > UO.Me.MaxMana)
+            manaMinimum = UO.Me.MaxMana;
+    
         while (UO.Me.CurrentMana < manaMinimum)
         {
             UO.UseSkill(Skill.Meditation);

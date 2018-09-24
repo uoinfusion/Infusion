@@ -26,6 +26,7 @@ public static class Specs
 
     // Weapon
     public static readonly ItemSpec VikingSword = new[] { 0x13B9, 0x13BA };
+    public static readonly ItemSpec Katana = new[] { 0x13FE, 0x13FF };
     public static readonly ItemSpec Dagger = new[] { 0x0F51, 0x0F52 };
     public static readonly ItemSpec WarMace = new[] { 0x1406, 0x1407 };
     public static readonly ItemSpec Club = new[] { 0x13B3, 0x013B4 };
@@ -65,7 +66,7 @@ public static class Specs
     };
 
     // Tools
-    public static readonly ItemSpec Knives = new[] { VikingSword, Dagger };
+    public static readonly ItemSpec Knives = new[] { VikingSword, Dagger, Katana };
     public static readonly ItemSpec PickAxe = new[] { 0x0E85, 0x0E86 };
     public static readonly ItemSpec FishingPole = 0x0DBF;
     public static readonly ItemSpec Hatchets = new[] { Hatchet, CopperExecutionersAxe };

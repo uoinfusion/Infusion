@@ -205,6 +205,20 @@ public static class Specs
     public static readonly ItemSpec EnergyElixir = new ItemSpec(0x182A, (Color)0x00c5);
     public static readonly ItemSpec SpellShieldElixir = new ItemSpec(0x182A, (Color)0x0059);
 
+    public static readonly ItemSpec Potions = new[] {
+        NightsighPoition, DispellExplosionPotion, ExplosionLesserPotion, ExplosionPotion, ExplosionGreaterPotion,
+        LavaPotion, AgilityLesserPotion, AgilityPotion, AgilityGreaterPotion, CureLesserPotion, CurePotion, CureGreaterPotion,
+        HealLesserPotion, HealPotion, HealGreaterPotion, RefreshLesserPotion, RefreshPotion, RefreshGreaterPotion,
+        StrengthLesserPotion, StrengthPotion, StrengthGreaterPotion, InvisibilityPotion,
+        ClevernessLesserPotion, ClevernessPotion, ClevernessGreaterPotion, StoneskinElixir, MobilityPotion,
+        EnergyLesserPotion, EnergyPotion, EnergyGreaterPotion, ReflectionPotion, ReactivePotion, ShieldPotion
+    };
+    
+    public static readonly ItemSpec Elixirs = new[] {
+        ElixirPoznani, AgilityElixir, HealElixir, RefreshElixir, StrengthElixir, ClevernessElixir,
+        StoneskinElixir, EnergyElixir, SpellShieldElixir
+    };
+
     // Reagents
     public static readonly ItemSpec GraveDust = 0x0f8f;
     public static readonly ItemSpec Pumice = 0x0f8b;

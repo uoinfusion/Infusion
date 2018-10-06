@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Infusion.Desktop.Profiles;
@@ -111,6 +113,33 @@ namespace Infusion.Desktop.Launcher
         private void OnDeleteProfileButtonClick(object sender, RoutedEventArgs e)
         {
             launcherViewModel.DeleteSelectedProfile();
+        }
+
+        private void OnSelectOrionPath(object sender, RoutedEventArgs e)
+        {
+            launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath 
+                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "OrionUO.exe|OrionUO.exe");
+        }
+
+        private string SelectPath(string initialPath, string filter)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Multiselect = false;
+            openFileDialog.Filter = filter;
+            openFileDialog.FileName = initialPath;
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                return openFileDialog.FileName;
+            }
+
+            return initialPath;
+        }
+
+        private void OnSelectClassicPath(object sender, RoutedEventArgs e)
+        {
+            launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath
+                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath, "*.exe|*.exe");
+
         }
     }
 }

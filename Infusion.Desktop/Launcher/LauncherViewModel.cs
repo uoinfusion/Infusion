@@ -38,8 +38,9 @@ namespace Infusion.Desktop.Launcher
             get => selectedProfile;
             set
             {
-                selectedProfile = value; 
+                selectedProfile = value;
                 OnPropertyChanged();
+                OnSelectedClientTypeChanged();
             }
         }
 
@@ -60,6 +61,26 @@ namespace Infusion.Desktop.Launcher
         }
 
         public bool CanDeleteSelectedProfile => Profiles.Count > 1;
+
+        public bool ClassicClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
+        public bool OrionOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Orion;
+
+        public UltimaClientType SelectedClientType
+        {
+            get => SelectedProfile.LauncherOptions.ClientType;
+            set
+            {
+                SelectedProfile.LauncherOptions.ClientType = value;
+                OnSelectedClientTypeChanged();
+            }
+        }
+
+        private void OnSelectedClientTypeChanged()
+        {
+            OnPropertyChanged("SelectedClientType");
+            OnPropertyChanged("ClassicClientOptionsVisible");
+            OnPropertyChanged("OrionOptionsVisible");
+        }
 
         public void DeleteSelectedProfile()
         {

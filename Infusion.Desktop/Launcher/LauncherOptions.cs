@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using Ultima;
 
 namespace Infusion.Desktop.Launcher
 {
@@ -15,9 +16,13 @@ namespace Infusion.Desktop.Launcher
         private string initialScriptFileName;
 
         public string ServerEndpoint { get; set; }
+        public UltimaClientType ClientType { get; set; } = UltimaClientType.Classic;
+
         public string UserName { get; set; }
         public string Password { get; set; }
-        public ushort ProxyPort { get; set; } = 0;
+
+        public OrionLanuncherOptions Orion { get; set; } = new OrionLanuncherOptions();
+        public ClassicClientLauncherOptions Classic { get; set; } = new ClassicClientLauncherOptions();
 
         public string InitialScriptFileName
         {
@@ -95,21 +100,11 @@ namespace Infusion.Desktop.Launcher
                 return false;
             }
 
+            if (ClientType == UltimaClientType.Orion && !Orion.Validate(out validationMessage))
+                return false;
+
             validationMessage = string.Empty;
             return true;
-        }
-
-        public ushort ResolveProxyPort()
-        {
-            if (ProxyPort > 0)
-                return ProxyPort;
-
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            listener.Start();
-            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-
-            return (ushort)port;
         }
     }
 }

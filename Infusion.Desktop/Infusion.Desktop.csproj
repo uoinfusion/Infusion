@@ -239,10 +239,15 @@
     </Compile>
     <Compile Include="InterProcessCommunication.cs" />
     <Compile Include="IScriptOutput.cs" />
+    <Compile Include="Launcher\ClassicClientLauncher.cs" />
+    <Compile Include="Launcher\ClassicClientLauncherOptions.cs" />
     <Compile Include="Launcher\LauncherViewModel.cs" />
+    <Compile Include="Launcher\OrionLanuncherOptions.cs" />
+    <Compile Include="Launcher\OrionLauncher.cs" />
     <Compile Include="Launcher\TestOuputWindow.xaml.cs">
       <DependentUpon>TestOuputWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Launcher\UltimaClientType.cs" />
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Profiles\ProfileRepositiory.cs" />
     <Compile Include="ScriptOutput.cs" />

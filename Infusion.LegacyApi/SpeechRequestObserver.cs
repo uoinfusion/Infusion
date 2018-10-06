@@ -24,24 +24,30 @@ namespace Infusion.LegacyApi
 
         private Packet? FilterClientSpeech(Packet rawPacket)
         {
+            string text = null;
+
             if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
+                text = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket).Text;
+            else if (rawPacket.Id == PacketDefinitions.TalkRequest.Id)
+                text = PacketDefinitionRegistry.Materialize<TalkRequest>(rawPacket).Message;
+
+            if (text != null)
             {
-                var packet = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket);
-                if (commandHandler.IsInvocationSyntax(packet.Text))
+                if (commandHandler.IsInvocationSyntax(text))
                 {
-                    eventSource.Publish(new CommandRequestedEvent(packet.Text));
+                    eventSource.Publish(new CommandRequestedEvent(text));
 
                     Task.Run(() =>
                     {
-                        logger.Debug(packet.Text);
-                        commandHandler.InvokeSyntax(packet.Text);
+                        logger.Debug(text);
+                        commandHandler.InvokeSyntax(text);
                     });
 
                     return null;
                 }
 
-                logger.Debug(packet.Text);
-                eventSource.Publish(new SpeechRequestedEvent(packet.Text));
+                logger.Debug(text);
+                eventSource.Publish(new SpeechRequestedEvent(text));
             }
 
             return rawPacket;

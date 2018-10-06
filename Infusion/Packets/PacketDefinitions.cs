@@ -20,8 +20,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<MoveRequest> MoveRequest = new PacketDefinition<MoveRequest>(0x02,
             new StaticPacketLength(7), "MoveRequest", packet => new MoveRequest());
 
-        public static readonly PacketDefinition TalkRequest = new PacketDefinition(0x03,
-            new VariablePacketLength(), "TalkRequest");
+        public static readonly PacketDefinition TalkRequest = new PacketDefinition<TalkRequest>(0x03,
+            new VariablePacketLength(), "TalkRequest", packet => new TalkRequest());
 
         public static readonly PacketDefinition GodModeRequest = new PacketDefinition(0x04,
             new StaticPacketLength(2), "GodModeRequest");

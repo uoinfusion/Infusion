@@ -39,6 +39,8 @@ namespace Infusion
 
             if (rawPacket.Id == PacketDefinitions.MoveRequest.Id)
                 packetHandler.Publish<MoveRequest>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.TalkRequest.Id)
+                packetHandler.Publish<TalkRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
                 packetHandler.Publish<SpeechRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)

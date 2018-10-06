@@ -549,6 +549,9 @@ namespace Infusion.Packets
         public static readonly PacketDefinition GenericAosCommands = new PacketDefinition(0xD7,
             new VariablePacketLength(), "GenericAosCommands");
 
+        public static readonly PacketDefinition KrriosClientSpecial = new PacketDefinition(0xF0,
+            new VariablePacketLength(), "KrriosClientSpecial");
+
         public static readonly PacketDefinition FreeShardList = new PacketDefinition(0xF1,
             new VariablePacketLength(), "FreeShardList");
 

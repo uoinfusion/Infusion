@@ -186,6 +186,7 @@ namespace Infusion.Packets
             Register(PacketDefinitions.BookHeaderNew);
             Register(PacketDefinitions.MegaCliloc);
             Register(PacketDefinitions.GenericAosCommands);
+            Register(PacketDefinitions.KrriosClientSpecial);
             Register(PacketDefinitions.FreeShardList);
         }
 

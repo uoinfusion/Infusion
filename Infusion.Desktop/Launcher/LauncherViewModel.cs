@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Infusion.Desktop.Profiles;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Infusion.Desktop.Profiles;
 
 namespace Infusion.Desktop.Launcher
 {
@@ -14,6 +14,20 @@ namespace Infusion.Desktop.Launcher
         {
             new Profile {Name = "new profile"}
         };
+        private readonly Action<string> passwordSetter;
+
+        private bool showPassword;
+        public bool ShowPassword
+        {
+            get => showPassword;
+            set
+            {
+                showPassword = value;
+                OnPropertyChanged();
+                OnPropertyChanged("HidePassword");
+            }
+        }
+        public bool HidePassword => !showPassword;
 
         public ObservableCollection<Profile> Profiles
         {
@@ -28,8 +42,9 @@ namespace Infusion.Desktop.Launcher
             }
         }
 
-        public LauncherViewModel()
+        public LauncherViewModel(Action<string> passwordSetter)
         {
+            this.passwordSetter = passwordSetter;
             SelectedProfile = Profiles.First();
         }
 
@@ -41,6 +56,7 @@ namespace Infusion.Desktop.Launcher
                 selectedProfile = value;
                 OnPropertyChanged();
                 OnSelectedClientTypeChanged();
+                passwordSetter(selectedProfile.LauncherOptions.Password);
             }
         }
 
@@ -52,10 +68,10 @@ namespace Infusion.Desktop.Launcher
 
         public void NewProfile()
         {
-            var profile = new Profile {Name = "new profile"};
+            var profile = new Profile { Name = "new profile" };
             Profiles.Add(profile);
             SelectedProfile = profile;
-            
+
             // ReSharper disable once ExplicitCallerInfoArgument
             OnPropertyChanged("CanDeleteSelectedProfile");
         }

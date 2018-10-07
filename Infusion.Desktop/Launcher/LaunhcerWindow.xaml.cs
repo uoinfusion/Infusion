@@ -18,7 +18,7 @@ namespace Infusion.Desktop.Launcher
     internal partial class LauncherWindow : Window
     {
         private readonly Action<Profile> launchCallback;
-        private readonly LauncherViewModel launcherViewModel = new LauncherViewModel();
+        private readonly LauncherViewModel launcherViewModel;
 
 
         private void ShowError(string errorMessage)
@@ -30,6 +30,7 @@ namespace Infusion.Desktop.Launcher
         {
             this.launchCallback = launchCallback;
             InitializeComponent();
+            launcherViewModel = new LauncherViewModel(pwd => passwordBox.Password = pwd);
 
             var profiles = ProfileRepositiory.LoadProfiles();
             if (profiles != null)
@@ -140,6 +141,11 @@ namespace Infusion.Desktop.Launcher
             launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath
                 = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath, "*.exe|*.exe");
 
+        }
+
+        private void PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            launcherViewModel.SelectedProfile.LauncherOptions.Password = passwordBox.Password;
         }
     }
 }

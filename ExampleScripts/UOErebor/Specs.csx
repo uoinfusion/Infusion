@@ -81,6 +81,15 @@ public static class Specs
     public static readonly ItemSpec BurningTorch = 0x0A12;
     public static readonly ItemSpec Mortar = 0x0E9B;
     public static readonly ItemSpec Candle = 0x1430;
+    
+    // Instruments
+    public static readonly ItemSpec Drum = 0x0E9C;
+    public static readonly ItemSpec Tambourine = new[] { 0x0E9D, 0x0E9E };
+    public static readonly ItemSpec Harp = 0x0EB1;
+    public static readonly ItemSpec Lyre = 0x0EB2;
+    public static readonly ItemSpec Lute = new[] { 0x0EB3, 0x0EB4 };
+    
+    public static readonly ItemSpec Instrument = new[] { Drum, Tambourine, Harp, Lyre, Lute };
 
     // Armor
     public static readonly ItemSpec BoneHelmet = 0x1451;

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading;
-using Infusion.LegacyApi.Events;
+﻿using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
+using System;
+using System.Threading;
 
 namespace Infusion.LegacyApi
 {
@@ -31,8 +31,10 @@ namespace Infusion.LegacyApi
 
             IClientPacketSubject clientPacketSubject = client;
             clientPacketSubject.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
+            clientPacketSubject.RegisterOutputFilter(FilterSentClientPackets);
 
             server.RegisterFilter(FilterServerPackets);
+            
             server.Subscribe(PacketDefinitions.CharacterLocaleAndBody, HandleCharLocaleAndBodyPacket);
             server.Subscribe(PacketDefinitions.DrawGamePlayer, HandleDrawGamePlayerPacket);
             server.Subscribe(PacketDefinitions.CharMoveRejection, HandleCharMoveRejectionPacket);
@@ -46,6 +48,19 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
 
             clientPacketSubject.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
+        }
+
+        private Skill? lastSkill;
+
+        private Packet? FilterSentClientPackets(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.RequestSkills.Id)
+            {
+                var packet = PacketDefinitionRegistry.Materialize<SkillRequest>(rawPacket);
+                lastSkill = packet.Skill;
+            }
+
+            return rawPacket;
         }
 
         private void HandleUpdatePlayerPacket(UpdatePlayerPacket packet)
@@ -102,18 +117,24 @@ namespace Infusion.LegacyApi
         {
             if (packet.Values.Length == 1)
             {
-                if (player.Skills.TryGetValue(packet.Values[0].Skill, out var currentSkillValue))
+                var skill = packet.Values[0].Skill != Skill.None ? packet.Values[0].Skill : lastSkill ?? Skill.None;
+                if (skill == Skill.None)
+                {
+                    throw new NotImplementedException("Server sent 3a packet with skill 0 and no skill was requested from client.");
+                }
+
+                if (player.Skills.TryGetValue(skill, out var currentSkillValue))
                 {
                     if (currentSkillValue.Value != packet.Values[0].Value)
                     {
-                        eventJournalSource.Publish(new SkillChangedEvent(packet.Values[0].Skill, currentSkillValue.Value, packet.Values[0].Value));
+                        eventJournalSource.Publish(new SkillChangedEvent(skill, currentSkillValue.Value, packet.Values[0].Value));
                     }
 
                     if (currentSkillValue.Value < packet.Values[0].Value)
                     {
                         var delta = packet.Values[0].Percentage - currentSkillValue.Percentage;
                         logger.Info(
-                            $"Skill {packet.Values[0].Skill} increased by {delta:F1} %, currently it is {packet.Values[0].Percentage:F1} %");
+                            $"Skill {skill} increased by {delta:F1} %, currently it is {packet.Values[0].Percentage:F1} %");
                     }
                 }
             }
@@ -313,12 +334,12 @@ namespace Infusion.LegacyApi
 
             eventJournalSource.Publish(new PlayerMoveAcceptedEvent());
 
-            return discardCurrentPacket ? (Packet?) null : rawPacket;
+            return discardCurrentPacket ? (Packet?)null : rawPacket;
         }
 
         private void HandleMoveRequest(MoveRequest packet)
         {
-            player.CurrentSequenceKey = (byte) (packet.SequenceKey + 1);
+            player.CurrentSequenceKey = (byte)(packet.SequenceKey + 1);
             player.WalkRequestQueue.Enqueue(new WalkRequest(packet.SequenceKey,
                 packet.Direction, packet.MovementType, false));
 

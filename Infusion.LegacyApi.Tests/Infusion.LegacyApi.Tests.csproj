@@ -72,6 +72,7 @@
     <Compile Include="Packets\SendGumpMenuDialogPackets.cs" />
     <Compile Include="Packets\SpeechPackets.cs" />
     <Compile Include="Packets\TargetCursorPackets.cs" />
+    <Compile Include="SkillTests.cs" />
     <Compile Include="SpeechJournalAwaiterTests.cs" />
     <Compile Include="SpeechJournalTests.cs" />
     <Compile Include="ItemCollectionTests.cs" />

@@ -18,6 +18,11 @@ namespace Infusion
             packetHandler.RegisterFilter(filter);
         }
 
+        public void RegisterOutputFilter(Func<Packet, Packet?> filter)
+        {
+            packetHandler.RegisterOutputFilter(filter);
+        }
+
         public void Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
             where TPacket : MaterializedPacket
         {
@@ -29,6 +34,8 @@ namespace Infusion
         {
             packetHandler.Unsubscribe(definition, observer);
         }
+
+        public Packet? FilterOutput(Packet rawPacket) => packetHandler.FilterOutput(rawPacket);
 
         public Packet? HandlePacket(Packet rawPacket)
         {

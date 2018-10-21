@@ -14,8 +14,18 @@ namespace Infusion.LegacyApi
         {
             ServerPacketHandler = new ServerPacketHandler();
             ClientPacketHandler = new ClientPacketHandler();
-            Server = new UltimaServer(ServerPacketHandler, packet => { packetsSentToServer.Add(packet); });
-            Client = new UltimaClient(ClientPacketHandler, packet => { packetsSentToClient.Add(packet); });
+            Server = new UltimaServer(ServerPacketHandler, packet =>
+            {
+                var filteredPacket = ClientPacketHandler.FilterOutput(packet);
+                if (filteredPacket.HasValue)
+                    packetsSentToServer.Add(filteredPacket.Value);
+            });
+            Client = new UltimaClient(ClientPacketHandler, packet =>
+            {
+                var filteredPacket = ServerPacketHandler.FilterOutput(packet);
+                if (filteredPacket.HasValue)
+                    packetsSentToClient.Add(filteredPacket.Value);
+            });
 
             var logger = new NullLogger();
             Api = new Legacy(new Configuration(), new CommandHandler(logger), Server, Client, logger);
@@ -25,7 +35,9 @@ namespace Infusion.LegacyApi
         public IEnumerable<Packet> PacketsSentToServer => packetsSentToServer;
 
         public Packet? PacketReceivedFromServer(Packet packet) => ServerPacketHandler.HandlePacket(packet);
+        public Packet? PacketReceivedFromServer(byte[] payload) => ServerPacketHandler.HandlePacket(new Packet(payload[0], payload));
         public Packet? PacketReceivedFromClient(Packet packet) => ClientPacketHandler.HandlePacket(packet);
+        public Packet? PacketReceivedFromClient(byte[] payload) => ClientPacketHandler.HandlePacket(new Packet(payload[0], payload));
 
         public Legacy Api { get; }
 

@@ -401,12 +401,16 @@ namespace Infusion.Proxy
             if (serverConnection == null)
                 return;
 
-            lock (serverStreamLock)
+            var filteredPacket = clientPacketHandler.FilterOutput(rawPacket);
+            if (filteredPacket.HasValue)
             {
-                using (var memoryStream = new MemoryStream(1024))
+                lock (serverStreamLock)
                 {
-                    serverConnection.Send(rawPacket, memoryStream);
-                    ServerStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                    using (var memoryStream = new MemoryStream(1024))
+                    {
+                        serverConnection.Send(filteredPacket.Value, memoryStream);
+                        ServerStream.Write(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                    }
                 }
             }
         }

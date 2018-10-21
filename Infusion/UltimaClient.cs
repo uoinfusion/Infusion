@@ -22,10 +22,10 @@ namespace Infusion
             packetSender(rawPacket);
         }
 
-        void IClientPacketSubject.RegisterFilter(Func<Packet, Packet?> filter)
-        {
-            packetSubject.RegisterFilter(filter);
-        }
+        void IClientPacketSubject.RegisterFilter(Func<Packet, Packet?> filter) => packetSubject.RegisterFilter(filter);
+
+        public void RegisterOutputFilter(Func<Packet, Packet?> filter) => packetSubject.RegisterOutputFilter(filter);
+
 
         void IClientPacketSubject.Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
         {

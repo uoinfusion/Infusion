@@ -18,35 +18,33 @@ namespace Infusion.Packets.Both
 
             var values = new List<SkillValue>();
 
-            ushort skill;
+            ushort skillNumber;
             ushort value;
             ushort unmodifiedValue;
 
             switch (type)
             {
                 case 0x00:
-                    skill = reader.ReadUShort();
+                    skillNumber = reader.ReadUShort();
 
-                    while (skill != 0)
+                    while (skillNumber != 0)
                     {
                         value = reader.ReadUShort();
                         unmodifiedValue = reader.ReadUShort();
                         reader.Skip(1); // skill lock
 
-                        values.Add(new SkillValue((Skill)skill, value, unmodifiedValue));
+                        values.Add(new SkillValue((Skill)skillNumber, value, unmodifiedValue));
 
-                        skill = reader.ReadUShort();
+                        skillNumber = reader.ReadUShort();
                     }
                     break;
                 case 0xFF:
-                    skill = reader.ReadUShort();
-                    if (skill == 0)
-                        throw new NotImplementedException($"Unexpected skill = 0 for single skill update.");
-
+                    skillNumber = reader.ReadUShort();
+                    var skill = skillNumber != 0 ? (Skill)(skillNumber + 1) : Skill.None;
                     value = reader.ReadUShort();
                     unmodifiedValue = reader.ReadUShort();
                     reader.Skip(1); // skill lock
-                    values.Add(new SkillValue((Skill)(skill + 1), value, unmodifiedValue));
+                    values.Add(new SkillValue(skill, value, unmodifiedValue));
                     break;
                 default:
                     throw new NotImplementedException($"Unknown type {type} of SendSkills packet.");

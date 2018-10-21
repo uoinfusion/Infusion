@@ -128,6 +128,42 @@ public static class Items
     public static bool DropFromBackPack(ItemSpec itemSpec, bool all = false)
         => DropFromBackPack(itemSpec, UO.Me.Location, all);    
 
+    public static bool DropFromBackPack(ItemSpec itemSpec, int amount)
+        => DropFromBackPack(itemSpec, UO.Me.Location, amount);
+
+    public static bool DropFromBackPack(ItemSpec itemSpec, Location3D location, int amount)
+    {
+        var potentialItems = UO.Items.Matching(itemSpec).InBackPack().ToArray();
+        
+        int i = 0;
+        int remainingAmount = amount;
+        
+        while (i < potentialItems.Length && remainingAmount > 0)
+        {
+            var item = potentialItems[i];
+            if (item.Amount > remainingAmount)
+            {
+                if (Drop(item, location, remainingAmount))
+                    remainingAmount = 0;
+            }
+            else
+            {
+                if (Drop(item, location, item.Amount))
+                    remainingAmount -= item.Amount;
+            }
+            
+            i++;
+        }
+
+        if (remainingAmount > 0)
+        {
+            UO.ClientPrint($"Cannot find enough {Specs.TranslateToName(itemSpec)} in your backpack (remaining amount {remainingAmount}).");
+            return false;
+        }
+        
+        return true;
+    }
+
     public static bool DropFromBackPack(ItemSpec itemSpec, Location3D location, bool all = false)
     {
         var potentialItems = UO.Items.Matching(itemSpec).InBackPack();
@@ -143,7 +179,7 @@ public static class Items
             foreach (var item in potentialItems)
             {
                 UO.Trace.Log($"Dropping {Specs.TranslateToName(item)} ({item.Id})");
-                if (!Drop(item, location))
+                if (!Drop(item, location, item.Amount))
                     return false;
             }
             
@@ -151,18 +187,19 @@ public static class Items
         }
         else
         {
-            return Drop(potentialItems.First(), location);
+            var first = potentialItems.First();
+            return Drop(first, location, first.Amount);
         }
     }
 
     public static bool Drop(Item item)
-        => Drop(item, UO.Me.Location);
+        => Drop(item, UO.Me.Location, item.Amount);
     
-    public static bool Drop(Item item, Location3D location)
+    public static bool Drop(Item item, Location3D location, int amount)
     {
         if (item != null)
         {
-            UO.DragItem(item);
+            UO.DragItem(item, amount);
             var result = UO.WaitForItemDragged(item.Id);
             if (result != DragResult.Success)
             {

@@ -73,7 +73,7 @@ public class Countdown : IDisposable
                 $"{Timeout.TotalSeconds:F0}" :
                 $"{this.Name}: {Timeout.TotalSeconds:F0}";
             UO.ClientPrint(text, this.Name, TargetObjectId, TargetObjectType,
-                SpeechType.Speech, this.Color, false);
+                SpeechType.Speech, this.Color);
             lastNotificationTime = timerStarted;
         }
     }
@@ -94,7 +94,7 @@ public class Countdown : IDisposable
         if (timeLeft < countdownPrecission)
         {
             UO.ClientPrint($"{this.Name} !!!", this.Name, targetObject.Id, targetObject.Type,
-                SpeechType.Speech, this.Color, false);
+                SpeechType.Speech, this.Color);
             this.Dispose();
             return;
         }

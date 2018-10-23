@@ -1,5 +1,12 @@
+#r "System.Drawing"
+#r "Infusion.Scripts.UOErebor.Extensions.dll"
 using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Threading;
+using System.Text;
 using System.Runtime.InteropServices;
+using Infusion.Scripts.UOErebor.Extensions.Uoam;
 
 public static class Uoam
 {
@@ -17,6 +24,22 @@ public static class Uoam
             int lParam = x + y * 0x10000;
             SendMessage(hwnd, WM_SETMARKER, 0, lParam);
         }
+    }
+    
+    public static void Enable()
+    {
+        Client.Start();
+        Client.OnMessage = OnMessage;
+    }
+
+    public static void Disable()
+    {
+        Client.Stop();
+    }
+
+    private static void OnMessage(string message, ObjectId speaker, Color color)
+    {
+        UO.ClientPrint(message, "UOAM", 0, 0, SpeechType.AllianceChat, color); 
     }
 
     [DllImport("user32")]

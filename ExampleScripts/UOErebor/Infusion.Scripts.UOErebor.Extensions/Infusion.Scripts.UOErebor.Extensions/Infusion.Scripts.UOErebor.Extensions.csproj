@@ -76,6 +76,8 @@
       <DependentUpon>StatusesWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="StatusBars\WindowDock.cs" />
+    <Compile Include="Uoam\Client.cs" />
+    <Compile Include="Uoam\Native.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

@@ -147,5 +147,22 @@ namespace Infusion.Desktop.Launcher
         {
             launcherViewModel.SelectedProfile.LauncherOptions.Password = passwordBox.Password;
         }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            launcherViewModel.ShowPassword = true;
+            launcherViewModel.SelectedProfile.LauncherOptions.Password = passwordBox.Password;
+            passwordTextBox.Text = passwordBox.Password;
+            passwordBox.Visibility = Visibility.Collapsed;
+            passwordTextBox.Visibility = Visibility.Visible;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            launcherViewModel.ShowPassword = false;
+            passwordTextBox.Text = string.Empty;
+            passwordBox.Visibility = Visibility.Visible;
+            passwordTextBox.Visibility = Visibility.Collapsed;
+        }
     }
 }

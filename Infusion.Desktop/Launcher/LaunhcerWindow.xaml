@@ -72,12 +72,11 @@
                 <TextBlock Grid.Column="0" Grid.Row="4">User name:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding Path=SelectedProfile.LauncherOptions.UserName}" />
                 <TextBlock Grid.Column="0" Grid.Row="5">Password:</TextBlock>
-                <PasswordBox Grid.Column="1" Grid.Row="5" Margin="0 0 0 5" x:Name="passwordBox" PasswordChanged="PasswordChanged"
-                             Visibility="{Binding Path=HidePassword,Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding Path=SelectedProfile.LauncherOptions.Password}"
-                         Visibility="{Binding Path=ShowPassword,Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <PasswordBox x:Name="passwordBox" Grid.Column="1" Grid.Row="5" Margin="0 0 0 5" PasswordChanged="PasswordChanged"
+                             Visibility="Visible" />
+                <TextBox x:Name="passwordTextBox" Grid.Column="1" Grid.Row="5" Visibility="Collapsed" IsReadOnly="True" />
                 <TextBlock Grid.Column="0" Grid.Row="6">Show password:</TextBlock>
-                <CheckBox Grid.Column="1" Grid.Row="6" Margin="0 0 0 5" IsChecked="{Binding Path=ShowPassword}" />
+                <CheckBox Grid.Column="1" Grid.Row="6" Margin="0 0 0 5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
 
                 <TextBlock Grid.Column="0" Grid.Row="7">Initial Script:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Path=SelectedProfile.LauncherOptions.InitialScriptFileName}" />

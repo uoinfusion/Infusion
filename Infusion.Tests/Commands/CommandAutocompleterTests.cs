@@ -130,5 +130,17 @@ namespace Infusion.Tests.Commands
             result.IsAutocompleted.Should().BeFalse();
             result.AutocompletedCommandLine.Should().BeNull();
         }
+
+        [TestMethod]
+        public void Returns_no_autocompleted_command_for_one_space()
+        {
+            var completer = new CommandAutocompleter(() => new[]
+                {"asdf1",});
+
+            var result = completer.Autocomplete(" ");
+
+            result.IsAutocompleted.Should().BeFalse();
+            result.AutocompletedCommandLine.Should().BeNull();
+        }
     }
 }

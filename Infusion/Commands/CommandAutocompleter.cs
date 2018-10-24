@@ -22,7 +22,7 @@ namespace Infusion.Commands
 
         public CommandAutocompletion Autocomplete(string commandLine)
         {
-            if (string.IsNullOrEmpty(commandLine))
+            if (string.IsNullOrWhiteSpace(commandLine))
                 return CommandAutocompletion.Empty;
 
             var syntax = CommandParser.Parse(commandLine);

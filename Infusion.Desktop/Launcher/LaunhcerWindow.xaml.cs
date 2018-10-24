@@ -46,6 +46,8 @@ namespace Infusion.Desktop.Launcher
 
         private async void OnLaunchButtonClicked(object sender, RoutedEventArgs e)
         {
+            (sender as System.Windows.Controls.Button).Focus();
+
             ProfileRepositiory.SaveProfiles(launcherViewModel.Profiles);
             ProfileRepositiory.SelectedProfile = launcherViewModel.SelectedProfile;
             ProfileRepositiory.SaveSelectedProfileId(launcherViewModel.SelectedProfile.Id);

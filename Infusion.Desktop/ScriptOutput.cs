@@ -46,5 +46,10 @@ namespace Infusion.Desktop
         {
             Add(text, Brushes.LightSkyBlue);
         }
+
+        public void Debug(string text)
+        {
+            Add(text, Brushes.DimGray);
+        }
     }
 }

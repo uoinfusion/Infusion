@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
@@ -11,12 +12,30 @@ using Infusion.LegacyApi;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using Microsoft.CodeAnalysis.Text;
 using RoslynPad.UI;
 
 namespace Infusion.Desktop
 {
     public class CSharpScriptEngine : IScriptEngine
     {
+        private class Resolver : SourceFileResolver
+        {
+            private readonly IScriptOutput output;
+
+            public Resolver(ScriptSourceResolver resolver, IScriptOutput output) : base(resolver.SearchPaths, resolver.BaseDirectory)
+            {
+                this.output = output;
+            }
+
+            public override string ResolveReference(string path, string baseFilePath)
+            {
+                output.Debug($"Referencing {path} from {baseFilePath}");
+
+                return base.ResolveReference(path, baseFilePath);
+            }
+        }
+
         private ScriptState<object> scriptState;
 
         private readonly IScriptOutput scriptOutput;
@@ -83,9 +102,9 @@ namespace Infusion.Desktop
                     .WithEmitDebugInformation(true)
                     .WithFilePath(filePath)
                     .WithFileEncoding(System.Text.Encoding.Default)
-                    .WithSourceResolver(ScriptSourceResolver.Default
+                    .WithSourceResolver(new Resolver(ScriptSourceResolver.Default
                         .WithSearchPaths(scriptDirectory)
-                        .WithBaseDirectory(scriptDirectory))
+                        .WithBaseDirectory(scriptDirectory), scriptOutput))
                     .WithMetadataResolver(ScriptMetadataResolver.Default
                         .WithSearchPaths(scriptDirectory, binDirectory)
                         .WithBaseDirectory(scriptDirectory));
@@ -127,6 +146,13 @@ namespace Infusion.Desktop
                         }
 
                         scriptOutput.Info($"OK (in {watch.ElapsedMilliseconds} ms)");
+                    }
+                    catch (CompilationErrorException compilationErrorEx)
+                    {
+                        foreach (var diagnostic in compilationErrorEx.Diagnostics)
+                        {
+                            scriptOutput.Error(diagnostic.ToString());
+                        }
                     }
                     catch (AggregateException ex)
                     {

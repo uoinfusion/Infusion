@@ -6,5 +6,6 @@ namespace Infusion.Desktop
         void Error(string text);
         void Result(string text);
         void Info(string text);
+        void Debug(string text);
     }
 }

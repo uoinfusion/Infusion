@@ -80,6 +80,9 @@ namespace Infusion.Desktop
             if (!string.IsNullOrEmpty(scriptDirectory))
             {
                 scriptOptions = scriptOptions
+                    .WithEmitDebugInformation(true)
+                    .WithFilePath(filePath)
+                    .WithFileEncoding(System.Text.Encoding.Default)
                     .WithSourceResolver(ScriptSourceResolver.Default
                         .WithSearchPaths(scriptDirectory)
                         .WithBaseDirectory(scriptDirectory))

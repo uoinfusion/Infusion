@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Threading;
-using Windows.UI.Notifications;
 using Infusion.Desktop.Profiles;
 using Infusion.Logging;
 using Infusion.Proxy;
@@ -86,22 +85,22 @@ namespace Infusion.Desktop
         private void ToastNotificationCore(string message)
         {
 
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            //var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
-            var stringElements = toastXml.GetElementsByTagName("text");
-            stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
-            stringElements[1].AppendChild(toastXml.CreateTextNode(message));
+            //var stringElements = toastXml.GetElementsByTagName("text");
+            //stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
+            //stringElements[1].AppendChild(toastXml.CreateTextNode(message));
 
-            var audioElement = toastXml.CreateElement("audio");
-            audioElement.SetAttribute("silent", "true");
-            toastXml.SelectSingleNode("/toast")?.AppendChild(audioElement);
+            //var audioElement = toastXml.CreateElement("audio");
+            //audioElement.SetAttribute("silent", "true");
+            //toastXml.SelectSingleNode("/toast")?.AppendChild(audioElement);
 
-            var toast = new ToastNotification(toastXml);
-            toast.Group = "Infusion";
-            toast.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(10);
+            //var toast = new ToastNotification(toastXml);
+            //toast.Group = "Infusion";
+            //toast.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(10);
 
-            var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
-            notifier.Show(toast);
+            //var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
+            //notifier.Show(toast);
         }
 
         private void ToastAlertNotification(string message)
@@ -119,18 +118,18 @@ namespace Infusion.Desktop
 
         private void ToastAlertNotificationCore(string message)
         {
-            var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+            //var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
 
-            var stringElements = toastXml.GetElementsByTagName("text");
-            stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
-            stringElements[1].AppendChild(toastXml.CreateTextNode(message));
+            //var stringElements = toastXml.GetElementsByTagName("text");
+            //stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
+            //stringElements[1].AppendChild(toastXml.CreateTextNode(message));
 
-            var toast = new ToastNotification(toastXml);
-            toast.Group = "Infusion";
-            toast.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(10);
+            //var toast = new ToastNotification(toastXml);
+            //toast.Group = "Infusion";
+            //toast.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(10);
 
-            var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
-            notifier.Show(toast);
+            //var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
+            //notifier.Show(toast);
         }
     }
 }

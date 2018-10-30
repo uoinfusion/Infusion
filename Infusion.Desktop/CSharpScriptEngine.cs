@@ -17,7 +17,7 @@ namespace Infusion.Desktop
 {
     public class CSharpScriptEngine : IScriptEngine
     {
-        private static ScriptState<object> scriptState;
+        private ScriptState<object> scriptState;
 
         private readonly IScriptOutput scriptOutput;
 
@@ -53,14 +53,14 @@ namespace Infusion.Desktop
             await Execute(scriptText, scriptPath, true, cancellationTokenSource);
         }
 
-        private static int submissionNumber = 0;
+        private int submissionNumber = 0;
 
         public void Reset()
         {
             scriptState = null;
         }
 
-        public Task<object> Execute(string code, string filePath, bool fullFile = false, CancellationTokenSource cancellationTokenSource = null)
+        public Task<object> Execute(string code, string filePath, bool wholeFile, CancellationTokenSource cancellationTokenSource = null)
         {
             string binDirectory = Path.GetDirectoryName(GetType().Assembly.Location);
 
@@ -103,7 +103,7 @@ namespace Infusion.Desktop
 
                 var command = new Command(commandName, () =>
                 {
-                    if (fullFile && fileExists)
+                    if (wholeFile && fileExists)
                         scriptOutput.Info($"Executing file {filePath}.");
                     else
                         scriptOutput.Echo(code);

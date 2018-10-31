@@ -10,6 +10,7 @@ using Infusion.Commands;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.LegacyApi;
+using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
@@ -50,15 +51,15 @@ namespace Infusion.Proxy
         private static ushort proxyLocalPort;
         private static CommandHandler commandHandler;
 
-        internal static ILogger Console { get; set; } = new ConsoleLogger();
-
+        internal static IConsole Console { get; set; } = new TextConsole();
+        
         public static NetworkStream ClientStream { get; set; }
 
         public static NetworkStream ServerStream { get; set; }
 
         public static void Print(string message)
         {
-            Console.Info(message);
+            Console.WriteLine(ConsoleLineType.Information, message);
         }
 
         public static void Main()
@@ -67,7 +68,7 @@ namespace Infusion.Proxy
 
         private static void HelpCommand(string parameters)
         {
-            Console.Info(commandHandler.Help(parameters));
+            Console.WriteLine(ConsoleLineType.Information, commandHandler.Help(parameters));
         }
 
         private static void ListRunningCommands()
@@ -77,7 +78,7 @@ namespace Infusion.Proxy
                 if (command.Name == ListCommandName)
                     continue;
 
-                Console.Info(command.ExecutionMode == CommandExecutionMode.Background
+                Console.WriteLine(ConsoleLineType.Information, command.ExecutionMode == CommandExecutionMode.Background
                     ? $"{command.Name} (background)"
                     : command.Name);
             }
@@ -110,73 +111,9 @@ namespace Infusion.Proxy
         public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
         {
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
-            serverPacketHandler.Subscribe(PacketDefinitions.SendSpeech, HandleSendSpeechPacket);
-            serverPacketHandler.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
-            serverPacketHandler.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
-            serverPacketHandler.Subscribe(PacketDefinitions.ClilocMessageAffix, HandleClilocMessageAffix);
 
             serverEndpoint = serverAddress;
             return Main(localProxyPort, packetRingBufferLogger);
-        }
-
-        private static void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
-        {
-            var message = new SpeechMessage
-            {
-                Type = SpeechType.Speech,
-                Message = clilocDictionary.Value.GetString(packet.MessageId.Value) + packet.Affix,
-                Name = packet.Name,
-                SpeakerId = packet.SpeakerId
-            };
-
-            AddConsoleMessage(message);
-        }
-
-        private static void HandleClilocMessage(ClilocMessagePacket packet)
-        {
-            var message = new SpeechMessage
-            {
-                Type = SpeechType.Speech,
-                Message = clilocDictionary.Value.GetString(packet.MessageId.Value),
-                Name = packet.Name,
-                SpeakerId = packet.SpeakerId
-            };
-
-            AddConsoleMessage(message);
-        }
-
-        private static void AddConsoleMessage(SpeechMessage message)
-        {
-            if (speechFilter.IsPassing(message.Text))
-                Console.Important(message.Text);
-            else
-                Console.Info(message.Text);
-        }
-
-        private static void HandleSendSpeechPacket(SendSpeechPacket packet)
-        {
-            var message = new SpeechMessage
-            {
-                Type = packet.Type,
-                Message = packet.Message,
-                Name = packet.Name,
-                SpeakerId = packet.Id
-            };
-
-            AddConsoleMessage(message);
-        }
-
-        private static void HandleSpeechMessagePacket(SpeechMessagePacket packet)
-        {
-            var message = new SpeechMessage
-            {
-                Type = packet.Type,
-                Message = packet.Message,
-                Name = packet.Name,
-                SpeakerId = packet.Id
-            };
-
-            AddConsoleMessage(message);
         }
 
         private static Task Main(ushort port, ILogger logger)

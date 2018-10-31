@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 
 namespace Infusion.LegacyApi
@@ -8,10 +9,10 @@ namespace Infusion.LegacyApi
     {
         private readonly ScriptTraceLogger logger;
 
-        internal GlobalTrace(ILogger baseLogger)
+        internal GlobalTrace(IConsole baseConsole)
         {
-            logger = new ScriptTraceLogger(baseLogger);
-            JournalTrace = new DiagnosticTrace(baseLogger);
+            logger = new ScriptTraceLogger(baseConsole);
+            JournalTrace = new DiagnosticTrace(baseConsole);
         }
 
         public ScriptTrace Create() => new ScriptTrace(logger);

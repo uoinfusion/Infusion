@@ -38,6 +38,11 @@
             return new Color(id);
         }
 
+        public static implicit operator ushort(Color color)
+        {
+            return color.Id;
+        }
+
         public override string ToString() => $"0x{Id:X4}";
 
         public ushort Id { get; }

@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Infusion.Desktop.Launcher"
-        xmlns:Desktop="clr-namespace:Infusion.Desktop"
+        xmlns:console="clr-namespace:Infusion.Desktop.Console"
         mc:Ignorable="d"
         Title="TestOuputWindow" Height="300" Width="300">
     <Grid>
-        <Desktop:ConsoleControl x:Name="_console" />
+        <console:ConsoleControl x:Name="_console" />
     </Grid>
 </Window>

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.LegacyApi.Filters;
 using Infusion.Logging;
@@ -21,10 +22,10 @@ namespace Infusion.LegacyApi
         private readonly JournalObservers journalObservers;
         private readonly EventJournal legacyEventJournal;
 
-        private readonly SpeechJournalSource journalSource;
+        internal SpeechJournalSource JournalSource { get; }
         private readonly LightObserver lightObserver;
 
-        private readonly ILogger logger;
+        private readonly IConsole console;
         private readonly PlayerObservers playerObservers;
         private readonly QuestArrowObserver questArrowObserver;
         private readonly SoundObserver soundObserver;
@@ -42,9 +43,11 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
         internal Legacy(Configuration configuration, CommandHandler commandHandler,
-            UltimaServer ultimaServer, UltimaClient ultimaClient, ILogger logger)
+            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console)
         {
-            Trace = new GlobalTrace(logger);
+            this.console = console;
+
+            Trace = new GlobalTrace(console);
 
             cancellation = new Cancellation(() => CancellationToken);
             eventJournalSource = new EventJournalSource();
@@ -57,11 +60,11 @@ namespace Infusion.LegacyApi
             Corpses = new CorpseCollection(GameObjects);
             itemsObserver = new ItemsObservers(GameObjects, ultimaServer, ultimaClient, this, eventJournalSource);
             Me.LocationChanged += itemsObserver.OnPlayerPositionChanged;
-            journalSource = new SpeechJournalSource();
-            journalSource.NewMessageReceived +=
+            JournalSource = new SpeechJournalSource();
+            JournalSource.NewMessageReceived +=
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
-            Journal = new SpeechJournal(journalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
-            journalObservers = new JournalObservers(journalSource, ultimaServer);
+            Journal = new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
+            journalObservers = new JournalObservers(JournalSource, ultimaServer, console);
             targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
@@ -70,14 +73,13 @@ namespace Infusion.LegacyApi
             soundObserver = new SoundObserver(ultimaServer, eventJournalSource);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
             shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient);
-            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, logger);
+            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, console);
             var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);
             dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource);
 
-            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, logger, this, GameObjects, eventJournalSource);
+            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, console, this, GameObjects, eventJournalSource);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
 
-            this.logger = logger;
             Server = ultimaServer;
             Client = ultimaClient;
 
@@ -151,7 +153,7 @@ namespace Infusion.LegacyApi
 
         public void Alert(string message)
         {
-            logger.Critical(message);
+            console.Critical(message);
         }
 
         private void RegisterDefaultCommands()
@@ -174,14 +176,14 @@ namespace Infusion.LegacyApi
             CommandHandler.RegisterCommand(new Command("filter-weather", ClientFilters.Weather.Toggle));
         }
 
-        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(journalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
+        public SpeechJournal CreateSpeechJournal() => new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
         public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, cancellation, () => DefaultTimeout);
 
         public void Say(string message)
         {
             NotifyAction();
 
-            this.logger.Debug(message);
+            this.console.Debug(message);
             Server.Say(message);
         }
 
@@ -192,7 +194,7 @@ namespace Infusion.LegacyApi
 
         internal void NotifyAction(DateTime actionTime)
         {
-            journalSource.NotifyAction();
+            JournalSource.NotifyAction();
             eventJournalSource.NotifyAction();
             targeting.NotifyLastAction(actionTime);
         }
@@ -559,7 +561,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            logger.Info(message);
+            console.Info(message);
         }
 
         public void TriggerGump(GumpControlId triggerId)
@@ -626,7 +628,7 @@ namespace Infusion.LegacyApi
         {
             Client.SendSpeech(message, name, itemId, itemModel, type, color);
             if (log)
-                Log(message);
+                console.WriteSpeech(name, message, itemId, color);
         }
 
         public void ClientPrint(string message, bool log = true)

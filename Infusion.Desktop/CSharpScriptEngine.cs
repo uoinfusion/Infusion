@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Infusion.Commands;
 using Infusion.LegacyApi;
+using Infusion.LegacyApi.Console;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
@@ -21,16 +22,16 @@ namespace Infusion.Desktop
     {
         private class Resolver : SourceFileResolver
         {
-            private readonly IScriptOutput output;
+            private readonly IConsole output;
 
-            public Resolver(ScriptSourceResolver resolver, IScriptOutput output) : base(resolver.SearchPaths, resolver.BaseDirectory)
+            public Resolver(ScriptSourceResolver resolver, IConsole output) : base(resolver.SearchPaths, resolver.BaseDirectory)
             {
                 this.output = output;
             }
 
             public override string ResolveReference(string path, string baseFilePath)
             {
-                output.Debug($"Referencing {path} from {baseFilePath}");
+                output.WriteLine(ConsoleLineType.Debug, $"Referencing {path} from {baseFilePath}");
 
                 return base.ResolveReference(path, baseFilePath);
             }
@@ -38,7 +39,7 @@ namespace Infusion.Desktop
 
         private ScriptState<object> scriptState;
 
-        private readonly IScriptOutput scriptOutput;
+        private readonly IConsole scriptOutput;
 
         private ScriptOptions scriptOptions;
         private string scriptRootPath;
@@ -54,7 +55,7 @@ namespace Infusion.Desktop
             }
         }
 
-        public CSharpScriptEngine(IScriptOutput scriptOutput)
+        public CSharpScriptEngine(IConsole scriptOutput)
         {
             this.scriptOutput = scriptOutput;
             scriptOptions = ScriptOptions.Default
@@ -123,9 +124,9 @@ namespace Infusion.Desktop
                 var command = new Command(commandName, () =>
                 {
                     if (wholeFile && fileExists)
-                        scriptOutput.Info($"Executing file {filePath}.");
+                        scriptOutput.WriteLine(ConsoleLineType.Information, $"Executing file {filePath}.");
                     else
-                        scriptOutput.Echo(code);
+                        scriptOutput.WriteLine(ConsoleLineType.ScriptEcho, code);
 
                     try
                     {
@@ -140,29 +141,29 @@ namespace Infusion.Desktop
                         var resultText = scriptState?.ReturnValue?.ToString();
                         if (!string.IsNullOrEmpty(resultText))
                         {
-                            scriptOutput.Result(resultText);
+                            scriptOutput.WriteLine(ConsoleLineType.ScriptResult, resultText);
                             result = scriptState.ReturnValue;
                             return;
                         }
 
-                        scriptOutput.Info($"OK (in {watch.ElapsedMilliseconds} ms)");
+                        scriptOutput.WriteLine(ConsoleLineType.Information, $"OK (in {watch.ElapsedMilliseconds} ms)");
                     }
                     catch (CompilationErrorException compilationErrorEx)
                     {
                         foreach (var diagnostic in compilationErrorEx.Diagnostics)
                         {
-                            scriptOutput.Error(diagnostic.ToString());
+                            scriptOutput.WriteLine(ConsoleLineType.Error, diagnostic.ToString());
                         }
                     }
                     catch (AggregateException ex)
                     {
-                        scriptOutput.Error(ex.InnerExceptions
+                        scriptOutput.WriteLine(ConsoleLineType.Error, ex.InnerExceptions
                             .Select(inner => inner.ToString())
                             .Aggregate((l, r) => l + Environment.NewLine + r));
                     }
                     catch (Exception ex)
                     {
-                        scriptOutput.Error(ex.ToString());
+                        scriptOutput.WriteLine(ConsoleLineType.Error, ex.ToString());
                     }
 
                     result = null;

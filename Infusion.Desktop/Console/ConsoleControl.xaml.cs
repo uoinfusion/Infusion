@@ -8,13 +8,15 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Infusion.Commands;
+using Infusion.Desktop.Console;
 using Infusion.LegacyApi;
+using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Proxy;
 using Infusion.Utilities;
 
-namespace Infusion.Desktop
+namespace Infusion.Desktop.Console
 {
     public partial class ConsoleControl : UserControl, IDisposable
     {
@@ -23,7 +25,8 @@ namespace Infusion.Desktop
 
         private readonly CommandHistory history = new CommandHistory();
         private readonly FlowDocument outputDocument;
-        private readonly FileLogger fileLogger;
+        private readonly FileConsole fileConsole;
+        private readonly InfusionConsole infusionConsole;
 
         private void HandleFileLoggingException(Exception ex)
         {
@@ -47,13 +50,13 @@ namespace Infusion.Desktop
             outputDocument.FontStretch = _inputBlock.FontStretch;
             outputDocument.FontStyle = _inputBlock.FontStyle;
 
+            fileConsole = new FileConsole(Program.Configuration, new CircuitBreaker(HandleFileLoggingException));
+            var wpfConsole = new WpfConsole(consoleContent, Dispatcher, Program.Configuration);
+            infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
 
-            ScriptEngine = new CSharpScriptEngine(new ScriptOutput(Dispatcher, consoleContent));
+            ScriptEngine = new CSharpScriptEngine(infusionConsole);
 
-            var infusionConsoleLogger = new InfusionConsoleLogger(consoleContent, Dispatcher, Program.Configuration);
-
-            fileLogger = new FileLogger(Program.Configuration, new CircuitBreaker(HandleFileLoggingException));
-            Program.Console = new AsyncLogger(new MultiplexLogger(infusionConsoleLogger, fileLogger));
+            Program.Console = infusionConsole;
             var commandHandler = new CommandHandler(Program.Console);
 
             Program.Initialize(commandHandler);
@@ -68,7 +71,7 @@ namespace Infusion.Desktop
 
         public void Dispose()
         {
-
+            fileConsole.Dispose();
         }
 
         public CSharpScriptEngine ScriptEngine { get; }

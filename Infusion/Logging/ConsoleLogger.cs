@@ -2,7 +2,7 @@
 
 namespace Infusion.Logging
 {
-    internal sealed class ConsoleLogger : ILogger, ITimestampedLogger
+    internal sealed class ConsoleLogger : ILogger
     {
         public void WriteLine(DateTime timeStamp, string message)
         {

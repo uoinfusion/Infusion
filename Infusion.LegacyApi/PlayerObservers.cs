@@ -1,4 +1,5 @@
-﻿using Infusion.LegacyApi.Events;
+﻿using Infusion.LegacyApi.Console;
+using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Both;
@@ -14,17 +15,17 @@ namespace Infusion.LegacyApi
         private readonly UltimaClient client;
         private readonly UltimaServer server;
         private readonly Player player;
-        private readonly ILogger logger;
+        private readonly IConsole console;
         private readonly Legacy legacyApi;
         private readonly GameObjectCollection gameObjects;
         private readonly EventJournalSource eventJournalSource;
 
-        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, ILogger logger, Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource)
+        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, IConsole console, Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource)
         {
             this.client = client;
             this.server = server;
             this.player = player;
-            this.logger = logger;
+            this.console = console;
             this.legacyApi = legacyApi;
             this.gameObjects = gameObjects;
             this.eventJournalSource = eventJournalSource;
@@ -133,7 +134,7 @@ namespace Infusion.LegacyApi
                     if (currentSkillValue.Value < packet.Values[0].Value)
                     {
                         var delta = packet.Values[0].Percentage - currentSkillValue.Percentage;
-                        logger.Info(
+                        console.WriteLine(ConsoleLineType.SkillChanged, 
                             $"Skill {skill} increased by {delta:F1} %, currently it is {packet.Values[0].Percentage:F1} %");
                     }
                 }

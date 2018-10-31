@@ -9,7 +9,7 @@ namespace Infusion.LegacyApi
     // ReSharper disable once InconsistentNaming
     public static class UO
     {
-        private static Legacy Current { get; set; }
+        internal static Legacy Current { get; private set; }
 
         public static Configuration Configuration => Current.Configuration;
 
@@ -28,7 +28,7 @@ namespace Infusion.LegacyApi
         public static IUltimaClientWindow ClientWindow => Current.ClientWindow;
 
 
-        public static CancellationToken? CancellationToken
+        internal static CancellationToken? CancellationToken
         {
             get => Current.CancellationToken;
             set => Current.CancellationToken = value;

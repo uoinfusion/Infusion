@@ -131,14 +131,11 @@
     <Compile Include="Layer.cs" />
     <Compile Include="Location2D.cs" />
     <Compile Include="Location3D.cs" />
-    <Compile Include="Logging\AsyncLogger.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPullStream.cs" />
     <Compile Include="Logging\ConsoleDiagnosticPushStream.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Logging\DiagnosticLogger.cs" />
     <Compile Include="Logging\ILogger.cs" />
-    <Compile Include="Logging\ITimestampedLogger.cs" />
-    <Compile Include="Logging\MultiplexLogger.cs" />
     <Compile Include="Logging\NullLogger.cs" />
     <Compile Include="Logging\RingBufferLogger.cs" />
     <Compile Include="MessageId.cs" />

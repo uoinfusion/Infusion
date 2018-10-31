@@ -51,6 +51,10 @@
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedClientPacketsFilters.cs" />
     <Compile Include="Cancellation.cs" />
+    <Compile Include="Console\ConsoleLineType.cs" />
+    <Compile Include="Console\IConsole.cs" />
+    <Compile Include="Console\NullConsole.cs" />
+    <Compile Include="Console\TextConsole.cs" />
     <Compile Include="DiagnosticTrace.cs" />
     <Compile Include="DialogBoxObservers.cs" />
     <Compile Include="Events\CommandRequestedEvent.cs" />

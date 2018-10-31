@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Infusion.Desktop"
+        xmlns:console="clr-namespace:Infusion.Desktop.Console"
         mc:Ignorable="d"
         Icon="pack://application:,,,/infusion.png"
         Title="Infusion" Height="550" Width="685.061"
         Loaded="InfusionWindow_OnLoaded">
-    <local:ConsoleControl x:Name="_console" />
+    <console:ConsoleControl x:Name="_console" />
 </Window>

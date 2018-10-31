@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Infusion.Commands;
+using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Packets;
 
@@ -27,8 +28,8 @@ namespace Infusion.LegacyApi
                     packetsSentToClient.Add(filteredPacket.Value);
             });
 
-            var logger = new NullLogger();
-            Api = new Legacy(new Configuration(), new CommandHandler(logger), Server, Client, logger);
+            var console = new NullConsole();
+            Api = new Legacy(new Configuration(), new CommandHandler(console), Server, Client, console);
         }
 
         public IEnumerable<Packet> PacketsSentToClient => packetsSentToClient;

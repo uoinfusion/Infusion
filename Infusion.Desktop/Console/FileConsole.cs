@@ -1,22 +1,19 @@
+﻿using Infusion.Utilities;
 using System;
 using System.IO;
-using Infusion.Desktop.Profiles;
-using Infusion.Logging;
-using Infusion.Proxy;
-using Infusion.Utilities;
 
-namespace Infusion.Desktop
+namespace Infusion.Desktop.Console
 {
-    internal sealed class FileLogger : ITimestampedLogger, IDisposable
+    internal class FileConsole : IDisposable
     {
         private readonly Configuration configuration;
         private readonly CircuitBreaker loggingBreaker;
-        private object logLock = new object();
+        private readonly object logLock = new object();
         private bool firstWrite = true;
         private FileStream stream;
         private StreamWriter writer;
 
-        public FileLogger(Configuration configuration, CircuitBreaker loggingBreaker)
+        public FileConsole(Configuration configuration, CircuitBreaker loggingBreaker)
         {
             this.configuration = configuration;
             this.loggingBreaker = loggingBreaker;
@@ -40,7 +37,7 @@ namespace Infusion.Desktop
             }
         }
 
-        private void WriteLine(DateTime timeStamp, string message)
+        public void WriteLine(DateTime timeStamp, string message)
         {
             if (!configuration.LogToFileEnabled)
                 return;
@@ -49,11 +46,11 @@ namespace Infusion.Desktop
             {
                 lock (logLock)
                 {
-                    string logsPath = configuration.LogPath;
+                    var logsPath = configuration.LogPath;
 
-                    string fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
+                    var fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
 
-                    bool createdNew = false;
+                    var createdNew = false;
                     if (!File.Exists(fileName))
                     {
                         File.Create(fileName).Dispose();
@@ -89,31 +86,6 @@ namespace Infusion.Desktop
                     writer.Flush();
                 }
             });
-        }
-
-        public void Info(DateTime timeStamp, string message)
-        {
-            WriteLine(timeStamp, message);
-        }
-
-        public void Important(DateTime timeStamp, string message)
-        {
-            WriteLine(timeStamp, message);
-        }
-
-        public void Debug(DateTime timeStamp, string message)
-        {
-            WriteLine(timeStamp, message);
-        }
-
-        public void Critical(DateTime timeStamp, string message)
-        {
-            WriteLine(timeStamp, message);
-        }
-
-        public void Error(DateTime timeStamp, string message)
-        {
-            WriteLine(timeStamp, message);
         }
     }
 }

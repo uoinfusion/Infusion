@@ -254,11 +254,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             });
 
             journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
-            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0)));
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0, (Color)0)));
             task.Wait(100).Should().BeTrue();
             result.Should().Be("x");
 
-            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0)));
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0, (Color)0)));
 
             result = "z";
             task = Task.Run(() =>

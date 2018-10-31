@@ -7,13 +7,14 @@ namespace Infusion.LegacyApi
     {
         private string text;
 
-        public JournalEntry(long id, string name, string message, ObjectId speakerId, ModelId type)
+        public JournalEntry(long id, string name, string message, ObjectId speakerId, ModelId type, Color color)
         {
             Id = id;
             Name = name;
             Message = message;
             SpeakerId = speakerId;
             Type = type;
+            Color = color;
             Created = DateTime.UtcNow;
         }
 
@@ -24,7 +25,7 @@ namespace Infusion.LegacyApi
 
         public ObjectId SpeakerId { get; }
         public ModelId Type { get; }
-
+        public Color Color { get; }
         public DateTime Created { get; }
 
         public string Text

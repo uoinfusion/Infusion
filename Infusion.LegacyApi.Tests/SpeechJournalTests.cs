@@ -17,7 +17,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             journal.Contains("afk").Should().BeTrue();
         }
@@ -28,7 +28,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             journal.Contains("name: this").Should().BeTrue();
         }
@@ -39,7 +39,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             journal.Contains("and now for completely something else").Should().BeFalse();
         }
@@ -50,7 +50,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "same message", new ObjectId(1), 0);
+            source.AddMessage("name", "same message", new ObjectId(1), 0, (Color)0);
 
             journal.Contains(1, "same message").Should().BeTrue();
             journal.Contains(0, "same message").Should().BeFalse();
@@ -63,9 +63,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "before last action", new ObjectId(0), 0);
+            source.AddMessage("name", "before last action", new ObjectId(0), 0, (Color)0);
             source.NotifyAction();
-            source.AddMessage("name", "after last action", new ObjectId(0), 0);
+            source.AddMessage("name", "after last action", new ObjectId(0), 0, (Color)0);
 
             journal.When("after last action", () => executed = true).WaitAny(TimeSpan.FromMilliseconds(100));
 
@@ -80,9 +80,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "before last action", new ObjectId(0), 0);
+            source.AddMessage("name", "before last action", new ObjectId(0), 0, (Color)0);
             source.NotifyAction();
-            source.AddMessage("name", "after last action", new ObjectId(0), 0);
+            source.AddMessage("name", "after last action", new ObjectId(0), 0, (Color)0);
 
             journal.When("before last action", () => executed = true).WhenTimeout(() => timeoutExecuted = true).WaitAny(TimeSpan.FromMilliseconds(10));
 
@@ -115,9 +115,9 @@ namespace Infusion.LegacyApi.Tests
 
             nextOtherThreadStep.WaitOne();
 
-            source.AddMessage("name", "message 1", 0, 0);
+            source.AddMessage("name", "message 1", 0, 0, (Color)0);
             source.NotifyAction();
-            source.AddMessage("name", "message 2", 0, 0);
+            source.AddMessage("name", "message 2", 0, 0, (Color)0);
 
             nextScriptStep.Set();
 
@@ -135,7 +135,7 @@ namespace Infusion.LegacyApi.Tests
             bool firstCheckExecuted = false;
             bool secondCheckExecuted = false;
 
-            source.AddMessage("name", "message1", new ObjectId(0), 0);
+            source.AddMessage("name", "message1", new ObjectId(0), 0, (Color)0);
             journal.When("message1", () => { firstCheckExecuted = true; }).WhenTimeout(() => { }).WaitAny(TimeSpan.FromMilliseconds(1));
             journal.When("message1", () => { secondCheckExecuted = true; }).WhenTimeout(() => { }).WaitAny(TimeSpan.FromMilliseconds(1));
 
@@ -149,13 +149,13 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "first message", new ObjectId(0), 0);
+            source.AddMessage("name", "first message", new ObjectId(0), 0, (Color)0);
 
             using (var enumerator = journal.GetEnumerator())
             {
                 enumerator.MoveNext().Should().BeTrue();
                 enumerator.Current.Message.Should().Be("first message");
-                source.AddMessage("name", "second, concurrently added message", new ObjectId(0), 0);
+                source.AddMessage("name", "second, concurrently added message", new ObjectId(0), 0, (Color)0);
                 enumerator.MoveNext().Should().BeFalse();
             }
         }
@@ -166,9 +166,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "first message", new ObjectId(0), 0);
+            source.AddMessage("name", "first message", new ObjectId(0), 0, (Color)0);
             journal.Delete();
-            source.AddMessage("name", "message after delete", new ObjectId(0), 0);
+            source.AddMessage("name", "message after delete", new ObjectId(0), 0, (Color)0);
 
             journal.Contains("message after delete").Should().BeTrue();
         }
@@ -179,7 +179,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "message before delete", new ObjectId(0), 0);
+            source.AddMessage("name", "message before delete", new ObjectId(0), 0, (Color)0);
             journal.Delete();
 
             journal.Contains("message before delete").Should().BeFalse();
@@ -191,7 +191,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "message before delete", new ObjectId(0), 0);
+            source.AddMessage("name", "message before delete", new ObjectId(0), 0, (Color)0);
             journal.Delete();
 
             bool canSeeMessageBeforeDelete = false;
@@ -206,7 +206,7 @@ namespace Infusion.LegacyApi.Tests
         public void Cannot_see_entries_received_before_journal_instantiation()
         {
             var source = new SpeechJournalSource();
-            source.AddMessage("name", "message before instantiation", new ObjectId(0), 0);
+            source.AddMessage("name", "message before instantiation", new ObjectId(0), 0, (Color)0);
 
             var journal = new SpeechJournal(source, null);
 
@@ -219,7 +219,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "message after instantiation", new ObjectId(0), 0);
+            source.AddMessage("name", "message after instantiation", new ObjectId(0), 0, (Color)0);
 
             journal.Contains("message after instantiation").Should().BeTrue();
         }
@@ -230,7 +230,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "message1", new ObjectId(0), 0);
+            source.AddMessage("name", "message1", new ObjectId(0), 0, (Color)0);
 
             journal.When("message1", () => { }).WaitAny(TimeSpan.FromMilliseconds(1));
 
@@ -243,9 +243,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source);
 
-            source.AddMessage("name", "word5 word6", new ObjectId(2), 0);
-            source.AddMessage("name", "word1 word2", new ObjectId(1), 0);
-            source.AddMessage("name", "word1 word2", new ObjectId(0), 0);
+            source.AddMessage("name", "word5 word6", new ObjectId(2), 0, (Color)0);
+            source.AddMessage("name", "word1 word2", new ObjectId(1), 0, (Color)0);
+            source.AddMessage("name", "word1 word2", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.First("word3", "word2");
 
@@ -258,9 +258,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source);
 
-            source.AddMessage("name", "word5 word6", new ObjectId(2), 0);
-            source.AddMessage("name", "wOrD1 WoRd2", new ObjectId(1), 0);
-            source.AddMessage("name", "word1 word2", new ObjectId(0), 0);
+            source.AddMessage("name", "word5 word6", new ObjectId(2), 0, (Color)0);
+            source.AddMessage("name", "wOrD1 WoRd2", new ObjectId(1), 0, (Color)0);
+            source.AddMessage("name", "word1 word2", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.First("word3", "word2");
 
@@ -273,7 +273,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.First("name: this");
 
@@ -286,7 +286,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.First("qwer");
             entry.Should().BeNull();
@@ -298,9 +298,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source);
 
-            source.AddMessage("name", "word1 word2", new ObjectId(2), 0);
-            source.AddMessage("name", "word1 word2", new ObjectId(1), 0);
-            source.AddMessage("name", "word5 word6", new ObjectId(0), 0);
+            source.AddMessage("name", "word1 word2", new ObjectId(2), 0, (Color)0);
+            source.AddMessage("name", "word1 word2", new ObjectId(1), 0, (Color)0);
+            source.AddMessage("name", "word5 word6", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.Last("word3", "word2");
 
@@ -313,9 +313,9 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source);
 
-            source.AddMessage("name", "word1 word2", new ObjectId(2), 0);
-            source.AddMessage("name", "WoRd1 WoRd2", new ObjectId(1), 0);
-            source.AddMessage("name", "word5 word6", new ObjectId(0), 0);
+            source.AddMessage("name", "word1 word2", new ObjectId(2), 0, (Color)0);
+            source.AddMessage("name", "WoRd1 WoRd2", new ObjectId(1), 0, (Color)0);
+            source.AddMessage("name", "word5 word6", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.Last("word3", "word2");
 
@@ -328,7 +328,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.Last("name: this");
 
@@ -341,7 +341,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source, null);
 
-            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0);
+            source.AddMessage("name", "this is an AfK check", new ObjectId(0), 0, (Color)0);
 
             var entry = journal.Last("qwer");
             entry.Should().BeNull();

@@ -36,8 +36,8 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             var source = new EventJournalSource();
             var journal = new EventJournal(source);
 
-            source.Publish(new SpeechReceivedEvent(new JournalEntry(0, "name", "test1", 0, 0)));
-            source.Publish(new SpeechReceivedEvent(new JournalEntry(0, "name", "test2", 0, 0)));
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(0, "name", "test1", 0, 0, (Color)0)));
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(0, "name", "test2", 0, 0, (Color)0)));
 
             bool test1Handled = false;
             bool test2Handled = false;

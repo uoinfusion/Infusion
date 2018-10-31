@@ -24,7 +24,7 @@ namespace Infusion.LegacyApi.Benchmarks
 
             fullSource = new SpeechJournalSource();
             for (int i = 0; i <= SpeechJournalSource.MaxLength; i++)
-                fullSource.AddMessage("name", "message", 0, 0);
+                fullSource.AddMessage("name", "message", 0, 0, (Color)0);
             fullJournal = new SpeechJournal(fullSource);
         }
 
@@ -43,13 +43,13 @@ namespace Infusion.LegacyApi.Benchmarks
         [Benchmark]
         public void EventPublicationWithEmptyJournal()
         {
-            emptySource.AddMessage("name", "message", 0, 0);
+            emptySource.AddMessage("name", "message", 0, 0, (Color)0);
         }
 
         [Benchmark]
         public void EventPublicationWithFullJournal()
         {
-            fullSource.AddMessage("name", "message", 0, 0);
+            fullSource.AddMessage("name", "message", 0, 0, (Color)0);
         }
     }
 }

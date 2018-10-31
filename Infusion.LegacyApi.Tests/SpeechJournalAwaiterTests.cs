@@ -26,7 +26,7 @@ namespace Infusion.LegacyApi.Tests
             var source = new SpeechJournalSource();
             var journal = new SpeechJournal(source);
 
-            source.AddMessage("name", "cas InSeNsItIvE", new ObjectId(0), 0);
+            source.AddMessage("name", "cas InSeNsItIvE", new ObjectId(0), 0, (Color)0);
 
             bool executed = false;
 
@@ -50,7 +50,7 @@ namespace Infusion.LegacyApi.Tests
                     .WaitAny(TimeSpan.FromMilliseconds(250));
             });
             Thread.Sleep(25);
-            source.AddMessage("name", "InSeNsItIvE", new ObjectId(0), 0);
+            source.AddMessage("name", "InSeNsItIvE", new ObjectId(0), 0, (Color)0);
 
             task.Wait();
 
@@ -72,7 +72,7 @@ namespace Infusion.LegacyApi.Tests
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321));
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321, (Color)0));
             task.Wait();
 
             executed.Should().Be(true);
@@ -97,7 +97,7 @@ namespace Infusion.LegacyApi.Tests
 
             initializedEvent.WaitOne(100);
             awaiter.ReceiveJournalEntry(new JournalEntry(0, "TestName", "somethingsomething word2 somethingsomething", new ObjectId(1234),
-                (ModelId) 4321));
+                (ModelId) 4321, (Color)0));
 
             task.Wait(100);
 
@@ -121,7 +121,7 @@ namespace Infusion.LegacyApi.Tests
             });
 
             initializedEvent.WaitOne(100);
-            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321));
+            awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321, (Color)0));
             task.Wait(100);
 
             executed.Should().Be(true);
@@ -165,7 +165,7 @@ namespace Infusion.LegacyApi.Tests
         {
             var source = new SpeechJournalSource();
             var awaiter = new SpeechJournalAwaiter(cancellation, source);
-            source.AddMessage("name1", "message1", 0x12345, 0x1234);
+            source.AddMessage("name1", "message1", 0x12345, 0x1234, (Color)0);
 
             ((Action) (() => awaiter.WaitAny(TimeSpan.FromMilliseconds(10))))
                 .ShouldThrow<TimeoutException>();

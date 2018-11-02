@@ -7,6 +7,6 @@
         mc:Ignorable="d"
         Icon="pack://application:,,,/infusion.png"
         Title="Infusion" Height="550" Width="685.061"
-        Loaded="InfusionWindow_OnLoaded">
+        Loaded="InfusionWindow_OnLoaded" Closing="HandleClosing" >
     <console:ConsoleControl x:Name="_console" />
 </Window>

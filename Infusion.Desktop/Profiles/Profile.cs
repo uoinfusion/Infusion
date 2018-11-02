@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Infusion.Desktop.Console;
 using Infusion.Desktop.Launcher;
 
 namespace Infusion.Desktop.Profiles
@@ -23,6 +24,8 @@ namespace Infusion.Desktop.Profiles
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
         public LauncherOptions LauncherOptions { get; set; } = new LauncherOptions();
+
+        public ConsoleOptions ConsoleOptions { get; set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -104,10 +104,7 @@ namespace Infusion.Desktop.Console
                         outputDocument.Blocks.Add(newline);
                     }
 
-                    var scrollViewer = FindScrollViewer(_outputViewer);
-                    if (scrollViewer != null && Math.Abs(scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset) <
-                        0.1)
-                        scrollViewer.ScrollToBottom();
+                    ScrollToBottom();
 
                     break;
                 case NotifyCollectionChangedAction.Remove:
@@ -316,6 +313,19 @@ namespace Infusion.Desktop.Console
             {
                 _outputViewer.Focus();
             }
+        }
+
+        private void HandleSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScrollToBottom();
+        }
+
+        private void ScrollToBottom()
+        {
+            var scrollViewer = FindScrollViewer(_outputViewer);
+            if (scrollViewer != null && Math.Abs(scrollViewer.ScrollableHeight - scrollViewer.VerticalOffset) <
+                0.1)
+                scrollViewer.ScrollToBottom();
         }
     }
 }

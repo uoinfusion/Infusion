@@ -373,7 +373,7 @@ public static class Looting
             UO.WaitTargetObject(corpse);
             if (!UO.TryUse(KnivesSpec))
             {
-                UO.Alert("Cannot find any knife");
+                UO.ClientPrint("Cannot find any knife", UO.Me);
                 return false;
             }
           

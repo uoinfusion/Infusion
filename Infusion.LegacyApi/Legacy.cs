@@ -151,11 +151,6 @@ namespace Infusion.LegacyApi
             return command;
         }
 
-        public void Alert(string message)
-        {
-            console.Critical(message);
-        }
-
         private void RegisterDefaultCommands()
         {
             CommandHandler.RegisterCommand(new Command("info", InfoCommand,

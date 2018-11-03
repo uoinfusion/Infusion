@@ -11,7 +11,7 @@ public static class Eating
 
         if (!hasAnyFood)
         {
-            UO.Alert("Cannot find any food, I will starve and die soon!");
+            UO.ClientPrint("Cannot find any food, I will starve and die soon!", UO.Me);
             return;
         }
 

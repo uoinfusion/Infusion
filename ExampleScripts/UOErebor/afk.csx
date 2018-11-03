@@ -93,7 +93,7 @@ public static class Afk
         }            
 
         
-        UO.Alert("Afk kontrola");
+        UO.ClientPrint("Afk kontrola", UO.Me);
 
         UO.Wait(AlertLength);
     }

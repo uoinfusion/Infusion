@@ -237,8 +237,7 @@ public sealed class CraftProducer
     
     public void Produce()
     {
-        if (OnStart != null)
-            OnStart();
+        OnStart?.Invoke();
         AskForResourceContainers();
         var productContainerItem = AskForContainer(product.Spec, $"Select container to unload {Specs.TranslateToName(product.Spec)}.");
         var foodContainerItem = AskForContainer(Specs.Food, "Select container with food");
@@ -279,13 +278,13 @@ public sealed class CraftProducer
                 {
                     if (journal.Contains("Nebyl zadan zadny predmet k vyrobe"))
                     {
-                        UO.Alert("Cannot find product in crafting menu");
+                        UO.ClientPrint("Cannot find product in crafting menu", UO.Me);
                         return;
                     }
                     
                     if (journal.Contains("S tim co mas nevyrobis nic."))
                     {
-                        UO.Alert("Cannot find material or tools");
+                        UO.ClientPrint("Cannot find material or tools", UO.Me);
                         return;
                     }
                 
@@ -303,7 +302,7 @@ public sealed class CraftProducer
             catch (GumpException ex)
             {
                 UO.Say(".abortmaking");
-                UO.Alert(ex.ToString());
+                UO.ClientPrint(ex.ToString(), UO.Me);
                 throw;
             }
             catch

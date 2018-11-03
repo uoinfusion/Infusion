@@ -53,12 +53,12 @@ public class TwoStateAbility : ITwoStateAbility
                 {
                     UO.Say(ToggleCommand);
                     abilityJournal
-                        .When(TurnedOffMessage, () => UO.Alert($"Waning: cannot turn on {ToggleCommand}"))
+                        .When(TurnedOffMessage, () => UO.ClientPrint($"Waning: cannot turn on {ToggleCommand}", UO.Me))
                         .When(TurnedOnMessage, () => { })
-                        .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
+                        .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                         .WaitAny();
                 })
-                .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
+                .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                 .WaitAny();
     
             IsTurnedOn = true;
@@ -89,11 +89,11 @@ public class TwoStateAbility : ITwoStateAbility
                     abilityJournal
                         .When(TurnedOnMessage, () => UO.Log($"Warning: cannot turn off {ToggleCommand}"))
                         .When(TurnedOffMessage, () => { })
-                        .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
+                        .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                         .WaitAny();
                 })
                 .When(TurnedOffMessage, () => { })
-                .When(FailMessages, () => UO.Alert($"Warning: {ToggleCommand} failed."))
+                .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                 .WaitAny();
     
             IsTurnedOn = false;

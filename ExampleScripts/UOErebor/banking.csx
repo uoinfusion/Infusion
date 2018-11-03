@@ -42,7 +42,7 @@ public static class Banking
             {
                 failedCount++;
                 if (failedCount > 5)
-                    UO.Alert("Cannot open bank");
+                    UO.ClientPrint("Cannot open bank", UO.Me);
             }
         } while (gump == null);
         

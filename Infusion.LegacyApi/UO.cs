@@ -70,9 +70,6 @@ namespace Infusion.LegacyApi
         public static Command RegisterCommand(string name, Action<string> commandAction)
             => Current.RegisterCommand(name, commandAction);
 
-        public static void Alert(string message)
-            => Current.Alert(message);
-
         public static SpeechJournal CreateSpeechJournal()
             => Current.CreateSpeechJournal();
 

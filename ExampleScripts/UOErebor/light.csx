@@ -31,7 +31,7 @@ public static class LightSources
             UO.Wait(1000);
         }
         else
-            UO.Alert($"Cannot find {Specs.TranslateToName(spec) ?? "any source of light"}.");
+            UO.ClientPrint($"Cannot find {Specs.TranslateToName(spec) ?? "any source of light"}.", UO.Me);
     }
 }
 

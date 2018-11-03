@@ -1,4 +1,5 @@
-﻿using Infusion.LegacyApi;
+﻿using Infusion.Desktop.Profiles;
+using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using System;
 using System.Collections.Generic;
@@ -42,11 +43,9 @@ namespace Infusion.Desktop.Console
                     break;
                 case ConsoleLineType.Important:
                     DispatchWriteLine(timeStamp, message, Brushes.White);
-                    ToastNotification(message);
                     break;
                 case ConsoleLineType.Critical:
                     DispatchWriteLine(timeStamp, message, Brushes.Red);
-                    ToastAlertNotification(message);
                     break;
                 case ConsoleLineType.Information:
                     DispatchWriteLine(timeStamp, message, Brushes.Gray);
@@ -92,70 +91,6 @@ namespace Infusion.Desktop.Console
             }
 
             consoleContent.Add($"{timeStamp:HH:mm:ss:fff} - {message}", textBrush);
-        }
-
-        private void ToastNotification(string message)
-        {
-            if (!configuration.ShowImportantToastNotification ||
-                !configuration.ToastNotificationEnabled)
-            {
-                return;
-            }
-
-            if (Environment.OSVersion.Version < toastingMinimalOsVersion)
-                return;
-
-            ToastNotificationCore(message);
-        }
-
-        private void ToastNotificationCore(string message)
-        {
-
-            //var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-
-            //var stringElements = toastXml.GetElementsByTagName("text");
-            //stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
-            //stringElements[1].AppendChild(toastXml.CreateTextNode(message));
-
-            //var audioElement = toastXml.CreateElement("audio");
-            //audioElement.SetAttribute("silent", "true");
-            //toastXml.SelectSingleNode("/toast")?.AppendChild(audioElement);
-
-            //var toast = new ToastNotification(toastXml);
-            //toast.Group = "Infusion";
-            //toast.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(10);
-
-            //var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
-            //notifier.Show(toast);
-        }
-
-        private void ToastAlertNotification(string message)
-        {
-            if (Environment.OSVersion.Version < toastingMinimalOsVersion)
-                return;
-
-            if (!configuration.ToastNotificationEnabled)
-            {
-                return;
-            }
-
-            ToastAlertNotificationCore(message);
-        }
-
-        private void ToastAlertNotificationCore(string message)
-        {
-            //var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
-
-            //var stringElements = toastXml.GetElementsByTagName("text");
-            //stringElements[0].AppendChild(toastXml.CreateTextNode(ProfileRepositiory.SelectedProfile.Name));
-            //stringElements[1].AppendChild(toastXml.CreateTextNode(message));
-
-            //var toast = new ToastNotification(toastXml);
-            //toast.Group = "Infusion";
-            //toast.ExpirationTime = DateTimeOffset.UtcNow.AddMinutes(10);
-
-            //var notifier = ToastNotificationManager.CreateToastNotifier("Infusion");
-            //notifier.Show(toast);
         }
     }
 }

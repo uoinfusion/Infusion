@@ -25,7 +25,7 @@ namespace Infusion.Desktop.Console
             Enqueue(() =>
             {
                 string text = !string.IsNullOrEmpty(name) ? $"{name}: {message}" : message;
-                    wpfConsole.WriteJournalEntry(now, text, color);
+                    wpfConsole.WriteSpeech(now, name, message, text, color);
                     fileConsole.WriteLine(now, text);
             });
         }

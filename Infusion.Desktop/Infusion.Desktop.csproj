@@ -186,6 +186,7 @@
       <DependentUpon>ConsoleControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Console\ConsoleContent.cs" />
+    <Compile Include="Console\ConsoleLine.cs" />
     <Compile Include="Console\ConsoleOptions.cs" />
     <Compile Include="Console\FileConsole.cs" />
     <Compile Include="Console\WpfConsole.cs" />

@@ -51,7 +51,7 @@ namespace Infusion.Desktop.Console
             outputDocument.FontStyle = _inputBlock.FontStyle;
 
             fileConsole = new FileConsole(Program.Configuration, new CircuitBreaker(HandleFileLoggingException));
-            var wpfConsole = new WpfConsole(consoleContent, Dispatcher, Program.Configuration);
+            var wpfConsole = new WpfConsole(consoleContent, Dispatcher);
             infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
 
             ScriptEngine = new CSharpScriptEngine(infusionConsole);
@@ -68,6 +68,11 @@ namespace Infusion.Desktop.Console
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
         }
+
+        internal void ShowToggle() => consoleContent.ShowToggle();
+        internal void ShowSpeechOnly() => consoleContent.ShowSpeechOnly();
+        internal void ShowAll() => consoleContent.ShowAll();
+        internal void ShowGame() => consoleContent.ShowGame();
 
         public void Dispose()
         {
@@ -100,7 +105,7 @@ namespace Infusion.Desktop.Console
                         var newline = new Paragraph();
                         newline.Margin = new Thickness(0);
                         newline.LineStackingStrategy = LineStackingStrategy.BlockLineHeight;
-                        newline.Inlines.Add(new Run(line.Message) {Foreground = line.TextBrush});
+                        newline.Inlines.Add(new Run(line.Text) {Foreground = line.TextBrush});
                         outputDocument.Blocks.Add(newline);
                     }
 

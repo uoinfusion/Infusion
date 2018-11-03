@@ -55,6 +55,11 @@ namespace Infusion.Desktop
                 "Loads a script file."));
             UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls),
                 "Clears console content."));
+
+            UO.CommandHandler.RegisterCommand(new Command("console-show-toggle", () => Dispatcher.Invoke(() => _console.ShowToggle())));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-speechonly", () => Dispatcher.Invoke(() => _console.ShowSpeechOnly())));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-game", () => Dispatcher.Invoke(() => _console.ShowGame())));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll())));
         }
 
         private void Cls()

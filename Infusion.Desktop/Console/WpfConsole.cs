@@ -1,11 +1,5 @@
-﻿using Infusion.Desktop.Profiles;
-using Infusion.LegacyApi;
-using Infusion.LegacyApi.Console;
+﻿using Infusion.LegacyApi.Console;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -15,20 +9,16 @@ namespace Infusion.Desktop.Console
     {
         private readonly ConsoleContent consoleContent;
         private readonly Dispatcher dispatcher;
-        private readonly Configuration configuration;
 
-        private readonly Version toastingMinimalOsVersion = new Version(6, 2);
-
-        public WpfConsole(ConsoleContent consoleContent, Dispatcher dispatcher, Configuration configuration)
+        public WpfConsole(ConsoleContent consoleContent, Dispatcher dispatcher)
         {
             this.consoleContent = consoleContent;
             this.dispatcher = dispatcher;
-            this.configuration = configuration;
         }
 
-        internal void WriteJournalEntry(DateTime timeStamp, string message, Color color)
+        internal void WriteSpeech(DateTime timeStamp, string name, string message, string text, Color color)
         {
-            DispatchWriteLine(timeStamp, message, color);
+            DispatchWrtieSpeech(timeStamp, name, message, text, color);
         }
 
         internal void WriteLine(DateTime timeStamp, ConsoleLineType type, string message)
@@ -67,30 +57,36 @@ namespace Infusion.Desktop.Console
 
         private void DispatchWriteLine(DateTime timeStamp, string message, Brush textBrush)
         {
-            dispatcher.BeginInvoke((Action)(() => { WriteLine(timeStamp, message, textBrush); }));
+            dispatcher.BeginInvoke((Action)(() => { WriteLine(timeStamp, new ConsoleLine(timeStamp, message, textBrush)); }));
         }
 
-        private void DispatchWriteLine(DateTime timeStamp, string message, Color color)
+        private void DispatchWrtieSpeech(DateTime timeStamp, string name, string message, string text, Color color)
         {
             dispatcher.BeginInvoke((Action)(() =>
             {
                 var drawingColor = Ultima.Hues.GetHue(color - 1).GetColor(31);
                 var brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(drawingColor.R, drawingColor.G, drawingColor.B));
-                WriteLine(timeStamp, message, brush);
+
+                WriteLine(timeStamp, new ConsoleSpeechLine(timeStamp, name, message, text, brush));
             }));
         }
 
         private DateTime? lastWriteLineDate;
 
-        private void WriteLine(DateTime timeStamp, string message, Brush textBrush)
+        private void WriteLine(DateTime timeStamp, ConsoleLine line)
+        {
+            EnsureDateChangeInfo(timeStamp);
+
+            consoleContent.Add(line);
+        }
+
+        private void EnsureDateChangeInfo(DateTime timeStamp)
         {
             if (!lastWriteLineDate.HasValue || lastWriteLineDate.Value != timeStamp.Date)
             {
-                consoleContent.Add($"{timeStamp.Date:d}", Brushes.White);
+                consoleContent.Add(new ConsoleLine($"{timeStamp.Date:d}", Brushes.White));
                 lastWriteLineDate = timeStamp.Date;
             }
-
-            consoleContent.Add($"{timeStamp:HH:mm:ss:fff} - {message}", textBrush);
         }
     }
 }

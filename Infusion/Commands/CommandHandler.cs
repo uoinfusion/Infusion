@@ -175,6 +175,12 @@ namespace Infusion.Commands
                 commands = commands.Remove(commandName);
         }
 
+        internal void UnregisterAllPublic()
+        {
+            var publicCommands = commands.Where(x => !x.Value.BuiltIn).Select(x => x.Key).ToArray();
+            commands = commands.RemoveRange(publicCommands);
+        }
+
         public void Unregister(Command command)
         {
             Unregister(command.Name);

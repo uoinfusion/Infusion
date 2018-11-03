@@ -29,18 +29,20 @@ namespace Infusion.Commands
             ExecutionMode = executionMode;
         }
 
-        internal Command(string name, Action<string> commandAction, bool terminable, string summary = null, string description = null,
+        internal Command(string name, Action<string> commandAction, bool terminable, bool builtIn, string summary = null, string description = null,
             CommandExecutionMode executionMode = CommandExecutionMode.Normal)
             : this(name, commandAction, summary, description, executionMode)
         {
             Terminable = terminable;
+            BuiltIn = builtIn;
         }
 
-        internal Command(string name, Action commandAction, bool terminable, string summary = null, string description = null,
+        internal Command(string name, Action commandAction, bool terminable, bool builtIn, string summary = null, string description = null,
             CommandExecutionMode executionMode = CommandExecutionMode.Normal)
             : this(name, commandAction, summary, description, executionMode)
         {
             Terminable = terminable;
+            BuiltIn = builtIn;
         }
 
         public string Summary { get; }
@@ -50,6 +52,7 @@ namespace Infusion.Commands
         public string Name { get; }
 
         internal bool Terminable { get; } = true;
+        internal bool BuiltIn { get; } = false;
 
         internal void Invoke()
         {

@@ -46,20 +46,20 @@ namespace Infusion.Desktop
             };
 
 
-            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()),
+            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), false, true,
                 "Reloads an initial script file."));
             UO.CommandHandler.RegisterCommand(new Command("edit",
                 () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action) (() => Edit())),
-                "Opens the script editor."));
+                false, true, "Opens the script editor."));
             UO.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)),
-                "Loads a script file."));
+                false, true, "Loads a script file."));
             UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls),
-                "Clears console content."));
+                false, true, "Clears console content."));
 
-            UO.CommandHandler.RegisterCommand(new Command("console-show-toggle", () => Dispatcher.Invoke(() => _console.ShowToggle())));
-            UO.CommandHandler.RegisterCommand(new Command("console-show-speechonly", () => Dispatcher.Invoke(() => _console.ShowSpeechOnly())));
-            UO.CommandHandler.RegisterCommand(new Command("console-show-game", () => Dispatcher.Invoke(() => _console.ShowGame())));
-            UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll())));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-toggle", () => Dispatcher.Invoke(() => _console.ShowToggle()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-speechonly", () => Dispatcher.Invoke(() => _console.ShowSpeechOnly()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-game", () => Dispatcher.Invoke(() => _console.ShowGame()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll()), false, true));
         }
 
         private void Cls()
@@ -119,6 +119,7 @@ namespace Infusion.Desktop
             if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
             {
                 UO.CommandHandler.BeginTerminate(true);
+                UO.CommandHandler.UnregisterAllPublic();
                 _console.ScriptEngine.Reset();
                 using (var tokenSource = new CancellationTokenSource())
                 {

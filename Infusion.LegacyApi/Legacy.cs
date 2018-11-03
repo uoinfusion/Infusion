@@ -153,22 +153,22 @@ namespace Infusion.LegacyApi
 
         private void RegisterDefaultCommands()
         {
-            CommandHandler.RegisterCommand(new Command("info", InfoCommand,
+            CommandHandler.RegisterCommand(new Command("info", InfoCommand, true, true,
                 "Shows information about selected item or tile."));
-            CommandHandler.RegisterCommand(new Command("lastgumpinfo", LastGumpInfo,
+            CommandHandler.RegisterCommand(new Command("lastgumpinfo", LastGumpInfo, true, true,
                 "Shows information about the last gump dispalyed in Ultima Online client."));
-            CommandHandler.RegisterCommand(new Command("opendoor", OpenDoor,
+            CommandHandler.RegisterCommand(new Command("opendoor", OpenDoor, true, true,
                 "Opens neares closed doors. This is analogue to UO client's 'opendoor' macro."));
-            CommandHandler.RegisterCommand(new Command("warmode-on", WarModeOn,
-                "War mode on."));
-            CommandHandler.RegisterCommand(new Command("warmode-off", WarModeOff,
-                "War mode off."));
-            CommandHandler.RegisterCommand(new Command("terminate", Terminate, false,
+            CommandHandler.RegisterCommand(new Command("warmode-on", WarModeOn, true, true,
+                summary: "War mode on."));
+            CommandHandler.RegisterCommand(new Command("warmode-off", WarModeOff, true, true,
+                summary: "War mode off."));
+            CommandHandler.RegisterCommand(new Command("terminate", Terminate, false, true,
                 summary: "Terminates all running commands excluding background commands.", executionMode: CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("terminate-all", CommandHandler.TerminateAll, false,
+            CommandHandler.RegisterCommand(new Command("terminate-all", CommandHandler.TerminateAll, false, true,
                 summary: "Terminates all running commands.", executionMode: CommandExecutionMode.Direct));
-            CommandHandler.RegisterCommand(new Command("filter-light", ClientFilters.Light.Toggle));
-            CommandHandler.RegisterCommand(new Command("filter-weather", ClientFilters.Weather.Toggle));
+            CommandHandler.RegisterCommand(new Command("filter-light", ClientFilters.Light.Toggle, true, true));
+            CommandHandler.RegisterCommand(new Command("filter-weather", ClientFilters.Weather.Toggle, true, true));
         }
 
         public SpeechJournal CreateSpeechJournal() => new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);

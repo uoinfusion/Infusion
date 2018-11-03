@@ -11,7 +11,7 @@ namespace Infusion.LegacyApi
     {
         internal static Legacy Current { get; private set; }
 
-        public static Configuration Configuration => Current.Configuration;
+        public static LogConfiguration LogConfig => Current.LogConfig;
 
         public static Gump CurrentGump => Current.CurrentGump;
 

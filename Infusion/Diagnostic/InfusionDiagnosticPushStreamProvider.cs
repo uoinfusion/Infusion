@@ -8,12 +8,12 @@ namespace Infusion.Diagnostic
 {
     internal sealed class InfusionDiagnosticPushStreamProvider : IDisposable
     {
-        private readonly Configuration configuration;
+        private readonly IDiagnosticConfiguration configuration;
         private readonly ILogger logger;
         private BinaryDiagnosticPushStream outputStream;
         private readonly object providerLock = new object();
 
-        public InfusionDiagnosticPushStreamProvider(Configuration configuration, ILogger logger)
+        public InfusionDiagnosticPushStreamProvider(IDiagnosticConfiguration configuration, ILogger logger)
         {
             this.configuration = configuration;
             this.logger = logger;

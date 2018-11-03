@@ -29,7 +29,7 @@ namespace Infusion.LegacyApi
             });
 
             var console = new NullConsole();
-            Api = new Legacy(new Configuration(), new CommandHandler(console), Server, Client, console);
+            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console);
         }
 
         public IEnumerable<Packet> PacketsSentToClient => packetsSentToClient;

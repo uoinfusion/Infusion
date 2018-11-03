@@ -42,7 +42,7 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
-        internal Legacy(Configuration configuration, CommandHandler commandHandler,
+        internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console)
         {
             this.console = console;
@@ -86,7 +86,7 @@ namespace Infusion.LegacyApi
             CommandHandler = commandHandler;
             CommandHandler.CancellationTokenCreated += (sender, token) => CancellationToken = token;
 
-            Configuration = configuration;
+            LogConfig = logConfig;
             legacyEventJournal = CreateEventJournal();
 
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
@@ -95,7 +95,7 @@ namespace Infusion.LegacyApi
 
         public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
 
-        public Configuration Configuration { get; }
+        public LogConfiguration LogConfig { get; }
 
         public LegacyFilters ClientFilters { get; }
 

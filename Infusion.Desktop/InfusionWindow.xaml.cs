@@ -146,14 +146,6 @@ namespace Infusion.Desktop
             Application.Current.Shutdown();
         }
 
-        protected override void OnStateChanged(EventArgs e)
-        {
-            if (WindowState == WindowState.Minimized && Program.Configuration.HideWhenMinimized)
-                Hide();
-
-            base.OnStateChanged(e);
-        }
-
         private void InfusionWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action) (() =>

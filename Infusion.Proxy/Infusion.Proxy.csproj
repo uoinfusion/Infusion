@@ -54,7 +54,6 @@
     <Compile Include="LatencyMeter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpeechFilter.cs" />
     <Compile Include="SpeechMessage.cs" />
   </ItemGroup>
   <ItemGroup>

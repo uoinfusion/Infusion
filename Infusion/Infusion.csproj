@@ -69,11 +69,11 @@
     <Compile Include="Commands\CommandParameterParser.cs" />
     <Compile Include="Commands\CommandParser.cs" />
     <Compile Include="Commands\CommandSyntax.cs" />
-    <Compile Include="Configuration.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="Corpse.cs" />
     <Compile Include="CursorId.cs" />
     <Compile Include="Diagnostic\BinaryPacketFileParser.cs" />
+    <Compile Include="Diagnostic\IDiagnosticConfiguration.cs" />
     <Compile Include="DialogBox.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="DragResult.cs" />
@@ -229,13 +229,6 @@
     <Compile Include="SoundId.cs" />
     <Compile Include="SpeechType.cs" />
     <Compile Include="Spell.cs" />
-    <Compile Include="TextFilters\ContainsFilter.cs" />
-    <Compile Include="TextFilters\EndsWithFilter.cs" />
-    <Compile Include="TextFilters\ITextFilter.cs" />
-    <Compile Include="TextFilters\NameFilter.cs" />
-    <Compile Include="TextFilters\JustNumberFilter.cs" />
-    <Compile Include="TextFilters\StartsWithFilter.cs" />
-    <Compile Include="TextFilters\TextFilterSpecificationParser.cs" />
     <Compile Include="UltimaClient.cs" />
     <Compile Include="UltimaClientConnection.cs" />
     <Compile Include="UltimaClientConnectionStatus.cs" />

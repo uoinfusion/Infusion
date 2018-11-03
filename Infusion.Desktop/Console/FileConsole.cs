@@ -1,4 +1,5 @@
-﻿using Infusion.Utilities;
+﻿using Infusion.LegacyApi;
+using Infusion.Utilities;
 using System;
 using System.IO;
 
@@ -6,16 +7,16 @@ namespace Infusion.Desktop.Console
 {
     internal class FileConsole : IDisposable
     {
-        private readonly Configuration configuration;
+        private readonly LogConfiguration logConfig;
         private readonly CircuitBreaker loggingBreaker;
         private readonly object logLock = new object();
         private bool firstWrite = true;
         private FileStream stream;
         private StreamWriter writer;
 
-        public FileConsole(Configuration configuration, CircuitBreaker loggingBreaker)
+        public FileConsole(LogConfiguration logConfig, CircuitBreaker loggingBreaker)
         {
-            this.configuration = configuration;
+            this.logConfig = logConfig;
             this.loggingBreaker = loggingBreaker;
         }
 
@@ -39,14 +40,14 @@ namespace Infusion.Desktop.Console
 
         public void WriteLine(DateTime timeStamp, string message)
         {
-            if (!configuration.LogToFileEnabled)
+            if (!logConfig.LogToFileEnabled)
                 return;
 
             loggingBreaker.Protect(() =>
             {
                 lock (logLock)
                 {
-                    var logsPath = configuration.LogPath;
+                    var logsPath = logConfig.LogPath;
 
                     var fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
 

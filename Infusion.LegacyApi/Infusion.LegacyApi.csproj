@@ -97,6 +97,7 @@
     <Compile Include="KeyCode.cs" />
     <Compile Include="LegacyFilters.cs" />
     <Compile Include="LocalUltimaClientWindow.cs" />
+    <Compile Include="LogConfiguration.cs" />
     <Compile Include="NullUltimaClientWindow.cs" />
     <Compile Include="OrderedEvent.cs" />
     <Compile Include="Events\SkillRequestedEvent.cs" />

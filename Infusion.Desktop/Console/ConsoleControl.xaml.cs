@@ -30,7 +30,7 @@ namespace Infusion.Desktop.Console
 
         private void HandleFileLoggingException(Exception ex)
         {
-            Program.Console.Error($"Error while writing logs to disk. Please, check that Infusion can write to {Program.Configuration.LogPath}.");
+            Program.Console.Error($"Error while writing logs to disk. Please, check that Infusion can write to {Program.LogConfig.LogPath}.");
             Program.Console.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
             Program.Console.Debug(ex.ToString());
         }
@@ -50,7 +50,7 @@ namespace Infusion.Desktop.Console
             outputDocument.FontStretch = _inputBlock.FontStretch;
             outputDocument.FontStyle = _inputBlock.FontStyle;
 
-            fileConsole = new FileConsole(Program.Configuration, new CircuitBreaker(HandleFileLoggingException));
+            fileConsole = new FileConsole(Program.LogConfig, new CircuitBreaker(HandleFileLoggingException));
             var wpfConsole = new WpfConsole(consoleContent, Dispatcher);
             infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
 

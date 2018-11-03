@@ -23,7 +23,7 @@ namespace Infusion.Proxy
     {
         private const string ListCommandName = "list";
 
-        public static Configuration Configuration { get; } = new Configuration();
+        public static LogConfiguration LogConfig { get; } = new LogConfiguration();
 
         private static readonly ServerPacketHandler serverPacketHandler = new ServerPacketHandler();
         private static readonly ClientPacketHandler clientPacketHandler = new ClientPacketHandler();
@@ -35,7 +35,6 @@ namespace Infusion.Proxy
         private static bool needServerReconnect;
         private static IDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
-        private static readonly SpeechFilter speechFilter = new SpeechFilter(Configuration);
 
         private static readonly object serverConnectionLock = new object();
 
@@ -97,7 +96,7 @@ namespace Infusion.Proxy
                 "Lists running commands"));
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, "Shows proxy latency."));
 
-            legacyApi = new Legacy(Configuration, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
+            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
             UO.Initialize(legacyApi);
         }
 
@@ -142,7 +141,7 @@ namespace Infusion.Proxy
 
         private static void ClientLoop(ILogger packetLogger)
         {
-            var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(Configuration, Console);
+            var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, Console);
             serverDiagnosticPushStream =
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server"),
                     new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ClientToServer, diagnosticProvider.GetStream));

@@ -34,16 +34,13 @@ namespace Infusion.LegacyApi
 
         public static Item FirstOrDefault(this IEnumerable<Item> items) => Enumerable.FirstOrDefault(items);
 
-        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, GameObject container)
-            => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == container.Id);
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, GameObject container, bool recursive = true)
+            => InContainer(items, container.Id, recursive);
 
-        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId)
-            => items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == containerId);
-
-        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId, bool recursive)
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId, bool recursive = true)
             => recursive 
                 ? items.Where(i => AnyParentContainerInContainer(i, containerId))
-                : items.InContainer(containerId);
+                : items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == containerId);
 
         public static IEnumerable<Item> InBackPack(this IEnumerable<Item> items)
         {

@@ -4,3 +4,7 @@
 [submodule "RoslynPad"]
 	path = RoslynPad
 	url = git@github.com:JakubLinhart/RoslynPad.git
+[submodule "InjectionScript"]
+	path = InjectionScript
+	url = git@github.com:uoinfusion/InjectionScript.git
+	branch = master

@@ -92,6 +92,7 @@
     <Compile Include="InfusionTestProxy.cs" />
     <Compile Include="CorpseCollection.cs" />
     <Compile Include="CorpseCollectionExtensions.cs" />
+    <Compile Include="Injection\InjectionHost.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
     <Compile Include="Filters\IWeatherFilter.cs" />
     <Compile Include="KeyCode.cs" />
@@ -151,6 +152,10 @@
     <ProjectReference Include="..\Infusion\Infusion.csproj">
       <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
       <Name>Infusion</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\InjectionScript\src\InjectionScript\InjectionScript.csproj">
+      <Project>{C076C217-ECB3-4001-A5BA-C0FF2A2B1029}</Project>
+      <Name>InjectionScript</Name>
     </ProjectReference>
     <ProjectReference Include="..\UltimaSdk\Ultima.csproj">
       <Project>{5d66ace6-b2a4-400f-b5a5-24525959ac5c}</Project>

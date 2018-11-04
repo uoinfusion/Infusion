@@ -6,6 +6,7 @@ using Infusion.Gumps;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.LegacyApi.Filters;
+using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
 
 namespace Infusion.LegacyApi
@@ -91,7 +92,11 @@ namespace Infusion.LegacyApi
 
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
+
+            Injection = new InjectionHost(this, console);
         }
+
+        public InjectionHost Injection { get; }
 
         public TimeSpan DefaultTimeout { get; set; } = TimeSpan.FromSeconds(30);
 

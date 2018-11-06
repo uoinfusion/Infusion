@@ -37,14 +37,14 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        public void CallSubrutine(string subrutineName)
-        {
-            runtime.CallSubrutine(subrutineName);
-        }
+        public void CallSubrutine(string subrutineName) => runtime.CallSubrutine(subrutineName);
 
         private void RegisterNatives()
         {
             runtime.Metadata.Add(new NativeSubrutineDefinition("wait", (Action<int>)Wait));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "set", (Action<string, string>)Set));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "set", (Action<string, int>)Set));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "print", (Action<string>)Print));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<int>)GetX));
@@ -57,7 +57,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string, string, string>)FindTypeSubrutine.FindType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findcount", (Func<int>)FindTypeSubrutine.FindCount));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findcount", (Func<int>)(() => FindTypeSubrutine.FindCount)));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
 
@@ -68,11 +68,29 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public void Wait(int ms) => api.Wait(ms);
+
+        public void Set(string name, int value)
+        {
+            if (name.Equals("finddistance", StringComparison.OrdinalIgnoreCase))
+                FindTypeSubrutine.Distance = value;
+        }
+
+        public void Set(string name, string valueStr)
+        {
+            bool successfulConversion = NumberConversions.TryStr2Int(valueStr, out var value);
+
+            if (name.Equals("finddistance", StringComparison.OrdinalIgnoreCase))
+            {
+                FindTypeSubrutine.Distance = successfulConversion ? value : 0;
+
+            }
+        }
+
         public void Print(string msg) => api.ClientPrint(msg);
         public int GetX() => api.Me.Location.X;
         public int GetY() => api.Me.Location.Y;
         public int GetZ() => api.Me.Location.Z;
-        public string GetSerial(string id) => NumberConversions.Int2Hex(GetObject(id));
+        public string GetSerial(string id) => GetObject(id);
         public int Dead() => api.Me.IsDead ? 1 : 0;
 
         public void Click(string id) => api.Click((uint)runtime.GetObject(id));

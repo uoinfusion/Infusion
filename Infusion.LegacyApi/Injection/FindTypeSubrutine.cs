@@ -11,13 +11,12 @@ namespace Infusion.LegacyApi.Injection
     {
         private readonly Legacy api;
         private readonly Runtime runtime;
-
-        public int Quantity { get; private set; }
-        public int FindItem { get; internal set; }
-
         public int count;
 
-        public int FindCount() => count;
+        public int FindItem { get; internal set; }
+        public int FindCount => count;
+
+        public int Distance { get; internal set; } = -1;
 
         public FindTypeSubrutine(Legacy api, Runtime runtime)
         {
@@ -45,39 +44,32 @@ namespace Infusion.LegacyApi.Injection
 
         public void FindType(int type, int color, int container)
         {
-            Item[] foundItems = Array.Empty<Item>();
+            IEnumerable<Item> foundItems = Array.Empty<Item>();
 
             if (container == 1)
             {
-                if (color >= 0)
-                    foundItems = api.Items.OfType((ModelId)type).OfColor((Color)color).OnGround().OrderByDistance().ToArray();
-                else
-                    foundItems = api.Items.OfType((ModelId)type).OnGround().OrderByDistance().ToArray();
+                foundItems = UO.Items.OnGround();
+                if (Distance >= 0)
+                    foundItems = foundItems.MaxDistance((ushort)Distance);
+                foundItems = foundItems.OrderByDistance();
             }
             else if (container == -1)
-            {
-                if (color >= 0)
-                    foundItems = api.Items.OfType((ModelId)type).OfColor((Color)color).InBackPack(false).ToArray();
-                else
-                    foundItems = api.Items.OfType((ModelId)type).InBackPack(false).ToArray();
-            }
+                foundItems = UO.Items.InBackPack(false);
             else if (container > 1)
-            {
-                if (color >= 0)
-                    foundItems = api.Items.OfType((ModelId)type).OfColor((Color)color).InContainer((uint)container, false).ToArray();
-                else
-                    foundItems = api.Items.OfType((ModelId)type).InContainer((uint)container, false).ToArray();
-            }
+                foundItems = UO.Items.InContainer((uint)container, false);
 
-            if (foundItems.Length > 0)
+            if (color >= 0)
+                foundItems = foundItems.OfColor((Color)color);
+
+            foundItems = foundItems.OfType((ModelId)type).ToArray();
+
+            if (foundItems.Any())
             {
-                Quantity = foundItems[0].Amount;
-                count = foundItems.Length;
-                FindItem = (int)foundItems[0].Id.Value;
+                count = foundItems.Count();
+                FindItem = (int)foundItems.First().Id.Value;
             }
             else
             {
-                Quantity = 0;
                 count = 0;
                 FindItem = 0;
             }

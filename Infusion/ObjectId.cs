@@ -8,6 +8,7 @@
         public static implicit operator ObjectId(uint value) => new ObjectId(value);
 
         public static implicit operator uint(ObjectId id) => id.Value;
+        public static explicit operator int(ObjectId id) => (int)id.Value;
 
         public static bool operator ==(ObjectId id1, ObjectId id2) => id1.Equals(id2);
 

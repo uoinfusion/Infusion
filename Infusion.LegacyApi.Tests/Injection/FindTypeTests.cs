@@ -35,7 +35,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED);
 
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
         }
 
         [TestMethod]
@@ -48,7 +48,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED);
 
-            findTypeSubrutine.FindCount().Should().Be(2);
+            findTypeSubrutine.FindCount.Should().Be(2);
         }
 
         [TestMethod]
@@ -61,7 +61,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, 0x0100, -1);
 
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
         }
 
         [TestMethod]
@@ -74,7 +74,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, -1, -1);
 
-            findTypeSubrutine.FindCount().Should().Be(2);
+            findTypeSubrutine.FindCount.Should().Be(2);
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, -1, 1);
 
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
         }
 
         [TestMethod]
@@ -98,7 +98,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, -1, -1);
 
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
         }
 
         [TestMethod]
@@ -111,7 +111,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, -1, 1);
 
-            injectionHost.GetSerial("finditem").Should().Be((int)(uint)nearestId);
+            injectionHost.GetSerial("finditem").Should().Be(NumberConversions.Int2Hex((int)nearestId));
         }
 
         [TestMethod]
@@ -123,7 +123,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, -1, "ground");
 
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
         }
 
         [TestMethod]
@@ -135,7 +135,43 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindType(0xEED, -1, "my");
 
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void Ignores_nested_containers_in_backpack()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            var subContainerId = serverApi.AddNewItemToBackpack(0x0E75);
+            serverApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
+
+            findTypeSubrutine.FindType(0xEED, -1, "my");
+
+            findTypeSubrutine.FindCount.Should().Be(0);
+        }
+
+        [TestMethod]
+        public void Finds_in_container_when_container_is_id()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            var subContainerId = serverApi.AddNewItemToBackpack(0x0E75);
+            serverApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
+
+            findTypeSubrutine.FindType(0xEED, -1, NumberConversions.Int2Hex(subContainerId));
+
+            findTypeSubrutine.FindCount.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void Ignores_nested_containers()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            var subContainerId = serverApi.AddNewItemToBackpack(0x0E75);
+            serverApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
+
+            findTypeSubrutine.FindType(0xEED, -1, NumberConversions.Int2Hex(testProxy.Api.Me.BackPack.Id));
+
+            findTypeSubrutine.FindCount.Should().Be(0);
         }
 
         [TestMethod]
@@ -145,10 +181,10 @@ namespace Infusion.LegacyApi.Tests.Injection
             serverApi.AddNewItemToBackpack(0xEED);
 
             findTypeSubrutine.FindType(0xEED);
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
 
             findTypeSubrutine.FindType(0xEEF);
-            findTypeSubrutine.FindCount().Should().Be(0);
+            findTypeSubrutine.FindCount.Should().Be(0);
         }
 
         [TestMethod]
@@ -158,11 +194,83 @@ namespace Infusion.LegacyApi.Tests.Injection
             serverApi.AddNewItemToBackpack(0xEED);
 
             findTypeSubrutine.FindType(0xEED);
-            findTypeSubrutine.FindCount().Should().Be(1);
+            findTypeSubrutine.FindCount.Should().Be(1);
 
             findTypeSubrutine.FindType(0xEEF);
 
-            Assert.Fail();
+            findTypeSubrutine.FindItem.Should().Be(0);
+        }
+
+        [TestMethod]
+        public void Finds_item_inside_chebyshev_distance()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            // everything inside chebyshev distance
+            serverApi.AddNewItemToGround(0xeed, new Location2D(999, 999));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(999, 1000));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(999, 1001));
+
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 999));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 1000));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 1001));
+
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1001, 999));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1001, 1000));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1001, 1001));
+
+            injectionHost.Set("finddistance", 1);
+            findTypeSubrutine.FindType(0xEED, -1, "ground");
+
+            findTypeSubrutine.FindCount.Should().Be(9);
+        }
+
+        [TestMethod]
+        public void Doesnt_find_items_outside_chebyshev_distance()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            // everything outside chebyshev distance
+            serverApi.AddNewItemToGround(0xeed, new Location2D(998, 999));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(998, 1000));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(998, 1001));
+
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 997));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 998));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 1002));
+
+            injectionHost.Set("finddistance", "1");
+            findTypeSubrutine.FindType(0xEED, -1, "ground");
+
+            findTypeSubrutine.FindCount.Should().Be(0);
+        }
+
+        [TestMethod]
+        public void Distance_is_0_when_cannot_convert_set_value_to_int()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            serverApi.AddNewItemToGround(0xeed, new Location2D(998, 999));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1000, 1000));
+
+            injectionHost.Set("finddistance", "asdf");
+            findTypeSubrutine.FindType(0xEED, -1, "ground");
+
+            findTypeSubrutine.FindCount.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void All_items_on_ground_when_distance_is_negative()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1010, 1010));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1015, 1015));
+
+            injectionHost.Set("finddistance", "-10");
+            findTypeSubrutine.FindType(0xEED, -1, "ground");
+
+            findTypeSubrutine.FindCount.Should().Be(2);
         }
     }
 }

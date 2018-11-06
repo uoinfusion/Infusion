@@ -92,6 +92,7 @@
     <Compile Include="InfusionTestProxy.cs" />
     <Compile Include="CorpseCollection.cs" />
     <Compile Include="CorpseCollectionExtensions.cs" />
+    <Compile Include="Injection\FindTypeSubrutine.cs" />
     <Compile Include="Injection\InjectionHost.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
     <Compile Include="Filters\IWeatherFilter.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Filters\StaminaFilter.cs" />
     <Compile Include="TargetInfo.cs" />
     <Compile Include="TargetType.cs" />
+    <Compile Include="TestServerApi.cs" />
     <Compile Include="UO.cs" />
     <Compile Include="Legacy.cs" />
     <Compile Include="Player.cs" />

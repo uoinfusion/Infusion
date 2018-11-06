@@ -7,27 +7,28 @@ namespace Infusion.LegacyApi.Injection
 {
     public sealed class InjectionHost
     {
-        private Runtime runtime;
+        private readonly Runtime runtime;
         private readonly Legacy api;
         private readonly IConsole console;
-        private readonly SpeechJournal journal;
+        internal FindTypeSubrutine FindTypeSubrutine { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
             this.api = api;
             this.console = console;
-            journal = api.CreateSpeechJournal();
+
+            runtime = new Runtime();
+
+            this.FindTypeSubrutine = new FindTypeSubrutine(api, runtime);
+
+            RegisterNatives();
         }
 
         public void LoadScript(string fileName)
         {
-            runtime = new Runtime();
-
             try
             {
                 runtime.Load(fileName);
-
-                RegisterNatives();
             }
             catch (SyntaxErrorException ex)
             {
@@ -49,9 +50,16 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<int>)GetX));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gety", (Func<int>)GetY));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getz", (Func<int>)GetZ));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getserial", (Func<string, string>)GetSerial));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dead", (Func<int>)Dead));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "deletejournal", (Action)DeleteJournal));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string, string, string>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findcount", (Func<int>)FindTypeSubrutine.FindCount));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Action<int>)SetWarMode));
 
@@ -59,16 +67,17 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "cast", (Action<string>)Cast));
         }
 
-        private void Wait(int ms) => api.Wait(ms);
-        private void Print(string msg) => api.ClientPrint(msg);
-        private int GetX() => api.Me.Location.X;
-        private int GetY() => api.Me.Location.Y;
-        private int GetZ() => api.Me.Location.Z;
-        private int Dead() => api.Me.IsDead ? 1 : 0;
+        public void Wait(int ms) => api.Wait(ms);
+        public void Print(string msg) => api.ClientPrint(msg);
+        public int GetX() => api.Me.Location.X;
+        public int GetY() => api.Me.Location.Y;
+        public int GetZ() => api.Me.Location.Z;
+        public string GetSerial(string id) => NumberConversions.Int2Hex(GetObject(id));
+        public int Dead() => api.Me.IsDead ? 1 : 0;
 
-        private void DeleteJournal() => journal.Delete();
+        public void Click(string id) => api.Click((uint)runtime.GetObject(id));
 
-        private void SetWarMode(int mode)
+        public void SetWarMode(int mode)
         {
             if (mode == 0)
                 api.WarModeOff();
@@ -76,8 +85,8 @@ namespace Infusion.LegacyApi.Injection
                 api.WarModeOn();
         }
 
-        private void UseSkill(string skillName) => api.UseSkill(TranslateSkill(skillName));
-        private void Cast(string spellName) => api.CastSpell(TranslateSpell(spellName));
+        public void UseSkill(string skillName) => api.UseSkill(TranslateSkill(skillName));
+        public void Cast(string spellName) => api.CastSpell(TranslateSpell(spellName));
 
         private Skill TranslateSkill(string skillName)
         {
@@ -98,6 +107,14 @@ namespace Infusion.LegacyApi.Injection
                 default:
                     throw new NotImplementedException($"Unknown skill {skillName}");
             }
+        }
+
+        private string GetObject(string id)
+        {
+            if (id.Equals("finditem", StringComparison.OrdinalIgnoreCase))
+                return NumberConversions.Int2Hex(FindTypeSubrutine.FindItem);
+
+            return NumberConversions.Int2Hex(runtime.GetObject(id));
         }
 
         private Spell TranslateSpell(string spellName)

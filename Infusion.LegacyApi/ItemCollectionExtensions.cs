@@ -42,17 +42,11 @@ namespace Infusion.LegacyApi
                 ? items.Where(i => AnyParentContainerInContainer(i, containerId))
                 : items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == containerId);
 
-        public static IEnumerable<Item> InBackPack(this IEnumerable<Item> items)
-        {
-            var backPack = UO.Me.BackPack;
-            return items.Where(i => AnyParentContainerInContainer(i, backPack));
-        }
+        public static IEnumerable<Item> InBackPack(this IEnumerable<Item> items, bool recursive = true) 
+            => InContainer(items, UO.Me.BackPack, recursive);
 
-        public static IEnumerable<Item> InBankBox(this IEnumerable<Item> items)
-        {
-            var bank = UO.Me.BankBox;
-            return items.Where(i => AnyParentContainerInContainer(i, bank));
-        }
+        public static IEnumerable<Item> InBankBox(this IEnumerable<Item> items, bool recursive = true)
+            => InContainer(items, UO.Me.BankBox, recursive);
 
         public static IEnumerable<Item> OnGround(this IEnumerable<Item> items)
             => items.Where(i => i.IsOnGround);

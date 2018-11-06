@@ -30,6 +30,8 @@ namespace Infusion.LegacyApi
 
             var console = new NullConsole();
             Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console);
+            UO.Initialize(Api);
+            ServerApi = new TestServerApi(PacketReceivedFromServer, Api);
         }
 
         public IEnumerable<Packet> PacketsSentToClient => packetsSentToClient;
@@ -48,5 +50,6 @@ namespace Infusion.LegacyApi
 
         internal ServerPacketHandler ServerPacketHandler { get; }
         internal ClientPacketHandler ClientPacketHandler { get; }
+        public TestServerApi ServerApi { get; }
     }
 }

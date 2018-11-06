@@ -20,13 +20,21 @@ namespace Infusion.Packets.Server
         {            
         }
 
-        public ObjectInfoPacket(ObjectId id, ModelId type, Location3D location, Color? color)
+        public ObjectInfoPacket(ObjectId id, ModelId type, Location3D location, Color? color, ushort? amount = null)
         {
             Id = id;
             Type = type;
             Location = location;
 
-            ushort packetLength = (ushort)(color.HasValue ? 17 : 15);
+            ushort packetLength = 15;
+            if (color.HasValue)
+                packetLength += 2;
+            if (amount.HasValue)
+            {
+                packetLength += 2;
+                id += 0x80000000;
+            }
+
             var payload = new byte[packetLength];
             var writer = new ArrayPacketWriter(payload);
 
@@ -34,6 +42,8 @@ namespace Infusion.Packets.Server
             writer.WriteUShort(packetLength);
             writer.WriteId(id);
             writer.WriteModelId(type);
+            if (amount.HasValue)
+                writer.WriteUShort(amount.Value);
             writer.WriteUShort((ushort)location.X);
             ushort y = (ushort)(color.HasValue ? location.Y | 0x8000 : location.Y);
             writer.WriteUShort(y);

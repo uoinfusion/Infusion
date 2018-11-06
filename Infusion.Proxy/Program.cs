@@ -88,13 +88,13 @@ namespace Infusion.Proxy
         public static void Initialize(CommandHandler commandHandler)
         {
             Program.commandHandler = commandHandler;
-            commandHandler.RegisterCommand(new Command("dump", DumpPacketLog,
+            commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
                 executionMode: CommandExecutionMode.Direct));
-            commandHandler.RegisterCommand(new Command("help", HelpCommand, "Shows command help."));
-            commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands,
+            commandHandler.RegisterCommand(new Command("help", HelpCommand, false, true, "Shows command help."));
+            commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands, false, true,
                 "Lists running commands"));
-            commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, "Shows proxy latency."));
+            commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
 
             legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
             UO.Initialize(legacyApi);

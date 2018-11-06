@@ -272,5 +272,40 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             findTypeSubrutine.FindCount.Should().Be(2);
         }
+
+        [TestMethod]
+        public void Ignores_ignored_items()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            var itemId1 = serverApi.AddNewItemToGround(0xeed, new Location2D(1001, 1001));
+            var itemId2 = serverApi.AddNewItemToGround(0xeed, new Location2D(1002, 1002));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1003, 1003));
+
+            injectionHost.Ignore(NumberConversions.Int2Hex(itemId1));
+            injectionHost.Ignore(NumberConversions.Int2Hex(itemId2));
+
+            findTypeSubrutine.FindType(0xEED, -1, "ground");
+
+            findTypeSubrutine.FindCount.Should().Be(1);
+        }
+
+        [TestMethod]
+        public void Can_clear_ignored_items()
+        {
+            serverApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            var itemId1 = serverApi.AddNewItemToGround(0xeed, new Location2D(1001, 1001));
+            var itemId2 = serverApi.AddNewItemToGround(0xeed, new Location2D(1002, 1002));
+            serverApi.AddNewItemToGround(0xeed, new Location2D(1003, 1003));
+
+            findTypeSubrutine.Ignore((int)itemId1);
+            findTypeSubrutine.Ignore((int)itemId2);
+            findTypeSubrutine.IgnoreReset();
+
+            findTypeSubrutine.FindType(0xEED, -1, "ground");
+
+            findTypeSubrutine.FindCount.Should().Be(3);
+        }
     }
 }

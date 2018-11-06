@@ -58,6 +58,8 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string, string, string>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findcount", (Func<int>)(() => FindTypeSubrutine.FindCount)));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<int>)FindTypeSubrutine.Ignore));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<string>)Ignore));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
 
@@ -93,7 +95,8 @@ namespace Infusion.LegacyApi.Injection
         public string GetSerial(string id) => GetObject(id);
         public int Dead() => api.Me.IsDead ? 1 : 0;
 
-        public void Click(string id) => api.Click((uint)runtime.GetObject(id));
+        public void Ignore(string id) => FindTypeSubrutine.Ignore(NumberConversions.Str2Int(GetObject(id)));
+        public void Click(string id) => api.Click((uint)NumberConversions.Str2Int(GetObject(id)));
 
         public void SetWarMode(int mode)
         {

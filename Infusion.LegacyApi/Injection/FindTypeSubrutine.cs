@@ -11,6 +11,7 @@ namespace Infusion.LegacyApi.Injection
     {
         private readonly Legacy api;
         private readonly Runtime runtime;
+        private readonly HashSet<ObjectId> ignoredIds = new HashSet<ObjectId>();
         public int count;
 
         public int FindItem { get; internal set; }
@@ -48,7 +49,7 @@ namespace Infusion.LegacyApi.Injection
 
             if (container == 1)
             {
-                foundItems = UO.Items.OnGround();
+                foundItems = UO.Items.Where(x => !ignoredIds.Contains(x.Id)).OnGround();
                 if (Distance >= 0)
                     foundItems = foundItems.MaxDistance((ushort)Distance);
                 foundItems = foundItems.OrderByDistance();
@@ -74,5 +75,8 @@ namespace Infusion.LegacyApi.Injection
                 FindItem = 0;
             }
         }
+
+        public void Ignore(int id) => ignoredIds.Add((uint)id);
+        public void IgnoreReset() => ignoredIds.Clear();
     }
 }

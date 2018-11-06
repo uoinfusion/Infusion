@@ -379,6 +379,11 @@ namespace Infusion.LegacyApi
             return playerObservers.Attack(target.Id, timeout);
         }
 
+        public AttackResult TryAttack(ObjectId id, TimeSpan? timeout = null)
+        {
+            return playerObservers.Attack(id, timeout);
+        }
+
         public void TargetTile(string tileInfo)
         {
             CheckCancellation();

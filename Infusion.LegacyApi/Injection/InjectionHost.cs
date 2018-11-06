@@ -85,6 +85,14 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dead", (Func<int>)Dead));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "hidden", (Func<int>)Hidden));
 
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "str", (Func<int>)Str));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "int", (Func<int>)Int));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dex", (Func<int>)Dex));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "stamina", (Func<int>)Stamina));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "mana", (Func<int>)Mana));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "weight", (Func<int>)Weight));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gold", (Func<int>)Gold));
+
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
@@ -188,6 +196,14 @@ namespace Infusion.LegacyApi.Injection
         public string GetSerial(string id) => NumberConversions.Int2Hex(GetObject(id));
         public int Dead() => api.Me.IsDead ? 1 : 0;
         public int Hidden() => api.Me.IsHidden? 1 : 0;
+
+        public int Str() => api.Me.Strength;
+        public int Int() => api.Me.Intelligence;
+        public int Dex() => api.Me.Dexterity;
+        public int Stamina() => api.Me.CurrentStamina;
+        public int Mana() => api.Me.CurrentMana;
+        public int Weight() => api.Me.Weight;
+        public int Gold() => (int)api.Me.Gold;
 
         public void Ignore(string id) => FindTypeSubrutine.Ignore(GetObject(id));
         public void Click(string id) => api.Click((uint)GetObject(id));

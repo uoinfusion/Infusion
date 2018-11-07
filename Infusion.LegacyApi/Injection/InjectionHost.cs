@@ -102,6 +102,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<string>)Ignore));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<int>)Click));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "useobject", (Action<string>)UseObject));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "useobject", (Action<int>)UseObject));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "attack", (Action<string>)Attack));
@@ -112,8 +113,6 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "serverprint", (Action<string>)Say));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Action<int>)WarMode));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Func<int>)WarMode));
@@ -207,6 +206,7 @@ namespace Infusion.LegacyApi.Injection
 
         public void Ignore(string id) => FindTypeSubrutine.Ignore(GetObject(id));
         public void Click(string id) => api.Click((uint)GetObject(id));
+        public void Click(int id) => api.Click((uint)id);
         public void UseObject(int id) => api.Use((uint)id);
         public void UseObject(string id) => api.Use((uint)GetObject(id));
         public void Attack(string id) => api.TryAttack((uint)GetObject(id));

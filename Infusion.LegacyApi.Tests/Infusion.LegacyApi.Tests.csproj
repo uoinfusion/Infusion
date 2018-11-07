@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConcurrencyTester.cs" />
+    <Compile Include="CorpsesTests.cs" />
     <Compile Include="EventJournalTests\TestEventJournalSource.cs" />
     <Compile Include="EventJournalTests\AllTests.cs" />
     <Compile Include="EventJournalTests\EnumerationTests.cs" />

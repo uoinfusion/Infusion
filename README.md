@@ -19,6 +19,11 @@ debugging capabilities.
 - If you know Injection, take a look to a brief [comparison with Infusion](https://github.com/uoinfusion/Infusion/wiki/Comparison-with-Injection).
 - Look at [example scripts](https://github.com/uoinfusion/Infusion/tree/master/ExampleScripts).
 
+You may take a look at some videos:
+
+- [Debugging scripts with Visual Studio 2017 Community edition](https://www.youtube.com/watch?v=X2hyImvCSHg)
+- [Using Hotride/UOPatcher to enable FPS patch](https://www.youtube.com/watch?v=hagheyX6Odo)
+
 
 ## Current Status
 

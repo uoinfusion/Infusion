@@ -114,10 +114,26 @@ namespace Infusion.LegacyApi
             var packet = new ObjectInfoPacket(newItemId, type, (Location3D)location, color, (ushort?)amount);
             sendPacket(packet.RawPacket.Payload);
 
-            // 0x1A, 0x00, 0x11, 0xC0, 0x08, 0x8F, 0xB7, 0x0E, 0xED, 0x00, 0x14, 0x0A, 0x7C, 0x4C, 0x8E, 0x00, 
-            // 0x20, 
-
             return newItemId;
+        }
+
+        public void Say(ObjectId id, string name, string message, Color? color = null, ModelId? modelId = null,
+            SpeechType type = SpeechType.Normal, ushort font = 0)
+        {
+            var packet = new SendSpeechPacket()
+            {
+                Id = id,
+                Name = name,
+                Message = message,
+                Color = color ?? (Color)0,
+                Model = modelId ?? 0,
+                Font = font,
+                Type = type,
+            };
+
+            packet.Serialize();
+
+            sendPacket(packet.RawPacket.Payload);
         }
 
         private ObjectId NewMobileId() => lastMobileId++;

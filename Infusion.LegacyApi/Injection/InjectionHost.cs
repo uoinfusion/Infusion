@@ -11,6 +11,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly Legacy api;
         private readonly IConsole console;
         internal FindTypeSubrutine FindTypeSubrutine { get; }
+        internal Journal Journal { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
@@ -20,6 +21,8 @@ namespace Infusion.LegacyApi.Injection
             runtime = new Runtime();
 
             this.FindTypeSubrutine = new FindTypeSubrutine(api, runtime);
+            this.Journal = new Journal(1000);
+            api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
 
             RegisterNatives();
         }
@@ -113,6 +116,13 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "serverprint", (Action<string>)Say));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "injournal", (Func<string, int>)InJournal));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "deletejournal", (Action)DeleteJournal));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "journal", (Func<int, string>)GetJournalText));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "journalserial", (Func<int, string>)JournalSerial));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setjournalline", (Action<int>)SetJournalLine));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setjournalline", (Action<int, string>)SetJournalLine));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Action<int>)WarMode));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Func<int>)WarMode));
@@ -215,6 +225,13 @@ namespace Infusion.LegacyApi.Injection
         public void GetStatus(int id) => api.RequestStatus((uint)id);
 
         public void Say(string message) => api.Say(message);
+
+        public int InJournal(string pattern) => Journal.InJournal(pattern);
+        public void DeleteJournal() => Journal.DeleteJournal();
+        public string GetJournalText(int index) => Journal.GetJournalText(index);
+        public string JournalSerial(int index) => Journal.JournalSerial(index);
+        public void SetJournalLine(int index) => Journal.SetJournalLine(index);
+        public void SetJournalLine(int index, string text) => Journal.SetJournalLine(index);
 
         public void WarMode(int mode)
         {

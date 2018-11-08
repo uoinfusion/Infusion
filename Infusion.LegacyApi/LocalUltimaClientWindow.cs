@@ -57,6 +57,15 @@ namespace Infusion.LegacyApi
             PostMessage(hWnd, WM_CHAR, value, lParam);
         }
 
+        public void SendText(string text)
+        {
+            for (int i = 0; i < text.Length; ++i)
+                SendChar(ultimaClientProcess.MainWindowHandle, text[i]);
+
+            SendChar(ultimaClientProcess.MainWindowHandle, '\r');
+            SendChar(ultimaClientProcess.MainWindowHandle, '\n');
+        }
+
         private const int WM_CHAR = 0x102;
         private const int WM_KEYDOWN = 0x100;
         private const int WM_KEYUP = 0x0101;

@@ -113,7 +113,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<string>)GetStatus));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<int>)GetStatus));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)Say));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "serverprint", (Action<string>)Say));
 
@@ -224,6 +224,7 @@ namespace Infusion.LegacyApi.Injection
         public void GetStatus(string id) => api.RequestStatus((uint)GetObject(id));
         public void GetStatus(int id) => api.RequestStatus((uint)id);
 
+        public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);
 
         public int InJournal(string pattern) => Journal.InJournal(pattern);

@@ -22,5 +22,7 @@ namespace Infusion.LegacyApi
         public void PressKey(KeyCode keyCode)
         {
         }
+
+        public void SendText(string text) => throw new NotImplementedException();
     }
 }

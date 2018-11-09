@@ -11,6 +11,8 @@ namespace Infusion.LegacyApi.Injection
         private readonly Runtime runtime;
         private readonly Legacy api;
         private readonly IConsole console;
+        private readonly Injection.ItemObservers itemObservers;
+
         internal FindTypeSubrutine FindTypeSubrutine { get; }
         internal Journal Journal { get; }
         internal EquipmentSubrutines Equipment { get; }
@@ -33,6 +35,8 @@ namespace Infusion.LegacyApi.Injection
             this.Grabbing = new Grabbing(api, this);
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
+
+            itemObservers = new ItemObservers(api.Server, api);
 
             RegisterNatives();
         }
@@ -344,6 +348,8 @@ namespace Infusion.LegacyApi.Injection
                 return FindTypeSubrutine.FindItem;
             if (id.Equals("self", StringComparison.OrdinalIgnoreCase))
                 return (int)api.Me.PlayerId;
+            if (id.Equals("lastcorpse", StringComparison.OrdinalIgnoreCase))
+                return (int)itemObservers.LastCorpseId;
 
             return runtime.GetObject(id);
         }

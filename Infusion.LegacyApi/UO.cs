@@ -234,6 +234,9 @@ namespace Infusion.LegacyApi
         public static void CloseGump()
             => Current.CloseGump();
 
+        public static void Wear(ObjectId id, Layer layer, TimeSpan? timeout = null)
+            => Current.Wear(id, layer, timeout);
+
         public static void Wear(Item item, Layer layer, TimeSpan? timeout = null)
             => Current.Wear(item, layer, timeout);
 

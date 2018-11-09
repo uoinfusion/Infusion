@@ -599,11 +599,16 @@ namespace Infusion.LegacyApi
             gumpObservers.CloseGump();
         }
 
-        public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        public void Wear(ObjectId id, Layer layer, TimeSpan? timeout = null)
         {
             NotifyAction();
 
-            Server.Wear(item.Id, layer, Me.PlayerId);
+            Server.Wear(id, layer, Me.PlayerId);
+        }
+
+        public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        {
+            Wear(item.Id, layer, timeout);
         }
 
         public void CastSpell(Spell spell)

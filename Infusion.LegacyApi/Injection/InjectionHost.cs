@@ -1,4 +1,5 @@
-﻿using Infusion.LegacyApi.Console;
+﻿using Infusion.Commands;
+using Infusion.LegacyApi.Console;
 using InjectionScript.Interpretation;
 using InjectionScript.Parsing;
 using System;
@@ -12,6 +13,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly IConsole console;
         internal FindTypeSubrutine FindTypeSubrutine { get; }
         internal Journal Journal { get; }
+        internal EquipmentSubrutines Equipment { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
@@ -22,7 +24,9 @@ namespace Infusion.LegacyApi.Injection
 
             this.FindTypeSubrutine = new FindTypeSubrutine(api, runtime);
             this.Journal = new Journal(1000);
+            this.Equipment = new EquipmentSubrutines(api);
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
+            api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
             RegisterNatives();
         }
@@ -31,7 +35,9 @@ namespace Infusion.LegacyApi.Injection
         {
             try
             {
+                UnregisterCommands();
                 runtime.Load(fileName);
+                RegisterCommands();
             }
             catch (SyntaxErrorException ex)
             {
@@ -39,6 +45,37 @@ namespace Infusion.LegacyApi.Injection
                     console.Error($"{error.Line}, {error.CharPos} {error.Message}");
             }
         }
+
+        private void ExecCommand(string parameters)
+        {
+            var subrutine = runtime.Metadata.GetSubrutine(parameters, 0);
+            if (subrutine == null)
+                throw new NotImplementedException();
+
+            var commandName = GetCommandName(subrutine);
+
+            this.api.CommandHandler.InvokeSyntax("," + commandName);
+        }
+
+        private void RegisterCommands()
+        {
+            foreach (var subrutine in runtime.Metadata.Subrutines)
+            {
+                var name = GetCommandName(subrutine);
+                this.api.CommandHandler.RegisterCommand(name, () => CallSubrutine(subrutine.Name));
+            }
+        }
+
+        private void UnregisterCommands()
+        {
+            foreach (var subrutine in runtime.Metadata.Subrutines)
+            {
+                var name = GetCommandName(subrutine);
+                this.api.CommandHandler.Unregister(name);
+            }
+        }
+
+        private string GetCommandName(SubrutineDefinition subrutine) => "inj-" + subrutine.Name;
 
         public void CallSubrutine(string subrutineName) => runtime.CallSubrutine(subrutineName);
 
@@ -49,7 +86,6 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "set", (Action<string, string>)Set));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "set", (Action<string, int>)Set));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "print", (Action<string>)Print));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<int>)GetX));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<string, int>)GetX));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<int, int>)GetX));
@@ -116,6 +152,9 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "serverprint", (Action<string>)Say));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "print", (Action<string>)Print));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<int, string>)CharPrint));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<int, int, string>)CharPrint));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "injournal", (Func<string, int>)InJournal));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "deletejournal", (Action)DeleteJournal));
@@ -123,6 +162,9 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "journalserial", (Func<int, string>)JournalSerial));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setjournalline", (Action<int>)SetJournalLine));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setjournalline", (Action<int, string>)SetJournalLine));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "arm", (Action<string>)Arm));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setarm", (Action<string>)SetArm));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Action<int>)WarMode));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Func<int>)WarMode));
@@ -150,7 +192,6 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        public void Print(string msg) => api.ClientPrint(msg);
         public int GetX() => api.Me.Location.X;
         public int GetX(string id) => GetX(GetObject(id));
         public int GetX(int id) => api.GameObjects[(uint)id]?.Location.X ?? 0;
@@ -226,6 +267,9 @@ namespace Infusion.LegacyApi.Injection
 
         public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);
+        public void Print(string msg) => api.ClientPrint(msg);
+        public void CharPrint(int color, string msg) => api.ClientPrint(msg, "", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Normal, (Color)color);
+        public void CharPrint(int id, int color, string msg) => api.ClientPrint(msg, "", (uint)id, 0, SpeechType.Normal, (Color)color);
 
         public int InJournal(string pattern) => Journal.InJournal(pattern);
         public void DeleteJournal() => Journal.DeleteJournal();
@@ -233,6 +277,9 @@ namespace Infusion.LegacyApi.Injection
         public string JournalSerial(int index) => Journal.JournalSerial(index);
         public void SetJournalLine(int index) => Journal.SetJournalLine(index);
         public void SetJournalLine(int index, string text) => Journal.SetJournalLine(index);
+
+        public void Arm(string name) => Equipment.Arm(name);
+        public void SetArm(string name) => Equipment.SetArm(name);
 
         public void WarMode(int mode)
         {

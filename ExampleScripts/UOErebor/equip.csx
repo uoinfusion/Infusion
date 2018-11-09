@@ -1,50 +1,52 @@
-
 #load "items.csx"
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 public static class Equip
 {
-    public static Equipment GetHand()
+    public static EquipmentSet GetHand()
     {
-        Layer itemInHandLayer;
-
-        var itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
-        if (itemInHand == null)
-        {
-            itemInHand = UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
-            itemInHandLayer = Layer.TwoHandedWeapon;
-        }
-        else
-        {
-            itemInHand = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
-            itemInHandLayer = Layer.OneHandedWeapon;
-        }
-
-        if (itemInHand != null)
-            return new Equipment(itemInHand.Id, itemInHandLayer);
-        else
-            return Equipment.None;
+        List<Equipment> hands = new List<Equipment>();
+        
+        var oneHandedWeapon = UO.Items.OnLayer(Layer.OneHandedWeapon).FirstOrDefault();
+        var twoHandedWeapon = UO.Items.OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
+        
+        if (oneHandedWeapon == null && twoHandedWeapon == null)
+        return EquipmentSet.Empty;
+        
+        if (oneHandedWeapon != null)
+            hands.Add(new Equipment(oneHandedWeapon.Id, Layer.OneHandedWeapon));
+        if (twoHandedWeapon != null)
+            hands.Add(new Equipment(twoHandedWeapon.Id, Layer.TwoHandedWeapon));
+            
+        return new EquipmentSet(hands);
     }
 
-    public static void Set(Equipment equipment, TimeSpan? timeout = null)
+    public static void Set(EquipmentSet equipmentSet, TimeSpan? timeout = null)
     {
-        if (equipment.Equals(Equipment.None))
+        if (!equipmentSet.Any())
         {
-            UO.ClientPrint("No item to equip");
+            UO.ClientPrint("Equipment set is empty, no item to equip.");
             return;
         }
 
-        var item = UO.Items[equipment.Id];
-
-        if (item == null)
+        foreach (var equipment in equipmentSet)
         {
-            UO.ClientPrint($"Cannot find item {equipment.Id}.");
-            return;
+            var item = UO.Items[equipment.Id];
+    
+            if (item == null)
+            {
+                UO.ClientPrint($"Cannot find item {equipment.Id}.");
+                return;
+            }
+            
+            if (item.Layer != equipment.Layer)
+                Items.Wear(item, equipment.Layer, timeout);
         }
-        
-        if (item.Layer != equipment.Layer)
-            Items.Wear(item, equipment.Layer, timeout);
     }
     
     public static void UndressJewelry()
@@ -65,6 +67,39 @@ public static class Equip
     }
 }
 
+public class EquipmentSet : IEnumerable<Equipment>
+{
+    public readonly static EquipmentSet Empty = new EquipmentSet(Array.Empty<Equipment>());
+
+    private readonly IEnumerable<Equipment> equips;
+
+    public EquipmentSet(IEnumerable<Equipment> equips)
+    {
+        this.equips = equips.ToArray();
+    }
+    
+    IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+    public IEnumerator<Equipment> GetEnumerator() => equips.GetEnumerator();
+
+    public override string ToString()
+    {
+        if (!equips.Any())
+            return "empty EquipmentSet";
+            
+        var builder = new StringBuilder();
+        bool empty = true;
+        foreach (var set in equips)
+        {
+            if (!empty)
+                builder.Append(';');
+            builder.Append(set.ToString());
+            empty = false;
+        }
+        
+        return builder.ToString();
+    }
+}
+
 public struct Equipment
 {
     public static readonly Equipment None = new Equipment((ObjectId)0, Layer.Arms);
@@ -78,7 +113,7 @@ public struct Equipment
     public ObjectId Id { get; }
     public Layer Layer { get; }
 
-    public override string ToString() => $"{Id}, {Layer}";
+    public override string ToString() => $"{Id} ({Layer})";
 }
 
 UO.RegisterCommand("undress-jewelry", Equip.UndressJewelry);

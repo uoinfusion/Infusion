@@ -51,12 +51,23 @@ public static class Looting
     public static ItemSpec KnivesSpec { get; set; } = Specs.Knives;
     
     public static IgnoredItems ignoredItems = new IgnoredItems();
+    public static HashSet<ObjectId> rippedCorpses = new HashSet<ObjectId>();
 
     public static IEnumerable<Corpse> GetLootableCorpses()
     {
         var corpses = UO.Corpses
             .MaxDistance(20)
             .Where(x => !ignoredItems.IsIgnored(x))
+            .OrderByDistance().ToArray();
+
+        return corpses;
+    }
+
+    public static IEnumerable<Corpse> GetUnrippedCorpses()
+    {
+        var corpses = UO.Corpses
+            .MaxDistance(20)
+            .Where(x => !rippedCorpses.Contains(x.Id))
             .OrderByDistance().ToArray();
 
         return corpses;
@@ -117,6 +128,10 @@ public static class Looting
     public static void RipAndLootNearest()
     {
         var corpses = GetLootableCorpses().ToArray();
+        
+        if (!corpses.Any())
+            corpses = GetUnrippedCorpses().ToArray();
+
         var corpse = corpses.MaxDistance(3).FirstOrDefault();
 
         if (corpse != null)
@@ -362,6 +377,12 @@ public static class Looting
 
     public static bool Rip(Corpse corpse)
     {
+        if (rippedCorpses.Contains(corpse.Id))
+        {
+            UO.ClientPrint($"{Specs.TranslateToName(corpse)} already ripped.");
+            return true;
+        }
+    
         if (NotRippableCorpses.Matches(corpse))
         {
             UO.ClientPrint($"Not ripping {Specs.TranslateToName(corpse)}, it is ignored");
@@ -393,7 +414,10 @@ public static class Looting
                     result = false;
                 })
                 .WaitAny();
-                
+            
+            if (result)
+                rippedCorpses.Add(corpse.Id);
+
             return result;
         }
         finally

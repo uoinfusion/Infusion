@@ -16,6 +16,7 @@ namespace Infusion.LegacyApi.Injection
         internal EquipmentSubrutines Equipment { get; }
         internal UseSubrutines UseSubrutines { get; }
         internal Targeting Targeting { get; }
+        internal Grabbing Grabbing { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
@@ -29,6 +30,7 @@ namespace Infusion.LegacyApi.Injection
             this.Equipment = new EquipmentSubrutines(api);
             this.UseSubrutines = new UseSubrutines(api);
             this.Targeting = new Targeting(api, this);
+            this.Grabbing = new Grabbing(api, this);
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
@@ -140,6 +142,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string, string, string>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, string>)FindTypeSubrutine.FindType));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findcount", (Func<int>)(() => FindTypeSubrutine.FindCount)));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<int>)FindTypeSubrutine.Ignore));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<string>)Ignore));
@@ -156,6 +159,10 @@ namespace Infusion.LegacyApi.Injection
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string>)WaitTargetObject));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string, string>)WaitTargetObject));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<int, int>)Grab));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<int, string>)Grab));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setreceivingcontainer", (Action<int>)SetReceivingContainer));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
@@ -277,6 +284,10 @@ namespace Infusion.LegacyApi.Injection
 
         public void WaitTargetObject(string id) => Targeting.WaitTargetObject(id);
         public void WaitTargetObject(string id1, string id2) => Targeting.WaitTargetObject(id1, id2);
+
+        public void SetReceivingContainer(int id) => Grabbing.SetReceivingContainer(id);
+        public void Grab(int amount, int id) => Grabbing.Grab(amount, id);
+        public void Grab(int amount, string id) => Grabbing.Grab(amount, id);
 
         public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);

@@ -15,6 +15,7 @@ namespace Infusion.LegacyApi.Injection
         internal Journal Journal { get; }
         internal EquipmentSubrutines Equipment { get; }
         internal UseSubrutines UseSubrutines { get; }
+        internal Targeting Targeting { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
@@ -27,6 +28,7 @@ namespace Infusion.LegacyApi.Injection
             this.Journal = new Journal(1000);
             this.Equipment = new EquipmentSubrutines(api);
             this.UseSubrutines = new UseSubrutines(api);
+            this.Targeting = new Targeting(api, this);
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
@@ -152,6 +154,9 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<int>)GetStatus));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "usetype", (Action<int>)UseType));
 
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string>)WaitTargetObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string, string>)WaitTargetObject));
+
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "serverprint", (Action<string>)Say));
@@ -270,6 +275,9 @@ namespace Infusion.LegacyApi.Injection
 
         public void UseType(int type) => UseSubrutines.UseType(type);
 
+        public void WaitTargetObject(string id) => Targeting.WaitTargetObject(id);
+        public void WaitTargetObject(string id1, string id2) => Targeting.WaitTargetObject(id1, id2);
+
         public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);
         public void Print(string msg) => api.ClientPrint(msg);
@@ -319,7 +327,7 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        private int GetObject(string id)
+        internal int GetObject(string id)
         {
             if (id.Equals("finditem", StringComparison.OrdinalIgnoreCase))
                 return FindTypeSubrutine.FindItem;

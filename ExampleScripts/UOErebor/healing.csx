@@ -35,15 +35,16 @@ public static class Healing
         try
         {
             UO.WaitTargetObject(UO.Me);
-            
+
+            UO.Wait(500);
+            if (ReEquip)
+                Equip.Set(weapon);
+
             bool result = true;
             UO.Journal
                 .When("You are frozen and can not move.", () => result = false)
                 .When("byl uspesne osetren", "Leceni se ti nepovedlo.", "neni zranen.", "prestal krvacet.", "prestala krvacet.", () => result = true)
                 .WaitAny();
-
-            if (ReEquip)
-                Equip.Set(weapon);
                 
             return result;
         }

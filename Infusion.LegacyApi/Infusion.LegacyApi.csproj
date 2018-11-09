@@ -98,6 +98,7 @@
     <Compile Include="Injection\FindTypeSubrutine.cs" />
     <Compile Include="Injection\InjectionHost.cs" />
     <Compile Include="Injection\Journal.cs" />
+    <Compile Include="Injection\UseSubrutines.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
     <Compile Include="Filters\IWeatherFilter.cs" />
     <Compile Include="KeyCode.cs" />

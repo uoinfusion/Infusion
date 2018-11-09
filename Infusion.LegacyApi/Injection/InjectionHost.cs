@@ -14,6 +14,7 @@ namespace Infusion.LegacyApi.Injection
         internal FindTypeSubrutine FindTypeSubrutine { get; }
         internal Journal Journal { get; }
         internal EquipmentSubrutines Equipment { get; }
+        internal UseSubrutines UseSubrutines { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
@@ -25,6 +26,7 @@ namespace Infusion.LegacyApi.Injection
             this.FindTypeSubrutine = new FindTypeSubrutine(api, runtime);
             this.Journal = new Journal(1000);
             this.Equipment = new EquipmentSubrutines(api);
+            this.UseSubrutines = new UseSubrutines(api);
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
@@ -148,6 +150,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "attack", (Action<int>)Attack));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<string>)GetStatus));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<int>)GetStatus));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "usetype", (Action<int>)UseType));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
@@ -264,6 +267,8 @@ namespace Infusion.LegacyApi.Injection
         public void Attack(int id) => api.TryAttack((uint)id);
         public void GetStatus(string id) => api.RequestStatus((uint)GetObject(id));
         public void GetStatus(int id) => api.RequestStatus((uint)id);
+
+        public void UseType(int type) => UseSubrutines.UseType(type);
 
         public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);

@@ -518,12 +518,16 @@ public static class Specs
 
     // Mounts
     public static readonly MobileSpec Lama = 0x00DC;
-    public static readonly MobileSpec Mustang = 0x00E2;
-    public static readonly MobileSpec Horse = new[] { 0x00C8, 0x00CC, 0x00E4 };
+    public static readonly MobileSpec LamaPack = 0x0124;
+    public static readonly MobileSpec Mustang = new[] { 0x1122, 0x1117, 0x1120, 0x1121, 0x1118, 0x1119, 0x1123, 0x1116, 0x1115, 0x1114, 0x9999 };
+    public static readonly MobileSpec Horse = new[] { 0x00C8, 0x00E2, 0x00E4, 0x00CC };
+    public static readonly MobileSpec HorsePack = 0x0123;
     public static readonly MobileSpec Oclock = 0x00D2;
     public static readonly MobileSpec Orn = 0x00DB;
+    public static readonly MobileSpec Zostrich = 0x00DA;
+    public static readonly MobileSpec Ridgeback = new[] { 0x00BB, 0x00BC}; 
 
-    public static readonly MobileSpec Mounts = new[] { Lama, Mustang, Horse, Oclock, Orn };
+    public static readonly MobileSpec Mounts = new[] { Lama, LamaPack, Mustang, Horse, HorsePack, Oclock, Orn, Zostrich, Ridgeback };
     
     // Shrink Animals
     public static readonly ItemSpec VlkodavShrink = new ItemSpec(0x20EA, (Color)0x0979);

@@ -100,6 +100,7 @@
     <Compile Include="Injection\InjectionHost.cs" />
     <Compile Include="Injection\ItemObservers.cs" />
     <Compile Include="Injection\Journal.cs" />
+    <Compile Include="Injection\Morphing.cs" />
     <Compile Include="Injection\Targeting.cs" />
     <Compile Include="Injection\UseSubrutines.cs" />
     <Compile Include="IUltimaClientWindow.cs" />

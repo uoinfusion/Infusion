@@ -19,6 +19,7 @@ namespace Infusion.LegacyApi.Injection
         internal UseSubrutines UseSubrutines { get; }
         internal Targeting Targeting { get; }
         internal Grabbing Grabbing { get; }
+        internal Morphing Morphing { get; }
 
         public InjectionHost(Legacy api, IConsole console)
         {
@@ -33,6 +34,7 @@ namespace Infusion.LegacyApi.Injection
             this.UseSubrutines = new UseSubrutines(api);
             this.Targeting = new Targeting(api, this);
             this.Grabbing = new Grabbing(api, this);
+            this.Morphing = new Morphing(api);
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
@@ -196,6 +198,9 @@ namespace Infusion.LegacyApi.Injection
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "useskill", (Action<string>)UseSkill));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "cast", (Action<string>)Cast));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "morph", (Action<string>)Morph));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "morph", (Action<int>)Morph));
         }
 
         public void Wait(int ms) => api.Wait(ms);
@@ -332,6 +337,9 @@ namespace Infusion.LegacyApi.Injection
 
         public void UseSkill(string skillName) => api.UseSkill(TranslateSkill(skillName));
         public void Cast(string spellName) => api.CastSpell(TranslateSpell(spellName));
+
+        public void Morph(string type) => Morphing.Morph(type);
+        public void Morph(int type) => Morphing.Morph(type);
 
         private Skill TranslateSkill(string skillName)
         {

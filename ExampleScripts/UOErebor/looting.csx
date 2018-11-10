@@ -372,7 +372,7 @@ public static class Looting
             return true;
         }
     
-        if (NotRippableCorpses.Matches(corpse))
+        if (NotRippableCorpses.Matches(corpse.CorpseType))
         {
             UO.ClientPrint($"Not ripping {Specs.TranslateToName(corpse)}, it is ignored");
             return true;

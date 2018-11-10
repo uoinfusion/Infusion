@@ -27,7 +27,7 @@ namespace Infusion.LegacyApi.Injection
 
             runtime = new Runtime();
 
-            this.FindTypeSubrutine = new FindTypeSubrutine(api, runtime);
+            this.FindTypeSubrutine = new FindTypeSubrutine(api, this);
             this.Journal = new Journal(1000);
             this.Equipment = new EquipmentSubrutines(api);
             this.UseSubrutines = new UseSubrutines(api);
@@ -134,6 +134,8 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dead", (Func<int>)Dead));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "hidden", (Func<int>)Hidden));
 
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "addobject", (Action<string, int>)AddObject));
+
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "str", (Func<int>)Str));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "int", (Func<int>)Int));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dex", (Func<int>)Dex));
@@ -160,13 +162,16 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<string>)GetStatus));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<int>)GetStatus));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "usetype", (Action<int>)UseType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "usetype", (Action<string>)UseType));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string>)WaitTargetObject));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string, string>)WaitTargetObject));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<int, int>)Grab));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<int, string>)Grab));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<string, string>)Grab));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setreceivingcontainer", (Action<int>)SetReceivingContainer));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setreceivingcontainer", (Action<string>)SetReceivingContainer));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
@@ -174,6 +179,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "print", (Action<string>)Print));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<int, string>)CharPrint));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<int, int, string>)CharPrint));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<string, int, string>)CharPrint));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "injournal", (Func<string, int>)InJournal));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "deletejournal", (Action)DeleteJournal));
@@ -266,6 +272,8 @@ namespace Infusion.LegacyApi.Injection
         public int Dead() => api.Me.IsDead ? 1 : 0;
         public int Hidden() => api.Me.IsHidden? 1 : 0;
 
+        public void AddObject(string name, int id) => runtime.SetObject(name, id);
+
         public int Str() => api.Me.Strength;
         public int Int() => api.Me.Intelligence;
         public int Dex() => api.Me.Dexterity;
@@ -285,19 +293,23 @@ namespace Infusion.LegacyApi.Injection
         public void GetStatus(int id) => api.RequestStatus((uint)id);
 
         public void UseType(int type) => UseSubrutines.UseType(type);
+        public void UseType(string type) => UseSubrutines.UseType(type);
 
         public void WaitTargetObject(string id) => Targeting.WaitTargetObject(id);
         public void WaitTargetObject(string id1, string id2) => Targeting.WaitTargetObject(id1, id2);
 
         public void SetReceivingContainer(int id) => Grabbing.SetReceivingContainer(id);
+        public void SetReceivingContainer(string id) => Grabbing.SetReceivingContainer(id);
         public void Grab(int amount, int id) => Grabbing.Grab(amount, id);
         public void Grab(int amount, string id) => Grabbing.Grab(amount, id);
+        public void Grab(string amount, string id) => Grabbing.Grab(amount, id);
 
         public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);
         public void Print(string msg) => api.ClientPrint(msg);
         public void CharPrint(int color, string msg) => api.ClientPrint(msg, "", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Normal, (Color)color);
         public void CharPrint(int id, int color, string msg) => api.ClientPrint(msg, "", (uint)id, 0, SpeechType.Normal, (Color)color);
+        public void CharPrint(string id, int color, string msg) => api.ClientPrint(msg, "", (uint)GetObject(id), 0, SpeechType.Normal, (Color)color);
 
         public int InJournal(string pattern) => Journal.InJournal(pattern);
         public void DeleteJournal() => Journal.DeleteJournal();

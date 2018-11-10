@@ -1,4 +1,6 @@
-﻿namespace Infusion
+﻿using System;
+
+namespace Infusion
 {
     public struct ObjectId
     {
@@ -9,6 +11,7 @@
 
         public static implicit operator uint(ObjectId id) => id.Value;
         public static explicit operator int(ObjectId id) => (int)id.Value;
+        public static explicit operator ObjectId(int id) => new ObjectId((uint)id);
 
         public static bool operator ==(ObjectId id1, ObjectId id2) => id1.Equals(id2);
 
@@ -29,6 +32,7 @@
         public override int GetHashCode() => Value.GetHashCode();
 
         public override string ToString() => $"0x{Value:X8}";
+
     }
 
 }

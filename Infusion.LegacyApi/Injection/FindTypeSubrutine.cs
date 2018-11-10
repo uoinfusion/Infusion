@@ -10,7 +10,7 @@ namespace Infusion.LegacyApi.Injection
     internal sealed class FindTypeSubrutine
     {
         private readonly Legacy api;
-        private readonly Runtime runtime;
+        private readonly InjectionHost host;
         private readonly HashSet<ObjectId> ignoredIds = new HashSet<ObjectId>();
         public int count;
 
@@ -19,10 +19,10 @@ namespace Infusion.LegacyApi.Injection
 
         public int Distance { get; internal set; } = -1;
 
-        public FindTypeSubrutine(Legacy api, Runtime runtime)
+        public FindTypeSubrutine(Legacy api, InjectionHost host)
         {
             this.api = api;
-            this.runtime = runtime;
+            this.host = host;
         }
         
         private int ConvertContainer(string id)
@@ -32,7 +32,7 @@ namespace Infusion.LegacyApi.Injection
             else if (id.Equals("ground", StringComparison.OrdinalIgnoreCase))
                 return 1;
 
-            return runtime.GetObject(id);
+            return host.GetObject(id);
         }
 
         public void FindType(string typeStr) => FindType(NumberConversions.Str2Int(typeStr));

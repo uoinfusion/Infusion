@@ -6,9 +6,20 @@ namespace Infusion.Packets.Server
     internal sealed class DrawObjectPacket : MaterializedPacket
     {
         private Packet rawPacket;
+        private ModelId type;
+
 
         public ObjectId Id { get; private set; }
-        public ModelId Type { get; private set; }
+        public ModelId Type { get => type;
+            set
+            {
+                type = value;
+                var writer = new ArrayPacketWriter(rawPacket.Payload);
+
+                writer.Position = 1 + 2 + 4;
+                writer.WriteModelId(value);
+            }
+        }
         public Location3D Location { get; private set; }
 
         public override Packet RawPacket => rawPacket;

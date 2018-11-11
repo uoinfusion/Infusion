@@ -12,36 +12,41 @@ namespace Infusion.Packets.Server
 
         public DrawGamePlayerPacket(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, MovementType movementType, Color color)
         {
-            var payload = new byte[19];
-            var writer = new ArrayPacketWriter(payload);
-
             PlayerId = playerId;
             BodyType = bodyType;
             Location = location;
             Color = color;
 
-            writer.WriteByte((byte) PacketDefinitions.DrawGamePlayer.Id);
-            writer.WriteId(playerId);
-            writer.WriteModelId(bodyType);
+            Serialize();
+        }
+
+        public void Serialize()
+        {
+            var payload = new byte[19];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.DrawGamePlayer.Id);
+            writer.WriteId(PlayerId);
+            writer.WriteModelId(BodyType);
             writer.WriteByte(0); // unknown
-            writer.WriteColor(color);
+            writer.WriteColor(Color);
             writer.WriteByte(0); // flag, alway 0
-            writer.WriteUShort((ushort)location.X);
-            writer.WriteUShort((ushort)location.Y);
+            writer.WriteUShort((ushort)Location.X);
+            writer.WriteUShort((ushort)Location.Y);
             writer.WriteUShort(0); // unknown
-            writer.WriteMovement(direction, movementType);
-            writer.WriteSByte((sbyte)location.Z);
+            writer.WriteMovement(Direction, MovementType);
+            writer.WriteSByte((sbyte)Location.Z);
 
             rawPacket = new Packet(PacketDefinitions.DrawGamePlayer.Id, payload);
         }
 
-        public byte Flags { get; private set; }
+        public byte Flags { get; set; }
 
-        public ObjectId PlayerId { get; private set; }
+        public ObjectId PlayerId { get; set; }
 
-        public ModelId BodyType { get; private set; }
+        public ModelId BodyType { get; set; }
 
-        public Location3D Location { get; private set; }
+        public Location3D Location { get; set; }
 
         public override Packet RawPacket => rawPacket;
 
@@ -49,7 +54,7 @@ namespace Infusion.Packets.Server
 
         public MovementType MovementType { get; set; }
 
-        public Color Color { get; private set; }
+        public Color Color { get; set; }
 
         public override void Deserialize(Packet rawPacket)
         {

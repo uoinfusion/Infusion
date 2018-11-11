@@ -1,4 +1,6 @@
-﻿using InjectionScript.Interpretation;
+﻿using Infusion.Packets;
+using Infusion.Packets.Server;
+using InjectionScript.Interpretation;
 
 namespace Infusion.LegacyApi.Injection
 {
@@ -6,9 +8,43 @@ namespace Infusion.LegacyApi.Injection
     {
         private readonly Legacy api;
         private ModelId? orignalModel;
-        private bool morphed = false;
+        private ModelId? morphedModel;
 
-        public Morphing(Legacy api) => this.api = api;
+        public Morphing(Legacy api)
+        {
+            this.api = api;
+            api.Server.RegisterOutputFilter(Filter);
+        }
+
+        private Packet? Filter(Packet rawPacket)
+        {
+            if (morphedModel.HasValue)
+            {
+                if (rawPacket.Id == PacketDefinitions.DrawGamePlayer.Id)
+                {
+                    var packet = PacketDefinitionRegistry.Materialize<DrawGamePlayerPacket>(rawPacket);
+                    if (packet.PlayerId == api.Me.PlayerId)
+                    {
+                        packet.BodyType = morphedModel.Value;
+                        packet.Serialize();
+
+                        return packet.RawPacket;
+                    }
+                }
+                else if (rawPacket.Id == PacketDefinitions.DrawObject.Id)
+                {
+                    var packet = PacketDefinitionRegistry.Materialize<DrawObjectPacket>(rawPacket);
+                    if (packet.Id == api.Me.PlayerId)
+                    {
+                        packet.Type = morphedModel.Value;
+
+                        return packet.RawPacket;
+                    }
+                }
+            }
+
+            return rawPacket;
+        }
 
         public void Morph(string type) => Morph(NumberConversions.Str2Int(type));
 
@@ -16,19 +52,19 @@ namespace Infusion.LegacyApi.Injection
         {
             ModelId model = (ushort)type;
 
-            if (!morphed)
+            if (!morphedModel.HasValue)
                 orignalModel = api.Me.BodyType;
 
             if (type <= 0)
             {
                 if (orignalModel.HasValue)
                     SetPlayerModel(orignalModel.Value);
-                morphed = false;
+                morphedModel = null;
             }
             else
             {
                 SetPlayerModel(model);
-                morphed = true;
+                morphedModel = model;
             }
         }
 

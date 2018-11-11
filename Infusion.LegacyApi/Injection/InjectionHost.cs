@@ -89,7 +89,17 @@ namespace Infusion.LegacyApi.Injection
 
         private string GetCommandName(SubrutineDefinition subrutine) => "inj-" + subrutine.Name;
 
-        public void CallSubrutine(string subrutineName) => runtime.CallSubrutine(subrutineName);
+        public void CallSubrutine(string subrutineName)
+        {
+            try
+            {
+                runtime.CallSubrutine(subrutineName);
+            }
+            catch (ScriptFailedException ex)
+            {
+                console.Error($"Line {ex.Line}, {runtime.CurrentFileName} - {ex.Message}");
+            }
+        }
 
         private void RegisterNatives()
         {

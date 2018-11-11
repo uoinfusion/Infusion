@@ -105,112 +105,112 @@ namespace Infusion.LegacyApi.Injection
         {
             runtime.Metadata.Add(new NativeSubrutineDefinition("wait", (Action<int>)Wait));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "set", (Action<string, string>)Set));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "set", (Action<string, int>)Set));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.set", (Action<string, string>)Set));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.set", (Action<string, int>)Set));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<int>)GetX));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<string, int>)GetX));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getx", (Func<int, int>)GetX));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getx", (Func<int>)GetX));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getx", (Func<string, int>)GetX));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getx", (Func<int, int>)GetX));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gety", (Func<int>)GetY));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gety", (Func<string, int>)GetY));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gety", (Func<int, int>)GetY));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.gety", (Func<int>)GetY));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.gety", (Func<string, int>)GetY));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.gety", (Func<int, int>)GetY));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getz", (Func<int>)GetZ));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getz", (Func<string, int>)GetZ));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getz", (Func<int, int>)GetZ));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getz", (Func<int>)GetZ));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getz", (Func<string, int>)GetZ));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getz", (Func<int, int>)GetZ));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getdistance", (Func<string, int>)GetDistance));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getdistance", (Func<int, int>)GetDistance));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getdistance", (Func<string, int>)GetDistance));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getdistance", (Func<int, int>)GetDistance));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gethp", (Func<int>)GetHP));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gethp", (Func<int, int>)GetHP));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gethp", (Func<string, int>)GetHP));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.gethp", (Func<int>)GetHP));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.gethp", (Func<int, int>)GetHP));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.gethp", (Func<string, int>)GetHP));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getmaxhp", (Func<int>)GetMaxHP));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getmaxhp", (Func<int, int>)GetMaxHP));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getmaxhp", (Func<string, int>)GetMaxHP));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getmaxhp", (Func<int>)GetMaxHP));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getmaxhp", (Func<int, int>)GetMaxHP));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getmaxhp", (Func<string, int>)GetMaxHP));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getnotoriety", (Func<int, int>)GetNotoriety));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getnotoriety", (Func<string, int>)GetNotoriety));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getnotoriety", (Func<int, int>)GetNotoriety));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getnotoriety", (Func<string, int>)GetNotoriety));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getname", (Func<int, string>)GetName));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getname", (Func<string, string>)GetName));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getname", (Func<int, string>)GetName));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getname", (Func<string, string>)GetName));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "isnpc", (Func<int, int>)IsNpc));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "isnpc", (Func<string, int>)IsNpc));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.isnpc", (Func<int, int>)IsNpc));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.isnpc", (Func<string, int>)IsNpc));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getserial", (Func<string, string>)GetSerial));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getquantity", (Func<string, int>)GetQuantity));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getquantity", (Func<int, int>)GetQuantity));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dead", (Func<int>)Dead));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "hidden", (Func<int>)Hidden));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getserial", (Func<string, string>)GetSerial));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getquantity", (Func<string, int>)GetQuantity));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getquantity", (Func<int, int>)GetQuantity));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.dead", (Func<int>)Dead));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.hidden", (Func<int>)Hidden));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "addobject", (Action<string, int>)AddObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.addobject", (Action<string, int>)AddObject));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "str", (Func<int>)Str));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "int", (Func<int>)Int));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "dex", (Func<int>)Dex));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "stamina", (Func<int>)Stamina));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "mana", (Func<int>)Mana));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "weight", (Func<int>)Weight));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "gold", (Func<int>)Gold));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.str", (Func<int>)Str));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.int", (Func<int>)Int));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.dex", (Func<int>)Dex));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.stamina", (Func<int>)Stamina));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.mana", (Func<int>)Mana));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.weight", (Func<int>)Weight));
+            runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.gold", (Func<int>)Gold));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string>)FindTypeSubrutine.FindType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int>)FindTypeSubrutine.FindType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<string, string, string>)FindTypeSubrutine.FindType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findtype", (Action<int, int, string>)FindTypeSubrutine.FindType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "findcount", (Func<int>)(() => FindTypeSubrutine.FindCount)));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<int>)FindTypeSubrutine.Ignore));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "ignore", (Action<string>)Ignore));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findtype", (Action<string>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findtype", (Action<int>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findtype", (Action<int, int, int>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findtype", (Action<string, string, string>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findtype", (Action<int, int, string>)FindTypeSubrutine.FindType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findcount", (Func<int>)(() => FindTypeSubrutine.FindCount)));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.ignore", (Action<int>)FindTypeSubrutine.Ignore));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.ignore", (Action<string>)Ignore));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<string>)Click));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "click", (Action<int>)Click));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "useobject", (Action<string>)UseObject));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "useobject", (Action<int>)UseObject));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "attack", (Action<string>)Attack));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "attack", (Action<int>)Attack));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<string>)GetStatus));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "getstatus", (Action<int>)GetStatus));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "usetype", (Action<int>)UseType));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "usetype", (Action<string>)UseType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.click", (Action<string>)Click));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.click", (Action<int>)Click));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.useobject", (Action<string>)UseObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.useobject", (Action<int>)UseObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.attack", (Action<string>)Attack));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.attack", (Action<int>)Attack));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getstatus", (Action<string>)GetStatus));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getstatus", (Action<int>)GetStatus));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.usetype", (Action<int>)UseType));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.usetype", (Action<string>)UseType));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string>)WaitTargetObject));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "waittargetobject", (Action<string, string>)WaitTargetObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetobject", (Action<string>)WaitTargetObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetobject", (Action<string, string>)WaitTargetObject));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<int, int>)Grab));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<int, string>)Grab));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "grab", (Action<string, string>)Grab));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setreceivingcontainer", (Action<int>)SetReceivingContainer));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setreceivingcontainer", (Action<string>)SetReceivingContainer));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<int, int>)Grab));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<int, string>)Grab));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<string, string>)Grab));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setreceivingcontainer", (Action<int>)SetReceivingContainer));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setreceivingcontainer", (Action<string>)SetReceivingContainer));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "say", (Action<string>)ClientSay));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "msg", (Action<string>)Say));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "serverprint", (Action<string>)Say));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "print", (Action<string>)Print));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<int, string>)CharPrint));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<int, int, string>)CharPrint));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "charprint", (Action<string, int, string>)CharPrint));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.say", (Action<string>)ClientSay));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.msg", (Action<string>)Say));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.serverprint", (Action<string>)Say));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.print", (Action<string>)Print));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<int, string>)CharPrint));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<int, int, string>)CharPrint));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<string, int, string>)CharPrint));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "injournal", (Func<string, int>)InJournal));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "deletejournal", (Action)DeleteJournal));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "journal", (Func<int, string>)GetJournalText));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "journalserial", (Func<int, string>)JournalSerial));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setjournalline", (Action<int>)SetJournalLine));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setjournalline", (Action<int, string>)SetJournalLine));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.injournal", (Func<string, int>)InJournal));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.deletejournal", (Action)DeleteJournal));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.journal", (Func<int, string>)GetJournalText));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.journalserial", (Func<int, string>)JournalSerial));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setjournalline", (Action<int>)SetJournalLine));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setjournalline", (Action<int, string>)SetJournalLine));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "arm", (Action<string>)Arm));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "setarm", (Action<string>)SetArm));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.arm", (Action<string>)Arm));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setarm", (Action<string>)SetArm));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Action<int>)WarMode));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "warmode", (Func<int>)WarMode));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.warmode", (Action<int>)WarMode));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.warmode", (Func<int>)WarMode));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "useskill", (Action<string>)UseSkill));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "cast", (Action<string>)Cast));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.useskill", (Action<string>)UseSkill));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.cast", (Action<string>)Cast));
 
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "morph", (Action<string>)Morph));
-            runtime.Metadata.Add(new NativeSubrutineDefinition("UO", "morph", (Action<int>)Morph));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.morph", (Action<string>)Morph));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.morph", (Action<int>)Morph));
         }
 
         public void Wait(int ms) => api.Wait(ms);

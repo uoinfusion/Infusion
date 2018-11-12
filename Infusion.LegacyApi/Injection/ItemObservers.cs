@@ -1,4 +1,5 @@
 ﻿using Infusion.Packets;
+using Infusion.Packets.Both;
 using Infusion.Packets.Server;
 using System;
 using System.Collections.Generic;
@@ -10,19 +11,38 @@ namespace Infusion.LegacyApi.Injection
 {
     internal sealed class ItemObservers
     {
-        private Legacy legacyApi;
-        public ObjectId LastCorpseId { get; internal set; } = 0;
+        public ObjectId LastCorpseId { get; private set; } = 0;
+        public ObjectId LastStatusId { get; private set; } = 0;
+        public ObjectId LastTargetId { get; private set; } = 0;
 
-        public ItemObservers(IServerPacketSubject serverPacketSubject, Legacy legacyApi)
+        public ItemObservers(IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject)
         {
-            this.legacyApi = legacyApi;
             serverPacketSubject.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
+            serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
+
+            clientPacketSubject.RegisterOutputFilter(FilterSentClientPackets);
+        }
+
+        private Packet? FilterSentClientPackets(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
+            {
+                var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
+                LastTargetId = packet.ClickedOnId;
+            }
+
+            return rawPacket;
         }
 
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
         {
             if (packet.Type == 0x2006)
                 LastCorpseId = packet.Id;
+        }
+
+        private void HandleStatusBarInfoPacket(StatusBarInfoPacket packet)
+        {
+            LastStatusId = packet.PlayerId;
         }
     }
 }

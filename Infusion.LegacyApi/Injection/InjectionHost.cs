@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi.Injection
             api.JournalSource.NewMessageReceived += (sender, entry) => Journal.Add(entry);
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
-            itemObservers = new ItemObservers(api.Server, api);
+            itemObservers = new ItemObservers(api.Server, api.Client);
 
             RegisterNatives();
         }
@@ -380,6 +380,10 @@ namespace Infusion.LegacyApi.Injection
                 return (int)api.Me.PlayerId;
             if (id.Equals("lastcorpse", StringComparison.OrdinalIgnoreCase))
                 return (int)itemObservers.LastCorpseId;
+            if (id.Equals("lasttarget", StringComparison.OrdinalIgnoreCase))
+                return (int)itemObservers.LastTargetId;
+            if (id.Equals("laststatus", StringComparison.OrdinalIgnoreCase))
+                return (int)itemObservers.LastStatusId;
 
             return runtime.GetObject(id);
         }

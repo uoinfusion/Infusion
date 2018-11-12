@@ -108,3 +108,4 @@ public sealed class InscriptionScroll : CraftProduct
 UO.RegisterCommand("inscription-gate", () => Inscription.Inscribe(InscriptionMenu.GateTravel));
 UO.RegisterCommand("inscription-recall", () => Inscription.Inscribe(InscriptionMenu.Recall));
 UO.RegisterCommand("inscription-mark", () => Inscription.Inscribe(InscriptionMenu.Mark));
+UO.RegisterCommand("inscription-teleport", () => Inscription.Inscribe(InscriptionMenu.Teleport));

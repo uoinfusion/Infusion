@@ -1,5 +1,6 @@
 ﻿using Infusion.Packets;
 using Infusion.Packets.Both;
+using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,6 @@ namespace Infusion.LegacyApi.Injection
         public ItemObservers(IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject)
         {
             serverPacketSubject.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
-            serverPacketSubject.Subscribe(PacketDefinitions.StatusBarInfo, HandleStatusBarInfoPacket);
 
             clientPacketSubject.RegisterOutputFilter(FilterSentClientPackets);
         }
@@ -30,6 +30,11 @@ namespace Infusion.LegacyApi.Injection
                 var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
                 LastTargetId = packet.ClickedOnId;
             }
+            else if (rawPacket.Id == PacketDefinitions.GetClientStatus.Id)
+            {
+                var packet = PacketDefinitionRegistry.Materialize<GetClientStatusRequest>(rawPacket);
+                LastStatusId = packet.Id;
+            }
 
             return rawPacket;
         }
@@ -38,11 +43,6 @@ namespace Infusion.LegacyApi.Injection
         {
             if (packet.Type == 0x2006)
                 LastCorpseId = packet.Id;
-        }
-
-        private void HandleStatusBarInfoPacket(StatusBarInfoPacket packet)
-        {
-            LastStatusId = packet.PlayerId;
         }
     }
 }

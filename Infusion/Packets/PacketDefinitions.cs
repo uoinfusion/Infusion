@@ -50,8 +50,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition ControlAnimation = new PacketDefinition(0x1E,
             new StaticPacketLength(4), "ControlAnimation");
 
-        public static readonly PacketDefinition GetClientStatus = new PacketDefinition(0x34,
-            new StaticPacketLength(10), "GetClientStatus");
+        public static readonly PacketDefinition<GetClientStatusRequest> GetClientStatus
+            = new PacketDefinition<GetClientStatusRequest>(0x34, new StaticPacketLength(10), "GetClientStatus", packet => new GetClientStatusRequest());
 
         public static readonly PacketDefinition PathfinidingInClient = new PacketDefinition(0x38,
             new StaticPacketLength(7), "PathfinidingInClient");

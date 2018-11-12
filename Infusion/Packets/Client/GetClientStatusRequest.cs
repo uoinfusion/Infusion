@@ -7,9 +7,16 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    internal sealed class GetClientStatusRequest
+    internal sealed class GetClientStatusRequest : MaterializedPacket
     {
-        public Packet RawPacket { get; }
+        private Packet rawPacket;
+
+        public ObjectId Id { get; private set; }
+        public override Packet RawPacket => rawPacket;
+
+        public GetClientStatusRequest()
+        {
+        }
 
         public GetClientStatusRequest(ObjectId id)
         {
@@ -21,7 +28,18 @@ namespace Infusion.Packets.Client
             writer.WriteByte(0x04);
             writer.WriteId(id);
 
-            RawPacket = new Packet(PacketDefinitions.GetClientStatus.Id, payload);
+            this.Id = id;
+
+            rawPacket = new Packet(PacketDefinitions.GetClientStatus.Id, payload);
+        }
+
+        public override void Deserialize(Packet rawPacket)
+        {
+            this.rawPacket = rawPacket;
+
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+            reader.Skip(6);
+            Id = reader.ReadObjectId();
         }
     }
 }

@@ -179,6 +179,10 @@ namespace Infusion.LegacyApi.Injection
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetobject", (Action<string>)WaitTargetObject));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetobject", (Action<string, string>)WaitTargetObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetself", (Action)WaitTargetSelf));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetself", (Action<string>)WaitTargetSelf));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetlast", (Action)WaitTargetLast));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetlast", (Action<string>)WaitTargetLast));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<int, int>)Grab));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<int, string>)Grab));
@@ -322,6 +326,10 @@ namespace Infusion.LegacyApi.Injection
 
         public void WaitTargetObject(string id) => Targeting.WaitTargetObject(id);
         public void WaitTargetObject(string id1, string id2) => Targeting.WaitTargetObject(id1, id2);
+        public void WaitTargetSelf(string ignoredID) => Targeting.WaitTargetObject(api.Me.PlayerId);
+        public void WaitTargetSelf() => Targeting.WaitTargetObject(api.Me.PlayerId);
+        public void WaitTargetLast(string ignoredID) => Targeting.WaitTargetObject(itemObservers.LastTargetId);
+        public void WaitTargetLast() => Targeting.WaitTargetObject(itemObservers.LastTargetId);
 
         public void SetReceivingContainer(int id) => Grabbing.SetReceivingContainer(id);
         public void SetReceivingContainer(string id) => Grabbing.SetReceivingContainer(id);

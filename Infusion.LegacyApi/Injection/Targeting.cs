@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Infusion.LegacyApi.Injection
+﻿namespace Infusion.LegacyApi.Injection
 {
     internal sealed class Targeting
     {
@@ -15,6 +9,11 @@ namespace Infusion.LegacyApi.Injection
         {
             this.api = api;
             this.host = host;
+        }
+
+        public void WaitTargetObject(ObjectId id)
+        {
+            api.WaitTargetObject(id);
         }
 
         public void WaitTargetObject(string idText)

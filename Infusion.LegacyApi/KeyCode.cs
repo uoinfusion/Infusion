@@ -1,6 +1,6 @@
 ﻿namespace Infusion.LegacyApi
 {
-    public enum KeyCode : int
+    public enum KeyCode
     {
         End = 0x23,
         Home = 0x24,

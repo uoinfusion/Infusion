@@ -145,6 +145,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.getquantity", (Func<int, int>)GetQuantity));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.dead", (Func<int>)Dead));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.hidden", (Func<int>)Hidden));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.hidden", (Func<string, int>)Hidden));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.addobject", (Action<string, int>)AddObject));
 
@@ -185,6 +186,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setreceivingcontainer", (Action<int>)SetReceivingContainer));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.setreceivingcontainer", (Action<string>)SetReceivingContainer));
 
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.keypress", (Action<int>)KeyPress));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.say", (Action<string>)ClientSay));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.msg", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.serverprint", (Action<string>)Say));
@@ -285,7 +287,15 @@ namespace Infusion.LegacyApi.Injection
 
         public string GetSerial(string id) => NumberConversions.Int2Hex(GetObject(id));
         public int Dead() => api.Me.IsDead ? 1 : 0;
-        public int Hidden() => api.Me.IsHidden? 1 : 0;
+        public int Hidden() => api.Me.IsHidden ? 1 : 0;
+        public int Hidden(string idText)
+        {
+            var id = GetObject(idText);
+            if (id == api.Me.PlayerId)
+                return api.Me.IsHidden ? 1 : 0;
+
+            return 0;
+        }
 
         public void AddObject(string name, int id) => runtime.SetObject(name, id);
 
@@ -319,6 +329,7 @@ namespace Infusion.LegacyApi.Injection
         public void Grab(int amount, string id) => Grabbing.Grab(amount, id);
         public void Grab(string amount, string id) => Grabbing.Grab(amount, id);
 
+        public void KeyPress(int key) => api.ClientWindow.PressKey((KeyCode)key);
         public void ClientSay(string message) => api.ClientWindow.SendText(message);
         public void Say(string message) => api.Say(message);
         public void Print(string msg) => api.ClientPrint(msg);
@@ -367,6 +378,8 @@ namespace Infusion.LegacyApi.Injection
                     return Skill.Meditation;
                 case "tracking":
                     return Skill.Tracking;
+                case "hid":
+                    return Skill.DetectingHidden;
                 default:
                     throw new NotImplementedException($"Unknown skill {skillName}");
             }

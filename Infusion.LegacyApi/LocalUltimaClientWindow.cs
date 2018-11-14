@@ -47,7 +47,6 @@ namespace Infusion.LegacyApi
         public void PressKey(KeyCode keyCode)
         {
             PostMessage(ultimaClientProcess.MainWindowHandle, WM_KEYDOWN, (int)keyCode, 1);
-            PostMessage(ultimaClientProcess.MainWindowHandle, WM_KEYUP, (int)keyCode, 1);
         }
 
         private static void SendChar(IntPtr hWnd, int value)

@@ -69,6 +69,16 @@ namespace Infusion.LegacyApi.Injection
             this.api.CommandHandler.InvokeSyntax("," + commandName);
         }
 
+        private void Terminate(string parameters)
+        {
+            var subrutine = runtime.Metadata.GetSubrutine(parameters, 0);
+            if (subrutine == null)
+                throw new NotImplementedException();
+            var commandName = GetCommandName(subrutine);
+
+            this.api.CommandHandler.Terminate(commandName);
+        }
+
         private void RegisterCommands()
         {
             foreach (var subrutine in runtime.Metadata.Subrutines)
@@ -198,6 +208,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.serverprint", (Action<string>)Say));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.print", (Action<string>)Print));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<int, string>)CharPrint));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<string, string>)CharPrint));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<int, int, string>)CharPrint));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.charprint", (Action<string, int, string>)CharPrint));
 
@@ -220,6 +231,8 @@ namespace Infusion.LegacyApi.Injection
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.morph", (Action<string>)Morph));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.morph", (Action<int>)Morph));
+
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.terminate", (Action<string>)Terminate));
         }
 
         public void Wait(int ms) => api.Wait(ms);
@@ -347,6 +360,7 @@ namespace Infusion.LegacyApi.Injection
         public void Say(string message) => api.Say(message);
         public void Print(string msg) => api.ClientPrint(msg);
         public void CharPrint(int color, string msg) => api.ClientPrint(msg, "", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Normal, (Color)color);
+        public void CharPrint(string color, string msg) => api.ClientPrint(msg, "", UO.Me.PlayerId, UO.Me.BodyType, SpeechType.Normal, (Color)NumberConversions.Str2Int(color));
         public void CharPrint(int id, int color, string msg) => api.ClientPrint(msg, "", (uint)id, 0, SpeechType.Normal, (Color)color);
         public void CharPrint(string id, int color, string msg) => api.ClientPrint(msg, "", (uint)GetObject(id), 0, SpeechType.Normal, (Color)color);
 

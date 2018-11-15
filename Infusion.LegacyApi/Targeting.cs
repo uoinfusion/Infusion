@@ -51,6 +51,7 @@ namespace Infusion.LegacyApi
 
         internal AutoResetEvent WaitForTargetStartedEvent { get; } = new AutoResetEvent(false);
         internal AutoResetEvent AskForTargetStartedEvent { get; } = new AutoResetEvent(false);
+        internal event Action<TargetInfo?> TargetInfoReceived;
 
         private void HanldeServerTargetCursorPacket(TargetCursorPacket packet)
         {
@@ -113,6 +114,7 @@ namespace Infusion.LegacyApi
                     lastTargetInfo = null;
                     lastItemIdInfo = null;
                     receivedTargetInfoEvent.Set();
+                    TargetInfoReceived.Invoke(null);
                     return null;
                 }
 
@@ -131,6 +133,7 @@ namespace Infusion.LegacyApi
                 }
 
                 receivedTargetInfoEvent.Set();
+                TargetInfoReceived.Invoke(lastTargetInfo);
                 return null;
             }
 
@@ -184,11 +187,7 @@ namespace Infusion.LegacyApi
         {
             try
             {
-                lastTargetInfo = null;
-                targetInfoRequested = true;
-                receivedTargetInfoEvent.Reset();
-
-                client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+                AskForTarget();
 
                 while (!receivedTargetInfoEvent.WaitOne(10))
                 {
@@ -308,16 +307,22 @@ namespace Infusion.LegacyApi
             Target(gameObject.Id, gameObject.Type, gameObject.Location);
         }
 
+        public void AskForTarget()
+        {
+            targetInfoRequested = true;
+            receivedTargetInfoEvent.Reset();
+            targetFromServerReceivedEvent.Reset();
+            ClearNextTarget();
+
+            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+        }
+
+
         public ObjectId? ItemIdInfo()
         {
             try
             {
-                targetInfoRequested = true;
-                receivedTargetInfoEvent.Reset();
-                targetFromServerReceivedEvent.Reset();
-                ClearNextTarget();
-
-                client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+                AskForTarget();
 
                 var originalTime = lastTargetCursorPacketTime;
 
@@ -342,11 +347,7 @@ namespace Infusion.LegacyApi
 
         public TargetInfo? LocationInfo()
         {
-            receivedTargetInfoEvent.Reset();
-            targetFromServerReceivedEvent.Reset();
-            ClearNextTarget();
-
-            client.TargetCursor(CursorTarget.Location, new CursorId(0xDEADBEEF), CursorType.Neutral);
+            AskForTarget();
 
             var originalTime = lastTargetCursorPacketTime;
 

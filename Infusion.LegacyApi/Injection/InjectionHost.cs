@@ -148,6 +148,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.hidden", (Func<string, int>)Hidden));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.addobject", (Action<string, int>)AddObject));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.addobject", (Action<string>)AddObject));
 
             runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.str", (Func<int>)Str));
             runtime.Metadata.AddIntrinsicVariable(new NativeSubrutineDefinition("UO.int", (Func<int>)Int));
@@ -183,6 +184,7 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetself", (Action<string>)WaitTargetSelf));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetlast", (Action)WaitTargetLast));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.waittargetlast", (Action<string>)WaitTargetLast));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.targeting", (Func<int>)IsTargeting));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<int, int>)Grab));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.grab", (Action<int, string>)Grab));
@@ -214,6 +216,7 @@ namespace Infusion.LegacyApi.Injection
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.useskill", (Action<string>)UseSkill));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.cast", (Action<string>)Cast));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.cast", (Action<string, string>)Cast));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.morph", (Action<string>)Morph));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.morph", (Action<int>)Morph));
@@ -302,6 +305,7 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public void AddObject(string name, int id) => runtime.SetObject(name, id);
+        public void AddObject(string name) => Targeting.AddObject(name);
 
         public int Str() => api.Me.Strength;
         public int Int() => api.Me.Intelligence;
@@ -330,6 +334,7 @@ namespace Infusion.LegacyApi.Injection
         public void WaitTargetSelf() => Targeting.WaitTargetObject(api.Me.PlayerId);
         public void WaitTargetLast(string ignoredID) => Targeting.WaitTargetObject(itemObservers.LastTargetId);
         public void WaitTargetLast() => Targeting.WaitTargetObject(itemObservers.LastTargetId);
+        public int IsTargeting() => Targeting.IsTargeting ? 1 : 0;
 
         public void SetReceivingContainer(int id) => Grabbing.SetReceivingContainer(id);
         public void SetReceivingContainer(string id) => Grabbing.SetReceivingContainer(id);
@@ -366,6 +371,11 @@ namespace Infusion.LegacyApi.Injection
 
         public void UseSkill(string skillName) => api.UseSkill(TranslateSkill(skillName));
         public void Cast(string spellName) => api.CastSpell(TranslateSpell(spellName));
+        public void Cast(string spellName, string idText)
+        {
+            Targeting.WaitTargetObject(idText);
+            api.CastSpell(TranslateSpell(spellName));
+        }
 
         public void Morph(string type) => Morphing.Morph(type);
         public void Morph(int type) => Morphing.Morph(type);

@@ -43,6 +43,12 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
+        internal event Action<TargetInfo?> TargetInfoReceived
+        {
+            add => targeting.TargetInfoReceived += value;
+            remove => targeting.TargetInfoReceived -= value;
+        }
+
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console)
         {
@@ -461,6 +467,7 @@ namespace Infusion.LegacyApi
         }
 
         public TargetInfo? Info() => targeting.Info();
+        internal void AskForTarget() => targeting.AskForTarget();
 
         private void InfoCommand()
         {

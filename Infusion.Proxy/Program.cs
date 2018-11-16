@@ -45,8 +45,6 @@ namespace Infusion.Proxy
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 
-        private static readonly Lazy<StringList> clilocDictionary = new Lazy<StringList>(() => new StringList("ENU"));
-
         private static ushort proxyLocalPort;
         private static CommandHandler commandHandler;
 

@@ -63,6 +63,16 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
+        public void InJournal_accepts_patterns_with_cliloc_message_numbers()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "System", "You cannot reach that.");
+
+            injection.InjectionHost.InJournal("cliloc# 0xA258").Should().NotBe(0);
+        }
+
+        [TestMethod]
         public void DeleteJournal_clears_journal()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
@@ -141,10 +151,12 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
-        public void Journal_returns_empty_text_when_no_entry_at_index() => injection.InjectionHost.GetJournalText(100).Should().Be(string.Empty);
+        public void Journal_returns_empty_text_when_no_entry_at_index()
+            => injection.InjectionHost.GetJournalText(100).Should().Be(string.Empty);
 
         [TestMethod]
-        public void JournalSerial_returns_0_when_no_entry_at_index() => injection.InjectionHost.JournalSerial(100).Should().Be("0x00000000");
+        public void JournalSerial_returns_0_when_no_entry_at_index()
+            => injection.InjectionHost.JournalSerial(100).Should().Be("0x00000000");
 
         [TestMethod]
         public void SetJournalSerial_clears_text_regardless_text_in_argument()

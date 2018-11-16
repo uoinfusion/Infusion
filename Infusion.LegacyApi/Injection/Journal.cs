@@ -1,12 +1,16 @@
 ﻿using InjectionScript.Interpretation;
+using System;
 using System.Collections.Generic;
+using Ultima;
 
 namespace Infusion.LegacyApi.Injection
 {
     public sealed class Journal
     {
+        private const string clilocPrefix = "cliloc# 0x";
         private readonly LinkedList<JournalEntry> journal = new LinkedList<JournalEntry>();
         private readonly object journalLock = new object();
+        private static readonly Lazy<StringList> clilocDictionary = new Lazy<StringList>(() => new StringList("ENU"));
 
         public int MaxEntries { get; }
 
@@ -22,14 +26,23 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        public int InJournal(string pattern)
+        public int InJournal(string searchPhrase)
         {
-            var searchWords = pattern.Split('|');
+            var searchPatterns = searchPhrase.Split('|');
 
             lock (journalLock)
             {
-                foreach (var word in searchWords)
+                foreach (var pattern in searchPatterns)
                 {
+                    string word = pattern;
+
+                    if (pattern.StartsWith(clilocPrefix, StringComparison.OrdinalIgnoreCase) && pattern.Length > clilocPrefix.Length)
+                    {
+                        var messageIdText = pattern.Substring(clilocPrefix.Length).Trim();
+                        var messageId = int.Parse(messageIdText, System.Globalization.NumberStyles.HexNumber) + 0x70000;
+                        word = clilocDictionary.Value.GetString(messageId);
+                    }
+
                     var foundIndex = journal.Count;
                     foreach (var entry in journal)
                     {

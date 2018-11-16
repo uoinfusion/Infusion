@@ -71,12 +71,11 @@ namespace Infusion.LegacyApi.Injection
 
         private void Terminate(string parameters)
         {
-            var subrutine = runtime.Metadata.GetSubrutine(parameters, 0);
-            if (subrutine == null)
-                throw new NotImplementedException();
-            var commandName = GetCommandName(subrutine);
-
-            this.api.CommandHandler.Terminate(commandName);
+            if (runtime.Metadata.TryGetSubrutine(parameters, 0, out var subrutine))
+            {
+                var commandName = GetCommandName(subrutine);
+                this.api.CommandHandler.Terminate(commandName);
+            }
         }
 
         private void RegisterCommands()

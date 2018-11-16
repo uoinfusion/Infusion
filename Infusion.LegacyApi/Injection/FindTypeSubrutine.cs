@@ -39,6 +39,8 @@ namespace Infusion.LegacyApi.Injection
         public void FindType(int type) => FindType(type, -1, -1);
         public void FindType(string type, string color, string container)
             => FindType(NumberConversions.Str2Int(type), NumberConversions.Str2Int(color), ConvertContainer(container));
+        public int Count(int type) => UO.Items.OfType((ModelId)type).InBackPack().Sum(x => x.Amount);
+        public int Count(string type) => Count(NumberConversions.Str2Int(type));
         internal void FindType(int type, int color, string container)
             => FindType(type, color, ConvertContainer(container));
 

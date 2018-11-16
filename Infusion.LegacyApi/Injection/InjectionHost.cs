@@ -108,6 +108,11 @@ namespace Infusion.LegacyApi.Injection
             {
                 console.Error($"Line {ex.Line}, {runtime.CurrentFileName} - {ex.Message}");
             }
+            catch (InternalInterpretationException ex)
+            {
+                console.Error($"Line {ex.Line}, {runtime.CurrentFileName} - {ex.Message}");
+                console.Debug(ex.InnerException.ToString());
+            }
         }
 
         private void RegisterNatives()
@@ -175,6 +180,8 @@ namespace Infusion.LegacyApi.Injection
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.findcount", (Func<int>)(() => FindTypeSubrutine.FindCount)));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.ignore", (Action<int>)FindTypeSubrutine.Ignore));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.ignore", (Action<string>)Ignore));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.count", (Func<string, int>)FindTypeSubrutine.Count));
+            runtime.Metadata.Add(new NativeSubrutineDefinition("UO.count", (Func<int, int>)FindTypeSubrutine.Count));
 
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.click", (Action<string>)Click));
             runtime.Metadata.Add(new NativeSubrutineDefinition("UO.click", (Action<int>)Click));
@@ -436,6 +443,8 @@ namespace Infusion.LegacyApi.Injection
         {
             switch (spellName.ToLower())
             {
+                case "harm":
+                    return Spell.Harm;
                 case "bless":
                     return Spell.Bless;
                 case "protection":

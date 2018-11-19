@@ -1,4 +1,5 @@
 ﻿using Infusion.Packets.Client;
+using InjectionScript.Runtime;
 
 namespace Infusion.LegacyApi.Injection
 {
@@ -34,18 +35,9 @@ namespace Infusion.LegacyApi.Injection
             api.WaitTargetObject(id);
         }
 
-        public void WaitTargetObject(string idText)
+        public void WaitTargetObject(ObjectId id1, ObjectId id2)
         {
-            var id = host.GetObject(idText);
-            api.WaitTargetObject((uint)id);
-        }
-
-        public void WaitTargetObject(string idText1, string idText2)
-        {
-            var id1 = host.GetObject(idText1);
-            var id2 = host.GetObject(idText2);
-
-            api.WaitTargetObject((uint)id1, (uint)id2);
+            api.WaitTargetObject(id1, id2);
         }
 
         public void AddObject(string objectName)

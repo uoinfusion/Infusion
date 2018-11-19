@@ -1,4 +1,4 @@
-﻿using InjectionScript.Interpretation;
+﻿using InjectionScript.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +15,6 @@ namespace Infusion.LegacyApi.Injection
         {
             this.api = api;
         }
-
-        public void UseType(string type) => UseType(NumberConversions.Str2Int(type));
 
         public void UseType(int type)
         {

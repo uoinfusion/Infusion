@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using InjectionScript.Interpretation;
+using InjectionScript.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Infusion.LegacyApi.Tests.Injection

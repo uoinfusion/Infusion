@@ -1,6 +1,6 @@
 ﻿using Infusion.Packets;
 using Infusion.Packets.Server;
-using InjectionScript.Interpretation;
+using InjectionScript.Runtime;
 
 namespace Infusion.LegacyApi.Injection
 {
@@ -45,8 +45,6 @@ namespace Infusion.LegacyApi.Injection
 
             return rawPacket;
         }
-
-        public void Morph(string type) => Morph(NumberConversions.Str2Int(type));
 
         public void Morph(int type)
         {

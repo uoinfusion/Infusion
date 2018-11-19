@@ -1,4 +1,4 @@
-﻿using InjectionScript.Interpretation;
+﻿using InjectionScript.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,6 @@ namespace Infusion.LegacyApi.Injection
     internal sealed class FindTypeSubrutine
     {
         private readonly Legacy api;
-        private readonly InjectionHost host;
         private readonly HashSet<ObjectId> ignoredIds = new HashSet<ObjectId>();
         public int count;
 
@@ -22,28 +21,9 @@ namespace Infusion.LegacyApi.Injection
         public FindTypeSubrutine(Legacy api, InjectionHost host)
         {
             this.api = api;
-            this.host = host;
-        }
-        
-        private int ConvertContainer(string id)
-        {
-            if (id.Equals("my", StringComparison.OrdinalIgnoreCase))
-                return -1;
-            else if (id.Equals("ground", StringComparison.OrdinalIgnoreCase))
-                return 1;
-
-            return host.GetObject(id);
         }
 
-        public void FindType(string typeStr) => FindType(NumberConversions.Str2Int(typeStr));
-        public void FindType(int type) => FindType(type, -1, -1);
-        public void FindType(string type, string color, string container)
-            => FindType(NumberConversions.Str2Int(type), NumberConversions.Str2Int(color), ConvertContainer(container));
         public int Count(int type) => UO.Items.OfType((ModelId)type).InBackPack().Sum(x => x.Amount);
-        public int Count(string type) => Count(NumberConversions.Str2Int(type));
-        internal void FindType(int type, int color, string container)
-            => FindType(type, color, ConvertContainer(container));
-
 
         public void FindType(int type, int color, int container)
         {

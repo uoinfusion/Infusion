@@ -1,4 +1,4 @@
-﻿using InjectionScript.Interpretation;
+﻿using InjectionScript.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,11 +19,7 @@ namespace Infusion.LegacyApi.Injection
             this.host = host;
         }
 
-        public void Grab(int amount, string id) => Grab(amount, host.GetObject(id));
-        internal void Grab(string amount, string id) => Grab(NumberConversions.Str2Int(amount), host.GetObject(id));
-
         public void SetReceivingContainer(int id) => receiveingContainerId = (uint)id;
-        public void SetReceivingContainer(string id) => receiveingContainerId = (uint)host.GetObject(id);
 
         public void Grab(int amount, int id)
         {

@@ -13,7 +13,7 @@ namespace Infusion.LegacyApi.Tests.Injection
         public void Initialize() => injection = new InjectionProxy();
 
         [TestMethod]
-        public void InJournal_returns_0_when_empty_journal() => injection.InjectionHost.InJournal("adsf").Should().Be(0);
+        public void InJournal_returns_0_when_empty_journal() => injection.InjectionHost.UO.InJournal("adsf").Should().Be(0);
 
         [TestMethod]
         public void InJournal_returns_0_when_text_not_found()
@@ -22,7 +22,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "zxcv");
 
-            injection.InjectionHost.InJournal("adsf").Should().Be(0);
+            injection.InjectionHost.UO.InJournal("adsf").Should().Be(0);
         }
 
         [TestMethod]
@@ -31,7 +31,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
 
-            injection.InjectionHost.InJournal("qwer").Should().Be(1);
+            injection.InjectionHost.UO.InJournal("qwer").Should().Be(1);
         }
 
         [TestMethod]
@@ -40,13 +40,13 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
-            injection.InjectionHost.InJournal("qwer").Should().Be(1);
+            injection.InjectionHost.UO.InJournal("qwer").Should().Be(1);
 
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "message 2");
-            injection.InjectionHost.InJournal("qwer").Should().Be(2);
+            injection.InjectionHost.UO.InJournal("qwer").Should().Be(2);
 
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "message 3");
-            injection.InjectionHost.InJournal("qwer").Should().Be(3);
+            injection.InjectionHost.UO.InJournal("qwer").Should().Be(3);
         }
 
         [TestMethod]
@@ -58,8 +58,8 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "zxcv");
 
-            injection.InjectionHost.InJournal("asdf|qwer").Should().Be(3);
-            injection.InjectionHost.InJournal("qwer|asdf").Should().Be(2);
+            injection.InjectionHost.UO.InJournal("asdf|qwer").Should().Be(3);
+            injection.InjectionHost.UO.InJournal("qwer|asdf").Should().Be(2);
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             injection.ServerApi.Say(injection.Me.PlayerId, "System", "You cannot reach that.");
 
-            injection.InjectionHost.InJournal("cliloc# 0xA258").Should().NotBe(0);
+            injection.InjectionHost.UO.InJournal("cliloc# 0xA258").Should().NotBe(0);
         }
 
         [TestMethod]
@@ -78,9 +78,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
-            injection.InjectionHost.DeleteJournal();
+            injection.InjectionHost.UO.DeleteJournal();
 
-            injection.InjectionHost.InJournal("qwer").Should().Be(0);
+            injection.InjectionHost.UO.InJournal("qwer").Should().Be(0);
         }
 
         [TestMethod]
@@ -92,9 +92,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "zxcv");
 
-            injection.InjectionHost.GetJournalText(0).Should().Be("player name: zxcv");
-            injection.InjectionHost.GetJournalText(1).Should().Be("player name: qwer");
-            injection.InjectionHost.GetJournalText(2).Should().Be("player name: asdf");
+            injection.InjectionHost.UO.GetJournalText(0).Should().Be("player name: zxcv");
+            injection.InjectionHost.UO.GetJournalText(1).Should().Be("player name: qwer");
+            injection.InjectionHost.UO.GetJournalText(2).Should().Be("player name: asdf");
         }
 
         [TestMethod]
@@ -110,9 +110,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(qwerSerial, "player name", "qwer");
             injection.ServerApi.Say(zxcvSerial, "player name", "zxcv");
 
-            injection.InjectionHost.JournalSerial(0).Should().Be(NumberConversions.Int2Hex((int)zxcvSerial));
-            injection.InjectionHost.JournalSerial(1).Should().Be(NumberConversions.Int2Hex((int)qwerSerial));
-            injection.InjectionHost.JournalSerial(2).Should().Be(NumberConversions.Int2Hex((int)asdfSerial));
+            injection.InjectionHost.UO.JournalSerial(0).Should().Be(NumberConversions.Int2Hex((int)zxcvSerial));
+            injection.InjectionHost.UO.JournalSerial(1).Should().Be(NumberConversions.Int2Hex((int)qwerSerial));
+            injection.InjectionHost.UO.JournalSerial(2).Should().Be(NumberConversions.Int2Hex((int)asdfSerial));
         }
 
 
@@ -125,10 +125,10 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "zxcv");
 
-            var foundIndex = injection.InjectionHost.InJournal("asdf");
+            var foundIndex = injection.InjectionHost.UO.InJournal("asdf");
             foundIndex.Should().Be(3);
 
-            injection.InjectionHost.GetJournalText(foundIndex - 1).Should().Be("player name: asdf");
+            injection.InjectionHost.UO.GetJournalText(foundIndex - 1).Should().Be("player name: asdf");
         }
 
         [TestMethod]
@@ -144,19 +144,19 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(qwerSerial, "player name", "qwer");
             injection.ServerApi.Say(zxcvSerial, "player name", "zxcv");
 
-            var foundIndex = injection.InjectionHost.InJournal("asdf");
+            var foundIndex = injection.InjectionHost.UO.InJournal("asdf");
             foundIndex.Should().Be(3);
 
-            injection.InjectionHost.JournalSerial(foundIndex - 1).Should().Be(NumberConversions.Int2Hex((int)asdfSerial));
+            injection.InjectionHost.UO.JournalSerial(foundIndex - 1).Should().Be(NumberConversions.Int2Hex((int)asdfSerial));
         }
 
         [TestMethod]
         public void Journal_returns_empty_text_when_no_entry_at_index()
-            => injection.InjectionHost.GetJournalText(100).Should().Be(string.Empty);
+            => injection.InjectionHost.UO.GetJournalText(100).Should().Be(string.Empty);
 
         [TestMethod]
         public void JournalSerial_returns_0_when_no_entry_at_index()
-            => injection.InjectionHost.JournalSerial(100).Should().Be("0x00000000");
+            => injection.InjectionHost.UO.JournalSerial(100).Should().Be("0x00000000");
 
         [TestMethod]
         public void SetJournalSerial_clears_text_regardless_text_in_argument()
@@ -164,9 +164,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
-            injection.InjectionHost.SetJournalLine(0, "some text");
+            injection.InjectionHost.UO.SetJournalLine(0, "some text");
 
-            injection.InjectionHost.GetJournalText(0).Should().Be(string.Empty);
+            injection.InjectionHost.UO.GetJournalText(0).Should().Be(string.Empty);
         }
 
         [TestMethod]
@@ -175,9 +175,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
-            injection.InjectionHost.SetJournalLine(0);
+            injection.InjectionHost.UO.SetJournalLine(0);
 
-            injection.InjectionHost.GetJournalText(0).Should().Be(string.Empty);
+            injection.InjectionHost.UO.GetJournalText(0).Should().Be(string.Empty);
         }
     }
 }

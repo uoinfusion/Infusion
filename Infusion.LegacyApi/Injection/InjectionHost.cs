@@ -108,6 +108,6 @@ namespace Infusion.LegacyApi.Injection
 
         internal int GetObject(string id) => runtime.GetObject(id);
 
-        internal void AddObject(string currentObjectName, int value) => runtime.Api.AddObject(currentObjectName, value);
+        internal void AddObject(string currentObjectName, int value) => runtime.Api.UO.AddObject(currentObjectName, value);
     }
 }

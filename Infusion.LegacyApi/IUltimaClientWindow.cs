@@ -16,5 +16,6 @@ namespace Infusion.LegacyApi
         void PressKey(char ch);
         void PressKey(KeyCode keyCode);
         void SendText(string text);
+        void Click(int x, int y);
     }
 }

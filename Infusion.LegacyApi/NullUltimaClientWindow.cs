@@ -23,6 +23,12 @@ namespace Infusion.LegacyApi
         {
         }
 
-        public void SendText(string text) => throw new NotImplementedException();
+        public void SendText(string text)
+        {
+        }
+
+        public void Click(int x, int y)
+        {
+        }
     }
 }

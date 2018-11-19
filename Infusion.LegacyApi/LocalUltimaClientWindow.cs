@@ -41,7 +41,7 @@ namespace Infusion.LegacyApi
 
         public void PressKey(char ch)
         {
-            SendChar(ultimaClientProcess.MainWindowHandle, (int) ch);
+            SendChar(ultimaClientProcess.MainWindowHandle, (int)ch);
         }
 
         public void PressKey(KeyCode keyCode)
@@ -65,9 +65,16 @@ namespace Infusion.LegacyApi
             SendChar(ultimaClientProcess.MainWindowHandle, '\n');
         }
 
+        public void Click(int x, int y)
+        {
+            var w = (y << 16) | x;
+            PostMessage(ultimaClientProcess.MainWindowHandle, WM_LBUTTONDOWN, 1, w);
+        }
+
         private const int WM_CHAR = 0x102;
         private const int WM_KEYDOWN = 0x100;
         private const int WM_KEYUP = 0x0101;
+        private const int WM_LBUTTONDOWN = 0x201;
 
         [DllImport("user32.dll")]
         private static extern int SetWindowText(IntPtr hWnd, string text);
@@ -87,6 +94,7 @@ namespace Infusion.LegacyApi
 
         [DllImport("User32")]
         public static extern int OemKeyScan(int wOemChar);
+
 
     }
 }

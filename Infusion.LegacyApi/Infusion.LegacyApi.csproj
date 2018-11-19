@@ -104,6 +104,7 @@
     <Compile Include="Injection\Morphing.cs" />
     <Compile Include="Injection\Targeting.cs" />
     <Compile Include="Injection\UseSubrutines.cs" />
+    <Compile Include="Injection\WavPlayer.cs" />
     <Compile Include="IUltimaClientWindow.cs" />
     <Compile Include="Filters\IWeatherFilter.cs" />
     <Compile Include="KeyCode.cs" />

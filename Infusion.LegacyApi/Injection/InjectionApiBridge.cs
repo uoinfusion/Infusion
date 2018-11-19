@@ -72,6 +72,8 @@ namespace Infusion.LegacyApi.Injection
         public int GetMaxHP(int id) => infusionApi.Mobiles[(uint)id]?.MaxHealth ?? 0;
         public int GetNotoriety(int id) => (int?)infusionApi.Mobiles[(uint)id]?.Notoriety ?? 0;
         public string GetName(int id) => infusionApi.GameObjects[(uint)id]?.Name ?? string.Empty;
+        public int GetGraphics(int id) => infusionApi.GameObjects[(uint)id]?.Type ?? 0;
+        public int GetDir(int id) => (int)(infusionApi.Mobiles[(uint)id]?.Orientation ?? Direction.North);
         public int IsNpc(int id) => infusionApi.Mobiles[(uint)id] != null ? 1 : 0;
 
         public int GetQuantity(int id)
@@ -120,8 +122,15 @@ namespace Infusion.LegacyApi.Injection
         public void SetReceivingContainer(int id) => grabbing.SetReceivingContainer(id);
         public void Grab(int amount, int id) => grabbing.Grab(amount, id);
 
+        public void LClick(int x, int y) => infusionApi.ClientWindow.Click(x, y);
         public void KeyPress(int key) => infusionApi.ClientWindow.PressKey((KeyCode)key);
         public void Say(string message) => infusionApi.ClientWindow.SendText(message);
+
+        public void PlayWav(string file) => WavPlayer.Play(file);
+
+        public void TextOpen() { /* just do nothing */ }
+        public void TextPrint(string text) => infusionApi.Log(text);
+
         public void ServerPrint(string message) => infusionApi.Say(message);
         public void Print(string msg) => infusionApi.ClientPrint(msg);
 

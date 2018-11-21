@@ -1,6 +1,7 @@
 ﻿using Infusion.Commands;
 using Infusion.LegacyApi.Console;
 using InjectionScript;
+using InjectionScript.Debugging;
 using InjectionScript.Runtime;
 using System;
 
@@ -20,7 +21,9 @@ namespace Infusion.LegacyApi.Injection
             this.console = console;
 
             var bridge = new InjectionApiBridge(api, this);
-            runtime = new InjectionRuntime(bridge);
+            var debuggerServer = new DebuggerServer();
+            debuggerServer.BreakpointHit += (sender, e) => console.Info($"Breakpoint hit at line {e.Line} in {e.FileName}.");
+            runtime = new InjectionRuntime(bridge, debuggerServer);
 
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
         }

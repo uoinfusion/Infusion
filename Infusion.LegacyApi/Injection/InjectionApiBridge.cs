@@ -6,6 +6,7 @@ namespace Infusion.LegacyApi.Injection
     internal sealed class InjectionApiBridge : IApiBridge
     {
         private readonly Legacy infusionApi;
+        private readonly InjectionHost injectionHost;
         private readonly FindTypeSubrutine findType;
         private readonly ItemObservers itemObservers;
         private readonly Targeting targeting;
@@ -18,7 +19,7 @@ namespace Infusion.LegacyApi.Injection
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost)
         {
             this.infusionApi = infusionApi;
-
+            this.injectionHost = injectionHost;
             this.findType = new FindTypeSubrutine(infusionApi, injectionHost);
             this.journal = new Journal(1000);
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
@@ -145,7 +146,14 @@ namespace Infusion.LegacyApi.Injection
         public void SetArm(string name) => equipmentSubrutines.SetArm(name);
         public void WaitTargetObject(int id) => targeting.WaitTargetObject((ObjectId)id);
         public void WaitTargetObject(int id1, int id2) => targeting.WaitTargetObject((ObjectId)id1, (ObjectId)id2);
-        public void ClientPrint(int id, int color, string msg) => throw new NotImplementedException();
+        public void CharPrint(int id, int color, string msg)
+        {
+            var objectId = (ObjectId)id;
+            string name = infusionApi.GameObjects[(ObjectId)id]?.Name ?? "injection";
+
+            infusionApi.ClientPrint(msg, name, objectId, 0, SpeechType.Normal, (Color)color);
+        }
+
         public void WarMode(int mode)
         {
             if (mode == 0)
@@ -216,6 +224,6 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        public void Terminate(string subrutineName) => throw new NotImplementedException();
+        public void Terminate(string subrutineName) => injectionHost.Terminate(subrutineName);
     }
 }

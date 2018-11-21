@@ -19,6 +19,8 @@ namespace Infusion.Desktop.Launcher
                 var serverEndPoint = options.ResolveServerEndpoint().Result;
                 ushort proxyPort = GetProxyPort();
 
+                CheckMulFiles(options);
+
                 var connectedToServerEvent = new AutoResetEvent(false);
                 Program.ConnectedToServer += (sender, args) =>
                 {
@@ -42,6 +44,31 @@ namespace Infusion.Desktop.Launcher
 
                 InterProcessCommunication.StartReceiving();
             });
+        }
+
+        private static void CheckMulFiles(LauncherOptions options)
+        {
+            bool requiresExplicitUltimaPath = false;
+            if (string.IsNullOrEmpty(Files.RootDir))
+            {
+                Program.Console.Info("Cannot find Ultima Online installation.");
+                requiresExplicitUltimaPath = true;
+            }
+
+            if (!string.IsNullOrEmpty(Files.RootDir) && !Directory.Exists(Files.RootDir))
+            {
+                Program.Console.Info($"Ultima Online installation path {Files.RootDir} doesn't exsist.");
+                requiresExplicitUltimaPath = true;
+            }
+
+            if (requiresExplicitUltimaPath)
+            {
+                var clientDirectory = Path.GetDirectoryName(options.ClientExePath);
+                Program.Console.Info($"Client path is {options.ClientExePath}. Assuming Ultima Online files are in {clientDirectory}.");
+                Files.SetMulPath(clientDirectory);
+            }
+
+            Program.Console.Debug($"Loading mul files from {Files.RootDir}.");
         }
 
         private static ushort GetProxyPort()

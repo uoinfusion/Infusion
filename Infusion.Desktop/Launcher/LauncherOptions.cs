@@ -57,6 +57,22 @@ namespace Infusion.Desktop.Launcher
             set => initialScriptFileName = value;
         }
 
+        public string ClientExePath
+        {
+            get
+            {
+                switch (this.ClientType)
+                {
+                    case UltimaClientType.Classic:
+                        return Classic.ClientExePath;
+                    case UltimaClientType.Orion:
+                        return Orion.ClientExePath;
+                    default:
+                        throw new NotImplementedException();
+                }
+            }
+        }
+
         public string EncryptPassword()
         { 
             if (string.IsNullOrEmpty(Password))

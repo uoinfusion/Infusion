@@ -135,6 +135,7 @@ public static class Phantoms
     
     public static void AddPhantomAtCurrentPosition()
     {
+        Enable();
         AddPhantomAndSave(UO.Me.Location);
     }
     
@@ -148,12 +149,14 @@ public static class Phantoms
     
     public static void AddPhantomAtLocationCommand(string parameters)
     {
+        Enable();
         var location = ParseLocation(parameters);
         AddPhantomAndSave(location);
     }
     
     public static void AddPhantomAtLastJump()
     {
+        Enable();
         if (locationBeforeJump.HasValue)
         {
             AddPhantomAndSave(locationBeforeJump.Value);
@@ -164,6 +167,7 @@ public static class Phantoms
     
     public static void AddPhantomCommand()
     {
+        Enable();
         UO.ClientPrint("Select positions to add phantoms, press esc to cancel phantoms adding");
         var targetInfo = UO.Info();
         while (targetInfo.HasValue)

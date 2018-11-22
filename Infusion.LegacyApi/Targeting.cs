@@ -234,16 +234,16 @@ namespace Infusion.LegacyApi
             if (!ushort.TryParse(parts[0], out rawType))
                 throw new InvalidOperationException(errorMessage);
 
-            ushort xloc;
-            if (!ushort.TryParse(parts[1], out xloc))
+            int xloc;
+            if (!int.TryParse(parts[1], out xloc))
                 throw new InvalidOperationException(errorMessage);
 
-            ushort yloc;
-            if (!ushort.TryParse(parts[2], out yloc))
+            int yloc;
+            if (!int.TryParse(parts[2], out yloc))
                 throw new InvalidOperationException(errorMessage);
 
-            byte zloc;
-            if (!byte.TryParse(parts[3], out zloc))
+            int zloc;
+            if (!int.TryParse(parts[3], out zloc))
                 throw new InvalidOperationException(errorMessage);
 
             TargetTile(xloc, yloc, zloc, rawType);

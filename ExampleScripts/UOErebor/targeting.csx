@@ -24,7 +24,8 @@ public static class TargetingModes
     public static TargetingMode Pvp = () =>
         UO.Mobiles.MaxDistance(20)
                 .Matching(Specs.Player)
-                .Where(i => i.Id != UO.Me.PlayerId && (i.Notoriety == Notoriety.Murderer || Specs.Player.Matches(i))
+                .Where(i => i.Id != UO.Me.PlayerId && (i.Notoriety == Notoriety.Murderer 
+                    || ((i.Notoriety == Notoriety.Grey ||  i.Notoriety == Notoriety.Criminal) && Specs.Player.Matches(i)))
                     && !Targeting.Ignored.Contains(i. Id)&& (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
                 .OrderByDistance();
 

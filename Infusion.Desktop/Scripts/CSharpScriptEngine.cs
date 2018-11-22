@@ -14,11 +14,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Text;
-using RoslynPad.UI;
 
-namespace Infusion.Desktop
+namespace Infusion.Desktop.Scripts
 {
-    public class CSharpScriptEngine : IScriptEngine
+    public class CSharpScriptEngine : RoslynPad.UI.IScriptEngine, IScriptEngine
     {
         private class Resolver : SourceFileResolver
         {
@@ -68,6 +67,9 @@ namespace Infusion.Desktop
 
         public async Task ExecuteScript(string scriptPath, CancellationTokenSource cancellationTokenSource)
         {
+            if (!scriptPath.EndsWith(".csx", StringComparison.OrdinalIgnoreCase))
+                return;
+
             string scriptText = File.ReadAllText(scriptPath);
 
             await Execute(scriptText, scriptPath, true, cancellationTokenSource);

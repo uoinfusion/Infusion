@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infusion.Desktop.Scripts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using RoslynPad.UI;
 
 namespace Infusion.Desktop.Launcher
 {
@@ -20,7 +20,7 @@ namespace Infusion.Desktop.Launcher
     /// </summary>
     public partial class TestOuputWindow : Window
     {
-        public CSharpScriptEngine ScriptEngine => _console.ScriptEngine;
+        public ScriptEngine ScriptEngine => _console.ScriptEngine;
 
         public TestOuputWindow()
         {

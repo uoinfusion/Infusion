@@ -191,7 +191,8 @@
     <Compile Include="Console\FileConsole.cs" />
     <Compile Include="Console\WpfConsole.cs" />
     <Compile Include="Console\InfusionConsole.cs" />
-    <Compile Include="CSharpScriptEngine.cs" />
+    <Compile Include="Scripts\ScriptEngine.cs" />
+    <Compile Include="Scripts\CSharpScriptEngine.cs" />
     <Compile Include="InfusionWindow.xaml.cs">
       <DependentUpon>InfusionWindow.xaml</DependentUpon>
     </Compile>
@@ -207,6 +208,8 @@
     <Compile Include="Launcher\UltimaClientType.cs" />
     <Compile Include="Profiles\Profile.cs" />
     <Compile Include="Profiles\ProfileRepositiory.cs" />
+    <Compile Include="Scripts\InjectionScriptEngine.cs" />
+    <Compile Include="Scripts\IScriptEngine.cs" />
     <Compile Include="UltimaConfiguration.cs" />
     <Page Include="Console\ConsoleControl.xaml">
       <SubType>Designer</SubType>

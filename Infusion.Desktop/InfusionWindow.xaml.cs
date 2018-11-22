@@ -99,7 +99,7 @@ namespace Infusion.Desktop
             {
                 var scriptPath = Path.GetDirectoryName(scriptFileName);
 
-                var roslynPadWindow = new RoslynPad.MainWindow(_console.ScriptEngine, scriptPath);
+                var roslynPadWindow = new RoslynPad.MainWindow(_console.CSharpScriptEngine, scriptPath);
                 roslynPadWindow.Show();
             }
             else

@@ -9,6 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Infusion.Commands;
 using Infusion.Desktop.Console;
+using Infusion.Desktop.Scripts;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
@@ -27,6 +28,9 @@ namespace Infusion.Desktop.Console
         private readonly FlowDocument outputDocument;
         private readonly FileConsole fileConsole;
         private readonly InfusionConsole infusionConsole;
+
+        internal ScriptEngine ScriptEngine { get; }
+        public CSharpScriptEngine CSharpScriptEngine { get; }
 
         private void HandleFileLoggingException(Exception ex)
         {
@@ -54,14 +58,16 @@ namespace Infusion.Desktop.Console
             var wpfConsole = new WpfConsole(consoleContent, Dispatcher);
             infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
 
-            ScriptEngine = new CSharpScriptEngine(infusionConsole);
-
             Program.Console = infusionConsole;
             var commandHandler = new CommandHandler(Program.Console);
 
             Program.Initialize(commandHandler);
             DataContext = consoleContent;
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
+
+            CSharpScriptEngine = new CSharpScriptEngine(infusionConsole);
+            var injectionScriptEngine = new InjectionScriptEngine(UO.Injection);
+            ScriptEngine = new ScriptEngine(CSharpScriptEngine, injectionScriptEngine);
 
             _inputBlock.Focus();
 
@@ -78,8 +84,6 @@ namespace Infusion.Desktop.Console
         {
             fileConsole.Dispose();
         }
-
-        public CSharpScriptEngine ScriptEngine { get; }
 
         private static ScrollViewer FindScrollViewer(FlowDocumentScrollViewer flowDocumentScrollViewer)
         {

@@ -30,6 +30,8 @@ namespace Infusion.LegacyApi.Injection
 
         public void LoadScript(string fileName)
         {
+            console.Info($"Loading {fileName}");
+
             UnregisterCommands();
             var messages = runtime.Load(fileName);
             var error = false;

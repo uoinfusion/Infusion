@@ -17,7 +17,7 @@ public static class Pets
     private static readonly Statuses statuses;
     private static readonly RequestStatusQueue requestStatusQueue = new RequestStatusQueue();
 
-    public static MobileSpec PetsSpec = new[] { Specs.NecroSummons, Specs.MageSummons };
+    public static MobileSpec PetsSpec = new[] { Specs.NecroSummons, Specs.MageSummons, Specs.Mounts, Specs.Dog, };
     public static StatusesConfiguration Window => statuses.Configuration;
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
@@ -90,7 +90,7 @@ public static class Pets
         {
             statuses.Update(args.UpdatedMobile);
         }
-        else if (args.UpdatedMobile.CanRename)
+        else if (args.UpdatedMobile.CanRename && PetsSpec.Matches(args.UpdatedMobile)) 
         {
             if (statuses.Count == 0)
             {
@@ -111,7 +111,7 @@ public static class Pets
 
     private static void HandleMobileLeftView(Mobile mobile)
     {
-        if (PetsSpec.Matches(mobile) && statuses.Contains(mobile))
+        if (statuses.Contains(mobile))
         {
             Trace.Log($"Pet left view: {mobile}");
             statuses.Remove(mobile);

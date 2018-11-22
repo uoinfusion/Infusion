@@ -187,6 +187,8 @@ namespace Infusion.LegacyApi
         {
             try
             {
+                lastTargetInfo = null;
+                targetInfoRequested = true;
                 AskForTarget();
 
                 while (!receivedTargetInfoEvent.WaitOne(10))
@@ -309,7 +311,6 @@ namespace Infusion.LegacyApi
 
         public void AskForTarget()
         {
-            targetInfoRequested = true;
             receivedTargetInfoEvent.Reset();
             targetFromServerReceivedEvent.Reset();
             ClearNextTarget();
@@ -322,6 +323,7 @@ namespace Infusion.LegacyApi
         {
             try
             {
+                targetInfoRequested = true;
                 AskForTarget();
 
                 var originalTime = lastTargetCursorPacketTime;

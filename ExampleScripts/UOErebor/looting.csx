@@ -30,11 +30,17 @@ public static class Looting
         Specs.Hairs
     };
     
-    public static ItemSpec InterestingLoot { get; } = new[]
+    public static ItemSpec InterestingLoot { get; set; } = new[]
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
         Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa,
         Specs.Food
+    };
+    
+    public static ItemSpec DungeonLoot { get; set; } = new[]
+    {
+        Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
+        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa
     };
     
     public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };
@@ -419,9 +425,62 @@ public static class Looting
     {
         Common.OpenContainer(LootContainer.Id);
         Warehouse.Sort(LootContainer.Id);
+        UO.ClientPrint("Loot unloading finished.");
+    }
+    
+    public static void SetDungeonLoot()
+    {
+        UO.ClientPrint("Looting only items specified by Looting.DungeonLoot.");
+        Looting.AllowedLoot = Looting.DungeonLoot;
+        currentLootMode = LootMode.Dungeon;
+    }
+    
+    public static void SetInterestingLoot()
+    {
+        UO.ClientPrint("Looting only items specified by Looting.InterestingLoot.");
+        Looting.AllowedLoot = Looting.InterestingLoot;
+        currentLootMode = LootMode.Interesting;
+    }
+    
+    public static void SetAllLoot()
+    {
+        UO.ClientPrint("Looting all except items specified by Looting.IgnoredLoot.");
+        Looting.AllowedLoot = null;
+        currentLootMode = LootMode.All;
+    }
+    
+    public static void ToggleLoot()
+    {
+        switch (currentLootMode)
+        {
+            case LootMode.Dungeon:
+                SetAllLoot();
+                break;
+            case LootMode.All:
+                SetInterestingLoot();
+                break;
+            case LootMode.Interesting:
+                SetDungeonLoot();
+                break;
+            default:
+                throw new NotImplementedException($"Unknown loot mode {currentLootMode}.");
+        }
+    }
+    
+    private static LootMode currentLootMode;
+    
+    private enum LootMode
+    {
+        Dungeon,
+        All,
+        Interesting
     }
 }
 
 UO.RegisterCommand("ripandloot", Looting.RipAndLootNearest);
 UO.RegisterCommand("loot", Looting.LootNearest);
 UO.RegisterCommand("loot-unload", Looting.UnloadLoot);
+UO.RegisterCommand("loot-dungeon", Looting.SetDungeonLoot);
+UO.RegisterCommand("loot-all", Looting.SetAllLoot);
+UO.RegisterCommand("loot-interesting", Looting.SetInterestingLoot);
+UO.RegisterCommand("loot-toggle", Looting.ToggleLoot);

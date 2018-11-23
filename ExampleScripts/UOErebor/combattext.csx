@@ -24,9 +24,12 @@ public static class CombatText
         UO.CommandHandler.Terminate("combattext");
     }
     
-    public static void Add(string text, Color color)
+    public static void Add(string text, Color? color = null)
     {
-        redirections.Add(new CombatTextRedirection(text, color));
+        if (color.HasValue)
+            redirections.Add(new CombatTextRedirection(text, color.Value));
+        else
+            redirections.Add(new CombatTextRedirection(text));
     }
 
     private static void OnSpeechReceived(JournalEntry entry)
@@ -35,8 +38,9 @@ public static class CombatText
         {
             if (entry.Text.IndexOf(redirection.Text, 0, StringComparison.OrdinalIgnoreCase) >= 0)
             {
+                var color = redirection.Color ?? entry.Color; 
                 UO.ClientPrint(redirection.Text, entry.Name, UO.Me.PlayerId, UO.Me.BodyType,
-                    SpeechType.Speech, redirection.Color, false);
+                    SpeechType.Speech, color, false);
             }
         }
     }
@@ -44,12 +48,17 @@ public static class CombatText
     private class CombatTextRedirection
     {
         public string Text { get; }
-        public Color Color { get; }
+        public Color? Color { get; }
         
         public CombatTextRedirection(string text, Color color)
         {
             Text = text;
             Color = color;
+        }
+
+        public CombatTextRedirection(string text)
+        {
+            Text = text;
         }
     }
 }

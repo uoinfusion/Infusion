@@ -40,7 +40,7 @@ namespace Infusion.Packets.Both
                     break;
                 case 0xFF:
                     skillNumber = reader.ReadUShort();
-                    var skill = skillNumber != 0 ? (Skill)(skillNumber + 1) : Skill.None;
+                    var skill = skillNumber != 0 ? (Skill)(skillNumber + 1) : Skill.Alchemy;
                     value = reader.ReadUShort();
                     unmodifiedValue = reader.ReadUShort();
                     reader.Skip(1); // skill lock

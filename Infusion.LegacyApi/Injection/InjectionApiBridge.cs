@@ -121,6 +121,7 @@ namespace Infusion.LegacyApi.Injection
         public int IsTargeting() => targeting.IsTargeting ? 1 : 0;
 
         public void SetReceivingContainer(int id) => grabbing.SetReceivingContainer(id);
+        public void UnsetReceivingContainer() => grabbing.UnsetReceivingContainer();
         public void Grab(int amount, int id) => grabbing.Grab(amount, id);
 
         public void LClick(int x, int y) => infusionApi.ClientWindow.Click(x, y);

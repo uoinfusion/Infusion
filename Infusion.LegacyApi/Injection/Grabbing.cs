@@ -34,5 +34,6 @@ namespace Infusion.LegacyApi.Injection
             api.DropItem((uint)id, targetContainerId);
         }
 
+        public void UnsetReceivingContainer() => receiveingContainerId = null;
     }
 }

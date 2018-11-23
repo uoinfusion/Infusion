@@ -13,6 +13,9 @@ namespace Infusion.LegacyApi.Injection
         private readonly Legacy api;
         private readonly IConsole console;
 
+        public IDebuggerServer Debugger { get; }
+        public ITracer Tracer { get; }
+
         public InjectionApi InjectionApi => runtime.Api;
 
         public InjectionHost(Legacy api, IConsole console)
@@ -24,6 +27,9 @@ namespace Infusion.LegacyApi.Injection
             var debuggerServer = new DebuggerServer();
             debuggerServer.BreakpointHit += (sender, e) => console.Info($"Breakpoint hit at line {e.Line} in {e.FileName}.");
             runtime = new InjectionRuntime(bridge, debuggerServer);
+
+            Debugger = debuggerServer;
+            Tracer = debuggerServer;
 
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
         }

@@ -30,6 +30,7 @@ public static class Specs
     public static readonly ItemSpec Dagger = new[] { 0x0F51, 0x0F52 };
     public static readonly ItemSpec WarMace = new[] { 0x1406, 0x1407 };
     public static readonly ItemSpec Club = new[] { 0x13B3, 0x013B4 };
+    public static readonly ItemSpec WarHammer = new[] { 0x1438, 0x1439 };
 
     public static readonly ItemSpec Crossbow = new[] { 0x0F4F, 0x0F50 };
 

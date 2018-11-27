@@ -308,6 +308,7 @@ namespace Infusion.LegacyApi
         public static void WaitTargetObject(params Item[] item) => Current.WaitTargetObject(item);
         public static void WaitTargetObject(params Mobile[] mobile) => Current.WaitTargetObject(mobile);
         public static void WaitTargetObject(Player player) => Current.WaitTargetObject(player);
+        public static void WaitTargetTile(int type, int x, int y, int z) => Current.WaitTargetTile(type, x, y, z);
         public static void ClearTargetObject() => Current.ClearTargetObject();
     }
 }

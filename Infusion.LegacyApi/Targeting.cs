@@ -75,11 +75,11 @@ namespace Infusion.LegacyApi
                     }
                 }
 
-                if (targetInfo.HasValue && targetInfo.Value.Id.HasValue)
+                if (targetInfo.HasValue)
                 {
                     var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
 
-                    server.TargetItem(packet.CursorId, targetInfo.Value.Id.Value, packet.CursorType,
+                    server.TargetItem(packet.CursorId, targetInfo.Value.Id ?? 0, packet.CursorType,
                         targetInfo.Value.Location, targetInfo.Value.ModelId);
 
                     return null;
@@ -414,6 +414,15 @@ namespace Infusion.LegacyApi
                 nextTargets.Clear();
                 foreach (var id in ids)
                     nextTargets.Enqueue(new TargetInfo(new Location3D(0, 0, 0), TargetType.Object, 0, id));
+            }
+        }
+
+        public void AddNextTarget(int type, int x, int y, int z)
+        {
+            lock (nextTargetsLock)
+            {
+                nextTargets.Clear();
+                nextTargets.Enqueue(new TargetInfo(new Location3D(x, y, z), TargetType.Tile, (ModelId)type, null));
             }
         }
 

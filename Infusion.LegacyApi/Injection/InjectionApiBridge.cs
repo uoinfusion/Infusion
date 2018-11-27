@@ -152,6 +152,7 @@ namespace Infusion.LegacyApi.Injection
         public void SetArm(string name) => equipmentSubrutines.SetArm(name);
         public void WaitTargetObject(int id) => targeting.WaitTargetObject((ObjectId)id);
         public void WaitTargetObject(int id1, int id2) => targeting.WaitTargetObject((ObjectId)id1, (ObjectId)id2);
+        public void WaitTargetTile(int type, int x, int y, int z) => targeting.WaitTargetTile(type, x, y, z);
         public void CharPrint(int id, int color, string msg)
         {
             var objectId = (ObjectId)id;

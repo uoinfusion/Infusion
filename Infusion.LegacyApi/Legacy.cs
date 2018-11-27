@@ -35,6 +35,7 @@ namespace Infusion.LegacyApi
         private readonly Targeting targeting;
         private readonly WeatherObserver weatherObserver;
         private readonly Cancellation cancellation;
+
         private readonly EventJournalSource eventJournalSource;
         private readonly DialogBoxObservers dialogBoxObervers;
 
@@ -724,6 +725,8 @@ namespace Infusion.LegacyApi
         public void WaitTargetObject(params Item[] item) => targeting.AddNextTarget(item);
         public void WaitTargetObject(params Mobile[] mobile) => targeting.AddNextTarget(mobile);
         public void WaitTargetObject(Player player) => targeting.AddNextTarget(player);
+        public void WaitTargetTile(int type, int x, int y, int z) => targeting.AddNextTarget(type, x, y, z);
+
         public void ClearTargetObject() => targeting.ClearNextTarget();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Infusion.Packets.Client;
+﻿using System;
+using Infusion.Packets.Client;
 using InjectionScript.Runtime;
 
 namespace Infusion.LegacyApi.Injection
@@ -38,6 +39,11 @@ namespace Infusion.LegacyApi.Injection
         public void WaitTargetObject(ObjectId id1, ObjectId id2)
         {
             api.WaitTargetObject(id1, id2);
+        }
+
+        public void WaitTargetTile(int type, int x, int y, int z)
+        {
+            api.WaitTargetTile(type, x, y, z);
         }
 
         public void AddObject(string objectName)

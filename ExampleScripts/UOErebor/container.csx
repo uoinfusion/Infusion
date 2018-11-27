@@ -86,5 +86,30 @@ public class Container : IContainer
             || (Parent != null && Parent.Contains(Item));
 }
 
+public class BackPackContainer : IContainer
+{
+    public ObjectId Id => UO.Me.BackPack.Id;
+
+    public Item Item => UO.Me.BackPack;
+
+    public bool Contains(Item item)
+        => item.ContainerId.HasValue && item.ContainerId.Value == Id;
+
+    public void Open()
+    {
+        if (UO.Me.BackPack == null)
+        {
+            UO.ClientPrint("Cannot open backpack.");
+            return;
+        }
+    
+        if (!OpenContainerTracker.IsOpen(UO.Me.BackPack.Id))
+        {
+            Common.OpenContainer(UO.Me.BackPack);
+            OpenContainerTracker.SetOpen(UO.Me.BackPack.Id);
+        }
+    }
+}
+
 UO.RegisterBackgroundCommand("container-track", OpenContainerTracker.Track);
 UO.CommandHandler.Invoke("container-track");

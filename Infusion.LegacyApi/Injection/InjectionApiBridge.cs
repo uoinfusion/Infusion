@@ -1,4 +1,5 @@
-﻿using InjectionScript.Runtime;
+﻿using Infusion.LegacyApi.Console;
+using InjectionScript.Runtime;
 using System;
 
 namespace Infusion.LegacyApi.Injection
@@ -7,6 +8,7 @@ namespace Infusion.LegacyApi.Injection
     {
         private readonly Legacy infusionApi;
         private readonly InjectionHost injectionHost;
+        private readonly IConsole console;
         private readonly FindTypeSubrutine findType;
         private readonly ItemObservers itemObservers;
         private readonly Targeting targeting;
@@ -16,10 +18,11 @@ namespace Infusion.LegacyApi.Injection
         private readonly EquipmentSubrutines equipmentSubrutines;
         private readonly Morphing morphing;
 
-        public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost)
+        public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console)
         {
             this.infusionApi = infusionApi;
             this.injectionHost = injectionHost;
+            this.console = console;
             this.findType = new FindTypeSubrutine(infusionApi, injectionHost);
             this.journal = new Journal(1000);
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
@@ -101,7 +104,7 @@ namespace Infusion.LegacyApi.Injection
 
         public void FindType(int type, int color, int containerId) => findType.FindType(type, color, containerId);
         public int FindCount() => findType.FindCount;
-        public int Count(int type) => findType.Count(type);
+        public int Count(int type, int color) => findType.Count(type, color);
         public void Ignore(int id) => findType.Ignore(id);
         public void IgnoreReset() => findType.IgnoreReset();
 
@@ -116,13 +119,15 @@ namespace Infusion.LegacyApi.Injection
         public void Attack(int id) => infusionApi.TryAttack((uint)id);
         public void GetStatus(int id) => infusionApi.RequestStatus((uint)id);
 
-        public void UseType(int type) => useSubrutines.UseType(type);
+        public void UseType(int type, int color) => useSubrutines.UseType(type, color);
 
         public int IsTargeting() => targeting.IsTargeting ? 1 : 0;
 
         public void SetReceivingContainer(int id) => grabbing.SetReceivingContainer(id);
         public void UnsetReceivingContainer() => grabbing.UnsetReceivingContainer();
         public void Grab(int amount, int id) => grabbing.Grab(amount, id);
+        public void MoveItem(int id, int amount, int targetContainerId)
+            => grabbing.MoveItem(id, amount, targetContainerId);
 
         public void LClick(int x, int y) => infusionApi.ClientWindow.Click(x, y);
         public void KeyPress(int key) => infusionApi.ClientWindow.PressKey((KeyCode)key);
@@ -150,7 +155,7 @@ namespace Infusion.LegacyApi.Injection
         public void CharPrint(int id, int color, string msg)
         {
             var objectId = (ObjectId)id;
-            string name = infusionApi.GameObjects[(ObjectId)id]?.Name ?? "injection";
+            var name = infusionApi.GameObjects[(ObjectId)id]?.Name ?? "injection";
 
             infusionApi.ClientPrint(msg, name, objectId, 0, SpeechType.Normal, (Color)color);
         }
@@ -226,5 +231,6 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public void Terminate(string subrutineName) => injectionHost.Terminate(subrutineName);
+        public void Error(string message) => console.Error(message);
     }
 }

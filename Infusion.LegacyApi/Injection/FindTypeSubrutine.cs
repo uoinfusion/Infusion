@@ -23,7 +23,14 @@ namespace Infusion.LegacyApi.Injection
             this.api = api;
         }
 
-        public int Count(int type) => UO.Items.OfType((ModelId)type).InBackPack().Sum(x => x.Amount);
+        public int Count(int type, int color)
+        {
+            var items = UO.Items.OfType((ModelId)type).InBackPack();
+            if (color >= 0)
+                items = items.OfColor((Color)color);
+
+            return items.Sum(x => x.Amount);
+        }
 
         public void FindType(int type, int color, int container)
         {

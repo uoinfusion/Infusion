@@ -277,16 +277,20 @@ namespace Infusion.LegacyApi
                 throw new LegacyException($"Cannot use requested item because you cannot see any such item, or no such item is in your backpack.");
         }
 
-        public bool TryUse(ModelId type)
+        public bool TryUse(ModelId type, Color? color = null)
         {
             CheckCancellation();
 
-            var item = Items.OfType(type).OnLayer(Layer.OneHandedWeapon)
+            var items = Items.OfType(type);
+            if (color.HasValue)
+                items = items.OfColor(color.Value);
+
+            var item = items.OnLayer(Layer.OneHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.OfType(type).OnLayer(Layer.TwoHandedWeapon)
+                       ?? items.OnLayer(Layer.TwoHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.OfType(type).InBackPack().FirstOrDefault()
-                       ?? Items.OfType(type).OnLayer(Layer.Backpack)
+                       ?? items.InBackPack().FirstOrDefault()
+                       ?? items.OnLayer(Layer.Backpack)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
             if (item != null)
             {

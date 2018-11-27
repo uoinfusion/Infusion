@@ -23,7 +23,7 @@ namespace Infusion.LegacyApi.Injection
             this.api = api;
             this.console = console;
 
-            var bridge = new InjectionApiBridge(api, this);
+            var bridge = new InjectionApiBridge(api, this, console);
             var debuggerServer = new DebuggerServer();
             debuggerServer.BreakpointHit += (sender, e) => console.Info($"Breakpoint hit at line {e.Line} in {e.FileName}.");
             runtime = new InjectionRuntime(bridge, debuggerServer);

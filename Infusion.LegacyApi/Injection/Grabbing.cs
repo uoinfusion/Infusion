@@ -35,5 +35,19 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public void UnsetReceivingContainer() => receiveingContainerId = null;
+
+        internal void MoveItem(int id, int amount, int targetContainerId)
+        {
+            var objId = (ObjectId)id;
+            if (amount <= 0)
+                amount = api.Items[objId]?.Amount ?? 0;
+
+            api.DragItem((uint)id, amount);
+
+            if (targetContainerId <= 0)
+                targetContainerId = (int)api.Me.BackPack.Id;
+
+            api.DropItem((ObjectId)id, (ObjectId)targetContainerId);
+        }
     }
 }

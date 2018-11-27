@@ -16,9 +16,11 @@ namespace Infusion.LegacyApi.Injection
             this.api = api;
         }
 
-        public void UseType(int type)
+        public void UseType(int type, int color)
         {
-            if (!api.TryUse((ModelId)type))
+            Color? convertedColor = color >= 0 ? (Color)color : (Color?)null;
+
+            if (!api.TryUse((ModelId)type, convertedColor))
                 api.ClientPrint("No item found.");
         }
     }

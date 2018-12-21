@@ -78,7 +78,8 @@ public static class Specs
     public static readonly ItemSpec Campfire = 0x0DE3;
     public static readonly ItemSpec Forge = new[] { 0x0FB1, 0x198E };
     public static readonly ItemSpec CookingPlaces = new[] { Campfire, Forge, };
-    public static readonly ItemSpec Loom = new[] { 0x1062, 0x1060 };
+    public static readonly ItemSpec Loom = new[] {  0x1060, 0x1062, 0x01064 };
+    public static readonly ItemSpec SpinningWheel = new[] { 0x101C, 0x01019 };
     public static readonly ItemSpec TinkeringTools = 0x1EBC;
     public static readonly ItemSpec SmithsHammer = new[] { 0x13E3, 0x013E4 };
     public static readonly ItemSpec Saw = 0x1034;

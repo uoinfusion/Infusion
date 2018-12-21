@@ -19,6 +19,7 @@ public static class Tailoring
         
         while (true)
         {
+            UO.Wait(200);
             UO.ClientPrint("Unloading");
             Items.MoveItems(UO.Items.Matching(Specs.FoldedCloth).InContainer(UO.Me.BackPack), unloadContainer);
     
@@ -59,7 +60,7 @@ public static class Tailoring
             UO.WaitForTarget();
             UO.Target(loom);
             UO.Journal.WaitAny("You put the folded cloth in your pack.", "You put the folded cloth at your feet. It is too heavy..");
-            UO.Wait(100);
+            UO.Wait(200);
         }
     }
     
@@ -103,3 +104,5 @@ public static class Tailoring
         Tailoring.ProcessYarn(reloadContainer, reloadContainer.Id, 25);
     }
 }
+
+UO.RegisterCommand("yarn", Tailoring.YarnCommand);

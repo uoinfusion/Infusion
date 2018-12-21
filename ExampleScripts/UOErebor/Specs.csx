@@ -20,6 +20,8 @@ public static class Specs
     public static readonly ItemSpec TravelStone = 0x1174;
     public static readonly ItemSpec HouseMenu = 0x0BD1;
     public static readonly ItemSpec Gold = 0x0eed;
+    
+    public static readonly ItemSpec VanocniBanka = 0x186F;
 
     public static readonly ItemSpec Hatchet = new[] { 0x0F44, 0x0F43 };
     public static readonly ItemSpec CopperExecutionersAxe = new[] { 0x0F45, 0x0F46 };
@@ -31,6 +33,8 @@ public static class Specs
     public static readonly ItemSpec WarMace = new[] { 0x1406, 0x1407 };
     public static readonly ItemSpec Club = new[] { 0x13B3, 0x013B4 };
     public static readonly ItemSpec WarHammer = new[] { 0x1438, 0x1439 };
+    public static readonly ItemSpec Scimitar = new[] { 0x13B6, 0x13B5 };
+    public static readonly ItemSpec Kryss = new[] { 0x1400, 0x1401 };
 
     public static readonly ItemSpec Crossbow = new[] { 0x0F4F, 0x0F50 };
 
@@ -74,7 +78,7 @@ public static class Specs
     public static readonly ItemSpec Campfire = 0x0DE3;
     public static readonly ItemSpec Forge = new[] { 0x0FB1, 0x198E };
     public static readonly ItemSpec CookingPlaces = new[] { Campfire, Forge, };
-    public static readonly ItemSpec Loom = 0x1062;
+    public static readonly ItemSpec Loom = new[] { 0x1062, 0x1060 };
     public static readonly ItemSpec TinkeringTools = 0x1EBC;
     public static readonly ItemSpec SmithsHammer = new[] { 0x13E3, 0x013E4 };
     public static readonly ItemSpec Saw = 0x1034;

@@ -210,6 +210,19 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             }
         }
 
+        public void UpdateHealth(ObjectId id, int currentHealt, int maxHealth)
+        {
+            var statusBar = Get(id);
+            if (statusBar != null)
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    statusBar.CurrentHealth = currentHealt;
+                    statusBar.MaxHealth = maxHealth;
+                }));
+            }
+        }
+
         public bool Contains(Mobile mobile) => StatusBars.Any(x => x.Id == mobile.Id);
 
         internal void Remove(StatusBar statusBar)

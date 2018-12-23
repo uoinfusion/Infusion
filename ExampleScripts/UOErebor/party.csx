@@ -23,6 +23,8 @@ public static class Party
             .Select(x => (ObjectId)x.Id).ToArray();
 
     private static ObjectId? lastTargetId = null; 
+    
+    public static bool UsingExplicitDataSource { get; set; } = false;
 
     static Party()
     {
@@ -103,7 +105,7 @@ public static class Party
     
     private static void HandleHealthUpdated(CurrentHealthUpdatedEvent ev)
     {
-        if (statuses.Contains(ev.UpdatedMobile))
+        if (statuses.Contains(ev.UpdatedMobile) && !UsingExplicitDataSource)
         {
             statuses.Update(ev.UpdatedMobile);
         }
@@ -197,7 +199,11 @@ public static class Party
     {
         UO.Log(statuses.WindowInfo);
     }
-
+    
+    public static bool IsPartyMember(ObjectId id) => memberIds.ContainsKey(id);
+    
+    public static void UpdateCurrentHealth(ObjectId id, int currentHealth, int maxHealth)
+        => statuses.UpdateHealth(id, currentHealth, maxHealth);
 }
 
 UO.RegisterBackgroundCommand("party", Party.Run);

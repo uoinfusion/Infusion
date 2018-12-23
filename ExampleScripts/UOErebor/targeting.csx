@@ -50,6 +50,9 @@ public static class Targeting
     public static IMobileLookup Ignored { get; set; } = Pets.MyPets;
     
     public static MobileSpec IgnoredSpec { get; set; } = null;
+    
+    public static event Action<ObjectId> TargetingLast;
+    public static event Action<ObjectId> AttackingLast;
 
     private static IEnumerable<Mobile> GetTargets()
     {
@@ -226,7 +229,8 @@ public static class Targeting
             alreadyTargeted.Clear();
             alreadyTargeted.Push(target.Id);
         }
-        
+
+        TargetingLast.Invoke(target.Id);
         UO.Target(target);
     }
     

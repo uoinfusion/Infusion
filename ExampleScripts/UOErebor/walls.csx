@@ -3,6 +3,7 @@
 #load "colors.csx"
 
 using System;
+using System.Linq;
 
 public static class Walls
 {
@@ -11,6 +12,11 @@ public static class Walls
     private static TargetInfo? wallPreviewTargetInfo;
     private static ObjectId[] previewWallIds = new ObjectId[7];
     private static EventJournal eventJournal = UO.CreateEventJournal();
+    
+    public static event Action<WallInfo[]> PreviewingWall;
+    public static event Action PreviewCancelled;
+    public static event Action<WallInfo[]> CastingWall;
+    public static event Action WallCasted;
 
     public static void PreviewWall(ModelId eastWestWallType, ModelId northSouthWallType)
     {
@@ -34,11 +40,28 @@ public static class Walls
             UO.ClientPrint("Too far away", "wall", UO.Me);
             return;
         }
+        
+        var walls = GetWallInfo(playerLocation, targetLocation,
+            eastWestWallType, northSouthWallType);
     
+        for (int i = 0; i < 7; ++i)
+        {    
+            ObjectId wallId = (uint)(0x5FFFFFFF - i);
+            UO.Client.ObjectInfo(wallId, walls[i].Type, walls[i].Location, Colors.Green);
+            previewWallIds[i] = wallId;
+        }
+
+        Trace.Log($"targetInfo: {wallPreviewTargetInfo}");
+    }
+    
+    private static WallInfo[] GetWallInfo(Location3D playerLocation, Location3D targetLocation,
+        ModelId eastWestWallType, ModelId northSouthWallType)
+    {
         int dx = Math.Abs(targetLocation.X - playerLocation.X);
         int dy = Math.Abs(targetLocation.Y - playerLocation.Y);
         var wallType = ( dx > dy ) ? northSouthWallType : eastWestWallType;
-
+        
+        WallInfo[] walls = new WallInfo[7];
         
         for (int i = -3; i <= 3; ++i)
         {    
@@ -46,13 +69,15 @@ public static class Walls
                 (dx > dy) ? targetLocation.X : targetLocation.X + i,
                 (dx > dy) ? targetLocation.Y + i : targetLocation.Y,
                 targetLocation.Z);
-        
-            ObjectId wallId = (uint)(0x5FFFFFFF - i);
-            UO.Client.ObjectInfo(wallId, wallType, loc, Colors.Green);
-            previewWallIds[i + 3] = wallId;
+                
+            walls[i + 3] = new WallInfo()
+            {
+                Type = wallType,
+                Location = loc
+            };
         }
-
-        Trace.Log($"targetInfo: {wallPreviewTargetInfo}");
+        
+        return walls;
     }
     
     public static void ApproveWall(ModelId eastWestWallType, ModelId northSouthWallType, Spell wallSpell, TimeSpan wallDurability, int wallDuplicates)
@@ -66,6 +91,9 @@ public static class Walls
 
         var currentTargetInfo = wallPreviewTargetInfo;
         var currentTargetLocation = wallPreviewTargetInfo.Value.Location;
+        
+        var wallInfo = GetWallInfo(UO.Me.Location, currentTargetLocation, eastWestWallType, northSouthWallType);
+        CastingWall?.Invoke(wallInfo);
         
         UO.CastSpell(wallSpell);
         if (!UO.WaitForTarget("You don't know that spell.", 
@@ -126,6 +154,8 @@ public static class Walls
 
             new Counter("wall", Colors.Blue, targetObject, 500).Start();
         }
+        
+        WallCasted?.Invoke();
     }
     
     private static bool IsFailMessage(string message)
@@ -143,6 +173,8 @@ public static class Walls
                 previewWallIds[i] = 0;
             }
         }
+
+        PreviewCancelled?.Invoke();
     }
 
     public static void PreviewWallOfStone()
@@ -164,6 +196,12 @@ public static class Walls
     {
         ApproveWall(0x3947, 0x3956, Spell.EnergyField, TimeSpan.FromSeconds(520), 0);
     }
+}
+
+public sealed class WallInfo
+{
+    public Location3D Location { get; set; }
+    public ModelId Type { get; set; }
 }
 
 UO.RegisterCommand("wallofstone-preview", Walls.PreviewWallOfStone);

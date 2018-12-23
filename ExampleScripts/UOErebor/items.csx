@@ -399,6 +399,12 @@ public static class Items
     }
     
     public static void AmountItemsSame()
+        => AmountItemsSame(src => UO.Items.OfType(src.Type).OfColor(src.Color));
+
+    public static void AmountItemsSameType()
+        => AmountItemsSame(src => UO.Items.OfType(src.Type));
+    
+    private static void AmountItemsSame(Func<Item, IEnumerable<Item>> filter)
     {
         UO.ClientPrint("Select item to count amount");
         var item = UO.AskForItem();
@@ -410,20 +416,29 @@ public static class Items
         
         var container = item.ContainerId.HasValue ? UO.Items[item.ContainerId.Value] : null;
         
-        int amount = (container != null) ? UO.Items.OfType(item.Type).OfColor(item.Color).InContainer(container).Sum(i => i.Amount)
+        int amount = (container != null) ? filter(item).InContainer(container).Sum(i => i.Amount)
             : UO.Items.OfType(item.Type).OfColor(item.Color).OnGround().Sum(i => i.Amount);
             
         UO.ClientPrint(amount.ToString());
-    
     }
     
     public static void MoveSameItems()
+    {
+        MoveSameItems((src) => UO.Items.OfType(src.Type).OfColor(src.Color));
+    }
+    
+    public static void MoveSameTypeItems()
+    {
+        MoveSameItems((src) => UO.Items.OfType(src.Type));
+    }
+    
+    private static void MoveSameItems(Func<Item, IEnumerable<Item>> filter)
     {
         UO.ClientPrint("Select item");
         var sourceItem = UO.AskForItem();
         if (sourceItem == null)
         {
-            UO.ClientPrint("MoveItems cancelled");
+            UO.ClientPrint("Cancelled");
             return;
         }
         
@@ -431,7 +446,7 @@ public static class Items
         var targetContainer = UO.AskForItem();
         if (sourceItem == null)
         {
-            UO.ClientPrint("MoveItems cancelled");
+            UO.ClientPrint("Cancelled");
             return;
         }
     
@@ -440,7 +455,7 @@ public static class Items
         {
             var sourceContainer = UO.Items[sourceItem.ContainerId.Value];
             if (sourceContainer != null)
-                items = UO.Items.InContainer(sourceContainer).OfType(sourceItem.Type).OfColor(sourceItem.Color).ToArray();
+                items = filter(sourceItem).InContainer(sourceContainer).ToArray();
         }
         
         if (items == null)
@@ -590,12 +605,14 @@ public static class Items
 }
 
 UO.RegisterCommand("moveitems-same", Items.MoveSameItems);
+UO.RegisterCommand("moveitems-sametype", Items.MoveSameTypeItems);
 UO.RegisterCommand("moveitems-all", Items.MoveAllItems);
 UO.RegisterCommand("clickitems-all", Items.ClickAllItems);
 UO.RegisterCommand("moveregs", Items.MoveRegs);
 UO.RegisterCommand("movefood", Items.MoveFood );
 UO.RegisterCommand("itemscount-same", Items.CountItemsSame);
 UO.RegisterCommand("itemsamount-same", Items.AmountItemsSame);
+UO.RegisterCommand("itemsamount-sametype", Items.AmountItemsSameType);
 UO.RegisterCommand("itemsamount-all", Items.ItemsAmountAll);
 UO.RegisterCommand("itemsamount-sub", Items.ItemsAmountSub);
 UO.RegisterCommand("batchmove", Items.BatchMoveAllCommand);

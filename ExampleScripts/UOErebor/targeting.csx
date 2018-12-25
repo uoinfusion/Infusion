@@ -230,7 +230,7 @@ public static class Targeting
             alreadyTargeted.Push(target.Id);
         }
 
-        TargetingLast.Invoke(target.Id);
+        TargetingLast?.Invoke(target.Id);
         UO.Target(target);
     }
     

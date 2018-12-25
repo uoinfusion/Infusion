@@ -17,6 +17,7 @@ public static class Walls
     public static event Action PreviewCancelled;
     public static event Action<WallInfo[]> CastingWall;
     public static event Action WallCasted;
+    public static event Action WallFailed;
 
     public static void PreviewWall(ModelId eastWestWallType, ModelId northSouthWallType)
     {
@@ -27,6 +28,7 @@ public static class Walls
         if (!wallPreviewTargetInfo.HasValue)
         {
             UO.ClientPrint("wall cancelled", "wall", UO.Me);
+            PreviewCancelled?.Invoke();
             return;
         }
         
@@ -46,10 +48,11 @@ public static class Walls
     
         for (int i = 0; i < 7; ++i)
         {    
-            ObjectId wallId = (uint)(0x5FFFFFFF - i);
-            UO.Client.ObjectInfo(wallId, walls[i].Type, walls[i].Location, Colors.Green);
-            previewWallIds[i] = wallId;
+            UO.Client.ObjectInfo(walls[i].Id, walls[i].Type, walls[i].Location, Colors.Green);
+            previewWallIds[i] = walls[i].Id;
         }
+        
+        PreviewingWall?.Invoke(walls);
 
         Trace.Log($"targetInfo: {wallPreviewTargetInfo}");
     }
@@ -73,7 +76,8 @@ public static class Walls
             walls[i + 3] = new WallInfo()
             {
                 Type = wallType,
-                Location = loc
+                Location = loc,
+                Id = (uint)(0x5FFFFFFF - i + 3)
             };
         }
         
@@ -88,12 +92,11 @@ public static class Walls
             UO.ClientPrint("No preview position set", "wall", UO.Me);
             return;
         }
-
+        
         var currentTargetInfo = wallPreviewTargetInfo;
         var currentTargetLocation = wallPreviewTargetInfo.Value.Location;
         
         var wallInfo = GetWallInfo(UO.Me.Location, currentTargetLocation, eastWestWallType, northSouthWallType);
-        CastingWall?.Invoke(wallInfo);
         
         UO.CastSpell(wallSpell);
         if (!UO.WaitForTarget("You don't know that spell.", 
@@ -103,7 +106,8 @@ public static class Walls
             Trace.Log("Waiting for target failed");
             return;
         }
-        
+
+        CastingWall?.Invoke(wallInfo);
         UO.Target(currentTargetInfo.Value.Location);
 
         ObjectId? targetObjectId = null;
@@ -141,11 +145,13 @@ public static class Walls
                 s => { })
             .WhenTimeout(() => UO.ClientPrint("Approve wall timeout"))
             .WaitAny(TimeSpan.FromSeconds(7.5));
-            
+
         if (targetObjectId.HasValue && targetObjectType.HasValue && targetObject != null)
         {
+            WallCasted?.Invoke();
+
             Trace.Log("Newly created wall found, starting count down!");
-            
+
             if (wallPreviewTargetInfo.HasValue && wallPreviewTargetInfo.Value.Location == currentTargetLocation)
             {
                 wallPreviewTargetInfo = null;
@@ -154,8 +160,8 @@ public static class Walls
 
             new Counter("wall", Colors.Blue, targetObject, 500).Start();
         }
-        
-        WallCasted?.Invoke();
+        else
+            WallFailed?.Invoke();
     }
     
     private static bool IsFailMessage(string message)
@@ -200,6 +206,7 @@ public static class Walls
 
 public sealed class WallInfo
 {
+    public ObjectId Id { get; set; }
     public Location3D Location { get; set; }
     public ModelId Type { get; set; }
 }

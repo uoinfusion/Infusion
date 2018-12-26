@@ -41,7 +41,8 @@ public static class Party
     
     public static void Enable()
     {
-        UO.CommandHandler.Invoke("party");
+        if (!UO.CommandHandler.IsCommandRunning("party"))
+            UO.CommandHandler.Invoke("party");
     }
     
     public static void Disable()
@@ -158,15 +159,17 @@ public static class Party
                 statuses.Add(id, name, hp, maxHp, type, prefix);
             else
                 statuses.Add(id, name, hp, maxHp, type);
-
         }
         else
         {
             statuses.Open();
         }
-        
-        UO.Wait(10);
-        statuses.SetOutOfSight(id, UO.Mobiles[id] == null);
+
+        if (UO.Mobiles[id] == null)
+        {
+            UO.Wait(10);
+            statuses.SetOutOfSight(id, false);
+        }
     }
     
     public static void Add(params ObjectId[] ids)

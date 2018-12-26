@@ -58,7 +58,21 @@ namespace Infusion.LegacyApi
         internal Location3D PredictedLocation { get; set; }
         internal Direction PredictedDirection { get; set; }
 
-        public Direction Direction { get; internal set; }
+        private Direction direction;
+
+        public Direction Direction
+        {
+            get => direction;
+            internal set
+            {
+                if (direction != value)
+                {
+                    var oldValue = direction;
+                    direction = value;
+                    eventJournalSource.Publish(new PlayerDirectionChangedEvent(value, oldValue));
+                }
+            }
+        }
         public MovementType MovementType { get; internal set; }
         internal byte CurrentSequenceKey { get; set; }
         internal WalkRequestQueue WalkRequestQueue { get; } = new WalkRequestQueue();

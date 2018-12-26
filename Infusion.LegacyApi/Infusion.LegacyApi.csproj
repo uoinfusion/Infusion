@@ -72,6 +72,7 @@
     <Compile Include="Events\ObjectDeletedEvent.cs" />
     <Compile Include="Events\LoginConfirmedEvent.cs" />
     <Compile Include="Events\MobileFlagsUpdatedEvent.cs" />
+    <Compile Include="Events\PlayerDirectionChangedEvent.cs" />
     <Compile Include="Events\PlayerMoveAcceptedEvent.cs" />
     <Compile Include="Events\PlayerMoveRejectedEvent.cs" />
     <Compile Include="Events\PlayerMoveRequestedEvent.cs" />

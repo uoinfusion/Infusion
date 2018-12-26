@@ -150,6 +150,25 @@ public static class Party
         }
     }
     
+    public static void Add(ObjectId id, string name, int hp, int maxHp, StatusBarType type)
+    {
+        if (!statuses.Contains(id))
+        {
+            if (memberIds.TryGetValue(id, out string prefix))
+                statuses.Add(id, name, hp, maxHp, type, prefix);
+            else
+                statuses.Add(id, name, hp, maxHp, type);
+
+        }
+        else
+        {
+            statuses.Open();
+        }
+        
+        UO.Wait(10);
+        statuses.SetOutOfSight(id, UO.Mobiles[id] == null);
+    }
+    
     public static void Add(params ObjectId[] ids)
     {
         foreach (var id in ids) 
@@ -200,7 +219,8 @@ public static class Party
         UO.Log(statuses.WindowInfo);
     }
     
-    public static bool IsPartyMember(ObjectId id) => memberIds.ContainsKey(id);
+    public static bool IsPartyMember(ObjectId id)
+        => memberIds.ContainsKey(id) || statuses.Contains(id);
     
     public static void UpdateCurrentHealth(ObjectId id, int currentHealth, int maxHealth)
         => statuses.UpdateHealth(id, currentHealth, maxHealth);

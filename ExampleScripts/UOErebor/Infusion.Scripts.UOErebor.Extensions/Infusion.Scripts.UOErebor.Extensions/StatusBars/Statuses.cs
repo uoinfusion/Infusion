@@ -167,6 +167,32 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
             }));
         }
 
+        public void Add(ObjectId id, string name, int hp, int maxHp, StatusBarType type, string namePrefix = null)
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                var statusBar = Get(id);
+                if (statusBar != null)
+                {
+                    StatusBars.Remove(statusBar);
+                }
+                else
+                {
+                    statusBar = new StatusBar(id, namePrefix)
+                    {
+                        Name = name,
+                        CurrentHealth = hp,
+                        MaxHealth = maxHp,
+                        Type = type,
+                        IsDead = false,
+                        IsPoisoned = false,
+                    };
+                }
+
+                Add(statusBar);
+            }));
+        }
+
         public void Remove(ObjectId id)
         {
             var statusBar = Get(id);
@@ -224,6 +250,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.StatusBars
         }
 
         public bool Contains(Mobile mobile) => StatusBars.Any(x => x.Id == mobile.Id);
+        public bool Contains(ObjectId id) => StatusBars.Any(x => x.Id == id);
 
         internal void Remove(StatusBar statusBar)
         {

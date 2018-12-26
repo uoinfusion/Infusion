@@ -191,7 +191,9 @@ public static class Targeting
             return;
         }
 
-        var attackResult = UO.TryAttack(target); 
+        var attackResult = UO.TryAttack(target);
+        AttackingLast?.Invoke(target.Id);
+
         if (attackResult != AttackResult.Accepted)
         {
             UO.ClientPrint($"Cannot attack {target.Name ?? "last target"}");

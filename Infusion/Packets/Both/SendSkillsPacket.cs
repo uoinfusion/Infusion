@@ -13,7 +13,8 @@ namespace Infusion.Packets.Both
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
 
-            reader.Skip(3);
+            reader.ReadByte();
+            ushort packetSize = reader.ReadUShort();
             byte type = reader.ReadByte();
 
             var values = new List<SkillValue>();
@@ -26,9 +27,7 @@ namespace Infusion.Packets.Both
             {
                 case 0x00:
                 case 0x02:
-                    skillNumber = reader.ReadUShort();
-
-                    while (skillNumber != 0)
+                    while (reader.Position < packetSize && (skillNumber = reader.ReadUShort()) != 0)
                     {
                         value = reader.ReadUShort();
                         unmodifiedValue = reader.ReadUShort();
@@ -37,8 +36,6 @@ namespace Infusion.Packets.Both
                             reader.Skip(2); // skill cap
 
                         values.Add(new SkillValue((Skill)skillNumber, value, unmodifiedValue));
-
-                        skillNumber = reader.ReadUShort();
                     }
                     break;
                 case 0xFF:

@@ -113,7 +113,28 @@ namespace Infusion.Tests.Packets.Both
             packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0));
             packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0x12c, 0x12c));
             packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0));
+        }
 
+        [TestMethod]
+        public void Can_deserialize_skill_update_with_skillcaps_without_null_terminator()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x3A, // packet
+                0x00, 0x1E, // size
+                0x02, // type
+                0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xBC,
+                0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xBC,
+                0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xBC,
+            });
+
+            var packet = new SendSkillsPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.Values.Length.Should().Be(3);
+            packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0));
+            packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0, 0));
+            packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0));
         }
     }
 }

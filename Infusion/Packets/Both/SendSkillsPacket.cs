@@ -25,6 +25,7 @@ namespace Infusion.Packets.Both
             switch (type)
             {
                 case 0x00:
+                case 0x02:
                     skillNumber = reader.ReadUShort();
 
                     while (skillNumber != 0)
@@ -32,6 +33,8 @@ namespace Infusion.Packets.Both
                         value = reader.ReadUShort();
                         unmodifiedValue = reader.ReadUShort();
                         reader.Skip(1); // skill lock
+                        if (type == 0x02)
+                            reader.Skip(2); // skill cap
 
                         values.Add(new SkillValue((Skill)skillNumber, value, unmodifiedValue));
 

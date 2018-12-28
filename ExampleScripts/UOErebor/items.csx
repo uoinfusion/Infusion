@@ -589,7 +589,7 @@ public static class Items
             return true;
         }
     
-        var sourceItemsToReload = UO.Items.InContainer(sourceContainerId).Matching(typesToReload).ToArray();
+        var sourceItemsToReload = UO.Items.InContainer(sourceContainerId, false).Matching(typesToReload).ToArray();
         if (sourceItemsToReload.Length <= 0)
         {
             UO.Log($"No items to reload found in {sourceContainerId}");

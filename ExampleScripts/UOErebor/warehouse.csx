@@ -66,7 +66,7 @@ public class Warehouse
     
     public void Sort(ObjectId sourceContainerId)
     {
-        var items = UO.Items.InContainer(sourceContainerId).ToArray();
+        var items = UO.Items.InContainer(sourceContainerId, false).ToArray();
         
         foreach (var item in items)
         {
@@ -97,7 +97,7 @@ public class Warehouse
         var container = GetContainer(spec);
         container.Open();
         
-        bool doLayout = forceLayout || !UO.Items.InContainer(targetContainerId).Matching(spec).Any();
+        bool doLayout = forceLayout || !UO.Items.InContainer(targetContainerId, false).Matching(spec).Any();
         doLayout &= layout != null;         
         if (doLayout && layout.TryGetContainerLocation(spec, out Location2D location))
         {

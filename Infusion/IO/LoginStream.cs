@@ -5,13 +5,21 @@ namespace Infusion.IO
 {
     internal class LoginStream : Stream
     {
-        private readonly uint[] m_key;
-        private readonly uint m_key1;
-        private readonly uint m_key2;
+        private uint[] m_key;
+        private uint m_key1;
+        private uint m_key2;
+        private readonly bool encrypted;
 
-        public LoginStream(Stream baseStream)
+        public LoginStream(Stream baseStream, bool encrypted = true)
         {
-            var seed = 0xA9FE5050;
+            SetSeed(0xA9FE5050);
+
+            BaseStream = baseStream;
+            this.encrypted = encrypted;
+        }
+
+        public void SetSeed(uint seed)
+        {
             uint k1 = 0x2cc3ed9d;
             var k2 = 0xa374227f;
 
@@ -26,8 +34,6 @@ namespace Infusion.IO
 
             m_key1 = k1;
             m_key2 = k2;
-
-            BaseStream = baseStream;
         }
 
         public Stream BaseStream { get; set; }
@@ -68,21 +74,24 @@ namespace Infusion.IO
 
         public override void Write(byte[] buffer, int offset, int count)
         {
-#if NO_CRYPT
-            BaseStream.Write(buffer, offset, count);
-#else
-            var output = new byte[1];
-            var input = new byte[1];
-
-            for (var i = 0; i < count; i++)
+            if (encrypted)
             {
-                input[0] = buffer[i + offset];
+                var output = new byte[1];
+                var input = new byte[1];
 
-                Encrypt(input, output, 1);
+                for (var i = 0; i < count; i++)
+                {
+                    input[0] = buffer[i + offset];
 
-                BaseStream.WriteByte(output[0]);
+                    Encrypt(input, output, 1);
+
+                    BaseStream.WriteByte(output[0]);
+                }
             }
-#endif
+            else
+            {
+                BaseStream.Write(buffer, offset, count);
+            }
         }
 
         private void Encrypt(byte[] input, byte[] output, long len)

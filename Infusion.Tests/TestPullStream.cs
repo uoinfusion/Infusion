@@ -45,7 +45,7 @@ namespace Infusion.Tests
 
             for (i = 0; i < count && position < batchesEnumerator.Current.Length; i++)
             {
-                buffer[i] = batchesEnumerator.Current[position++];
+                buffer[i + offset] = batchesEnumerator.Current[position++];
             }
 
             return i;

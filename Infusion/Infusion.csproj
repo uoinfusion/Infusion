@@ -20,7 +20,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -57,6 +57,7 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="Clients\ClientBehavior.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Commands\Command.cs" />
     <Compile Include="Commands\CommandAutocompleter.cs" />
@@ -157,6 +158,8 @@
     <Compile Include="Packets\Server\CloseContainerPacket.cs" />
     <Compile Include="DialogBoxResponse.cs" />
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
+    <Compile Include="Packets\Server\DrawContainerPacket7090.cs" />
+    <Compile Include="Packets\Server\DrawObjectPacket7000.cs" />
     <Compile Include="Packets\Server\GraphicalEffectPacket.cs" />
     <Compile Include="Packets\Server\OpenDialogBoxPacket.cs" />
     <Compile Include="Packets\Server\PauseClientChoice.cs" />

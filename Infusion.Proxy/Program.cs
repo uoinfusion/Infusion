@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Infusion.Clients;
 using Infusion.Commands;
 using Infusion.Diagnostic;
 using Infusion.IO;
@@ -139,6 +140,8 @@ namespace Infusion.Proxy
 
         private static void ClientLoop(ILogger packetLogger)
         {
+            new ClassicClientBehavior().RegisterPackets();
+
             var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, Console);
             serverDiagnosticPushStream =
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server"),
@@ -146,7 +149,7 @@ namespace Infusion.Proxy
             serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy");
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
-                serverDiagnosticPushStream);
+                serverDiagnosticPushStream, true);
             serverConnection.PacketReceived += ServerConnectionOnPacketReceived;
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,

@@ -239,6 +239,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition<DrawContainerPacket> DrawContainer = new PacketDefinition<DrawContainerPacket>(0x24,
             new StaticPacketLength(7), "DrawContainer", packet => new DrawContainerPacket());
+        public static readonly PacketDefinition<DrawContainerPacket> DrawContainer7090 = new PacketDefinition<DrawContainerPacket>(0x24,
+            new StaticPacketLength(9), "DrawContainer", packet => new DrawContainerPacket7090());
 
         public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer = new PacketDefinition<AddItemToContainerPacket>(0x25,
             new StaticPacketLength(20), "AddItemToContainer", packet => new AddItemToContainerPacket());
@@ -321,6 +323,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition<DrawObjectPacket> DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
             new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket());
+        public static readonly PacketDefinition<DrawObjectPacket> DrawObject7000 = new PacketDefinition<DrawObjectPacket>(0x78,
+            new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket7000());
 
         public static readonly PacketDefinition<OpenDialogBoxPacket> OpenDialogBox = new PacketDefinition<OpenDialogBoxPacket>(0x7C,
             new VariablePacketLength(), "OpenDialogBox", packet => new OpenDialogBoxPacket());
@@ -400,6 +404,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition EnableLockedClientFeatures = new PacketDefinition(0xB9,
             new StaticPacketLength(3), "EnableLockedClientFeatures");
+        public static readonly PacketDefinition EnableLockedClientFeaturesSince6_0_14_2 = new PacketDefinition(0xB9,
+            new StaticPacketLength(5), "EnableLockedClientFeatures");
 
         public static readonly PacketDefinition<QuestArrowPacket> QuestArrow = new PacketDefinition<QuestArrowPacket>(0xBA,
             new StaticPacketLength(6), "QuestArrow", packet => new QuestArrowPacket());

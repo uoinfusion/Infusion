@@ -16,14 +16,14 @@ namespace Infusion.Tests
         {
             var inputStream = new TestPullStream(new List<byte[]>
             {
-                FakePackets.InitialLoginSeed
+                FakePackets.InitialLoginSeed_Pre6060
                     .Concat(FakePackets.InitialLoginRequest)
                     .Concat(FakePackets.SelectServerRequest).ToArray()
             });
 
             var expectedPackets = new[]
             {
-                new Packet(PacketDefinitions.LoginSeed.Id, FakePackets.InitialLoginSeed),
+                new Packet(PacketDefinitions.LoginSeed.Id, FakePackets.InitialLoginSeed_Pre6060),
                 new Packet(0x80, FakePackets.InitialLoginRequest),
                 new Packet(0xA0, FakePackets.SelectServerRequest)
             };
@@ -41,13 +41,13 @@ namespace Infusion.Tests
         {
             var inputStream = new TestPullStream(new List<byte[]>
             {
-                FakePackets.InitialLoginSeed,
+                FakePackets.InitialLoginSeed_Pre6060,
                 FakePackets.InitialLoginRequest
             });
 
             var expectedPackets = new[]
             {
-                new Packet(PacketDefinitions.LoginSeed.Id, FakePackets.InitialLoginSeed),
+                new Packet(PacketDefinitions.LoginSeed.Id, FakePackets.InitialLoginSeed_Pre6060),
                 new Packet(0x80, FakePackets.InitialLoginRequest)
             };
 
@@ -133,18 +133,6 @@ namespace Infusion.Tests
 
         [TestMethod]
         public void
-            Given_connection_in_Initial_status_When_receives_login_seed_Then_connection_enters_ServerLogin_status()
-        {
-            var inputStream = new TestPullStream(new List<byte[]> {FakePackets.InitialLoginSeed});
-
-            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial);
-            connection.ReceiveBatch(inputStream);
-
-            connection.Status.Should().Be(UltimaClientConnectionStatus.ServerLogin);
-        }
-
-        [TestMethod]
-        public void
             Given_connection_in_ServerLogin_status_When_receives_SelectServerRequest_Then_enters_PreGameLogin_status()
         {
             var inputStream = new TestPullStream(new List<byte[]> {FakePackets.SelectServerRequest});
@@ -183,7 +171,7 @@ namespace Infusion.Tests
         {
             var inputStream = new TestPullStream(new List<byte[]>
             {
-                FakePackets.InitialLoginSeed,
+                FakePackets.InitialLoginSeed_Pre6060,
                 FakePackets.InitialLoginRequest,
                 FakePackets.ClientSpy,
                 FakePackets.SelectServerRequest,

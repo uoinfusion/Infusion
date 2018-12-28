@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    internal sealed class DrawObjectPacket : MaterializedPacket
+    internal class DrawObjectPacket : MaterializedPacket
     {
         private Packet rawPacket;
         private ModelId type;
@@ -52,11 +53,7 @@ namespace Infusion.Packets.Server
                 var layer = (Layer) reader.ReadByte();
                 Color? color = null;
 
-                if ((type & 0x8000) != 0)
-                {
-                    type -= 0x8000;
-                    color = (Color) reader.ReadUShort();
-                }
+                DeserializeColor(reader, ref type, ref color);
 
                 var item = new Item(new ObjectId(itemId), new ModelId(type), 1, new Location3D(0, 0, 0), containerId: Id,
                     layer: layer, color: color);
@@ -67,6 +64,15 @@ namespace Infusion.Packets.Server
             }
 
             Items = items.ToArray();
+        }
+
+        protected virtual void DeserializeColor(ArrayPacketReader reader, ref ushort type, ref Color? color)
+        {
+            if ((type & 0x8000) != 0)
+            {
+                type -= 0x8000;
+                color = (Color)reader.ReadUShort();
+            }
         }
     }
 }

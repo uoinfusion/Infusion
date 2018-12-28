@@ -70,10 +70,25 @@ namespace Infusion
 
         private void ReceiveSeed(IPullStream inputStream)
         {
-            var payload = new byte[4];
-            inputStream.Read(payload, 0, 4);
-            var packet = new Packet(PacketDefinitions.LoginSeed.Id, payload);
-            OnPacketReceived(packet);
+            var firstByte = inputStream.ReadByte();
+
+            if (firstByte != 0xEF)
+            {
+                var seed = new byte[4];
+                inputStream.Read(seed, 1, 3);
+                seed[0] = (byte)firstByte;
+                var packet = new Packet(PacketDefinitions.LoginSeed.Id, seed);
+                OnPacketReceived(packet);
+            }
+            else
+            {
+                var seed = new byte[21];
+                inputStream.Read(seed, 1, 20);
+                seed[0] = (byte)firstByte;
+                var packet = new Packet(PacketDefinitions.LoginSeed.Id, seed);
+
+                OnPacketReceived(packet);
+            }
         }
 
         private void OnPacketReceived(Packet packet)

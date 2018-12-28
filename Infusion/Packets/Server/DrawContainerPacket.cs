@@ -7,11 +7,11 @@ using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
-    internal sealed class DrawContainerPacket : MaterializedPacket
+    internal class DrawContainerPacket : MaterializedPacket
     {
-        public ObjectId ContainerId { get; private set; }
+        public ObjectId ContainerId { get; protected set; }
 
-        public ModelId GumpModel { get; private set; }
+        public ModelId GumpModel { get; protected set; }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -26,7 +26,7 @@ namespace Infusion.Packets.Server
 
         public override Packet RawPacket => rawPacket;
 
-        private Packet rawPacket;
+        protected Packet rawPacket;
 
     }
 }

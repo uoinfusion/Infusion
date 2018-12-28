@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
+using Infusion.Clients;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
@@ -10,6 +11,12 @@ namespace Infusion.Tests
     [TestClass]
     public class ServerConnectionTests
     {
+        [TestInitialize]
+        public void Initialize()
+        {
+            new ClassicClientBehavior().RegisterPackets();
+        }
+
         [TestMethod]
         public void Can_receive_prelogin_packet()
         {

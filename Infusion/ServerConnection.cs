@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
@@ -11,29 +12,41 @@ namespace Infusion
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly HuffmanStream huffmanStream;
-        private readonly NewGameStream receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 });
-        private readonly NewGameStream sendNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 });
+        private readonly NewGameStream receiveNewGameStream;
+        private readonly NewGameStream sendNewGameStream;
         private readonly PullStreamToStreamAdapter preLoginStream;
+        private readonly LoginStream loginStream;
 
         public ServerConnectionStatus Status { get; private set; }
 
         public ServerConnection()
-            : this(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance
-            )
+            : this(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, true)
         {
         }
 
         public ServerConnection(ServerConnectionStatus status)
-            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance)
+            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, true)
         {
         }
 
         public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
             IDiagnosticPushStream diagnosticPushStream)
+            : this (status, diagnosticPullStream, diagnosticPushStream, true)
+        {
+        }
+
+
+        public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
+            IDiagnosticPushStream diagnosticPushStream, bool encrypted)
         {
             this.Status = status;
             this.diagnosticPullStream = diagnosticPullStream;
             this.diagnosticPushStream = diagnosticPushStream;
+            this.loginStream = new LoginStream(null, encrypted);
+
+            this.receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
+            this.sendNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
+
             huffmanStream = new HuffmanStream(receiveNewGameStream);
             preLoginStream = new PullStreamToStreamAdapter(diagnosticPullStream);
         }
@@ -96,8 +109,6 @@ namespace Infusion
             }
         }
 
-        private readonly LoginStream loginStream = new LoginStream(null);
-
         public void Send(Packet packet, Stream outputStream)
         {
             diagnosticPushStream.DumpPacket(packet);
@@ -106,8 +117,13 @@ namespace Infusion
             {
                 case ServerConnectionStatus.Initial:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    // TODO: use seed sent by client
-                    diagnosticPushStream.Write(new byte[] { 0xA9, 0xFE, 0x50, 0x50 }, 0, 4);
+
+                    var seed = packet.Payload.Length > 4
+                        ? BitConverter.ToUInt32(packet.Payload.Skip(1).Take(4).Reverse().ToArray(), 0)
+                        : BitConverter.ToUInt32(packet.Payload.Take(4).Reverse().ToArray(), 0);
+                    loginStream.SetSeed(seed);
+
+                    diagnosticPushStream.Write(packet.Payload, 0, packet.Length);
                     Status = ServerConnectionStatus.PreLogin;
                     break;
                 case ServerConnectionStatus.PreLogin:

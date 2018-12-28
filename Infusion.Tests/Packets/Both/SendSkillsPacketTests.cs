@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using FluentAssertions;
-using Infusion.Packets;
+﻿using FluentAssertions;
 using Infusion.Packets.Both;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Linq;
 
 namespace Infusion.Tests.Packets.Both
 {
@@ -91,6 +90,30 @@ namespace Infusion.Tests.Packets.Both
             packet.Values.Length.Should().Be(0x32);
             packet.Values.First().Should().Be(new SkillValue(Skill.Alchemy, 0x12C, 0x12F));
             packet.Values.Last().Should().Be(new SkillValue(Skill.Necromancy, 0x12C, 0x12D));
+        }
+
+        [TestMethod]
+        public void Can_deserialize_skill_update_with_skillcaps()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x3A, // packet
+                0x00, 0x21, // size
+                0x02, // type
+                0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xE8,
+                0x00, 0x02, 0x01, 0x2C, 0x01, 0x2C, 0x00, 0x03, 0xE8,
+                0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0xE8,
+                0x00, 0x00,
+            });
+
+            var packet = new SendSkillsPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.Values.Length.Should().Be(3);
+            packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0));
+            packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0x12c, 0x12c));
+            packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0));
+
         }
     }
 }

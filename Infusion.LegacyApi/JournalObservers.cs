@@ -24,14 +24,18 @@ namespace Infusion.LegacyApi
 
         private void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
         {
-            string message = clilocDictionary.Value.GetString(packet.MessageId.Value) + packet.Affix;
+            var message = clilocDictionary.Value.GetString(packet.MessageId.Value) ?? $"Unknown Cliloc #{packet.MessageId.Value}";
+            if (!string.IsNullOrEmpty(packet.Affix))
+                message += packet.Affix;
+            
             journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color);
             console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color);
         }
 
         private void HandleClilocMessage(ClilocMessagePacket packet)
         {
-            var message = clilocDictionary.Value.GetString(packet.MessageId.Value);
+            var message = clilocDictionary.Value.GetString(packet.MessageId.Value) ?? $"Unknown Cliloc #{packet.MessageId.Value}";
+
             journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color);
             console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color);
         }

@@ -7,7 +7,7 @@ namespace Infusion.Tests
 {
     public static class FakePackets
     {
-        public static Packet InitialLoginSeedPacket = new Packet(PacketDefinitions.LoginSeed.Id, InitialLoginSeed);
+        public static Packet InitialLoginSeedPacket = new Packet(PacketDefinitions.LoginSeed.Id, InitialLoginSeed_Pre6060);
 
         public static Packet ConnectToGameServerPacket = Instantiate(ConnectToGameServer);
 
@@ -116,7 +116,12 @@ namespace Infusion.Tests
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x28
         };
 
-        public static byte[] InitialLoginSeed => new byte[] {0xA9, 0xFE, 0x50, 0x50};
+        public static byte[] InitialLoginSeed_Pre6060 => new byte[] { 0xA9, 0xFE, 0x50, 0x50 };
+        public static byte[] InitialLoginSeed_Post6060 => new byte[]
+        {
+            0xef, 0x01, 0x38, 0xa8, 0xc0, 0x00, 0x00, 0x00, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x21, 0x00, 0x00, 0x00, 0x01,
+        };
 
         public static byte[] InitialLoginRequest => new byte[]
         {

@@ -83,6 +83,57 @@ namespace Infusion.Tests.Packets.Server
         }
 
         [TestMethod]
+        public void Can_deserialize_packet_with_StatusFlag_equals_to_4()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x11, // packet
+                0x00, 0x58, // size
+                0x00, 0x00, 0x04, 0x61, // player id
+                // name
+                0x61, 0x73, 0x64, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x43, // current health
+                0x00, 0x43, // max health
+                0x00, // name change flag
+                0x04, // status flag
+                0x00, // sex + race
+                0x00, 0x23, // strength
+                0x00, 0x23, // dexterity
+                0x00, 0x0A, // intelligence
+                0x00, 0x23, // current stamina
+                0x00, 0x23, // max stamina
+                0x00, 0x0A, // current mana
+                0x00, 0x0A, // max mana
+                0x00, 0x00, 0x03, 0xE8, // gold
+                0x00, 0x02, // armor rating
+                0x00, 0x3E, // weight
+
+                // ignored
+                0x00, 0xE6, 0x00, 0x05, 0x00, 0x04, 0x00, 0x03, 0x00, 0x03, 0x00, 0x03, 0x00, 0x00, 0x00, 0x0F,
+                0x00, 0x15, 0x00, 0x00, 0x00, 0x00,
+            });
+
+            var packet = new StatusBarInfoPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.PlayerId.Should().Be(new ObjectId(0x00000461));
+            packet.PlayerName.Should().Be("asdf");
+            packet.CurrentHealth.Should().Be(0x43);
+            packet.MaxHealth.Should().Be(0x43);
+            packet.Status.Should().Be(0);
+            packet.Strength.Should().Be(0x23);
+            packet.Dexterity.Should().Be(0x23);
+            packet.Intelligence.Should().Be(0x0A);
+            packet.CurrentStamina.Should().Be(0x23);
+            packet.MaxStamina.Should().Be(0x23);
+            packet.CurrentMana.Should().Be(0x0A);
+            packet.MaxMana.Should().Be(0x0A);
+            packet.Gold.Should().Be(0x3E8);
+            packet.Weight.Should().Be(0x3E);
+        }
+
+        [TestMethod]
         public void Can_deserialize_packet_with_StatusFlag_equals_to_7()
         {
             var rawPacket = FakePackets.Instantiate(new byte[]
@@ -130,6 +181,59 @@ namespace Infusion.Tests.Packets.Server
             packet.MaxMana.Should().Be(0x28);
             packet.Gold.Should().Be(0x2E38);
             packet.Weight.Should().Be(0x9C);
+        }
+
+        [TestMethod]
+        public void Can_deserialize_packet_with_StatusFlag_equals_to_6()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x11, // packet 
+                0x00, 0x79, // size
+                0x00, 0x00, 0x04, 0x61, // id
+                // name
+                0x61, 0x73, 0x64, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x43, // hp
+                0x00, 0x43, // max hp
+                0x00, // name change
+                0x06, // status flag
+                0x00, // sex + race
+                0x00, 0x23, // str
+                0x00, 0x23, // dex
+                0x00, 0x0A, // int
+                0x00, 0x23, // stam
+                0x00, 0x23, // max stam
+                0x00, 0x0A, // mana
+                0x00, 0x0A, // max mana
+                0x00, 0x00, 0x03, 0xE8, // gold
+                0x00, 0x02, // armor
+                0x00, 0x3E, // weight
+
+                // ignored
+                0x00, 0xDE, 0x01, 0x00, 0xE6, 0x00, 0x05, 0x00, 0x04, 0x00, 0x03, 0x00, 0x03, 0x00,
+                0x03, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00, 0x64, 0x00, 0x64, 0x00,
+                0x64, 0x00, 0x64, 0x00, 0x64, 0x00, 0x00, 0x00, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            });
+
+            var packet = new StatusBarInfoPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.PlayerId.Should().Be(new ObjectId(0x00000461));
+            packet.PlayerName.Should().Be("asdf");
+            packet.CurrentHealth.Should().Be(0x43);
+            packet.MaxHealth.Should().Be(0x43);
+            packet.Status.Should().Be(0);
+            packet.Strength.Should().Be(0x23);
+            packet.Dexterity.Should().Be(0x23);
+            packet.Intelligence.Should().Be(0x0a);
+            packet.CurrentStamina.Should().Be(0x23);
+            packet.MaxStamina.Should().Be(0x23);
+            packet.CurrentMana.Should().Be(0x0a);
+            packet.MaxMana.Should().Be(0x0a);
+            packet.Gold.Should().Be(0x03e8);
+            packet.Weight.Should().Be(0x3e);
         }
     }
 }

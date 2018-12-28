@@ -16,12 +16,6 @@ namespace Infusion.Desktop.Launcher
     {
         public static void Launch(LauncherOptions options, ushort proxyPort)
         {
-            LoginConfiguration.SetServerAddress("127.0.0.1", proxyPort);
-            if (!string.IsNullOrEmpty(options.UserName))
-                UltimaConfiguration.SetUserName(options.UserName);
-            if (!string.IsNullOrEmpty(options.Password))
-                UltimaConfiguration.SetPassword(options.EncryptPassword());
-
             string ultimaExecutablePath = options.Classic.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
             {
@@ -36,9 +30,23 @@ namespace Infusion.Desktop.Launcher
                 return;
             }
 
-            Program.Console.Info($"Staring {ultimaExecutablePath}");
+            string workingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
+
+            var loginConfiguration = new LoginConfiguration(workingDirectory);
+            Program.Console.Info($"Configuring server address: {loginConfiguration.ConfigFile}");
+            loginConfiguration.SetServerAddress("127.0.0.1", proxyPort);
+
+            var ultimaConfiguration = new UltimaConfiguration(workingDirectory);
+            Program.Console.Info($"Configuring user name and password: {ultimaConfiguration.ConfigFile}");
+            if (!string.IsNullOrEmpty(options.UserName))
+                ultimaConfiguration.SetUserName(options.UserName);
+            if (!string.IsNullOrEmpty(options.Password))
+                ultimaConfiguration.SetPassword(options.EncryptPassword());
+
+            Program.Console.Info($"Staring {ultimaExecutablePath} from {workingDirectory}");
 
             var info = new ProcessStartInfo(ultimaExecutablePath);
+            info.WorkingDirectory = workingDirectory;
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)

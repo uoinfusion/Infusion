@@ -5,17 +5,26 @@ using Ultima;
 
 namespace Infusion.Desktop.Launcher
 {
-    public static class LoginConfiguration
+    public class LoginConfiguration
     {
-        public static void SetServerAddress(string address, int port)
+        private readonly string rootDir;
+
+        public string ConfigFile { get; }
+
+        public LoginConfiguration(string rootDir)
         {
-            string configFile = Path.Combine(Files.RootDir, "login.cfg");
-            string content = File.ReadAllText(configFile);
-            string patchedContent = SetServerAddress(content, $"{address},{port}");
-            File.WriteAllText(configFile, patchedContent);
+            this.rootDir = rootDir;
+            ConfigFile = Path.Combine(rootDir, "login.cfg");
         }
 
-        public static string SetServerAddress(string fileContent, string loginServer)
+        public void SetServerAddress(string address, int port)
+        {
+            string content = File.ReadAllText(ConfigFile);
+            string patchedContent = SetServerAddress(content, $"{address},{port}");
+            File.WriteAllText(ConfigFile, patchedContent);
+        }
+
+        public string SetServerAddress(string fileContent, string loginServer)
         {
             if (string.IsNullOrEmpty(fileContent))
                 return $";Inserted by Infusion{Environment.NewLine}LoginServer={loginServer}";

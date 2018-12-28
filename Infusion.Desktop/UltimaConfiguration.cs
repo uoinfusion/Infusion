@@ -5,21 +5,35 @@ using Ultima;
 
 namespace Infusion.Desktop
 {
-    public static class UltimaConfiguration
+    public class UltimaConfiguration
     {
-        public static void SetUserName(string userName)
+        private readonly string rootDir;
+
+        public string ConfigFile { get; }
+
+        public UltimaConfiguration(string rootDir)
+        {
+            this.rootDir = rootDir;
+            ConfigFile = Path.Combine(rootDir, "uo.cfg");
+        }
+
+        public UltimaConfiguration()
+        {
+            this.rootDir = Files.RootDir;
+        }
+
+        public void SetUserName(string userName)
         {
             SetProperty("AcctID", userName);
         }
 
-        private static void SetProperty(string property, string value)
+        private void SetProperty(string property, string value)
         {
-            var path = Path.Combine(Files.RootDir, "uo.cfg");
-            var updatedContent = SetProperty(File.ReadAllText(path), property, value);
-            File.WriteAllText(path, updatedContent);
+            var updatedContent = SetProperty(File.ReadAllText(ConfigFile), property, value);
+            File.WriteAllText(ConfigFile, updatedContent);
         }
 
-        public static string SetProperty(string configuration, string property, string value)
+        public string SetProperty(string configuration, string property, string value)
         {
             var lines = configuration.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
             var outputLines = new List<string>(lines.Length + 1);
@@ -45,7 +59,7 @@ namespace Infusion.Desktop
             return string.Join(Environment.NewLine, outputLines);
         }
 
-        public static void SetPassword(string password)
+        public void SetPassword(string password)
         {
             SetProperty("AcctPassword", password);
             SetProperty("RememberAcctPW", "yes");

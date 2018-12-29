@@ -33,7 +33,6 @@ namespace Infusion.Proxy
         private static UltimaClientConnection clientConnection;
         private static Socket serverSocket;
 
-        private static bool needServerReconnect;
         private static IDiagnosticPushStream serverDiagnosticPushStream;
         private static ConsoleDiagnosticPullStream serverDiagnosticPullStream;
 
@@ -140,6 +139,7 @@ namespace Infusion.Proxy
 
         private static void ClientLoop(ILogger packetLogger)
         {
+            //new ClassicClientBehaviorSince7090().RegisterPackets();
             new ClassicClientBehavior().RegisterPackets();
 
             var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, Console);
@@ -176,8 +176,14 @@ namespace Infusion.Proxy
                     while ((receivedLength = ClientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                     {
                         var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
+                        clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
+                    }
 
-                        clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream));
+                    lock (serverStreamLock)
+                    {
+                        Console.Info("Disconnecting");
+                        DisconnectFromServer();
+                        ServerStream = ConnectToServer();
                     }
 
                     Thread.Yield();
@@ -238,7 +244,6 @@ namespace Infusion.Proxy
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
                 packet.GameServerPort = proxyLocalPort;
                 rawPacket = packet.RawPacket;
-                needServerReconnect = true;
             }
 
             return rawPacket;
@@ -277,18 +282,11 @@ namespace Infusion.Proxy
             {
                 while (true)
                 {
-                    if (needServerReconnect)
+                    lock (serverStreamLock)
                     {
-                        lock (serverStreamLock)
-                        {
-                            DisconnectFromServer();
-                            needServerReconnect = false;
+                        if (ServerStream == null)
                             ServerStream = ConnectToServer();
-                        }
                     }
-
-                    if (ServerStream == null)
-                        ServerStream = ConnectToServer();
 
                     if (ServerStream.DataAvailable)
                     {

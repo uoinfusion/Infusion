@@ -35,19 +35,17 @@ namespace Infusion
 
         public event EventHandler<Packet> PacketReceived;
 
-        public void ReceiveBatch(IPullStream inputStream)
+        public void ReceiveBatch(IPullStream inputStream, int batchLength)
         {
             diagnosticPullStream.BaseStream = inputStream;
 
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
-                    ReceiveSeed(diagnosticPullStream);
-                    Status = UltimaClientConnectionStatus.ServerLogin;
+                    ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.ServerLogin);
                     break;
                 case UltimaClientConnectionStatus.PreGameLogin:
-                    ReceiveSeed(diagnosticPullStream);
-                    Status = UltimaClientConnectionStatus.GameLogin;
+                    ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.GameLogin);
                     break;
             }
 
@@ -68,27 +66,51 @@ namespace Infusion
             }
         }
 
-        private void ReceiveSeed(IPullStream inputStream)
+        private byte[] receivedSeed = new byte[21];
+        private int receivedPosition = 0;
+
+        private int ReceiveSeed(IPullStream inputStream, int batchLength, UltimaClientConnectionStatus nextStatus)
         {
-            var firstByte = inputStream.ReadByte();
+            int byteReceived = 0;
 
-            if (firstByte != 0xEF)
+            if (receivedPosition == 0)
             {
-                var seed = new byte[4];
-                inputStream.Read(seed, 1, 3);
-                seed[0] = (byte)firstByte;
-                var packet = new Packet(PacketDefinitions.LoginSeed.Id, seed);
-                OnPacketReceived(packet);
+                var firstByte = inputStream.ReadByte();
+                byteReceived++;
+                receivedPosition++;
+                receivedSeed[0] = (byte)firstByte;
+                if (firstByte != 0xEF)
+                {
+                    var seed = new byte[4];
+                    inputStream.Read(seed, 1, 3);
+                    seed[0] = (byte)firstByte;
+                    var packet = new Packet(PacketDefinitions.LoginSeed.Id, seed);
+                    OnPacketReceived(packet);
+                    Status = nextStatus;
+                    receivedPosition = 0;
+                    return 4;
+                }
             }
-            else
-            {
-                var seed = new byte[21];
-                inputStream.Read(seed, 1, 20);
-                seed[0] = (byte)firstByte;
-                var packet = new Packet(PacketDefinitions.LoginSeed.Id, seed);
 
-                OnPacketReceived(packet);
+            if (batchLength > byteReceived)
+            {
+                var remaining = 21 - receivedPosition;
+                var len = batchLength - byteReceived;
+                len = (len > remaining) ? remaining : len;
+                inputStream.Read(receivedSeed, receivedPosition, len);
+                receivedPosition += len;
+                byteReceived += len;
             }
+
+            if (receivedPosition >= 21)
+            {
+                var packet = new Packet(PacketDefinitions.LoginSeed.Id, receivedSeed);
+                OnPacketReceived(packet);
+                Status = nextStatus;
+                receivedPosition = 0;
+            }
+
+            return byteReceived;
         }
 
         private void OnPacketReceived(Packet packet)

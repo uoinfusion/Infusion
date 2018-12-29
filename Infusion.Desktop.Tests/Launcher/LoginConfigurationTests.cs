@@ -11,7 +11,7 @@ namespace Infusion.Desktop.Tests.Launcher
         public void Can_insert_infusion_LoginServer_to_empty_file()
         {
             var input = string.Empty;
-            var output = LoginConfiguration.SetServerAddress(input, "test.server.com,2593");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "test.server.com,2593");
 
             output.Should().Be(@";Inserted by Infusion
 LoginServer=test.server.com,2593");
@@ -22,7 +22,7 @@ LoginServer=test.server.com,2593");
         {
             var input = @";Inserted by Infusion
 LoginServer=server.com,2593";
-            var output = LoginConfiguration.SetServerAddress(input, "new.server.com,33333");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
             output.Should().Be(@";Inserted by Infusion
 LoginServer=new.server.com,33333");
@@ -37,7 +37,7 @@ LoginServer=new.server.com,33333");
 LoginServer=server.com,2593
 
 ; Some existing comment";
-            var output = LoginConfiguration.SetServerAddress(input, "new.server.com,33333");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
             var expected = @"; Some existing comment
 
@@ -55,7 +55,7 @@ LoginServer=new.server.com,33333
             var input = @"; Some existing comment
 
 ; Some existing comment";
-            var output = LoginConfiguration.SetServerAddress(input, "new.server.com,33333");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
             var expected = @"; Some existing comment
 
@@ -70,7 +70,7 @@ LoginServer=new.server.com,33333";
         public void Can_comment_LoginServer_When_inserting_infusion_LoginServer()
         {
             var input = @"LoginServer=non.infusion.login.server.com,2593";
-            var output = LoginConfiguration.SetServerAddress(input, "new.server.com,33333");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
             var expected = @";LoginServer=non.infusion.login.server.com,2593
 ;Inserted by Infusion
@@ -94,7 +94,7 @@ LoginServer=login.server.to.be.commented.out.com,2593";
 LoginServer=new.server.com,33333
 ;LoginServer=login.server.to.be.commented.out.com,2593";
 
-            var output = LoginConfiguration.SetServerAddress(input, "new.server.com,33333");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
             output.Should().Be(expected);
         }
@@ -110,7 +110,7 @@ LoginServer=new.server.com,33333
 ;Inserted by Infusion
 LoginServer=new.server.com,33333";
 
-            var output = LoginConfiguration.SetServerAddress(input, "new.server.com,33333");
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
             output.Should().Be(expected);
         }

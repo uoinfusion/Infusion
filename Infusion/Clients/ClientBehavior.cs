@@ -190,36 +190,9 @@ namespace Infusion.Clients
             PacketDefinitionRegistry.Register(PacketDefinitions.GenericAosCommands);
             PacketDefinitionRegistry.Register(PacketDefinitions.KrriosClientSpecial);
             PacketDefinitionRegistry.Register(PacketDefinitions.FreeShardList);
-        }
-    }
-
-    internal class ClassicClientBehaviorSince60142 : ClassicClientBehavior
-    {
-        public override void RegisterPackets()
-        {
-            base.RegisterPackets();
-
-            PacketDefinitionRegistry.Register(PacketDefinitions.EnableLockedClientFeaturesSince6_0_14_2);
-        }
-    }
-
-    internal class ClassicClientBehaviorSince7000 : ClassicClientBehaviorSince60142
-    {
-        public override void RegisterPackets()
-        {
-            base.RegisterPackets();
-
-            PacketDefinitionRegistry.Register(PacketDefinitions.DrawObject7000);
-        }
-    }
-
-    internal class ClassicClientBehaviorSince7090 : ClassicClientBehaviorSince7000
-    {
-        public override void RegisterPackets()
-        {
-            base.RegisterPackets();
-
-            PacketDefinitionRegistry.Register(PacketDefinitions.DrawContainer7090);
+            PacketDefinitionRegistry.Register(PacketDefinitions.EditTileData);
+            PacketDefinitionRegistry.Register(PacketDefinitions.SendElevation);
+            PacketDefinitionRegistry.Register(PacketDefinitions.AllNamesPacket);
         }
     }
 }

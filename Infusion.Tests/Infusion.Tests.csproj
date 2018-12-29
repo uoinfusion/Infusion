@@ -108,6 +108,7 @@
     <Compile Include="TestMemoryStream.cs" />
     <Compile Include="TestPullStream.cs" />
     <Compile Include="UltimaClientConnectionTests.cs" />
+    <Compile Include="UltimaClientConnectionTests_Post6060.cs" />
     <Compile Include="UltimaClientConnectionTests_Pre6060.cs" />
   </ItemGroup>
   <ItemGroup>

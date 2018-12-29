@@ -10,6 +10,18 @@ namespace Infusion.Packets.Server
         public Location2D Location { get; private set; }
         public ObjectId ContainerId { get; private set; }
         public Color Color { get; private set; }
+        
+        private readonly bool hasSlot;
+
+        public AddItemToContainerPacket()
+        {
+            hasSlot = false;
+        }
+
+        public AddItemToContainerPacket(bool hasSlot)
+        {
+            this.hasSlot = hasSlot;
+        }
 
         public override Packet RawPacket => rawPacket;
 
@@ -27,6 +39,10 @@ namespace Infusion.Packets.Server
             reader.Skip(1);
             Amount = reader.ReadUShort();
             Location = new Location2D(reader.ReadUShort(), reader.ReadUShort());
+
+            if (hasSlot)
+                reader.ReadByte();
+
             ContainerId = reader.ReadObjectId();
             Color = (Color) reader.ReadUShort();
         }

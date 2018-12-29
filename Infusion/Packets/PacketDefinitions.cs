@@ -38,14 +38,23 @@ namespace Infusion.Packets
         public static readonly PacketDefinition DropItem = new PacketDefinition(0x08,
             new StaticPacketLength(14), "DropItem");
 
+        public static readonly PacketDefinition DropItem6017 = new PacketDefinition(0x08,
+            new StaticPacketLength(15), "DropItem");
+
         public static readonly PacketDefinition SingleClick = new PacketDefinition(0x09,
             new StaticPacketLength(5), "SingleClick");
+
+        public static readonly PacketDefinition EditTileData = new PacketDefinition(0x0C,
+            new VariablePacketLength(), "EditTileData");
 
         public static readonly PacketDefinition<SkillRequest> RequestSkills = new PacketDefinition<SkillRequest>(0x12,
             new VariablePacketLength(), "RequestSkills", packet => new SkillRequest());
 
         public static readonly PacketDefinition DropWearItem = new PacketDefinition(0x13,
             new StaticPacketLength(10), "DropWearItem");
+
+        public static readonly PacketDefinition SendElevation = new PacketDefinition(0x14,
+            new StaticPacketLength(6), "SendElevation");
 
         public static readonly PacketDefinition ControlAnimation = new PacketDefinition(0x1E,
             new StaticPacketLength(4), "ControlAnimation");
@@ -155,6 +164,9 @@ namespace Infusion.Packets
         public static readonly PacketDefinition GameServerLoginRequest = new PacketDefinition(0x91,
             new StaticPacketLength(65), "GameServerLoginRequest");
 
+        public static readonly PacketDefinition AllNamesPacket = new PacketDefinition(0x98,
+            new VariablePacketLength(), "AllNames");
+
         public static readonly PacketDefinition RequestHelp = new PacketDefinition(0x9B,
             new StaticPacketLength(258), "RequestHelp");
 
@@ -243,7 +255,9 @@ namespace Infusion.Packets
             new StaticPacketLength(9), "DrawContainer", packet => new DrawContainerPacket7090());
 
         public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer = new PacketDefinition<AddItemToContainerPacket>(0x25,
-            new StaticPacketLength(20), "AddItemToContainer", packet => new AddItemToContainerPacket());
+            new StaticPacketLength(20), "AddItemToContainer", packet => new AddItemToContainerPacket(false));
+        public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer6017 = new PacketDefinition<AddItemToContainerPacket>(0x25,
+            new StaticPacketLength(21), "AddItemToContainer", packet => new AddItemToContainerPacket(true));
 
         public static readonly PacketDefinition KickPlayer = new PacketDefinition(0x26,
             new StaticPacketLength(5), "KickPlayer");
@@ -463,6 +477,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition SecondAgeObjectInformation = new PacketDefinition(0xF3,
             new StaticPacketLength(24), "SecondAgeObjectInformation");
+        public static readonly PacketDefinition SecondAgeObjectInformation7090 = new PacketDefinition(0xF3,
+            new StaticPacketLength(26), "SecondAgeObjectInformation");
 
         public static readonly PacketDefinition NewMapMessage = new PacketDefinition(0xF5,
             new StaticPacketLength(21), "NewMapMessage");

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Infusion.IO;
 
 namespace Infusion.Tests
@@ -14,7 +15,10 @@ namespace Infusion.Tests
         {
             this.batchesEnumerator = batches.GetEnumerator();
             hasData = this.batchesEnumerator.MoveNext();
+            Length = batches.Sum(x => x.Length);
         }
+
+        public int Length { get; }
 
         public void Dispose()
         {
@@ -25,7 +29,17 @@ namespace Infusion.Tests
 
         public int ReadByte()
         {
-            return batchesEnumerator.Current[position++];
+            Check();
+
+            var result = batchesEnumerator.Current[position];
+            IncreasePosition();
+
+            return result;
+        }
+
+        private void IncreasePosition()
+        {
+            position++;
         }
 
         public void NextBatch()
@@ -34,18 +48,27 @@ namespace Infusion.Tests
             position = 0;
         }
 
-        public int Read(byte[] buffer, int offset, int count)
+        private void Check()
         {
             if (!hasData)
             {
                 throw new EndOfStreamException();
             }
 
+            if (position >= batchesEnumerator.Current.Length)
+                throw new EndOfStreamException();
+        }
+
+        public int Read(byte[] buffer, int offset, int count)
+        {
+            Check();
+
             int i;
 
             for (i = 0; i < count && position < batchesEnumerator.Current.Length; i++)
             {
-                buffer[i + offset] = batchesEnumerator.Current[position++];
+                buffer[i + offset] = batchesEnumerator.Current[position];
+                IncreasePosition();
             }
 
             return i;

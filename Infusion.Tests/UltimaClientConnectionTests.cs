@@ -31,7 +31,7 @@ namespace Infusion.Tests
             var connection = new UltimaClientConnection();
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
 
             expectedPackets.AreEqual(receivedPackets);
         }
@@ -54,9 +54,9 @@ namespace Infusion.Tests
             var connection = new UltimaClientConnection();
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
             inputStream.NextBatch();
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
 
             expectedPackets.AreEqual(receivedPackets);
         }
@@ -138,7 +138,7 @@ namespace Infusion.Tests
             var inputStream = new TestPullStream(new List<byte[]> {FakePackets.SelectServerRequest});
 
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.ServerLogin);
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.PreGameLogin);
         }
@@ -150,7 +150,7 @@ namespace Infusion.Tests
             var inpuStream = new TestPullStream(new List<byte[]> {FakePackets.LoginSeed});
 
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin);
-            connection.ReceiveBatch(inpuStream);
+            connection.ReceiveBatch(inpuStream, inpuStream.Length);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.GameLogin);
         }
@@ -161,7 +161,7 @@ namespace Infusion.Tests
             var inputStream = new TestPullStream(new List<byte[]> {FakePackets.GameServerLoginRequest});
 
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.GameLogin);
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.Game);
         }
@@ -180,17 +180,17 @@ namespace Infusion.Tests
             });
 
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial);
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
             inputStream.NextBatch();
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
             inputStream.NextBatch();
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
             inputStream.NextBatch();
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
             inputStream.NextBatch();
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
             inputStream.NextBatch();
-            connection.ReceiveBatch(inputStream);
+            connection.ReceiveBatch(inputStream, inputStream.Length);
 
             connection.Status.Should().Be(UltimaClientConnectionStatus.Game);
         }

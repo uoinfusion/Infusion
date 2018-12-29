@@ -57,6 +57,10 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ClientPacketHandler.cs" />
+    <Compile Include="Clients\ClassicClientBehaviorSince60142.cs" />
+    <Compile Include="Clients\ClassicClientBehaviorSince7000.cs" />
+    <Compile Include="Clients\ClassicClientBehaviorSince7090.cs" />
+    <Compile Include="Clients\ClassicClientBehviorSince6017.cs" />
     <Compile Include="Clients\ClientBehavior.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Commands\Command.cs" />

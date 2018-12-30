@@ -187,17 +187,22 @@ public sealed class CraftProducer
     public Action OnStart { get; set; }
     public string[] AdditionalCycleEndPhrases { get; set; } = Array.Empty<string>();
 
-    public static Item AskForItem(ItemSpec spec)
+    public static Item AskForItem(ItemSpec spec, string prompt = null, bool ignoreBackpack = false)
     {
-        var item = UO.Items.Matching(spec).InBackPack().FirstOrDefault();
+        Item item = null;
+        if (!ignoreBackpack)
+            item = UO.Items.Matching(spec).InBackPack().FirstOrDefault()
+                    ?? UO.Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
+                    ?? UO.Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
+        
         if (item == null)
         {
-            UO.ClientPrint($"Select a {Specs.TranslateToName(spec)} to start crafting");
+            UO.ClientPrint(prompt ?? $"Select a {Specs.TranslateToName(spec)} to start crafting");
             item = UO.AskForItem();
             if (item == null)
                 throw new InvalidOperationException("Crafting canceled");
             
-            if (!Specs.Saw.Matches(item))
+            if (!spec.Matches(item))
                 throw new InvalidOperationException($"Selected item ({Specs.TranslateToName(item)}) is not a {Specs.TranslateToName(spec)}. Crafting canceled.");
             
             if (item.ContainerId != UO.Me.BackPack.Id)
@@ -271,8 +276,8 @@ public sealed class CraftProducer
                 var lastItemName = product.Path.Last();
     
                 CraftMenu.Select(BatchSize, product.Path);
+                var productionStart = DateTime.UtcNow;
                 
-                UO.ClientPrint("crafting...");
                 while (!journal.Contains("S tim co mas nevyrobis nic.","Vyroba zrusena", "Vyroba ukoncena.", "Nebyl zadan zadny predmet k vyrobe")
                     && !journal.Contains(AdditionalCycleEndPhrases))
                 {
@@ -297,6 +302,17 @@ public sealed class CraftProducer
                     }
                     
                     UO.Wait(1000);
+                    var lastProductionMessage = journal.Last("System: Vyrabim")?.Created;
+                    if (lastProductionMessage.HasValue)
+                    {
+                        var sinceLastProductionMessage = DateTime.UtcNow - lastProductionMessage.Value;
+                        if (sinceLastProductionMessage > TimeSpan.FromSeconds(30))
+                        {
+                            UO.Say(".abortmaking");
+                            UO.ClientPrint("Craft menu stuck, restarting production");
+                            break;
+                        }
+                    }
                 }
             }
             catch (GumpException ex)

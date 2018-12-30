@@ -11,6 +11,14 @@ namespace Infusion.Tests
     [TestClass]
     public class UltimaClientConnectionTests
     {
+        private PacketDefinitionRegistry packetRegistry;
+
+        [TestInitialize]
+        public void Initialize()
+        {
+            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient();
+        }
+
         [TestMethod]
         public void Can_receive_three_packets_in_one_batch()
         {
@@ -104,8 +112,9 @@ namespace Infusion.Tests
         public void Can_write_diagnostic_info_about_sent_PreGameLogin_packet()
         {
             var packet = FakePackets.Instantiate(FakePackets.ConnectToGameServer);
-            var diagnosticStream = new TextDiagnosticPushStream();
-            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin, NullDiagnosticPullStream.Instance, diagnosticStream);
+            var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin, NullDiagnosticPullStream.Instance,
+                diagnosticStream, packetRegistry);
             var outputStream = new TestMemoryStream();
 
             connection.Send(packet, outputStream);
@@ -119,8 +128,9 @@ namespace Infusion.Tests
         public void Can_write_diagnostic_info_about_send_Game_packet()
         {
             var packet = FakePackets.Instantiate(FakePackets.EnableLockedClientFeatures);
-            var diagnosticStream = new TextDiagnosticPushStream();
-            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Game, NullDiagnosticPullStream.Instance, diagnosticStream);
+            var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
+            var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Game, NullDiagnosticPullStream.Instance,
+                diagnosticStream, packetRegistry);
             var outputStream = new TestMemoryStream();
 
             connection.Send(packet, outputStream);

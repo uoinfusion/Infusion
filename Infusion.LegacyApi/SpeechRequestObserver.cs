@@ -13,12 +13,15 @@ namespace Infusion.LegacyApi
         private readonly CommandHandler commandHandler;
         private readonly IEventJournalSource eventSource;
         private readonly ILogger logger;
+        private readonly PacketDefinitionRegistry packetRegistry;
 
-        public SpeechRequestObserver(IClientPacketSubject clientPacketSubject, CommandHandler commandHandler, IEventJournalSource eventSource, ILogger logger)
+        public SpeechRequestObserver(IClientPacketSubject clientPacketSubject, CommandHandler commandHandler,
+            IEventJournalSource eventSource, ILogger logger, PacketDefinitionRegistry packetRegistry)
         {
             this.commandHandler = commandHandler;
             this.eventSource = eventSource;
             this.logger = logger;
+            this.packetRegistry = packetRegistry;
             clientPacketSubject.RegisterFilter(FilterClientSpeech);
         }
 
@@ -27,9 +30,9 @@ namespace Infusion.LegacyApi
             string text = null;
 
             if (rawPacket.Id == PacketDefinitions.SpeechRequest.Id)
-                text = PacketDefinitionRegistry.Materialize<SpeechRequest>(rawPacket).Text;
+                text = packetRegistry.Materialize<SpeechRequest>(rawPacket).Text;
             else if (rawPacket.Id == PacketDefinitions.TalkRequest.Id)
-                text = PacketDefinitionRegistry.Materialize<TalkRequest>(rawPacket).Message;
+                text = packetRegistry.Materialize<TalkRequest>(rawPacket).Message;
 
             if (text != null)
             {

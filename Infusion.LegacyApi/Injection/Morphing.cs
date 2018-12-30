@@ -7,12 +7,14 @@ namespace Infusion.LegacyApi.Injection
     internal class Morphing
     {
         private readonly Legacy api;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private ModelId? orignalModel;
         private ModelId? morphedModel;
 
-        public Morphing(Legacy api)
+        public Morphing(Legacy api, PacketDefinitionRegistry packetRegistry)
         {
             this.api = api;
+            this.packetRegistry = packetRegistry;
             api.Server.RegisterOutputFilter(Filter);
         }
 
@@ -22,7 +24,7 @@ namespace Infusion.LegacyApi.Injection
             {
                 if (rawPacket.Id == PacketDefinitions.DrawGamePlayer.Id)
                 {
-                    var packet = PacketDefinitionRegistry.Materialize<DrawGamePlayerPacket>(rawPacket);
+                    var packet = packetRegistry.Materialize<DrawGamePlayerPacket>(rawPacket);
                     if (packet.PlayerId == api.Me.PlayerId)
                     {
                         packet.BodyType = morphedModel.Value;
@@ -33,7 +35,7 @@ namespace Infusion.LegacyApi.Injection
                 }
                 else if (rawPacket.Id == PacketDefinitions.DrawObject.Id)
                 {
-                    var packet = PacketDefinitionRegistry.Materialize<DrawObjectPacket>(rawPacket);
+                    var packet = packetRegistry.Materialize<DrawObjectPacket>(rawPacket);
                     if (packet.Id == api.Me.PlayerId)
                     {
                         packet.Type = morphedModel.Value;

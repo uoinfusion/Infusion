@@ -9,13 +9,15 @@ namespace Infusion.Diagnostic
         private const int MaxColumns = 16;
         private readonly StringBuilder builder = new StringBuilder();
         private readonly string header;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private int columns;
         private bool requiresHeader = true;
         private bool needsNewLine = false;
 
-        public DiagnosticPacketFormatter(string header)
+        public DiagnosticPacketFormatter(string header, PacketDefinitionRegistry packetRegistry)
         {
             this.header = header;
+            this.packetRegistry = packetRegistry;
         }
 
         public void Header()
@@ -37,7 +39,7 @@ namespace Infusion.Diagnostic
             }
 
             builder.AppendFormat(
-                $"{DateTime.UtcNow:hh:mm:ss.fff} >>>> {header}: RawPacket {PacketDefinitionRegistry.Find(packet.Id).Name}, length = {packet.Length}");
+                $"{DateTime.UtcNow:hh:mm:ss.fff} >>>> {header}: RawPacket {packetRegistry.Find(packet.Id).Name}, length = {packet.Length}");
             builder.AppendLine();
 
             bool justAppendedNewLine = true;

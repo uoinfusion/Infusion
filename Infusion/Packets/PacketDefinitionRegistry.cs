@@ -3,16 +3,16 @@ using System.Collections.Generic;
 
 namespace Infusion.Packets
 {
-    internal static class PacketDefinitionRegistry
+    internal class PacketDefinitionRegistry
     {
-        private static readonly Dictionary<int, PacketDefinition> Definitions = new Dictionary<int, PacketDefinition>();
+        private readonly Dictionary<int, PacketDefinition> Definitions = new Dictionary<int, PacketDefinition>();
 
-        public static void Register(PacketDefinition definition)
+        public void Register(PacketDefinition definition)
         {
             Definitions[definition.Id] = definition;
         }
 
-        public static PacketDefinition Find(int id)
+        public PacketDefinition Find(int id)
         {
             PacketDefinition definition;
 
@@ -24,12 +24,12 @@ namespace Infusion.Packets
             return definition;
         }
 
-        public static bool TryFind(int packedId, out PacketDefinition packetDefinition)
+        public bool TryFind(int packedId, out PacketDefinition packetDefinition)
         {
             return Definitions.TryGetValue(packedId, out packetDefinition);
         }
 
-        public static T Materialize<T>(Packet rawPacket) where T : MaterializedPacket
+        public T Materialize<T>(Packet rawPacket) where T : MaterializedPacket
         {
             PacketDefinition definition = Find(rawPacket.Id);
             return (T)definition.Materialize(rawPacket);

@@ -8,11 +8,14 @@ namespace Infusion.LegacyApi.Filters
     internal sealed class SoundObserver : ISoundFilter
     {
         private readonly IEventJournalSource eventJournalSource;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private ISet<SoundId> filteredSounds = null;
 
-        public SoundObserver(IServerPacketSubject serverPacketHandler, IEventJournalSource eventJournalSource)
+        public SoundObserver(IServerPacketSubject serverPacketHandler, IEventJournalSource eventJournalSource,
+            PacketDefinitionRegistry packetRegistry)
         {
             this.eventJournalSource = eventJournalSource;
+            this.packetRegistry = packetRegistry;
             serverPacketHandler.RegisterFilter(FilterBlockedSounds);
         }
 
@@ -25,7 +28,7 @@ namespace Infusion.LegacyApi.Filters
                 if (rawPacket.Id == PacketDefinitions.PlaySoundEffect.Id)
                 {
                     PlaySoundEffectPacket packet =
-                        PacketDefinitionRegistry.Materialize<PlaySoundEffectPacket>(rawPacket);
+                        packetRegistry.Materialize<PlaySoundEffectPacket>(rawPacket);
 
                     var ev = new SoundEffectPlayedEvent(packet.Id, packet.Location);
                     eventJournalSource.Publish(ev);

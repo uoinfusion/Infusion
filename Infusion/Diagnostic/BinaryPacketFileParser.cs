@@ -11,7 +11,21 @@ namespace Infusion.Diagnostic
 {
     public class BinaryPacketFileParser
     {
-        public static IEnumerable<PacketLogEntry> ParseFile(string fileName)
+        private readonly PacketDefinitionRegistry packetRegistry;
+        private readonly Parsers.PacketLogParser packetLogParser;
+
+        public BinaryPacketFileParser()
+            : this(PacketDefinitionRegistryFactory.CreateClassicClient())
+        {
+        }
+
+        internal BinaryPacketFileParser(PacketDefinitionRegistry packetRegistry)
+        {
+            this.packetRegistry = packetRegistry;
+            this.packetLogParser = new Parsers.PacketLogParser(packetRegistry);
+        }
+
+        public IEnumerable<PacketLogEntry> ParseFile(string fileName)
         {
             using (var stream = new FileStream(fileName, FileMode.Open))
             {
@@ -37,8 +51,8 @@ namespace Infusion.Diagnostic
                                     throw new NotImplementedException($"Unknown binnary packet direction: {((int)binaryDirection):X8} at position {stream.Position}");
                             }
 
-                            var packet = Parsers.PacketLogParser.ParsePacket(pullStream);
-                            var definition = PacketDefinitionRegistry.Find(packet.Id);
+                            var packet = packetLogParser.ParsePacket(pullStream);
+                            var definition = packetRegistry.Find(packet.Id);
 
                             yield return new PacketLogEntry(time, definition.Name, packetDirection, packet.Payload);
                         }

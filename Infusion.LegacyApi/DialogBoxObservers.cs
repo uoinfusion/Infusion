@@ -15,13 +15,16 @@ namespace Infusion.LegacyApi
     {
         private readonly UltimaServer server;
         private readonly EventJournalSource eventJournalSource;
+        private readonly PacketDefinitionRegistry packetRegistry;
+
         internal bool ShowDialogBox { get; set; } = true;
         public DialogBox CurrentDialogBox { get; private set; }
 
-        public DialogBoxObservers(UltimaServer server, EventJournalSource eventJournalSource)
+        public DialogBoxObservers(UltimaServer server, EventJournalSource eventJournalSource, PacketDefinitionRegistry packetRegistry)
         {
             this.server = server;
             this.eventJournalSource = eventJournalSource;
+            this.packetRegistry = packetRegistry;
             server.RegisterFilter(FilterServerPackets);
         }
 
@@ -29,7 +32,7 @@ namespace Infusion.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.OpenDialogBox.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<OpenDialogBoxPacket>(rawPacket);
+                var packet = packetRegistry.Materialize<OpenDialogBoxPacket>(rawPacket);
                 var dialogBox = new DialogBox(packet.DialogId, packet.MenuId, packet.Question, packet.Responses);
                 CurrentDialogBox = dialogBox;
                 eventJournalSource.Publish(new DialogBoxOpenedEvent(dialogBox));

@@ -11,7 +11,8 @@ namespace Infusion.Tests.Packets
         [TestMethod]
         public void Can_materialize_packet()
         {
-            var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(FakePackets.ConnectToGameServerPacket);
+            var packet = PacketDefinitionRegistryFactory.CreateClassicClient()
+                .Materialize<ConnectToGameServerPacket>(FakePackets.ConnectToGameServerPacket);
 
             packet.Should().NotBeNull();
         }

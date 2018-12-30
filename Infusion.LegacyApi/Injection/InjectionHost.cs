@@ -1,5 +1,6 @@
 ﻿using Infusion.Commands;
 using Infusion.LegacyApi.Console;
+using Infusion.Packets;
 using InjectionScript;
 using InjectionScript.Debugging;
 using InjectionScript.Runtime;
@@ -18,12 +19,12 @@ namespace Infusion.LegacyApi.Injection
 
         public InjectionApi InjectionApi => runtime.Api;
 
-        public InjectionHost(Legacy api, IConsole console)
+        internal InjectionHost(Legacy api, IConsole console, PacketDefinitionRegistry packetRegistry)
         {
             this.api = api;
             this.console = console;
 
-            var bridge = new InjectionApiBridge(api, this, console);
+            var bridge = new InjectionApiBridge(api, this, console, packetRegistry);
             var debuggerServer = new DebuggerServer();
             debuggerServer.BreakpointHit += (sender, e) => console.Info($"Breakpoint hit at line {e.Line} in {e.FileName}.");
             runtime = new InjectionRuntime(bridge, debuggerServer);

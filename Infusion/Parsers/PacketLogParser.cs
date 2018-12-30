@@ -5,9 +5,16 @@ using Infusion.Packets;
 
 namespace Infusion.Parsers
 {
-    internal static class PacketLogParser
+    internal class PacketLogParser
     {
-        public static IEnumerable<Packet> ParseBatch(IPullStream inputStream)
+        private readonly PacketDefinitionRegistry packetRegistry;
+
+        public PacketLogParser(PacketDefinitionRegistry packetRegistry)
+        {
+            this.packetRegistry = packetRegistry;
+        }
+
+        public IEnumerable<Packet> ParseBatch(IPullStream inputStream)
         {
             while (inputStream.DataAvailable)
             {
@@ -15,7 +22,7 @@ namespace Infusion.Parsers
             }
         }
 
-        public static Packet ParsePacket(IPullStream inputStream)
+        public Packet ParsePacket(IPullStream inputStream)
         {
             byte[] buffer = new byte[65535];
 
@@ -31,11 +38,11 @@ namespace Infusion.Parsers
             return new Packet(packetId, payload);
         }
 
-        private static int GetPacketLength(StreamPacketReader reader, int packetId)
+        private int GetPacketLength(StreamPacketReader reader, int packetId)
         {
             PacketDefinition packetDefinition;
 
-            if (PacketDefinitionRegistry.TryFind(packetId, out packetDefinition))
+            if (packetRegistry.TryFind(packetId, out packetDefinition))
                 return packetDefinition.GetSize(reader);
 
             throw new NotImplementedException($"Unknown packet type {packetId:X2}");

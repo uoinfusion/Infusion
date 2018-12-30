@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using FluentAssertions;
-using Infusion.Clients;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
@@ -11,10 +10,12 @@ namespace Infusion.Tests
     [TestClass]
     public class ServerConnectionTests
     {
+        private PacketDefinitionRegistry packetRegistry;
+
         [TestInitialize]
         public void Initialize()
         {
-            new ClassicClientBehavior().RegisterPackets();
+            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient();
         }
 
         [TestMethod]
@@ -40,10 +41,9 @@ namespace Infusion.Tests
                 new byte[] {0xB6, 0xA0, 0xFE, 0xE6}
             });
 
-
-            var diagnosticStream = new TextDiagnosticPullStream();
+            var diagnosticStream = new TextDiagnosticPullStream(packetRegistry);
             var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream,
-                NullDiagnosticPushStream.Instance);
+                NullDiagnosticPushStream.Instance, true, packetRegistry);
             connection.Receive(inputData);
 
             var output = diagnosticStream.Flush();
@@ -112,10 +112,10 @@ namespace Infusion.Tests
         [TestMethod]
         public void Can_write_diagnostic_info_about_sent_PreLogin_packet()
         {
-            var diagnosticStream = new TextDiagnosticPushStream();
+            var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
 
             var connection = new ServerConnection(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance,
-                diagnosticStream);
+                diagnosticStream, true, packetRegistry);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
 
@@ -128,9 +128,9 @@ namespace Infusion.Tests
         [TestMethod]
         public void Can_write_diagnostic_info_about_sent_Game_packet()
         {
-            var diagnosticStream = new TextDiagnosticPushStream();
+            var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
             var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
-                diagnosticStream);
+                diagnosticStream, true, packetRegistry);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.GameServerLoginRequestPacket, testStream);
 

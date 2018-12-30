@@ -207,14 +207,16 @@ namespace Infusion.Packets
             new StaticPacketLength(49), "ParticleEffect");
 
         public static readonly PacketDefinition SpyOnClient = new PacketDefinition(0xD9,
-            new VariablePacketLength(), "SpyOnClient");
+            new StaticPacketLength(0x10c), "SpyOnClient");
 
         #endregion
 
         #region Server
 
         public static readonly PacketDefinition Damage = new PacketDefinition(0x0B,
-            new VariablePacketLength(), "Damage");
+            new StaticPacketLength(0x10A), "Damage");
+        public static readonly PacketDefinition Damage500a = new PacketDefinition(0x0B,
+            new StaticPacketLength(7), "Damage");
 
         public static readonly PacketDefinition<StatusBarInfoPacket> StatusBarInfo = new PacketDefinition<StatusBarInfoPacket>(0x11,
             new VariablePacketLength(), "StatusBarInfo", packet => new StatusBarInfoPacket());
@@ -423,6 +425,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition<QuestArrowPacket> QuestArrow = new PacketDefinition<QuestArrowPacket>(0xBA,
             new StaticPacketLength(6), "QuestArrow", packet => new QuestArrowPacket());
+        public static readonly PacketDefinition<QuestArrowPacket> QuestArrow7090 = new PacketDefinition<QuestArrowPacket>(0xBA,
+            new StaticPacketLength(10), "QuestArrow", packet => new QuestArrowPacket());
 
         public static readonly PacketDefinition SeasonalInformation = new PacketDefinition(0xBC,
             new StaticPacketLength(3), "SeasonalInformation");
@@ -469,11 +473,18 @@ namespace Infusion.Packets
         public static readonly PacketDefinition BuffSystem = new PacketDefinition(0xDF,
             new VariablePacketLength(), "BuffSystem");
 
+        public static readonly PacketDefinition ClientType = new PacketDefinition(0xE1,
+            new StaticPacketLength(9), "ClientType");
+        public static readonly PacketDefinition ClientType5090 = new PacketDefinition(0xE1,
+            new VariablePacketLength(), "ClientType");
+
         public static readonly PacketDefinition NewCharacterAnimation = new PacketDefinition(0xE2,
             new StaticPacketLength(10), "NewCharacterAnimation");
 
         public static readonly PacketDefinition KrEncryptionResponse = new PacketDefinition(0xE3,
             new StaticPacketLength(77), "KrEncryptionResponse");
+        public static readonly PacketDefinition KrEncryptionResponse6013 = new PacketDefinition(0xE3,
+            new VariablePacketLength(), "KrEncryptionResponse");
 
         public static readonly PacketDefinition SecondAgeObjectInformation = new PacketDefinition(0xF3,
             new StaticPacketLength(24), "SecondAgeObjectInformation");
@@ -531,6 +542,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition GiveBoatHousePlacementView = new PacketDefinition(0x99,
             new StaticPacketLength(26), "GiveBoatHousePlacementView");
+        public static readonly PacketDefinition GiveBoatHousePlacementView7090 = new PacketDefinition(0x99,
+            new StaticPacketLength(30), "GiveBoatHousePlacementView");
 
         public static readonly PacketDefinition ConsoleEntryPrompt = new PacketDefinition(0x9A,
             new VariablePacketLength(), "ConsoleEntryPrompt");
@@ -577,6 +590,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition FreeShardList = new PacketDefinition(0xF1,
             new VariablePacketLength(), "FreeShardList");
 
+        public static readonly PacketDefinition CharacterCreation70160 = new PacketDefinition(0xF8,
+           new StaticPacketLength(106), "CharacterCreation");
         #endregion
     }
 }

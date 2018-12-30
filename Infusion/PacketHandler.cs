@@ -9,6 +9,12 @@ namespace Infusion
     {
         private readonly List<Func<Packet, Packet?>> filters = new List<Func<Packet, Packet?>>();
         private readonly List<Func<Packet, Packet?>> outputFilters = new List<Func<Packet, Packet?>>();
+        private readonly PacketDefinitionRegistry packetRegistry;
+
+        public PacketHandler(PacketDefinitionRegistry packetRegistry)
+        {
+            this.packetRegistry = packetRegistry;
+        }
 
         private ImmutableDictionary<int, ImmutableList<Delegate>> observers =
             ImmutableDictionary<int, ImmutableList<Delegate>>.Empty;
@@ -49,7 +55,7 @@ namespace Infusion
             if (observers.TryGetValue(rawPacket.Id, out observerList))
             {
                 var packet =
-                    PacketDefinitionRegistry.Materialize<TPacket>(rawPacket);
+                    packetRegistry.Materialize<TPacket>(rawPacket);
 
                 foreach (var observer in observerList)
                 {

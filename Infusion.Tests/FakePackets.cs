@@ -217,8 +217,10 @@ namespace Infusion.Tests
 
         public static Packet LoginSeedPacket => new Packet(PacketDefinitions.LoginSeed.Id, LoginSeed);
 
-        public static Packet Instantiate(byte[] source)
+        internal static Packet Instantiate(byte[] source, PacketDefinitionRegistry packetRegistry = null)
         {
+            packetRegistry = packetRegistry ?? PacketDefinitionRegistryFactory.CreateClassicClient();
+
             var processingStream = new MemoryStream(source);
             var received = new byte[source.Length];
 
@@ -227,7 +229,7 @@ namespace Infusion.Tests
             if ((packetId < 0) || (packetId > 255))
                 throw new EndOfStreamException();
 
-            var packetDefinition = PacketDefinitionRegistry.Find(packetId);
+            var packetDefinition = packetRegistry.Find(packetId);
             var packetSize = packetDefinition.GetSize(packetReader);
             packetReader.ReadBytes(packetSize - packetReader.Position);
             var payload = new byte[packetSize];

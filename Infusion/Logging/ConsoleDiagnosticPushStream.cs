@@ -1,4 +1,5 @@
 ﻿using Infusion.Diagnostic;
+using Infusion.Packets;
 
 namespace Infusion.Logging
 {
@@ -6,7 +7,8 @@ namespace Infusion.Logging
     {
         private readonly ILogger logger;
 
-        public ConsoleDiagnosticPushStream(ILogger logger, string header) : base(header)
+        public ConsoleDiagnosticPushStream(ILogger logger, string header, PacketDefinitionRegistry packetRegistry)
+            : base(packetRegistry, header)
         {
             this.logger = logger;
         }

@@ -11,10 +11,11 @@ namespace Infusion.LegacyApi
         private readonly List<Packet> packetsSentToClient = new List<Packet>();
         private readonly List<Packet> packetsSentToServer = new List<Packet>();
 
-        public InfusionTestProxy()
+        internal InfusionTestProxy(PacketDefinitionRegistry packetRegistry = null)
         {
-            ServerPacketHandler = new ServerPacketHandler();
-            ClientPacketHandler = new ClientPacketHandler();
+            packetRegistry = packetRegistry ?? PacketDefinitionRegistryFactory.CreateClassicClient();
+            ServerPacketHandler = new ServerPacketHandler(PacketDefinitionRegistryFactory.CreateClassicClient());
+            ClientPacketHandler = new ClientPacketHandler(PacketDefinitionRegistryFactory.CreateClassicClient());
             Server = new UltimaServer(ServerPacketHandler, packet =>
             {
                 var filteredPacket = ClientPacketHandler.FilterOutput(packet);
@@ -29,7 +30,7 @@ namespace Infusion.LegacyApi
             });
 
             var console = new NullConsole();
-            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console);
+            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry);
             UO.Initialize(Api);
             ServerApi = new TestServerApi(PacketReceivedFromServer, Api);
         }

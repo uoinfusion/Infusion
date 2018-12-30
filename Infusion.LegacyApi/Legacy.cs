@@ -8,6 +8,7 @@ using Infusion.LegacyApi.Events;
 using Infusion.LegacyApi.Filters;
 using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
+using Infusion.Packets;
 
 namespace Infusion.LegacyApi
 {
@@ -51,7 +52,7 @@ namespace Infusion.LegacyApi
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
-            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console)
+            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry)
         {
             this.console = console;
 
@@ -61,7 +62,7 @@ namespace Infusion.LegacyApi
             eventJournalSource = new EventJournalSource();
             Me = new Player(() => GameObjects.OfType<Item>().OnLayer(Layer.Mount).FirstOrDefault() != null,
                 ultimaServer, this, eventJournalSource);
-            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, eventJournalSource, cancellation);
+            gumpObservers = new GumpObservers(ultimaServer, ultimaClient, eventJournalSource, cancellation, packetRegistry);
             GameObjects = new GameObjectCollection(Me);
             Items = new ItemCollection(GameObjects);
             Mobiles = new MobileCollection(GameObjects);
@@ -73,19 +74,19 @@ namespace Infusion.LegacyApi
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
             journalObservers = new JournalObservers(JournalSource, ultimaServer, console);
-            targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource);
+            targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource, packetRegistry);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
-            lightObserver = new LightObserver(ultimaServer, ultimaClient, Me, this);
+            lightObserver = new LightObserver(ultimaServer, ultimaClient, Me, this, packetRegistry);
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, this);
-            soundObserver = new SoundObserver(ultimaServer, eventJournalSource);
+            soundObserver = new SoundObserver(ultimaServer, eventJournalSource, packetRegistry);
             questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
-            shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient);
-            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, console);
+            shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient, packetRegistry);
+            var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, console, packetRegistry);
             var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);
-            dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource);
+            dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource, packetRegistry);
 
-            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, console, this, GameObjects, eventJournalSource);
+            playerObservers = new PlayerObservers(Me, ultimaClient, ultimaServer, console, this, GameObjects, eventJournalSource, packetRegistry);
             playerObservers.WalkRequestDequeued += Me.OnWalkRequestDequeued;
 
             Server = ultimaServer;
@@ -100,7 +101,7 @@ namespace Infusion.LegacyApi
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
 
-            Injection = new InjectionHost(this, console);
+            Injection = new InjectionHost(this, console, packetRegistry);
         }
 
         public InjectionHost Injection { get; }

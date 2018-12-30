@@ -7,7 +7,8 @@ namespace Infusion.Logging
     {
         private readonly ILogger logger;
 
-        public ConsoleDiagnosticPullStream(ILogger logger, string header) : base(header)
+        public ConsoleDiagnosticPullStream(ILogger logger, string header, PacketDefinitionRegistry packetRegistry)
+            : base(packetRegistry, header)
         {
             this.logger = logger;
         }

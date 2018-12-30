@@ -1,4 +1,5 @@
 ﻿using Infusion.LegacyApi.Console;
+using Infusion.Packets;
 using InjectionScript.Runtime;
 using System;
 
@@ -9,6 +10,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly Legacy infusionApi;
         private readonly InjectionHost injectionHost;
         private readonly IConsole console;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private readonly FindTypeSubrutine findType;
         private readonly ItemObservers itemObservers;
         private readonly Targeting targeting;
@@ -18,21 +20,23 @@ namespace Infusion.LegacyApi.Injection
         private readonly EquipmentSubrutines equipmentSubrutines;
         private readonly Morphing morphing;
 
-        public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console)
+        public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
+            PacketDefinitionRegistry packetRegistry)
         {
             this.infusionApi = infusionApi;
             this.injectionHost = injectionHost;
             this.console = console;
+            this.packetRegistry = packetRegistry;
             this.findType = new FindTypeSubrutine(infusionApi, injectionHost);
             this.journal = new Journal(1000);
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
             this.useSubrutines = new UseSubrutines(infusionApi);
             this.targeting = new Targeting(infusionApi, injectionHost);
             this.grabbing = new Grabbing(infusionApi, injectionHost);
-            this.morphing = new Morphing(infusionApi);
+            this.morphing = new Morphing(infusionApi, packetRegistry);
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
-            itemObservers = new ItemObservers(infusionApi.Server, infusionApi.Client);
+            itemObservers = new ItemObservers(infusionApi.Server, infusionApi.Client, packetRegistry);
         }
 
         public int FindItem => findType.FindItem;

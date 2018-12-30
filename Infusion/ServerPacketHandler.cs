@@ -11,7 +11,12 @@ namespace Infusion
 {
     internal sealed class ServerPacketHandler : IServerPacketSubject
     {
-        private readonly PacketHandler packetHandler = new PacketHandler();
+        private readonly PacketHandler packetHandler;
+
+        public ServerPacketHandler(PacketDefinitionRegistry packetRegistry)
+        {
+            packetHandler = new PacketHandler(packetRegistry);
+        }
 
         public void RegisterFilter(Func<Packet, Packet?> filter)
         {

@@ -14,7 +14,7 @@ namespace Infusion.LegacyApi
         private readonly Cancellation cancellation;
         private readonly UltimaClient client;
         private readonly EventJournalSource eventSource;
-
+        private readonly PacketDefinitionRegistry packetRegistry;
         private readonly Queue<TargetInfo> nextTargets = new Queue<TargetInfo>();
         private readonly object nextTargetsLock = new object();
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
@@ -33,12 +33,13 @@ namespace Infusion.LegacyApi
         private bool targetInfoRequested;
 
         public Targeting(UltimaServer server, UltimaClient client, Cancellation cancellation,
-            EventJournalSource eventSource)
+            EventJournalSource eventSource, PacketDefinitionRegistry packetRegistry)
         {
             this.server = server;
             this.client = client;
             this.cancellation = cancellation;
             this.eventSource = eventSource;
+            this.packetRegistry = packetRegistry;
             server.Subscribe(PacketDefinitions.TargetCursor, HanldeServerTargetCursorPacket);
             eventJournal = new EventJournal(eventSource, cancellation);
 
@@ -77,7 +78,7 @@ namespace Infusion.LegacyApi
 
                 if (targetInfo.HasValue)
                 {
-                    var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
+                    var packet = packetRegistry.Materialize<TargetCursorPacket>(rawPacket);
 
                     server.TargetItem(packet.CursorId, targetInfo.Value.Id ?? 0, packet.CursorType,
                         targetInfo.Value.Location, targetInfo.Value.ModelId);
@@ -94,7 +95,7 @@ namespace Infusion.LegacyApi
             if (rawPacket.Id != PacketDefinitions.TargetCursor.Id)
                 return rawPacket;
 
-            var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
+            var packet = packetRegistry.Materialize<TargetCursorPacket>(rawPacket);
 
             if (discardNextTargetLocationRequestIfEmpty)
             {

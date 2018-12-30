@@ -7,13 +7,13 @@ namespace Infusion.Diagnostic
     {
         private readonly DiagnosticPacketFormatter formatter;
 
-        public TextDiagnosticPushStream() : this(string.Empty)
+        public TextDiagnosticPushStream(PacketDefinitionRegistry packetRegistry) : this(packetRegistry, string.Empty)
         {
         }
 
-        public TextDiagnosticPushStream(string header)
+        public TextDiagnosticPushStream(PacketDefinitionRegistry packetRegistry, string header)
         {
-            formatter = new DiagnosticPacketFormatter(header);
+            formatter = new DiagnosticPacketFormatter(header, packetRegistry);
         }
 
         public void Dispose()

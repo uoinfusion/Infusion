@@ -16,6 +16,7 @@ namespace Infusion.LegacyApi
         private readonly UltimaClient client;
         private readonly EventJournalSource eventSource;
         private readonly Cancellation cancellation;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private readonly object gumpLock = new object();
         private readonly AutoResetEvent gumpReceivedEvent = new AutoResetEvent(false);
         private GumpTypeId? nextBlockedCancellationGumpId;
@@ -24,12 +25,14 @@ namespace Infusion.LegacyApi
 
         internal AutoResetEvent WaitForGumpStartedEvent { get; } = new AutoResetEvent(false);
 
-        public GumpObservers(UltimaServer server, UltimaClient client, EventJournalSource eventSource, Cancellation cancellation)
+        public GumpObservers(UltimaServer server, UltimaClient client, EventJournalSource eventSource,
+            Cancellation cancellation, PacketDefinitionRegistry packetRegistry)
         {
             this.server = server;
             this.client = client;
             this.eventSource = eventSource;
             this.cancellation = cancellation;
+            this.packetRegistry = packetRegistry;
             server.RegisterFilter(FilterSendGumpMenuDialog);
 
             IClientPacketSubject clientPacketSubject = client;
@@ -54,7 +57,7 @@ namespace Infusion.LegacyApi
             {
                 lock (gumpLock)
                 {
-                    var packet = PacketDefinitionRegistry.Materialize<GumpMenuSelectionRequest>(rawPacket);
+                    var packet = packetRegistry.Materialize<GumpMenuSelectionRequest>(rawPacket);
                     var gumpId = nextBlockedCancellationGumpId.Value;
                     nextBlockedCancellationGumpId = null;
                     if (gumpId == packet.GumpTypeId)
@@ -80,7 +83,7 @@ namespace Infusion.LegacyApi
 
                 lock (gumpLock)
                 {
-                    var packet = PacketDefinitionRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
+                    var packet = packetRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
                     var gump = new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
                     CurrentGump = gump;
                     eventSource.Publish(new GumpReceivedEvent(gump));

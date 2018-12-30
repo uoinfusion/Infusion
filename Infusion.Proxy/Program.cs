@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using Infusion.Clients;
 using Infusion.Commands;
 using Infusion.Diagnostic;
 using Infusion.IO;
@@ -26,8 +26,8 @@ namespace Infusion.Proxy
 
         public static LogConfiguration LogConfig { get; } = new LogConfiguration();
 
-        private static readonly ServerPacketHandler serverPacketHandler = new ServerPacketHandler();
-        private static readonly ClientPacketHandler clientPacketHandler = new ClientPacketHandler();
+        private static ServerPacketHandler serverPacketHandler;
+        private static ClientPacketHandler clientPacketHandler;
         private static TcpListener listener;
         private static ServerConnection serverConnection;
         private static UltimaClientConnection clientConnection;
@@ -82,6 +82,7 @@ namespace Infusion.Proxy
         }
 
         private static Legacy legacyApi;
+        private static PacketDefinitionRegistry packetRegistry;
 
         public static void Initialize(CommandHandler commandHandler)
         {
@@ -94,7 +95,11 @@ namespace Infusion.Proxy
                 "Lists running commands"));
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
 
-            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console);
+            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(new Version(7, 0, 66, 0));
+            serverPacketHandler = new ServerPacketHandler(packetRegistry);
+            clientPacketHandler = new ClientPacketHandler(packetRegistry);
+
+            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
             UO.Initialize(legacyApi);
         }
 
@@ -139,23 +144,20 @@ namespace Infusion.Proxy
 
         private static void ClientLoop(ILogger packetLogger)
         {
-            //new ClassicClientBehaviorSince7090().RegisterPackets();
-            new ClassicClientBehavior().RegisterPackets();
-
             var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, Console);
             serverDiagnosticPushStream =
-                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server"),
+                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> server", packetRegistry),
                     new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ClientToServer, diagnosticProvider.GetStream));
-            serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy");
+            serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy", packetRegistry);
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
-                serverDiagnosticPushStream, true);
+                serverDiagnosticPushStream, false, packetRegistry);
             serverConnection.PacketReceived += ServerConnectionOnPacketReceived;
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
-                new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy"),
-                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client"),
-                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)));
+                new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy", packetRegistry),
+                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client", packetRegistry),
+                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry);
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
 
             diagnosticProvider.ClientConnection = clientConnection;
@@ -175,6 +177,8 @@ namespace Infusion.Proxy
 
                     while ((receivedLength = ClientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                     {
+                        Console.Debug(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+
                         var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
                         clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
                     }
@@ -240,7 +244,7 @@ namespace Infusion.Proxy
         {
             if (rawPacket.Id == PacketDefinitions.ConnectToGameServer.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
+                var packet = packetRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
                 packet.GameServerPort = proxyLocalPort;
                 rawPacket = packet.RawPacket;

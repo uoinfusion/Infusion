@@ -19,8 +19,11 @@ namespace Infusion.LegacyApi
         private readonly Legacy legacyApi;
         private readonly GameObjectCollection gameObjects;
         private readonly EventJournalSource eventJournalSource;
+        private readonly PacketDefinitionRegistry packetRegistry;
 
-        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, IConsole console, Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource)
+        public PlayerObservers(Player player, UltimaClient client, UltimaServer server, IConsole console,
+            Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource,
+            PacketDefinitionRegistry packetRegistry)
         {
             this.client = client;
             this.server = server;
@@ -29,7 +32,7 @@ namespace Infusion.LegacyApi
             this.legacyApi = legacyApi;
             this.gameObjects = gameObjects;
             this.eventJournalSource = eventJournalSource;
-
+            this.packetRegistry = packetRegistry;
             IClientPacketSubject clientPacketSubject = client;
             clientPacketSubject.Subscribe(PacketDefinitions.MoveRequest, HandleMoveRequest);
             clientPacketSubject.RegisterOutputFilter(FilterSentClientPackets);
@@ -57,7 +60,7 @@ namespace Infusion.LegacyApi
         {
             if (rawPacket.Id == PacketDefinitions.RequestSkills.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<SkillRequest>(rawPacket);
+                var packet = packetRegistry.Materialize<SkillRequest>(rawPacket);
                 lastSkill = packet.Skill;
             }
 

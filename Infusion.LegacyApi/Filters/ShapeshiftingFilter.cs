@@ -10,10 +10,13 @@ namespace Infusion.LegacyApi.Filters
 
         private readonly List<ItemShapeShiftDefinition> itemShapeShiftDefinitions = new List<ItemShapeShiftDefinition>()
             ;
+        private readonly PacketDefinitionRegistry packetRegistry;
 
-        public ShapeshiftingFilter(IServerPacketSubject serverPacketHandler, UltimaClient client)
+        public ShapeshiftingFilter(IServerPacketSubject serverPacketHandler, UltimaClient client,
+            PacketDefinitionRegistry packetRegistry)
         {
             serverPacketHandler.RegisterOutputFilter(FilterItemShapes);
+            this.packetRegistry = packetRegistry;
         }
 
         public void AddShapeShift(ItemSpec spec, ModelId targetType, Color? targetColor = null)
@@ -40,7 +43,7 @@ namespace Infusion.LegacyApi.Filters
         {
             if (enabled && rawPacket.Id == PacketDefinitions.ObjectInfo.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<ObjectInfoPacket>(rawPacket);
+                var packet = packetRegistry.Materialize<ObjectInfoPacket>(rawPacket);
 
                 foreach (var def in itemShapeShiftDefinitions)
                 {

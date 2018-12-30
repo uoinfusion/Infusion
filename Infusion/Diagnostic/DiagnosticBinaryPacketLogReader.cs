@@ -9,19 +9,23 @@ namespace Infusion.Diagnostic
     internal sealed class DiagnosticPacketReader : IDisposable
     {
         private readonly Stream inputStream;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private readonly BinaryReader inputStreamReader;
         private readonly IPullStream pullStream;
+        private readonly Parsers.PacketLogParser packetLogParser;
 
-        public DiagnosticPacketReader(string fileName)
-            : this(File.OpenRead(fileName))
+        public DiagnosticPacketReader(string fileName, PacketDefinitionRegistry packetRegistry)
+            : this(File.OpenRead(fileName), packetRegistry)
         {
         }
 
-        public DiagnosticPacketReader(Stream inputStream)
+        public DiagnosticPacketReader(Stream inputStream, PacketDefinitionRegistry packetRegistry)
         {
             this.inputStream = inputStream;
+            this.packetRegistry = packetRegistry;
             inputStreamReader = new BinaryReader(inputStream);
             pullStream = new StreamToPullStreamAdaptet(this.inputStream);
+            packetLogParser = new Parsers.PacketLogParser(packetRegistry);
         }
 
         public void Dispose()
@@ -41,8 +45,8 @@ namespace Infusion.Diagnostic
                         ? PacketDirection.ProxyClient
                         : throw new InvalidOperationException();
 
-                var packet = Parsers.PacketLogParser.ParsePacket(pullStream);
-                var name = PacketDefinitionRegistry.Find(packet.Id).Name;
+                var packet = packetLogParser.ParsePacket(pullStream);
+                var name = packetRegistry.Find(packet.Id).Name;
 
                 return new PacketLogEntry(new DateTime(ticks), name, direction, packet.Payload);
             }

@@ -11,6 +11,7 @@ namespace Infusion
     {
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private readonly HuffmanStream huffmanStream;
         private readonly NewGameStream receiveNewGameStream;
         private readonly NewGameStream sendNewGameStream;
@@ -20,28 +21,30 @@ namespace Infusion
         public ServerConnectionStatus Status { get; private set; }
 
         public ServerConnection()
-            : this(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, true)
+            : this(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, true,
+                  PacketDefinitionRegistryFactory.CreateClassicClient())
         {
         }
 
         public ServerConnection(ServerConnectionStatus status)
-            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, true)
+            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, true,
+                  PacketDefinitionRegistryFactory.CreateClassicClient())
         {
         }
 
         public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
             IDiagnosticPushStream diagnosticPushStream)
-            : this (status, diagnosticPullStream, diagnosticPushStream, true)
+            : this (status, diagnosticPullStream, diagnosticPushStream, true, PacketDefinitionRegistryFactory.CreateClassicClient())
         {
         }
 
-
         public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
-            IDiagnosticPushStream diagnosticPushStream, bool encrypted)
+            IDiagnosticPushStream diagnosticPushStream, bool encrypted, PacketDefinitionRegistry packetRegistry)
         {
             this.Status = status;
             this.diagnosticPullStream = diagnosticPullStream;
             this.diagnosticPushStream = diagnosticPushStream;
+            this.packetRegistry = packetRegistry;
             this.loginStream = new LoginStream(null, encrypted);
 
             this.receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
@@ -66,7 +69,7 @@ namespace Infusion
                     throw new EndOfStreamException();
 
                 diagnosticPullStream.StartPacket();
-                var packetDefinition = PacketDefinitionRegistry.Find(packetId);
+                var packetDefinition = packetRegistry.Find(packetId);
                 var packetSize = packetDefinition.GetSize(packetReader);
                 packetReader.ReadBytes(packetSize - packetReader.Position);
                 var payload = new byte[packetSize];

@@ -12,27 +12,31 @@ namespace Infusion.LegacyApi.Injection
 {
     internal sealed class ItemObservers
     {
+        private readonly PacketDefinitionRegistry packetRegistry;
+
         public ObjectId LastCorpseId { get; private set; } = 0;
         public ObjectId LastStatusId { get; private set; } = 0;
         public ObjectId LastTargetId { get; private set; } = 0;
 
-        public ItemObservers(IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject)
+        public ItemObservers(IServerPacketSubject serverPacketSubject, IClientPacketSubject clientPacketSubject,
+            PacketDefinitionRegistry packetRegistry)
         {
             serverPacketSubject.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
 
             clientPacketSubject.RegisterOutputFilter(FilterSentClientPackets);
+            this.packetRegistry = packetRegistry;
         }
 
         private Packet? FilterSentClientPackets(Packet rawPacket)
         {
             if (rawPacket.Id == PacketDefinitions.TargetCursor.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<TargetCursorPacket>(rawPacket);
+                var packet = packetRegistry.Materialize<TargetCursorPacket>(rawPacket);
                 LastTargetId = packet.ClickedOnId;
             }
             else if (rawPacket.Id == PacketDefinitions.GetClientStatus.Id)
             {
-                var packet = PacketDefinitionRegistry.Materialize<GetClientStatusRequest>(rawPacket);
+                var packet = packetRegistry.Materialize<GetClientStatusRequest>(rawPacket);
                 LastStatusId = packet.Id;
             }
 

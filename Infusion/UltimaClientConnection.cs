@@ -11,24 +11,26 @@ namespace Infusion
     {
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
+        private readonly Parsers.PacketLogParser packetLogParser;
 
         public UltimaClientConnection() : this(
             UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
-            NullDiagnosticPushStream.Instance)
+            NullDiagnosticPushStream.Instance, PacketDefinitionRegistryFactory.CreateClassicClient())
         {
         }
 
         public UltimaClientConnection(UltimaClientConnectionStatus status)
-            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance)
+            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, PacketDefinitionRegistryFactory.CreateClassicClient())
         {
         }
 
         public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
-            IDiagnosticPushStream diagnosticPushStream)
+            IDiagnosticPushStream diagnosticPushStream, PacketDefinitionRegistry packetRegistry)
         {
             this.diagnosticPullStream = diagnosticPullStream;
             this.diagnosticPushStream = diagnosticPushStream;
             Status = status;
+            packetLogParser = new PacketLogParser(packetRegistry);
         }
 
         public UltimaClientConnectionStatus Status { get; private set; }
@@ -49,7 +51,7 @@ namespace Infusion
                     break;
             }
 
-            foreach (var packet in PacketLogParser.ParseBatch(diagnosticPullStream))
+            foreach (var packet in packetLogParser.ParseBatch(diagnosticPullStream))
             {
                 OnPacketReceived(packet);
                 switch (Status)

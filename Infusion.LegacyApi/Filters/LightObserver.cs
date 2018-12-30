@@ -8,14 +8,17 @@ namespace Infusion.LegacyApi.Filters
         private readonly UltimaClient client;
         private readonly Player player;
         private readonly Legacy legacy;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private Packet? lastOverallLightLevelRawPacket;
         private bool enabled;
 
-        internal LightObserver(IServerPacketSubject serverPacketHandler, UltimaClient client, Player player, Legacy legacy)
+        internal LightObserver(IServerPacketSubject serverPacketHandler, UltimaClient client, Player player, Legacy legacy,
+            PacketDefinitionRegistry packetRegistry)
         {
             this.client = client;
             this.player = player;
             this.legacy = legacy;
+            this.packetRegistry = packetRegistry;
             serverPacketHandler.RegisterFilter(FilterBlockedServerPackets);
             serverPacketHandler.Subscribe(PacketDefinitions.PersonalLightLevel, HandlePersonalLightLevelPacket);
         }
@@ -31,7 +34,7 @@ namespace Infusion.LegacyApi.Filters
             {
                 lastOverallLightLevelRawPacket = rawPacket.Clone();
                 var lastOverallLightLevelPacket =
-                    PacketDefinitionRegistry.Materialize<OverallLightLevelPacket>(lastOverallLightLevelRawPacket
+                    packetRegistry.Materialize<OverallLightLevelPacket>(lastOverallLightLevelRawPacket
                         .Value);
                 this.player.LightLevel = lastOverallLightLevelPacket.Level;
 

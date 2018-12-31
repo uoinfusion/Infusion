@@ -47,10 +47,10 @@ namespace Infusion.LegacyApi.Injection
                 switch (message.Severity)
                 {
                     case MessageSeverity.Warning:
-                        console.Important($"Warning: {message.Line}, {message.CharPos} {message.Text}");
+                        console.Important($"Warning: {message.StartLine}, {message.StartColumn} {message.Text}");
                         break;
                     case MessageSeverity.Error:
-                        console.Error($"Error: {message.Line}, {message.CharPos} {message.Text}");
+                        console.Error($"Error: {message.StartLine}, {message.StartColumn} {message.Text}");
                         error = true;
                         break;
                 }

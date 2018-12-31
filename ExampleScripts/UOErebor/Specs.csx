@@ -308,7 +308,7 @@ public static class Specs
     public static readonly ItemSpec ScrollWallOfStone = 0x1f44;
     public static readonly ItemSpec ScrollArchcure = 0x1f45;
     public static readonly ItemSpec ScrollArchprotection = 0x1f46;
-    public static readonly ItemSpec ScrollCurse = 0x1f47;
+    public static readonly ItemSpec ScrollCurse = new ItemSpec(0x1f47, (Color)0x0000);
     public static readonly ItemSpec ScrollFireField = 0x1f48;
     public static readonly ItemSpec ScrollGreaterHeal = 0x1f49;
     public static readonly ItemSpec ScrollLightning = 0x1f4a;

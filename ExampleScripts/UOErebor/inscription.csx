@@ -42,6 +42,7 @@ public static class InscriptionMenu
     public static InscriptionScroll GreaterHeal = new InscriptionScroll(Specs.ScrollGreaterHeal, "Kruh 4", "Greater Heal Scrol");
     public static InscriptionScroll ArchProtection = new InscriptionScroll(Specs.ScrollArchprotection, "Kruh 4", "Arch Protection Sc");
     public static InscriptionScroll ArchCure = new InscriptionScroll(Specs.ScrollArchcure, "Kruh 4", "Archcure Scroll");
+    public static InscriptionScroll Curse = new InscriptionScroll(Specs.ScrollCurse, "Kruh 4", "Curse Scroll");
 
     public static InscriptionScroll SummonCreature = new InscriptionScroll(Specs.ScrollSummonCreature, "Kruh 5", "Summon Creature Sc");
     public static InscriptionScroll Paralyze = new InscriptionScroll(Specs.ScrollParalyze, "Kruh 5", "Paralyze Scroll");

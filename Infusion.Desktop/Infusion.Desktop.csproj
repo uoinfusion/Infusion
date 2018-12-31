@@ -191,6 +191,7 @@
     <Compile Include="Console\FileConsole.cs" />
     <Compile Include="Console\WpfConsole.cs" />
     <Compile Include="Console\InfusionConsole.cs" />
+    <Compile Include="Launcher\ProtocolVersion.cs" />
     <Compile Include="Scripts\ScriptEngine.cs" />
     <Compile Include="Scripts\CSharpScriptEngine.cs" />
     <Compile Include="InfusionWindow.xaml.cs">

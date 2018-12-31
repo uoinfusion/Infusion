@@ -83,24 +83,11 @@ namespace Infusion.Proxy
 
         private static Legacy legacyApi;
         private static PacketDefinitionRegistry packetRegistry;
+        private static ProxyStartConfig proxyStartConfig;
 
         public static void Initialize(CommandHandler commandHandler)
         {
             Program.commandHandler = commandHandler;
-            commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,
-                "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
-                executionMode: CommandExecutionMode.Direct));
-            commandHandler.RegisterCommand(new Command("help", HelpCommand, false, true, "Shows command help."));
-            commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands, false, true,
-                "Lists running commands"));
-            commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
-
-            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(new Version(7, 0, 66, 0));
-            serverPacketHandler = new ServerPacketHandler(packetRegistry);
-            clientPacketHandler = new ClientPacketHandler(packetRegistry);
-
-            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
-            UO.Initialize(legacyApi);
         }
 
         private static void PrintProxyLatency()
@@ -109,13 +96,28 @@ namespace Infusion.Proxy
             Console.Info($"Server latency:\n{serverProxyLatencyMeter}");
         }
 
-
-        public static Task Start(IPEndPoint serverAddress, ushort localProxyPort = 33333)
+        public static Task Start(ProxyStartConfig config)
         {
+            proxyStartConfig = config;
+
+            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(proxyStartConfig.ProtocolVersion);
+            serverPacketHandler = new ServerPacketHandler(packetRegistry);
+            clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
 
-            serverEndpoint = serverAddress;
-            return Main(localProxyPort, packetRingBufferLogger);
+            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
+            UO.Initialize(legacyApi);
+
+            commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,
+                "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
+                executionMode: CommandExecutionMode.Direct));
+            commandHandler.RegisterCommand(new Command("help", HelpCommand, false, true, "Shows command help."));
+            commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands, false, true,
+                "Lists running commands"));
+            commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
+
+            serverEndpoint = config.ServerAddress;
+            return Main(config.LocalProxyPort, packetRingBufferLogger);
         }
 
         private static Task Main(ushort port, ILogger logger)
@@ -151,7 +153,7 @@ namespace Infusion.Proxy
             serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy", packetRegistry);
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
-                serverDiagnosticPushStream, false, packetRegistry);
+                serverDiagnosticPushStream, proxyStartConfig.Encrypted, packetRegistry);
             serverConnection.PacketReceived += ServerConnectionOnPacketReceived;
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
@@ -177,15 +179,12 @@ namespace Infusion.Proxy
 
                     while ((receivedLength = ClientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                     {
-                        Console.Debug(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
-
                         var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
                         clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
                     }
 
                     lock (serverStreamLock)
                     {
-                        Console.Info("Disconnecting");
                         DisconnectFromServer();
                         ServerStream = ConnectToServer();
                     }

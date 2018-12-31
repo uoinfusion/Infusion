@@ -20,7 +20,7 @@ namespace Infusion.Desktop.Launcher
     /// </summary>
     public partial class TestOuputWindow : Window
     {
-        public ScriptEngine ScriptEngine => _console.ScriptEngine;
+        public ScriptEngine ScriptEngine => _console.ScriptEngine.Value;
 
         public TestOuputWindow()
         {

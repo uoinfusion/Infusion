@@ -44,22 +44,6 @@ namespace Infusion.Desktop
                 Topmost = false;
                 Focus();
             };
-
-
-            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), false, true,
-                "Reloads an initial script file."));
-            UO.CommandHandler.RegisterCommand(new Command("edit",
-                () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action) (() => Edit())),
-                false, true, "Opens the script editor."));
-            UO.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)),
-                false, true, "Loads a script file."));
-            UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls),
-                false, true, "Clears console content."));
-
-            UO.CommandHandler.RegisterCommand(new Command("console-show-toggle", () => Dispatcher.Invoke(() => _console.ShowToggle()), false, true));
-            UO.CommandHandler.RegisterCommand(new Command("console-show-speechonly", () => Dispatcher.Invoke(() => _console.ShowSpeechOnly()), false, true));
-            UO.CommandHandler.RegisterCommand(new Command("console-show-game", () => Dispatcher.Invoke(() => _console.ShowGame()), false, true));
-            UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll()), false, true));
         }
 
         private void Cls()
@@ -71,7 +55,7 @@ namespace Infusion.Desktop
         {
             this.scriptFileName = scriptFileName;
             var scriptPath = Path.GetDirectoryName(scriptFileName);
-            _console.ScriptEngine.ScriptRootPath = scriptPath;
+            _console.ScriptEngine.Value.ScriptRootPath = scriptPath;
 
             Reload();
         }
@@ -80,6 +64,21 @@ namespace Infusion.Desktop
         {
             this.profile = profile;
             Title = $"{profile.Name}";
+
+            UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), false, true,
+                "Reloads an initial script file."));
+            UO.CommandHandler.RegisterCommand(new Command("edit",
+                () => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, (Action)(() => Edit())),
+                false, true, "Opens the script editor."));
+            UO.CommandHandler.RegisterCommand(new Command("load", path => Dispatcher.Invoke(() => Load(path)),
+                false, true, "Loads a script file."));
+            UO.CommandHandler.RegisterCommand(new Command("cls", () => Dispatcher.Invoke(Cls),
+                false, true, "Clears console content."));
+
+            UO.CommandHandler.RegisterCommand(new Command("console-show-toggle", () => Dispatcher.Invoke(() => _console.ShowToggle()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-speechonly", () => Dispatcher.Invoke(() => _console.ShowSpeechOnly()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-game", () => Dispatcher.Invoke(() => _console.ShowGame()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll()), false, true));
 
             if (!string.IsNullOrEmpty(profile.LauncherOptions.InitialScriptFileName))
                 Load(profile.LauncherOptions.InitialScriptFileName);
@@ -99,7 +98,7 @@ namespace Infusion.Desktop
             {
                 var scriptPath = Path.GetDirectoryName(scriptFileName);
 
-                var roslynPadWindow = new RoslynPad.MainWindow(_console.CSharpScriptEngine, scriptPath);
+                var roslynPadWindow = new RoslynPad.MainWindow(_console.CSharpScriptEngine.Value, scriptPath);
                 roslynPadWindow.Show();
             }
             else
@@ -120,10 +119,10 @@ namespace Infusion.Desktop
             {
                 UO.CommandHandler.BeginTerminate(true);
                 UO.CommandHandler.UnregisterAllPublic();
-                _console.ScriptEngine.Reset();
+                _console.ScriptEngine.Value.Reset();
                 using (var tokenSource = new CancellationTokenSource())
                 {
-                    await _console.ScriptEngine.ExecuteScript(scriptFileName, tokenSource);
+                    await _console.ScriptEngine.Value.ExecuteScript(scriptFileName, tokenSource);
                 }
             }
             else

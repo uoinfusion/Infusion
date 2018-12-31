@@ -29,6 +29,14 @@ namespace Infusion.Desktop.Launcher
         }
         public bool HidePassword => !showPassword;
 
+        public ProtocolVersion[] ProtocolVersions { get; } = new[]
+        {
+            new ProtocolVersion() { Version = new Version(3, 0, 0), Label = ">= 3.0.0" },
+            new ProtocolVersion() { Version = new Version(7, 0, 0, 0), Label = ">= 7.0.0.0" },
+            new ProtocolVersion() { Version = new Version(7, 0, 9, 0), Label = ">= 7.0.9.0" },
+            new ProtocolVersion() { Version = new Version(7, 0, 16, 0), Label = ">= 7.0.16.0" },
+        };
+
         public ObservableCollection<Profile> Profiles
         {
             get => profiles;
@@ -81,6 +89,27 @@ namespace Infusion.Desktop.Launcher
         public bool ClassicClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
         public bool OrionOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Orion;
 
+        public ProtocolVersion SelectedProtocolVersion
+        {
+            get => ProtocolVersions.FirstOrDefault(x => x.Version == SelectedProfile.LauncherOptions.ProtocolVersion)
+                ?? ProtocolVersions.First();
+            set
+            {
+                SelectedProfile.LauncherOptions.ProtocolVersion = value.Version;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool Encrypted
+        {
+            get => SelectedProfile.LauncherOptions.Encrypted;
+            set
+            {
+                SelectedProfile.LauncherOptions.Encrypted = value;
+                OnPropertyChanged();
+            }
+        }
+
         public UltimaClientType SelectedClientType
         {
             get => SelectedProfile.LauncherOptions.ClientType;
@@ -96,6 +125,8 @@ namespace Infusion.Desktop.Launcher
             OnPropertyChanged("SelectedClientType");
             OnPropertyChanged("ClassicClientOptionsVisible");
             OnPropertyChanged("OrionOptionsVisible");
+            OnPropertyChanged("SelectedProtocolVersion");
+            OnPropertyChanged("Encrypted");
         }
 
         public void DeleteSelectedProfile()

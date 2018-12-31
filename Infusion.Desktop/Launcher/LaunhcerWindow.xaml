@@ -10,7 +10,7 @@
         ResizeMode="NoResize"
         Icon="pack://application:,,,/infusion.png"
         SizeToContent="WidthAndHeight"
-        Title="Infusion launcher" Height="331.555" Width="405.049">
+        Title="Infusion launcher" Height="397.489" Width="405.049">
     <Window.Resources>
         <ObjectDataProvider x:Key="ultimaClientTypeValues" MethodName="GetValues"
                             ObjectType="{x:Type System:Enum}">
@@ -52,6 +52,8 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock>Profile:</TextBlock>
                 <ComboBox Grid.Column="1" Grid.Row="0" IsEditable="True" IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
@@ -80,8 +82,15 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="7">Initial Script:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Path=SelectedProfile.LauncherOptions.InitialScriptFileName}" />
-
+                <TextBlock Grid.Column="0" Grid.Row="8">Encryption:</TextBlock>
+                <CheckBox  Grid.Column="1" Grid.Row="8" Margin="0 0 0 5" IsChecked="{Binding Path=Encrypted}" />
+                <TextBlock Grid.Column="0" Grid.Row="9">Protocol:</TextBlock>
+                <ComboBox Grid.Column="1" Grid.Row="9" Padding="5 2 5 0" IsEditable="False"
+                          IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
+                          ItemsSource="{Binding Path=ProtocolVersions}" DisplayMemberPath="Label"
+                          SelectedItem="{Binding Path=SelectedProtocolVersion, Mode=TwoWay}" />
             </Grid>
+            
             <Grid Grid.Row="2" Margin="10 10 10 0"
                   Visibility="{Binding Path=ClassicClientOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
@@ -92,8 +101,8 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Column="0" Grid.Row="2">Client EXE:</TextBlock>
-                <Grid Grid.Column="1" Grid.Row="2">
+                <TextBlock Grid.Column="0" Grid.Row="0">Client EXE:</TextBlock>
+                <Grid Grid.Column="1" Grid.Row="0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
@@ -101,6 +110,7 @@
                     <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Classic.ClientExePath}" />
                     <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectClassicPath" />
                 </Grid>
+
             </Grid>
             <Grid Grid.Row="2" Margin="10 10 10 0"
                   Visibility="{Binding Path=OrionOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
@@ -122,13 +132,14 @@
                     <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectOrionPath" />
                 </Grid>
             </Grid>
-            <Grid Grid.Row="3">
+            <Grid Grid.Row="3" Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="230*"/>
+                    <ColumnDefinition Width="41*"/>
+                    <ColumnDefinition Width="189*"/>
                     <ColumnDefinition Width="169*"/>
                 </Grid.ColumnDefinitions>
                 <Button Content="Launch" IsDefault="True"
-                        Click="OnLaunchButtonClicked" Padding="0 5 0 5" Margin="20,0,20,10" VerticalAlignment="Bottom" Grid.ColumnSpan="2" />
+                        Click="OnLaunchButtonClicked" Padding="0 5 0 5" Margin="20,0,20,10" VerticalAlignment="Bottom" Grid.ColumnSpan="3" />
             </Grid>
         </Grid>
     </Grid>

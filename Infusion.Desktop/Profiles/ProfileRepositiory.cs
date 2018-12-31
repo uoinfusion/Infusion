@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Infusion.Desktop.Launcher;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Infusion.Desktop.Profiles
 {
@@ -86,7 +87,7 @@ namespace Infusion.Desktop.Profiles
         public static Profile LoadProfile(string profileFileName)
         {
             string profileJson = File.ReadAllText(profileFileName);
-            var profile = JsonConvert.DeserializeObject<Profile>(profileJson);
+            var profile = JsonConvert.DeserializeObject<Profile>(profileJson, new VersionConverter());
 
             ProvideDefaults(profile);
 
@@ -128,7 +129,7 @@ namespace Infusion.Desktop.Profiles
             {
                 EnsureProfileDirectoryExists();
 
-                string profileJson = JsonConvert.SerializeObject(profile);
+                string profileJson = JsonConvert.SerializeObject(profile, new VersionConverter());
                 string profileFileName = Path.Combine(ProfilesPath, profile.Id + ".profile");
 
                 File.WriteAllText(profileFileName, profileJson);

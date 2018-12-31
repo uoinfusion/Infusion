@@ -29,8 +29,8 @@ namespace Infusion.Desktop.Console
         private readonly FileConsole fileConsole;
         private readonly InfusionConsole infusionConsole;
 
-        internal ScriptEngine ScriptEngine { get; }
-        public CSharpScriptEngine CSharpScriptEngine { get; }
+        internal Lazy<ScriptEngine> ScriptEngine { get; }
+        public Lazy<CSharpScriptEngine> CSharpScriptEngine { get; }
 
         private void HandleFileLoggingException(Exception ex)
         {
@@ -65,9 +65,8 @@ namespace Infusion.Desktop.Console
             DataContext = consoleContent;
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
 
-            CSharpScriptEngine = new CSharpScriptEngine(infusionConsole);
-            var injectionScriptEngine = new InjectionScriptEngine(UO.Injection);
-            ScriptEngine = new ScriptEngine(CSharpScriptEngine, injectionScriptEngine);
+            CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
+            ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection)));
 
             _inputBlock.Focus();
 

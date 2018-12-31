@@ -17,6 +17,8 @@ namespace Infusion.Desktop.Launcher
 
         public string ServerEndpoint { get; set; }
         public UltimaClientType ClientType { get; set; } = UltimaClientType.Classic;
+        public Version ProtocolVersion { get; set; } = new Version(3, 0, 0);
+        public bool Encrypted { get; set; } = true;
 
         public string UserName { get; set; }
         public string Password { get; set; }

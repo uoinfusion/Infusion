@@ -97,6 +97,8 @@ namespace Infusion.LegacyApi.Injection
             return 0;
         }
 
+        public int Exists(int id) => infusionApi.GameObjects[(uint)id] == null ? 0 : 1;
+        public int IsOnline() => infusionApi.Me == null || infusionApi.Me.PlayerId == 0 ? 0 : 1;
         public int Dead() => infusionApi.Me.IsDead ? 1 : 0;
         public int Hidden(int id)
         {
@@ -149,11 +151,15 @@ namespace Infusion.LegacyApi.Injection
         public void DeleteJournal() => journal.DeleteJournal();
         public string GetJournalText(int index) => journal.GetJournalText(index);
         public string JournalSerial(int index) => journal.JournalSerial(index);
+        public string JournalColor(int index) => journal.JournalColor(index);
         public void SetJournalLine(int index) => journal.SetJournalLine(index);
         public void SetJournalLine(int index, string text) => journal.SetJournalLine(index);
 
         public void Arm(string name) => equipmentSubrutines.Arm(name);
         public void SetArm(string name) => equipmentSubrutines.SetArm(name);
+        public void Unequip(string layer) => equipmentSubrutines.Unequip(layer);
+        public void Equip(string layer, int id) => equipmentSubrutines.Equip(layer, id);
+        public int ObjAtLayer(string layer) => equipmentSubrutines.ObjAtLayer(layer);
         public void WaitTargetObject(int id) => targeting.WaitTargetObject((ObjectId)id);
         public void WaitTargetObject(int id1, int id2) => targeting.WaitTargetObject((ObjectId)id1, (ObjectId)id2);
         public void WaitTargetTile(int type, int x, int y, int z) => targeting.WaitTargetTile(type, x, y, z);

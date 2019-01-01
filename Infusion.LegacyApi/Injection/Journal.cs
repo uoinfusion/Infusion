@@ -65,23 +65,13 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        public string GetJournalText(int index)
-        {
-            lock (journalLock)
-            {
-                var i = journal.Count - 1;
-                foreach (var entry in journal)
-                {
-                    if (i == index)
-                        return GetText(entry);
+        internal string JournalColor(int index) => ProcessJournalIndex(index, GetColor, "0x0000");
+        private string GetColor(JournalEntry entry) => entry.Color.ToString();
 
-                    i--;
-                }
-            }
+        internal string JournalSerial(int index) => ProcessJournalIndex(index, GetSerial, "0x00000000");
+        private string GetSerial(JournalEntry entry) => entry.Id.ToString();
 
-            return string.Empty;
-        }
-
+        internal string GetJournalText(int index) => ProcessJournalIndex(index, GetText, string.Empty);
         private string GetText(JournalEntry entry)
         {
             if (string.IsNullOrEmpty(entry.Name) && string.IsNullOrEmpty(entry.Message))
@@ -90,7 +80,7 @@ namespace Infusion.LegacyApi.Injection
             return entry.Text;
         }
 
-        public string JournalSerial(int index)
+        private string ProcessJournalIndex(int index, Func<JournalEntry, string> processFunc, string @default)
         {
             lock (journalLock)
             {
@@ -98,13 +88,13 @@ namespace Infusion.LegacyApi.Injection
                 foreach (var entry in journal)
                 {
                     if (i == index)
-                        return NumberConversions.Int2Hex((int)entry.SpeakerId);
+                        return processFunc(entry);
 
                     i--;
                 }
             }
 
-            return "0x00000000";
+            return @default;
         }
 
         public void SetJournalLine(int index)

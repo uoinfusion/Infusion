@@ -65,6 +65,20 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
+        public void DeleteJournal(string text)
+        {
+            lock (journalLock)
+            {
+                var node = journal.First;
+                while (node != null)
+                {
+                    if (node.Value.Text.Contains(text))
+                        node.Value = new JournalEntry(node.Value.Id, null, null, node.Value.SpeakerId, node.Value.Type, node.Value.Color);
+                    node = node.Next;
+                }
+            }
+        }
+
         internal string JournalColor(int index) => ProcessJournalIndex(index, GetColor, "0x0000");
         private string GetColor(JournalEntry entry) => entry.Color.ToString();
 

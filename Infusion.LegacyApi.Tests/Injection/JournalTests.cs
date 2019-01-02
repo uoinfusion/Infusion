@@ -84,6 +84,23 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
+        public void DeleteJournal_with_text_removes_journal_entries_containing_text()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer test");
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "test qwer");
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer test qwer");
+            injection.InjectionHost.UO.DeleteJournal("test");
+
+            injection.InjectionHost.UO.GetJournalText(0).Should().Be("");
+            injection.InjectionHost.UO.GetJournalText(1).Should().Be("");
+            injection.InjectionHost.UO.GetJournalText(2).Should().Be("");
+            injection.InjectionHost.UO.GetJournalText(3).Should().Be("player name: qwer");
+        }
+
+        [TestMethod]
         public void Journal_returns_text_including_name_and_message_at_zero_based_journal_index()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));

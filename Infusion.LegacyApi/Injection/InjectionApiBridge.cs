@@ -146,6 +146,7 @@ namespace Infusion.LegacyApi.Injection
 
         public int InJournal(string pattern) => journal.InJournal(pattern);
         public void DeleteJournal() => journal.DeleteJournal();
+        public void DeleteJournal(string text) => journal.DeleteJournal(text);
         public string GetJournalText(int index) => journal.GetJournalText(index);
         public string JournalSerial(int index) => journal.JournalSerial(index);
         public string JournalColor(int index) => journal.JournalColor(index);

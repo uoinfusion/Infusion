@@ -67,7 +67,6 @@
     <Compile Include="Injection\FindTypeTests.cs" />
     <Compile Include="Injection\InjectionProxy.cs" />
     <Compile Include="Injection\JournalTests.cs" />
-    <Compile Include="Injection\TimerTests.cs" />
     <Compile Include="ItemManipulationTests\DropItemTests.cs" />
     <Compile Include="ItemManipulationTests\LayerHandlingTests.cs" />
     <Compile Include="ItemManipulationTests\WaitForItemDraggedTests.cs" />

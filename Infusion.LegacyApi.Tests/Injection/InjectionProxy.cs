@@ -14,10 +14,12 @@ namespace Infusion.LegacyApi.Tests.Injection
         public InfusionTestProxy TestProxy { get; }
         public InjectionApi InjectionHost { get; }
         public Player Me => TestProxy.Api.Me;
+        public TestTimeSource TimeSource { get; }
 
         public InjectionProxy()
         {
-            TestProxy = new InfusionTestProxy();
+            TimeSource = new TestTimeSource();
+            TestProxy = new InfusionTestProxy(TimeSource);
             ServerApi = TestProxy.ServerApi;
             InjectionHost = TestProxy.Api.Injection.InjectionApi;
         }

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using InjectionScript.Runtime;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Infusion.LegacyApi.Tests.Injection
 {
@@ -50,7 +51,18 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
-        public void InJournal_first_searches_for_first_string_in_logical_or_pattern()
+        public void InJournal_finds_newer_entry_first()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
+
+            injection.InjectionHost.UO.InJournal("qwer").Should().Be(1);
+        }
+
+        [TestMethod]
+        public void InJournal_first_searches_for_first_string_in_pattern()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
@@ -70,6 +82,74 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(injection.Me.PlayerId, "System", "You cannot reach that.");
 
             injection.InjectionHost.UO.InJournal("cliloc# 0xA258").Should().NotBe(0);
+        }
+
+        [TestMethod]
+        public void InJournalBetweenTimes_returns_only_entry_created_in_specified_time_span()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            injection.TimeSource.StartTime = new System.DateTime(2019, 1, 2, 10, 10, 23, 125);
+            injection.TimeSource.Now = injection.TimeSource.StartTime;
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 25, 0);
+            var startTime = injection.InjectionHost.Now();
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 26, 0);
+            var endTime = injection.InjectionHost.Now();
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 27, 0);
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.InjectionHost.UO.InJournalBetweenTimes("asdf", startTime, endTime).Should().Be(2);
+        }
+
+        [TestMethod]
+        public void InJournalBetweenTimes_returns_0_when_text_outside_time_span()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            injection.TimeSource.StartTime = new System.DateTime(2019, 1, 2, 10, 10, 23, 125);
+            injection.TimeSource.Now = injection.TimeSource.StartTime;
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 25, 0);
+            var startTime = injection.InjectionHost.Now();
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 26, 0);
+            var endTime = injection.InjectionHost.Now();
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 27, 0);
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.InjectionHost.UO.InJournalBetweenTimes("asdf", startTime, endTime).Should().Be(0);
+        }
+
+        [TestMethod]
+        public void InJournalBetweenTimes_returns_0_when_text_inside_time_span_but_outside_limit()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            injection.TimeSource.StartTime = new System.DateTime(2019, 1, 2, 10, 10, 23, 125);
+            injection.TimeSource.Now = injection.TimeSource.StartTime;
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 25, 0);
+            var startTime = injection.InjectionHost.Now();
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 26, 0);
+            var endTime = injection.InjectionHost.Now();
+
+            injection.TimeSource.Now = new System.DateTime(2019, 1, 2, 10, 10, 27, 0);
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player name", "asdf");
+
+            injection.InjectionHost.UO.InJournalBetweenTimes("asdf", startTime, endTime, 1).Should().Be(0);
         }
 
         [TestMethod]

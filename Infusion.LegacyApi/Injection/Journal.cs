@@ -1,5 +1,4 @@
-﻿using InjectionScript.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Ultima;
 
@@ -7,26 +6,51 @@ namespace Infusion.LegacyApi.Injection
 {
     public sealed class Journal
     {
+        private class Entry
+        {
+            public string Message { get; set; }
+            public string Name { get; set; }
+
+            public ObjectId SpeakerId { get; set; }
+            public Color Color { get; set; }
+            public int Created { get; set; }
+
+            public string Text => $"{Name ?? "no name"}: {Message}";
+        }
+
+
         private const string clilocPrefix = "cliloc# 0x";
-        private readonly LinkedList<JournalEntry> journal = new LinkedList<JournalEntry>();
+        private readonly LinkedList<Entry> journal = new LinkedList<Entry>();
         private readonly object journalLock = new object();
         private static readonly Lazy<StringList> clilocDictionary = new Lazy<StringList>(() => new StringList("ENU"));
+        private readonly Func<int> provideNow;
 
         public int MaxEntries { get; }
 
-        internal Journal(int maxEntries) => MaxEntries = maxEntries;
+        internal Journal(int maxEntries, Func<int> provideNow)
+        {
+            MaxEntries = maxEntries;
+            this.provideNow = provideNow;
+        }
 
         internal void Add(JournalEntry entry)
         {
             lock (journalLock)
             {
-                journal.AddLast(entry);
+                journal.AddFirst(new Entry
+                {
+                    Color = entry.Color,
+                    Created = provideNow(),
+                    Message = entry.Message,
+                    Name = entry.Name,
+                    SpeakerId = entry.SpeakerId,
+                });
                 while (journal.Count > MaxEntries)
-                    journal.RemoveFirst();
+                    journal.RemoveLast();
             }
         }
 
-        public int InJournal(string searchPhrase)
+        internal int InJournalBetweenTime(string searchPhrase, int startTime, int endTime, int limit)
         {
             var searchPatterns = searchPhrase.Split('|');
 
@@ -34,7 +58,7 @@ namespace Infusion.LegacyApi.Injection
             {
                 foreach (var pattern in searchPatterns)
                 {
-                    string word = pattern;
+                    var word = pattern;
 
                     if (pattern.StartsWith(clilocPrefix, StringComparison.OrdinalIgnoreCase) && pattern.Length > clilocPrefix.Length)
                     {
@@ -43,19 +67,29 @@ namespace Infusion.LegacyApi.Injection
                         word = clilocDictionary.Value.GetString(messageId);
                     }
 
-                    var foundIndex = journal.Count;
-                    foreach (var entry in journal)
+                    var foundIndex = 1;
+                    var entry = journal.First;
+                    while (entry != null)
                     {
-                        if (GetText(entry).Contains(word))
+                        if ((startTime < 0 || entry.Value.Created >= startTime)
+                            && (endTime < 0 || entry.Value.Created <= endTime)
+                            && (limit < 0 || foundIndex <= limit)
+                            && GetText(entry.Value).Contains(word))
+                        {
                             return foundIndex;
+                        }
 
-                        foundIndex--;
+                        entry = entry.Next;
+                        foundIndex++;
                     }
                 }
             }
 
             return 0;
         }
+
+        public int InJournal(string searchPhrase)
+            => InJournalBetweenTime(searchPhrase, -1, -1, -1);
 
         public void DeleteJournal()
         {
@@ -73,20 +107,23 @@ namespace Infusion.LegacyApi.Injection
                 while (node != null)
                 {
                     if (node.Value.Text.Contains(text))
-                        node.Value = new JournalEntry(node.Value.Id, null, null, node.Value.SpeakerId, node.Value.Type, node.Value.Color);
+                    {
+                        node.Value.Message = null;
+                        node.Value.Name = null;
+                    }
                     node = node.Next;
                 }
             }
         }
 
         internal string JournalColor(int index) => ProcessJournalIndex(index, GetColor, "0x0000");
-        private string GetColor(JournalEntry entry) => entry.Color.ToString();
+        private string GetColor(Entry entry) => entry.Color.ToString();
 
         internal string JournalSerial(int index) => ProcessJournalIndex(index, GetSerial, "0x00000000");
-        private string GetSerial(JournalEntry entry) => entry.SpeakerId.ToString();
+        private string GetSerial(Entry entry) => entry.SpeakerId.ToString();
 
         internal string GetJournalText(int index) => ProcessJournalIndex(index, GetText, string.Empty);
-        private string GetText(JournalEntry entry)
+        private string GetText(Entry entry)
         {
             if (string.IsNullOrEmpty(entry.Name) && string.IsNullOrEmpty(entry.Message))
                 return string.Empty;
@@ -94,40 +131,48 @@ namespace Infusion.LegacyApi.Injection
             return entry.Text;
         }
 
-        private string ProcessJournalIndex(int index, Func<JournalEntry, string> processFunc, string @default)
+        private string ProcessJournalIndex(int index, Func<Entry, string> processFunc, string @default)
         {
             lock (journalLock)
             {
-                var i = journal.Count - 1;
-                foreach (var entry in journal)
+                var i = 0;
+                var node = journal.First;
+                while (node != null)
                 {
                     if (i == index)
-                        return processFunc(entry);
+                        return processFunc(node.Value);
 
-                    i--;
+                    node = node.Next;
+                    i++;
                 }
             }
 
             return @default;
         }
 
-        public void SetJournalLine(int index)
+        public void SetJournalLine(int index, string message)
         {
             lock (journalLock)
             {
-                var i = journal.Count - 1;
+                var i = 0;
                 var node = journal.First;
 
                 while (node != null)
                 {
                     if (i == index)
                     {
-                        node.Value = new JournalEntry(node.Value.Id, string.Empty, string.Empty,
-                            node.Value.SpeakerId, node.Value.Type, node.Value.Color);
+                        if (string.IsNullOrEmpty(message))
+                        {
+                            node.Value.Message = null;
+                            node.Value.Name = null;
+                        }
+                        else
+                            node.Value.Message = message;
+
                         break;
                     }
 
-                    i--;
+                    i++;
                     node = node.Next;
                 }
             }

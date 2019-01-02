@@ -9,6 +9,7 @@ using Infusion.LegacyApi.Filters;
 using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
 using Infusion.Packets;
+using InjectionScript.Runtime;
 
 namespace Infusion.LegacyApi
 {
@@ -53,6 +54,14 @@ namespace Infusion.LegacyApi
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry)
+            : this(logConfig, commandHandler, ultimaServer, ultimaClient, console, packetRegistry, new RealTimeSource())
+        {
+
+        }
+
+        internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
+            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
+            ITimeSource timeSource)
         {
             this.console = console;
 
@@ -101,7 +110,7 @@ namespace Infusion.LegacyApi
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
 
-            Injection = new InjectionHost(this, console, packetRegistry, new InjectionScript.Runtime.RealTimeSource());
+            Injection = new InjectionHost(this, console, packetRegistry, timeSource);
         }
 
         public InjectionHost Injection { get; }

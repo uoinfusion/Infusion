@@ -3,6 +3,7 @@ using Infusion.Commands;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Packets;
+using InjectionScript.Runtime;
 
 namespace Infusion.LegacyApi
 {
@@ -12,6 +13,11 @@ namespace Infusion.LegacyApi
         private readonly List<Packet> packetsSentToServer = new List<Packet>();
 
         internal InfusionTestProxy(PacketDefinitionRegistry packetRegistry = null)
+            : this(new RealTimeSource(), packetRegistry)
+        {
+        }
+
+        internal InfusionTestProxy(ITimeSource timeSource, PacketDefinitionRegistry packetRegistry = null)
         {
             packetRegistry = packetRegistry ?? PacketDefinitionRegistryFactory.CreateClassicClient();
             ServerPacketHandler = new ServerPacketHandler(PacketDefinitionRegistryFactory.CreateClassicClient());
@@ -30,7 +36,7 @@ namespace Infusion.LegacyApi
             });
 
             var console = new NullConsole();
-            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry);
+            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry, timeSource);
             UO.Initialize(Api);
             ServerApi = new TestServerApi(PacketReceivedFromServer, Api);
         }

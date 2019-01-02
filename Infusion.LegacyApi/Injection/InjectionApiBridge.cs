@@ -28,7 +28,7 @@ namespace Infusion.LegacyApi.Injection
             this.console = console;
             this.packetRegistry = packetRegistry;
             this.findType = new FindTypeSubrutine(infusionApi, injectionHost);
-            this.journal = new Journal(1000);
+            this.journal = new Journal(1000, () => injectionHost.InjectionApi.Now());
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
             this.useSubrutines = new UseSubrutines(infusionApi);
             this.targeting = new Targeting(infusionApi, injectionHost);
@@ -145,13 +145,15 @@ namespace Infusion.LegacyApi.Injection
         public void Print(string msg) => infusionApi.ClientPrint(msg);
 
         public int InJournal(string pattern) => journal.InJournal(pattern);
+        public int InJournalBetweenTimes(string pattern, int startTime, int endTime, int limit) 
+            => journal.InJournalBetweenTime(pattern, startTime, endTime, limit);
         public void DeleteJournal() => journal.DeleteJournal();
         public void DeleteJournal(string text) => journal.DeleteJournal(text);
         public string GetJournalText(int index) => journal.GetJournalText(index);
         public string JournalSerial(int index) => journal.JournalSerial(index);
         public string JournalColor(int index) => journal.JournalColor(index);
-        public void SetJournalLine(int index) => journal.SetJournalLine(index);
-        public void SetJournalLine(int index, string text) => journal.SetJournalLine(index);
+        public void SetJournalLine(int index) => journal.SetJournalLine(index, null);
+        public void SetJournalLine(int index, string text) => journal.SetJournalLine(index, text);
 
         public void Arm(string name) => equipmentSubrutines.Arm(name);
         public void SetArm(string name) => equipmentSubrutines.SetArm(name);

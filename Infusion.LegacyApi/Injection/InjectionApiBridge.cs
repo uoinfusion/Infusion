@@ -40,14 +40,11 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public int FindItem => findType.FindItem;
-
         public int Self => (int)infusionApi.Me.PlayerId;
-
         public int LastCorpse => (int)itemObservers.LastCorpseId;
-
         public int LastStatus => (int)itemObservers.LastStatusId;
-
         public int LastTarget => (int)itemObservers.LastTargetId;
+        public int Backpack => (int)infusionApi.Me.BackPack.Id;
 
         public int Strength => infusionApi.Me.Strength;
 

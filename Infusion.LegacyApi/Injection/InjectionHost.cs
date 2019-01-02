@@ -19,7 +19,7 @@ namespace Infusion.LegacyApi.Injection
 
         public InjectionApi InjectionApi => runtime.Api;
 
-        internal InjectionHost(Legacy api, IConsole console, PacketDefinitionRegistry packetRegistry)
+        internal InjectionHost(Legacy api, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource)
         {
             this.api = api;
             this.console = console;
@@ -27,7 +27,7 @@ namespace Infusion.LegacyApi.Injection
             var bridge = new InjectionApiBridge(api, this, console, packetRegistry);
             var debuggerServer = new DebuggerServer();
             debuggerServer.BreakpointHit += (sender, e) => console.Info($"Breakpoint hit at line {e.Line} in {e.FileName}.");
-            runtime = new InjectionRuntime(bridge, debuggerServer);
+            runtime = new InjectionRuntime(bridge, debuggerServer, timeSource);
 
             Debugger = debuggerServer;
             Tracer = debuggerServer;

@@ -101,7 +101,7 @@ namespace Infusion.LegacyApi
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
 
-            Injection = new InjectionHost(this, console, packetRegistry);
+            Injection = new InjectionHost(this, console, packetRegistry, new InjectionScript.Runtime.RealTimeSource());
         }
 
         public InjectionHost Injection { get; }

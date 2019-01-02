@@ -69,7 +69,7 @@ namespace Infusion.LegacyApi.Injection
         private string GetColor(JournalEntry entry) => entry.Color.ToString();
 
         internal string JournalSerial(int index) => ProcessJournalIndex(index, GetSerial, "0x00000000");
-        private string GetSerial(JournalEntry entry) => entry.Id.ToString();
+        private string GetSerial(JournalEntry entry) => entry.SpeakerId.ToString();
 
         internal string GetJournalText(int index) => ProcessJournalIndex(index, GetText, string.Empty);
         private string GetText(JournalEntry entry)

@@ -26,7 +26,7 @@ namespace Infusion.Packets.Client
         public Packet Serialize(ObjectId itemId, Location3D location)
             => Serialize(itemId, 0xFFFFFF, location);
         public Packet Serialize(ObjectId itemId, ObjectId targetContainerId, Location2D location)
-            => Serialize(itemId, 0xFFFFFF, (Location3D)location);
+            => Serialize(itemId, targetContainerId, (Location3D)location);
 
 
         public Packet Serialize(ObjectId itemId, ObjectId containerId, Location3D location)

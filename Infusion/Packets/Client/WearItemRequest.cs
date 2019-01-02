@@ -18,7 +18,7 @@ namespace Infusion.Packets.Client
             writer.WriteByte((byte) layer);
             writer.WriteId(playerId);
 
-            RawPacket = new Packet(PacketDefinitions.AttackRequest.Id, payload);
+            RawPacket = new Packet(PacketDefinitions.DropWearItem.Id, payload);
         }
 
         public ObjectId ItemId { get; }

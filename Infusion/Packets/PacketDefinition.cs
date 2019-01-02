@@ -3,22 +3,19 @@ using Infusion.IO;
 
 namespace Infusion.Packets
 {
-    // TODO: move materialization from packet to a materializer so it is possible to implement different protocol versions (two versions of the same packet)
     internal class PacketDefinition<TPacket> : PacketDefinition
         where TPacket : MaterializedPacket
     {
-        private readonly Func<Packet, TPacket> materializer;
+        private readonly Func<TPacket> factory;
 
-        public PacketDefinition(int id, PacketLength length, string name, Func<Packet, TPacket> materializer)
+        public PacketDefinition(int id, PacketLength length, string name, Func<TPacket> factory)
             : base(id, length, name)
         {
-            this.materializer = materializer;
+            this.factory= factory;
         }
 
-        protected override MaterializedPacket MaterializeImpl(Packet rawPacket)
-        {
-            return materializer(rawPacket);
-        }
+        protected override MaterializedPacket MaterializeImpl(Packet rawPacket) => factory();
+        public override MaterializedPacket Instantiate() => factory();
     }
 
     internal class PacketDefinition
@@ -39,6 +36,8 @@ namespace Infusion.Packets
         {
             return Length.GetSize(reader);
         }
+
+        public virtual MaterializedPacket Instantiate() => throw new NotImplementedException();
 
         public MaterializedPacket Materialize(Packet rawPacket)
         {

@@ -21,7 +21,7 @@ namespace Infusion.LegacyApi
                 var filteredPacket = ClientPacketHandler.FilterOutput(packet);
                 if (filteredPacket.HasValue)
                     packetsSentToServer.Add(filteredPacket.Value);
-            });
+            }, packetRegistry);
             Client = new UltimaClient(ClientPacketHandler, packet =>
             {
                 var filteredPacket = ServerPacketHandler.FilterOutput(packet);

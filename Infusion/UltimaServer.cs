@@ -8,12 +8,15 @@ namespace Infusion
     internal sealed class UltimaServer : IServerPacketSubject
     {
         private readonly Action<Packet> packetSender;
+        private readonly PacketDefinitionRegistry packetRegistry;
         private readonly IServerPacketSubject packetSubject;
 
-        public UltimaServer(IServerPacketSubject packetSubject, Action<Packet> packetSender)
+        public UltimaServer(IServerPacketSubject packetSubject, Action<Packet> packetSender,
+            PacketDefinitionRegistry packetRegistry)
         {
             this.packetSubject = packetSubject;
             this.packetSender = packetSender;
+            this.packetRegistry = packetRegistry;
         }
 
         public void RegisterFilter(Func<Packet, Packet?> filter)
@@ -83,20 +86,23 @@ namespace Infusion
 
         public void DropItem(ObjectId itemId, ObjectId targetContainerId)
         {
-            var dropPacket = new DropItemRequest(itemId, targetContainerId);
-            Send(dropPacket.RawPacket);
+            var dropPacket = packetRegistry.Instantiate<DropItemRequest>();
+
+            Send(dropPacket.Serialize(itemId, targetContainerId));
         }
 
         public void DropItem(ObjectId itemId, Location3D location)
         {
-            var dropPacket = new DropItemRequest(itemId, location);
-            Send(dropPacket.RawPacket);
+            var dropPacket = packetRegistry.Instantiate<DropItemRequest>();
+
+            Send(dropPacket.Serialize(itemId, location));
         }
 
         public void DropItem(ObjectId itemId, ObjectId targetContainerId, Location2D targetContainerLocation)
         {
-            var dropPacket = new DropItemRequest(itemId, targetContainerId, targetContainerLocation);
-            Send(dropPacket.RawPacket);
+            var dropPacket = packetRegistry.Instantiate<DropItemRequest>();
+
+            Send(dropPacket.Serialize(itemId, targetContainerId, targetContainerLocation));
         }
 
         public void DragItem(ObjectId itemId, int amount)

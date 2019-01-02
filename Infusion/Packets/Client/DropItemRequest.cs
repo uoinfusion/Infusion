@@ -1,42 +1,41 @@
-﻿using Infusion.IO;
+﻿using System;
+using Infusion.IO;
 
 namespace Infusion.Packets.Client
 {
-    internal sealed class DropItemRequest
+    internal sealed class DropItemRequest : MaterializedPacket
     {
-        public ObjectId ItemId { get; }
+        public ObjectId ItemId { get; private set;  }
 
-        public Location3D Location { get; }
+        public Location3D Location { get; private set; }
 
-        public ObjectId ContainerId { get; }
+        public ObjectId ContainerId { get; private set; }
 
-        public DropItemRequest(ObjectId itemId, ObjectId containerId)
-            : this(itemId, containerId, new Location3D(0xFFFF, 0xFFFF, 0x00))
+        private Packet rawPacket;
+        private readonly bool useGridIndex;
+        private readonly int packetLength;
+
+        public DropItemRequest(bool useGridIndex, int packetLength)
         {
+            this.useGridIndex = useGridIndex;
+            this.packetLength = packetLength;
         }
 
-        public DropItemRequest(ObjectId itemId, ObjectId containerId, Location2D containerLocation)
-            : this(itemId, containerId, new Location3D(containerLocation.X, containerLocation.Y, 0))
-        {
-        }
+        public Packet Serialize(ObjectId itemId, ObjectId targetContainerId)
+            => Serialize(itemId, targetContainerId, new Location3D(0xFFFF, 0xFFFF, 0x00));
+        public Packet Serialize(ObjectId itemId, Location3D location)
+            => Serialize(itemId, 0xFFFFFF, location);
+        public Packet Serialize(ObjectId itemId, ObjectId targetContainerId, Location2D location)
+            => Serialize(itemId, 0xFFFFFF, (Location3D)location);
 
-        public DropItemRequest(ObjectId itemId, Location3D location)
-            : this(itemId, 0xFFFFFF, location)
-        {
-        }
 
-        private DropItemRequest(ObjectId itemId, ObjectId containerId, Location3D location)
+        public Packet Serialize(ObjectId itemId, ObjectId containerId, Location3D location)
         {
             ItemId = itemId;
             ContainerId = containerId;
             Location = location;
 
-            RawPacket = Serialize();
-        }
-
-        private Packet Serialize()
-        {
-            byte[] payload = new byte[14];
+            byte[] payload = new byte[packetLength];
 
             var writer = new ArrayPacketWriter(payload);
             writer.WriteByte((byte) PacketDefinitions.DropItem.Id);
@@ -44,11 +43,18 @@ namespace Infusion.Packets.Client
             writer.WriteUShort((ushort)Location.X);
             writer.WriteUShort((ushort)Location.Y);
             writer.WriteSByte((sbyte)Location.Z);
+
+            if (useGridIndex)
+                writer.WriteByte(0);
+
             writer.WriteId(ContainerId);
 
-            return new Packet(PacketDefinitions.DropItem.Id, payload);
+            rawPacket = new Packet(PacketDefinitions.DropItem.Id, payload);
+            return rawPacket;
         }
 
-        public Packet RawPacket { get; }
+        public override void Deserialize(Packet rawPacket) => throw new System.NotImplementedException();
+
+        public override Packet RawPacket => rawPacket;
     }
 }

@@ -105,7 +105,7 @@ namespace Infusion.Proxy
             clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
 
-            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
+            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
             UO.Initialize(legacyApi);
 
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,

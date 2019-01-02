@@ -18,10 +18,10 @@ namespace Infusion.Packets
             new StaticPacketLength(5), "DisconnectNotification");
 
         public static readonly PacketDefinition<MoveRequest> MoveRequest = new PacketDefinition<MoveRequest>(0x02,
-            new StaticPacketLength(7), "MoveRequest", packet => new MoveRequest());
+            new StaticPacketLength(7), "MoveRequest", () => new MoveRequest());
 
         public static readonly PacketDefinition TalkRequest = new PacketDefinition<TalkRequest>(0x03,
-            new VariablePacketLength(), "TalkRequest", packet => new TalkRequest());
+            new VariablePacketLength(), "TalkRequest", () => new TalkRequest());
 
         public static readonly PacketDefinition GodModeRequest = new PacketDefinition(0x04,
             new StaticPacketLength(2), "GodModeRequest");
@@ -30,16 +30,16 @@ namespace Infusion.Packets
             new StaticPacketLength(5), "AttackRequest");
 
         public static readonly PacketDefinition<DoubleClickRequest> DoubleClick = new PacketDefinition<DoubleClickRequest>(0x06,
-            new StaticPacketLength(5), "DoubleClick", packet => new DoubleClickRequest());
+            new StaticPacketLength(5), "DoubleClick", () => new DoubleClickRequest());
 
         public static readonly PacketDefinition PickUpItem = new PacketDefinition(0x07,
             new StaticPacketLength(7), "PickUpItem");
 
-        public static readonly PacketDefinition DropItem = new PacketDefinition(0x08,
-            new StaticPacketLength(14), "DropItem");
+        public static readonly PacketDefinition<DropItemRequest> DropItem = new PacketDefinition<DropItemRequest>(0x08,
+            new StaticPacketLength(14), "DropItem", () => new DropItemRequest(false, 14));
 
-        public static readonly PacketDefinition DropItem6017 = new PacketDefinition(0x08,
-            new StaticPacketLength(15), "DropItem");
+        public static readonly PacketDefinition<DropItemRequest> DropItem6017 = new PacketDefinition<DropItemRequest>(0x08,
+            new StaticPacketLength(15), "DropItem", () => new DropItemRequest(true, 15));
 
         public static readonly PacketDefinition SingleClick = new PacketDefinition(0x09,
             new StaticPacketLength(5), "SingleClick");
@@ -48,7 +48,7 @@ namespace Infusion.Packets
             new VariablePacketLength(), "EditTileData");
 
         public static readonly PacketDefinition<SkillRequest> RequestSkills = new PacketDefinition<SkillRequest>(0x12,
-            new VariablePacketLength(), "RequestSkills", packet => new SkillRequest());
+            new VariablePacketLength(), "RequestSkills", () => new SkillRequest());
 
         public static readonly PacketDefinition DropWearItem = new PacketDefinition(0x13,
             new StaticPacketLength(10), "DropWearItem");
@@ -60,7 +60,7 @@ namespace Infusion.Packets
             new StaticPacketLength(4), "ControlAnimation");
 
         public static readonly PacketDefinition<GetClientStatusRequest> GetClientStatus
-            = new PacketDefinition<GetClientStatusRequest>(0x34, new StaticPacketLength(10), "GetClientStatus", packet => new GetClientStatusRequest());
+            = new PacketDefinition<GetClientStatusRequest>(0x34, new StaticPacketLength(10), "GetClientStatus", () => new GetClientStatusRequest());
 
         public static readonly PacketDefinition PathfinidingInClient = new PacketDefinition(0x38,
             new StaticPacketLength(7), "PathfinidingInClient");
@@ -186,10 +186,10 @@ namespace Infusion.Packets
             new VariablePacketLength(), "GumpTextEntryDialogReply");
 
         public static readonly PacketDefinition<SpeechRequest> SpeechRequest = new PacketDefinition<SpeechRequest>(0xAD,
-            new VariablePacketLength(), "SpeechRequest", (packet) => new SpeechRequest());
+            new VariablePacketLength(), "SpeechRequest", () => new SpeechRequest());
 
         public static readonly PacketDefinition<GumpMenuSelectionRequest> GumpMenuSelection = new PacketDefinition<GumpMenuSelectionRequest>(0xB1,
-            new VariablePacketLength(), "GumpMenuSelection", packet => new GumpMenuSelectionRequest());
+            new VariablePacketLength(), "GumpMenuSelection", () => new GumpMenuSelectionRequest());
 
         public static readonly PacketDefinition ChatText = new PacketDefinition(0xB3,
             new VariablePacketLength(), "ChatText");
@@ -219,7 +219,7 @@ namespace Infusion.Packets
             new StaticPacketLength(7), "Damage");
 
         public static readonly PacketDefinition<StatusBarInfoPacket> StatusBarInfo = new PacketDefinition<StatusBarInfoPacket>(0x11,
-            new VariablePacketLength(), "StatusBarInfo", packet => new StatusBarInfoPacket());
+            new VariablePacketLength(), "StatusBarInfo", () => new StatusBarInfoPacket());
 
         public static readonly PacketDefinition NewHealthBarStatusUpdate = new PacketDefinition(0x16,
             new VariablePacketLength(), "NewHealthBarStatusUpdate");
@@ -228,44 +228,44 @@ namespace Infusion.Packets
             new StaticPacketLength(12), "HealthBarStatusUpdate");
 
         public static readonly PacketDefinition<ObjectInfoPacket> ObjectInfo = new PacketDefinition<ObjectInfoPacket>(0x1A,
-            new VariablePacketLength(), "ObjectInfo", (packet) => new ObjectInfoPacket());
+            new VariablePacketLength(), "ObjectInfo", () => new ObjectInfoPacket());
 
         public static readonly PacketDefinition<CharLocaleAndBodyPacket> CharacterLocaleAndBody = new PacketDefinition<CharLocaleAndBodyPacket>(0x1B,
-            new StaticPacketLength(37), "CharacterLocaleAndBody", packet => new CharLocaleAndBodyPacket());
+            new StaticPacketLength(37), "CharacterLocaleAndBody", () => new CharLocaleAndBodyPacket());
 
         public static readonly PacketDefinition<SendSpeechPacket> SendSpeech = new PacketDefinition<SendSpeechPacket>(0x1C,
-            new VariablePacketLength(), "SendSpeech", packet => new SendSpeechPacket());
+            new VariablePacketLength(), "SendSpeech", () => new SendSpeechPacket());
 
         public static readonly PacketDefinition<DeleteObjectPacket> DeleteObject = new PacketDefinition<DeleteObjectPacket>(0x1D,
-            new StaticPacketLength(5), "DeleteObject", (packet) => new DeleteObjectPacket());
+            new StaticPacketLength(5), "DeleteObject", () => new DeleteObjectPacket());
 
         public static readonly PacketDefinition Explosion = new PacketDefinition(0x1F,
             new StaticPacketLength(8), "Explosion");
 
         public static readonly PacketDefinition<DrawGamePlayerPacket> DrawGamePlayer = new PacketDefinition<DrawGamePlayerPacket>(0x20,
-            new StaticPacketLength(19), "DrawGamePlayer", packet => new DrawGamePlayerPacket());
+            new StaticPacketLength(19), "DrawGamePlayer", () => new DrawGamePlayerPacket());
 
         public static readonly PacketDefinition<CharMoveRejectionPacket> CharMoveRejection = new PacketDefinition<CharMoveRejectionPacket>(0x21,
-            new StaticPacketLength(8), "CharMoveRejection", packet => new CharMoveRejectionPacket());
+            new StaticPacketLength(8), "CharMoveRejection", () => new CharMoveRejectionPacket());
 
         public static readonly PacketDefinition DraggingOfItem = new PacketDefinition(0x23,
             new StaticPacketLength(26), "DraggingOfItem");
 
         public static readonly PacketDefinition<DrawContainerPacket> DrawContainer = new PacketDefinition<DrawContainerPacket>(0x24,
-            new StaticPacketLength(7), "DrawContainer", packet => new DrawContainerPacket());
+            new StaticPacketLength(7), "DrawContainer", () => new DrawContainerPacket());
         public static readonly PacketDefinition<DrawContainerPacket> DrawContainer7090 = new PacketDefinition<DrawContainerPacket>(0x24,
-            new StaticPacketLength(9), "DrawContainer", packet => new DrawContainerPacket7090());
+            new StaticPacketLength(9), "DrawContainer", () => new DrawContainerPacket7090());
 
         public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer = new PacketDefinition<AddItemToContainerPacket>(0x25,
-            new StaticPacketLength(20), "AddItemToContainer", packet => new AddItemToContainerPacket(false));
+            new StaticPacketLength(20), "AddItemToContainer", () => new AddItemToContainerPacket(false));
         public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer6017 = new PacketDefinition<AddItemToContainerPacket>(0x25,
-            new StaticPacketLength(21), "AddItemToContainer", packet => new AddItemToContainerPacket(true));
+            new StaticPacketLength(21), "AddItemToContainer", () => new AddItemToContainerPacket(true));
 
         public static readonly PacketDefinition KickPlayer = new PacketDefinition(0x26,
             new StaticPacketLength(5), "KickPlayer");
 
         public static readonly PacketDefinition<RejectMoveItemRequestPacket> RejectMoveItemRequest = new PacketDefinition<RejectMoveItemRequestPacket>(0x27,
-            new StaticPacketLength(2), "RejectMoveItemRequest", packet => new RejectMoveItemRequestPacket());
+            new StaticPacketLength(2), "RejectMoveItemRequest", () => new RejectMoveItemRequestPacket());
 
         public static readonly PacketDefinition DropItemFailed = new PacketDefinition(0x28,
             new StaticPacketLength(5), "DropItemFailed");
@@ -280,7 +280,7 @@ namespace Infusion.Packets
             new StaticPacketLength(17), "MobAttributes");
 
         public static readonly PacketDefinition<WornItemPacket> WornItem = new PacketDefinition<WornItemPacket>(0x2E,
-            new StaticPacketLength(15), "WornItem", packet => new WornItemPacket());
+            new StaticPacketLength(15), "WornItem", () => new WornItemPacket());
 
         public static readonly PacketDefinition FightOccuring = new PacketDefinition(0x2F,
             new StaticPacketLength(10), "FightOccuring");
@@ -293,22 +293,22 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition<AddMultipleItemsInContainerPacket> AddMultipleItemsInContainer
             = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C, new VariablePacketLength(),
-                "AddMultipleItemsInContainer", (packet) => new AddMultipleItemsInContainerPacket());
+                "AddMultipleItemsInContainer", () => new AddMultipleItemsInContainerPacket());
 
         public static readonly PacketDefinition<PauseClientPacket> PauseClient = new PacketDefinition<PauseClientPacket>(0x33,
-            new StaticPacketLength(2), "PauseClient", packet => new PauseClientPacket());
+            new StaticPacketLength(2), "PauseClient", () => new PauseClientPacket());
 
         public static readonly PacketDefinition<PersonalLightLevelPacket> PersonalLightLevel = new PacketDefinition<PersonalLightLevelPacket>(0x4E,
-            new StaticPacketLength(6), "PersonalLightLevel", packet => new PersonalLightLevelPacket());
+            new StaticPacketLength(6), "PersonalLightLevel", () => new PersonalLightLevelPacket());
 
         public static readonly PacketDefinition<OverallLightLevelPacket> OverallLightLevel = new PacketDefinition<OverallLightLevelPacket>(0x4F,
-            new StaticPacketLength(2), "OverallLightLevel", packet => new OverallLightLevelPacket());
+            new StaticPacketLength(2), "OverallLightLevel", () => new OverallLightLevelPacket());
 
         public static readonly PacketDefinition RejectCharacterLogon = new PacketDefinition(0x53,
             new StaticPacketLength(2), "RejectCharacterLogon");
 
         public static readonly PacketDefinition<PlaySoundEffectPacket> PlaySoundEffect = new PacketDefinition<PlaySoundEffectPacket>(0x54,
-            new StaticPacketLength(12), "PlaySoundEffect", packet => new PlaySoundEffectPacket());
+            new StaticPacketLength(12), "PlaySoundEffect", () => new PlaySoundEffectPacket());
 
         public static readonly PacketDefinition LoginComplete = new PacketDefinition(0x55,
             new StaticPacketLength(1), "LoginComplete");
@@ -326,7 +326,7 @@ namespace Infusion.Packets
             new StaticPacketLength(14), "CharacterAnimation");
 
         public static readonly PacketDefinition<GraphicalEffectPacket> GraphicalEffect = new PacketDefinition<GraphicalEffectPacket>(0x70,
-            new StaticPacketLength(28), "GraphicalEffect", packet => new GraphicalEffectPacket());
+            new StaticPacketLength(28), "GraphicalEffect", () => new GraphicalEffectPacket());
 
         public static readonly PacketDefinition OpenBuyWindow = new PacketDefinition(0x74,
             new VariablePacketLength(), "OpenBuyWindow");
@@ -335,15 +335,15 @@ namespace Infusion.Packets
             new StaticPacketLength(16), "NewSubserver");
 
         public static readonly PacketDefinition<UpdatePlayerPacket> UpdatePlayer = new PacketDefinition<UpdatePlayerPacket>(0x77,
-            new StaticPacketLength(17), "UpdatePlayer", packet => new UpdatePlayerPacket());
+            new StaticPacketLength(17), "UpdatePlayer", () => new UpdatePlayerPacket());
 
         public static readonly PacketDefinition<DrawObjectPacket> DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
-            new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket());
+            new VariablePacketLength(), "DrawObject", () => new DrawObjectPacket());
         public static readonly PacketDefinition<DrawObjectPacket> DrawObject7000 = new PacketDefinition<DrawObjectPacket>(0x78,
-            new VariablePacketLength(), "DrawObject", (packet) => new DrawObjectPacket7000());
+            new VariablePacketLength(), "DrawObject", () => new DrawObjectPacket7000());
 
         public static readonly PacketDefinition<OpenDialogBoxPacket> OpenDialogBox = new PacketDefinition<OpenDialogBoxPacket>(0x7C,
-            new VariablePacketLength(), "OpenDialogBox", packet => new OpenDialogBoxPacket());
+            new VariablePacketLength(), "OpenDialogBox", () => new OpenDialogBoxPacket());
 
         public static readonly PacketDefinition LoginDenied = new PacketDefinition(0x82,
             new StaticPacketLength(2), "LoginDenied");
@@ -358,7 +358,7 @@ namespace Infusion.Packets
             new VariablePacketLength(), "CorpseClothing");
 
         public static readonly PacketDefinition<ConnectToGameServerPacket> ConnectToGameServer = new PacketDefinition<ConnectToGameServerPacket>(0x8C,
-            new StaticPacketLength(11), "ConnectToGameServer", rawPacket => new ConnectToGameServerPacket());
+            new StaticPacketLength(11), "ConnectToGameServer", () => new ConnectToGameServerPacket());
 
         public static readonly  PacketDefinition DisplaySign = new PacketDefinition(0x8b, new VariablePacketLength(), "DisplaySign");
 
@@ -376,14 +376,14 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition<UpdateCurrentHealthPacket> UpdateCurrentHealth =
             new PacketDefinition<UpdateCurrentHealthPacket>(0xA1,
-                new StaticPacketLength(9), "UpdateCurrentHealth", packet => new UpdateCurrentHealthPacket());
+                new StaticPacketLength(9), "UpdateCurrentHealth", () => new UpdateCurrentHealthPacket());
 
         public static readonly PacketDefinition<UpdateCurrentManaPacket> UpdateCurrentMana = new PacketDefinition<UpdateCurrentManaPacket>(0xA2,
-            new StaticPacketLength(9), "UpdateCurrentMana", packet => new UpdateCurrentManaPacket());
+            new StaticPacketLength(9), "UpdateCurrentMana", () => new UpdateCurrentManaPacket());
 
         public static readonly PacketDefinition<UpdateCurrentStaminaPacket> UpdateCurrentStamina =
             new PacketDefinition<UpdateCurrentStaminaPacket>(0xA3,
-                new StaticPacketLength(9), "UpdateCurrentStamina", packet => new UpdateCurrentStaminaPacket());
+                new StaticPacketLength(9), "UpdateCurrentStamina", () => new UpdateCurrentStaminaPacket());
 
         public static readonly PacketDefinition OpenWebBrowser = new PacketDefinition(0xA5,
             new VariablePacketLength(), "OpenWebBrowser");
@@ -398,19 +398,19 @@ namespace Infusion.Packets
             new VariablePacketLength(), "CharactersStartingLocations");
 
         public static readonly PacketDefinition<AllowRefuseAttackPacket> AllowRefuseAttack = new PacketDefinition<AllowRefuseAttackPacket>(0xAA,
-            new StaticPacketLength(5), "AllowRefuseAttack", packet => new AllowRefuseAttackPacket());
+            new StaticPacketLength(5), "AllowRefuseAttack", () => new AllowRefuseAttackPacket());
 
         public static readonly PacketDefinition GumpTextEntryDialog = new PacketDefinition(0xAB,
             new VariablePacketLength(), "GumpTextEntryDialog");
 
         public static readonly PacketDefinition<SpeechMessagePacket> SpeechMessage = new PacketDefinition<SpeechMessagePacket>(0xAE,
-            new VariablePacketLength(), "SpeechMessage", packet => new SpeechMessagePacket());
+            new VariablePacketLength(), "SpeechMessage", () => new SpeechMessagePacket());
 
         public static readonly PacketDefinition DisplayDeathAction = new PacketDefinition(0xAF,
             new StaticPacketLength(13), "DisplayDeathAction");
 
         public static readonly PacketDefinition<SendGumpMenuDialogPacket> SendGumpMenuDialog = new PacketDefinition<SendGumpMenuDialogPacket>(0xB0,
-            new VariablePacketLength(), "SendGumpMenuDialog", packet => new SendGumpMenuDialogPacket());
+            new VariablePacketLength(), "SendGumpMenuDialog", () => new SendGumpMenuDialogPacket());
 
         public static readonly PacketDefinition ChatMessage = new PacketDefinition(0xB2,
             new VariablePacketLength(), "ChatMessage");
@@ -424,9 +424,9 @@ namespace Infusion.Packets
             new StaticPacketLength(5), "EnableLockedClientFeatures");
 
         public static readonly PacketDefinition<QuestArrowPacket> QuestArrow = new PacketDefinition<QuestArrowPacket>(0xBA,
-            new StaticPacketLength(6), "QuestArrow", packet => new QuestArrowPacket());
+            new StaticPacketLength(6), "QuestArrow", () => new QuestArrowPacket());
         public static readonly PacketDefinition<QuestArrowPacket> QuestArrow7090 = new PacketDefinition<QuestArrowPacket>(0xBA,
-            new StaticPacketLength(10), "QuestArrow", packet => new QuestArrowPacket());
+            new StaticPacketLength(10), "QuestArrow", () => new QuestArrowPacket());
 
         public static readonly PacketDefinition SeasonalInformation = new PacketDefinition(0xBC,
             new StaticPacketLength(3), "SeasonalInformation");
@@ -435,7 +435,7 @@ namespace Infusion.Packets
             new StaticPacketLength(36), "GraphicalEffect2");
 
         public static readonly PacketDefinition<ClilocMessagePacket> ClilocMessage = new PacketDefinition<ClilocMessagePacket>(0xC1,
-            new VariablePacketLength(), "ClilocMessage", packet => new ClilocMessagePacket());
+            new VariablePacketLength(), "ClilocMessage", () => new ClilocMessagePacket());
 
         public static readonly PacketDefinition Semivisible = new PacketDefinition(0xC4,
             new StaticPacketLength(6), "Semivisible");
@@ -447,7 +447,7 @@ namespace Infusion.Packets
             new StaticPacketLength(7), "GlobalQueueCount");
 
         public static readonly PacketDefinition<ClilocMessageAffixPacket> ClilocMessageAffix = new PacketDefinition<ClilocMessageAffixPacket>(0xCC,
-            new VariablePacketLength(), "ClilocMessageAffix", packet => new ClilocMessageAffixPacket());
+            new VariablePacketLength(), "ClilocMessageAffix", () => new ClilocMessageAffixPacket());
 
         public static readonly PacketDefinition ExtendedDrawGamePlayer = new PacketDefinition(0xD2,
             new StaticPacketLength(25), "ExtendedDrawGamePlayer");
@@ -502,7 +502,7 @@ namespace Infusion.Packets
             new StaticPacketLength(9), "Follow");
 
         public static readonly PacketDefinition<CharacterMoveAckPacket> CharacterMoveAck = new PacketDefinition<CharacterMoveAckPacket>(0x22,
-            new StaticPacketLength(3), "CharacterMoveAck", packet => new CharacterMoveAckPacket());
+            new StaticPacketLength(3), "CharacterMoveAck", () => new CharacterMoveAckPacket());
 
         public static readonly PacketDefinition ResurrectionMenu = new PacketDefinition(0x2C,
             new StaticPacketLength(2), "ResurrectionMenu");
@@ -511,7 +511,7 @@ namespace Infusion.Packets
             new StaticPacketLength(9), "RemoveGroup");
 
         public static readonly PacketDefinition<SendSkillsPacket> SendSkills = new PacketDefinition<SendSkillsPacket>(0x3A,
-            new VariablePacketLength(), "SendSkills", (packet) => new SendSkillsPacket());
+            new VariablePacketLength(), "SendSkills", () => new SendSkillsPacket());
 
         public static readonly PacketDefinition MapPacket = new PacketDefinition(0x56,
             new StaticPacketLength(11), "MapPacket");
@@ -520,7 +520,7 @@ namespace Infusion.Packets
             new VariablePacketLength(), "BooksPages");
 
         public static readonly PacketDefinition<TargetCursorPacket> TargetCursor = new PacketDefinition<TargetCursorPacket>(0x6C,
-            new StaticPacketLength(19), "TargetCursor", (packet) => new TargetCursorPacket());
+            new StaticPacketLength(19), "TargetCursor", () => new TargetCursorPacket());
 
         public static readonly PacketDefinition SecureTraiding = new PacketDefinition(0x6F,
             new VariablePacketLength(), "SecureTraiding");

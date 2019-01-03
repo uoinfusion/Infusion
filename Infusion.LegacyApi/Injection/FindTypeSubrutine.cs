@@ -23,16 +23,14 @@ namespace Infusion.LegacyApi.Injection
             this.api = api;
         }
 
-        public int Count(int type, int color)
+        public int Count(int type, int color, int containerId)
         {
-            var items = UO.Items.OfType((ModelId)type).InBackPack();
-            if (color >= 0)
-                items = items.OfColor((Color)color);
+            var items = FindItems(type, color, containerId, -1);
 
             return items.Sum(x => x.Amount);
         }
 
-        public void FindType(int type, int color, int container, int range)
+        private IEnumerable<Item> FindItems(int type, int color, int container, int range)
         {
             IEnumerable<Item> foundItems = Array.Empty<Item>();
 
@@ -53,6 +51,14 @@ namespace Infusion.LegacyApi.Injection
                 foundItems = foundItems.OfColor((Color)color);
 
             foundItems = foundItems.OfType((ModelId)type).ToArray();
+
+            return foundItems;
+        }
+
+
+        public void FindType(int type, int color, int container, int range)
+        {
+            var foundItems = FindItems(type, color, container, range);
 
             if (foundItems.Any())
             {

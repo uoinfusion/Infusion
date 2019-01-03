@@ -32,15 +32,16 @@ namespace Infusion.LegacyApi.Injection
             return items.Sum(x => x.Amount);
         }
 
-        public void FindType(int type, int color, int container)
+        public void FindType(int type, int color, int container, int range)
         {
             IEnumerable<Item> foundItems = Array.Empty<Item>();
 
             if (container == 1)
             {
                 foundItems = UO.Items.Where(x => !ignoredIds.Contains(x.Id)).OnGround();
-                if (Distance >= 0)
-                    foundItems = foundItems.MaxDistance((ushort)Distance);
+                range = range >= 0 ? range : Distance;
+                if (range >= 0)
+                    foundItems = foundItems.MaxDistance((ushort)range);
                 foundItems = foundItems.OrderByDistance();
             }
             else if (container == -1)

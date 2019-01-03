@@ -196,7 +196,7 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
-        public void Finds_item_inside_chebyshev_distance()
+        public void Finds_item_inside_chebyshev_distance_specified_by_finddistance()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
@@ -217,6 +217,58 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
 
             injection.InjectionHost.UO.FindCount().Should().Be(9);
+        }
+
+        [TestMethod]
+        public void Finds_item_inside_chebyshev_distance_specified_by_parameter()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            // everything inside chebyshev distance
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(999, 999));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(999, 1000));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(999, 1001));
+
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 999));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 1000));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 1001));
+
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 999));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 1000));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 1001));
+
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED),
+                new InjectionValue(-1),
+                new InjectionValue("ground"),
+                new InjectionValue(1));
+
+            injection.InjectionHost.UO.FindCount().Should().Be(9);
+        }
+
+        [TestMethod]
+        public void Finds_item_inside_zero_distance_specified_by_string_parameter()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            // everything inside chebyshev distance
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(999, 999));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(999, 1000));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(999, 1001));
+
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 999));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 1000));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 1001));
+
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 999));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 1000));
+            injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 1001));
+
+            injection.InjectionHost.UO.FindType(new InjectionValue("0xEED"),
+                new InjectionValue("-1"),
+                new InjectionValue("ground"),
+                new InjectionValue("0"));
+
+            injection.InjectionHost.UO.FindCount().Should().Be(1);
         }
 
         [TestMethod]

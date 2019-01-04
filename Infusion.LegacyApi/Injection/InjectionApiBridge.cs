@@ -35,6 +35,7 @@ namespace Infusion.LegacyApi.Injection
             this.targeting = new Targeting(infusionApi, injectionHost);
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
+
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
             itemObservers = new ItemObservers(infusionApi.Server, infusionApi.Client, packetRegistry);
@@ -199,6 +200,15 @@ namespace Infusion.LegacyApi.Injection
 
             return string.Empty;
         }
+
+        public void Snap(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                Screenshot.Snap();
+            else
+                Screenshot.Snap(name);
+        }
+
 
         private Skill TranslateSkill(string skillName)
         {

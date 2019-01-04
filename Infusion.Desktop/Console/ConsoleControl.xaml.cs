@@ -66,7 +66,7 @@ namespace Infusion.Desktop.Console
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
 
             CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
-            ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection)));
+            ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));
 
             _inputBlock.Focus();
 

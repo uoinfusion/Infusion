@@ -2,6 +2,7 @@
 using Infusion.Packets;
 using InjectionScript.Runtime;
 using System;
+using System.Linq;
 
 namespace Infusion.LegacyApi.Injection
 {
@@ -187,6 +188,17 @@ namespace Infusion.LegacyApi.Injection
         public void Cast(string spellName) => throw new NotImplementedException();
 
         public void Morph(int type) => morphing.Morph(type);
+
+        public string PrivateGetTile(int x, int y, int unknown, int tileMin, int tileMax)
+        {
+            var tiles = Ultima.Map.Felucca.Tiles.GetStaticTiles(x, y);
+            var tileIds = tiles.Where(tile => tile.ID >= tileMin && tile.ID <= tileMax)
+                .Select(tile => $"0x{tile.ID:X4}");
+            if (tileIds.Any())
+                return tileIds.Aggregate((l, r) => l + "," + r);
+
+            return string.Empty;
+        }
 
         private Skill TranslateSkill(string skillName)
         {

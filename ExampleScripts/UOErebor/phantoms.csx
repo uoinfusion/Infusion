@@ -63,6 +63,8 @@ public static class Phantoms
                 
             AddPhantom(location);
         }
+        
+        UO.ClientPrint($"{fileName} loaded.");
     }
     
     private static Location3D ParseLocation(string locationString)
@@ -96,7 +98,7 @@ public static class Phantoms
             content.AppendLine(phantom.Location.ToString());
         }
         
-        UO.Log($"Saving to {currentFileName}");
+        UO.ClientPrint($"Saving to {currentFileName}");
         File.WriteAllText(currentFileName, content.ToString());
     }
 

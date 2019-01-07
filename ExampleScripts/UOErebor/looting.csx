@@ -252,27 +252,57 @@ public static class Looting
     public static Item LootContainer
     {
         get
-        {
-            if (lootContainer == null || UO.Items[lootContainer.Id] == null)
+        {        
+            if (LootContainerId.HasValue)
             {
-                if (LootContainerId.HasValue)
+                lootContainer = UO.Items[LootContainerId.Value];
+                if (lootContainer != null 
+                    && (lootContainer.Id != UO.Me.BackPack.Id && lootContainer.ContainerId != UO.Me.BackPack.Id))
                 {
-                    lootContainer = UO.Items[LootContainerId.Value];
+                    UO.ClientPrint($"Selected looting container must be in backpack!", UO.Me, Colors.Red);
+                    lootContainer = null;                        
                 }
+            }
+            
+            if (LootContainerSpec != null)
+            {
+                var potentialLootContainer = UO.Items
+                    .InContainer(UO.Me.BackPack)
+                    .Matching(LootContainerSpec)
+                    .FirstOrDefault();
                 
-                if (lootContainer == null && LootContainerSpec != null)
+                if (potentialLootContainer != null)
                 {
-                    lootContainer = UO.Items
-                        .InContainer(UO.Me.BackPack)
-                        .Matching(LootContainerSpec)
-                        .FirstOrDefault();
+                    if (lootContainer == null)
+                    {
+                        lootContainer = potentialLootContainer;
+                        UO.Log($"{LootContainerId?.ToString() ?? "null"} {lootContainer.Id}");
+                        if (LootContainerId != lootContainer.Id)
+                        {
+                            UO.ClientPrint("Default loot container selected from your backpack.");
+                            UO.Click(lootContainer);
+                        }
+                    }
+                    else if (lootContainer.Id == UO.Me.BackPack.Id)
+                    {
+                        // override backpack with a new container matching LootContainerSpec
+                        lootContainer = potentialLootContainer;
+                    }
                 }
-                
+            }
+                            
+            if (lootContainer == null)
+            {
+                lootContainer = Common.AskForContainer("Select loot container", UO.Me, Colors.Red);
                 if (lootContainer == null)
                 {
+                    UO.ClientPrint("Loot container selection canceled, looting to backpack.", UO.Me, Colors.Red);
+                    UO.ClientPrint("Type `,reload` To select other other looting container.");
                     lootContainer = UO.Me.BackPack;
                 }
             }
+            
+            LootContainerId = lootContainer.Id;
             
             return lootContainer;
         }

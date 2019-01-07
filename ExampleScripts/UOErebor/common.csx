@@ -68,6 +68,19 @@ public static class Common
     public static Item AskForContainer(string prompt)
     {
         UO.ClientPrint(prompt);
+        
+        return AskForContainer();
+    }
+
+    public static Item AskForContainer(string prompt, Player onBehalf, Color color)
+    {
+        UO.ClientPrint(prompt, onBehalf, color);
+        
+        return AskForContainer();
+    }
+    
+    private static Item AskForContainer()
+    {
         var item = UO.AskForItem();
         
         if (item == null)

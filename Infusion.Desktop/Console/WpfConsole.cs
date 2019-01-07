@@ -65,7 +65,11 @@ namespace Infusion.Desktop.Console
             dispatcher.BeginInvoke((Action)(() =>
             {
                 var drawingColor = Ultima.Hues.GetHue(color - 1).GetColor(31);
-                var brush = new SolidColorBrush(System.Windows.Media.Color.FromRgb(drawingColor.R, drawingColor.G, drawingColor.B));
+                var wpfColor = (drawingColor.GetBrightness() < 0.05)
+                    ? System.Windows.Media.Color.FromRgb((byte)(255 - drawingColor.R), (byte)(255 - drawingColor.G), (byte)(255 - drawingColor.B))
+                    : System.Windows.Media.Color.FromRgb(drawingColor.R, drawingColor.G, drawingColor.B);
+
+                var brush = new SolidColorBrush(wpfColor);
 
                 WriteLine(timeStamp, new ConsoleSpeechLine(timeStamp, name, message, text, brush));
             }));

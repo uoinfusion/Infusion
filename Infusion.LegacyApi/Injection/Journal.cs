@@ -14,6 +14,7 @@ namespace Infusion.LegacyApi.Injection
             public ObjectId SpeakerId { get; set; }
             public Color Color { get; set; }
             public int Created { get; set; }
+            public ModelId Type { get; set; }
 
             public string Text => $"{Name ?? "no name"}: {Message}";
         }
@@ -44,6 +45,7 @@ namespace Infusion.LegacyApi.Injection
                     Message = entry.Message,
                     Name = entry.Name,
                     SpeakerId = entry.SpeakerId,
+                    Type = entry.Type,
                 });
                 while (journal.Count > MaxEntries)
                     journal.RemoveLast();
@@ -128,7 +130,10 @@ namespace Infusion.LegacyApi.Injection
             if (string.IsNullOrEmpty(entry.Name) && string.IsNullOrEmpty(entry.Message))
                 return string.Empty;
 
-            return entry.Text;
+            if (entry.Type != 0x0000)
+                return entry.Text;
+
+            return entry.Message;
         }
 
         private string ProcessJournalIndex(int index, Func<Entry, string> processFunc, string @default)

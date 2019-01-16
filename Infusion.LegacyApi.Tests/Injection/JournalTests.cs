@@ -177,7 +177,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.InjectionHost.UO.GetJournalText(0).Should().Be("");
             injection.InjectionHost.UO.GetJournalText(1).Should().Be("");
             injection.InjectionHost.UO.GetJournalText(2).Should().Be("");
-            injection.InjectionHost.UO.GetJournalText(3).Should().Be("player name: qwer");
+            injection.InjectionHost.UO.GetJournalText(3).Should().Contain("qwer");
         }
 
         [TestMethod]
@@ -189,9 +189,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "qwer");
             injection.ServerApi.Say(injection.Me.PlayerId, "player name", "zxcv");
 
-            injection.InjectionHost.UO.GetJournalText(0).Should().Be("player name: zxcv");
-            injection.InjectionHost.UO.GetJournalText(1).Should().Be("player name: qwer");
-            injection.InjectionHost.UO.GetJournalText(2).Should().Be("player name: asdf");
+            injection.InjectionHost.UO.GetJournalText(0).Should().Contain("zxcv");
+            injection.InjectionHost.UO.GetJournalText(1).Should().Contain("qwer");
+            injection.InjectionHost.UO.GetJournalText(2).Should().Contain("asdf");
         }
 
         [TestMethod]
@@ -225,7 +225,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             var foundIndex = injection.InjectionHost.UO.InJournal("asdf");
             foundIndex.Should().Be(3);
 
-            injection.InjectionHost.UO.GetJournalText(foundIndex - 1).Should().Be("player name: asdf");
+            injection.InjectionHost.UO.GetJournalText(foundIndex - 1).Should().Contain("asdf");
         }
 
         [TestMethod]
@@ -275,6 +275,18 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.InjectionHost.UO.SetJournalLine(0);
 
             injection.InjectionHost.UO.GetJournalText(0).Should().Be(string.Empty);
+        }
+
+        [TestMethod]
+        public void Only_speech_messages_with_body_type_and_of_Speech_type_contains_name()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            injection.ServerApi.Say(injection.Me.PlayerId, "player1", "message1", (Color)0, 0x190);
+            injection.ServerApi.Say(injection.Me.PlayerId, "player2", "message2", (Color)0, 0);
+
+            injection.InjectionHost.UO.InJournal("player1: message1").Should().NotBe(0);
+            injection.InjectionHost.UO.InJournal("player2: message2").Should().Be(0);
         }
     }
 }

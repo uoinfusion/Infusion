@@ -109,7 +109,7 @@ namespace Infusion.LegacyApi.Injection
             return 0;
         }
 
-        public void FindType(int type, int color, int containerId, int range) 
+        public int FindType(int type, int color, int containerId, int range) 
             => findType.FindType(type, color, containerId, range);
         public int FindCount() => findType.FindCount;
         public int Count(int type, int color, int containerId) => findType.Count(type, color, containerId);

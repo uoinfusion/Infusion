@@ -56,7 +56,7 @@ namespace Infusion.LegacyApi.Injection
         }
 
 
-        public void FindType(int type, int color, int container, int range)
+        public int FindType(int type, int color, int container, int range)
         {
             var foundItems = FindItems(type, color, container, range);
 
@@ -70,6 +70,8 @@ namespace Infusion.LegacyApi.Injection
                 count = 0;
                 FindItem = 0;
             }
+
+            return (int)foundItems.First().Id.Value;
         }
 
         public void Ignore(int id) => ignoredIds.Add((uint)id);

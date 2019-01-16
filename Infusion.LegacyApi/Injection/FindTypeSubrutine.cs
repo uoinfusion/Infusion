@@ -64,14 +64,14 @@ namespace Infusion.LegacyApi.Injection
             {
                 count = foundItems.Count();
                 FindItem = (int)foundItems.First().Id.Value;
+                return (int)foundItems.First().Id.Value;
             }
             else
             {
                 count = 0;
                 FindItem = 0;
+                return 0;
             }
-
-            return (int)foundItems.First().Id.Value;
         }
 
         public void Ignore(int id) => ignoredIds.Add((uint)id);

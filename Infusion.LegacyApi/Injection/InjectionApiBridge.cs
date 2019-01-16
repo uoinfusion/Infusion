@@ -20,6 +20,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly Journal journal;
         private readonly EquipmentSubrutines equipmentSubrutines;
         private readonly Morphing morphing;
+        private readonly WavPlayer wavPlayer;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
             PacketDefinitionRegistry packetRegistry)
@@ -35,6 +36,7 @@ namespace Infusion.LegacyApi.Injection
             this.targeting = new Targeting(infusionApi, injectionHost);
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
+            this.wavPlayer = new WavPlayer(console);
 
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
@@ -139,7 +141,7 @@ namespace Infusion.LegacyApi.Injection
         public void KeyPress(int key) => infusionApi.ClientWindow.PressKey((KeyCode)key);
         public void Say(string message) => infusionApi.ClientWindow.SendText(message);
 
-        public void PlayWav(string file) => WavPlayer.Play(file);
+        public void PlayWav(string file) => wavPlayer.Play(file);
 
         public void TextOpen() { /* just do nothing */ }
         public void TextPrint(string text) => infusionApi.Log(text);

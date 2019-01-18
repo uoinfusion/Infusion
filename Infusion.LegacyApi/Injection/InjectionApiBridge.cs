@@ -268,5 +268,20 @@ namespace Infusion.LegacyApi.Injection
 
         public void Terminate(string subrutineName) => injectionHost.Terminate(subrutineName);
         public void Error(string message) => console.Error(message);
+
+        public void StepToward(int x, int y)
+        {
+            var targetLocation = new Location2D(x, y);
+            var currentLocation = infusionApi.Me.Location;
+
+            var walkVector = (targetLocation - currentLocation).Normalize();
+            if (walkVector != Vector.NullVector)
+            {
+                var movementType = UO.Me.CurrentStamina > UO.Me.MaxStamina / 10 ? MovementType.Run : MovementType.Walk;
+
+                var direction = walkVector.ToDirection();
+                UO.Walk(direction, movementType);
+            }
+        }
     }
 }

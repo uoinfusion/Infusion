@@ -34,18 +34,18 @@ namespace Infusion.LegacyApi
 
         public static Item FirstOrDefault(this IEnumerable<Item> items) => Enumerable.FirstOrDefault(items);
 
-        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, GameObject container, bool recursive = true)
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, GameObject container, bool recursive = false)
             => InContainer(items, container.Id, recursive);
 
-        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId, bool recursive = true)
+        public static IEnumerable<Item> InContainer(this IEnumerable<Item> items, ObjectId containerId, bool recursive = false)
             => recursive 
                 ? items.Where(i => AnyParentContainerInContainer(i, containerId))
                 : items.Where(i => i.ContainerId.HasValue && i.ContainerId.Value == containerId);
 
-        public static IEnumerable<Item> InBackPack(this IEnumerable<Item> items, bool recursive = true) 
+        public static IEnumerable<Item> InBackPack(this IEnumerable<Item> items, bool recursive = false) 
             => InContainer(items, UO.Me.BackPack, recursive);
 
-        public static IEnumerable<Item> InBankBox(this IEnumerable<Item> items, bool recursive = true)
+        public static IEnumerable<Item> InBankBox(this IEnumerable<Item> items, bool recursive = false)
             => InContainer(items, UO.Me.BankBox, recursive);
 
         public static IEnumerable<Item> OnGround(this IEnumerable<Item> items)

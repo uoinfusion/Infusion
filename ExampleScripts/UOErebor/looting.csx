@@ -257,9 +257,11 @@ public static class Looting
             {
                 lootContainer = UO.Items[LootContainerId.Value];
                 if (lootContainer != null 
-                    && (lootContainer.Id != UO.Me.BackPack.Id && lootContainer.ContainerId != UO.Me.BackPack.Id))
+                    && (lootContainer.Id != UO.Me.BackPack.Id
+                    && lootContainer.ContainerId != UO.Me.BackPack.Id))
                 {
-                    UO.ClientPrint($"Selected looting container must be in backpack!", UO.Me, Colors.Red);
+                    UO.ClientPrint($"Selected looting container must be in backpack! Trying to select another container.",
+                        UO.Me, Colors.Red);
                     lootContainer = null;                        
                 }
             }

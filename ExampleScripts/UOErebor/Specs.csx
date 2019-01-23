@@ -103,6 +103,8 @@ public static class Specs
     // Resources
     public static readonly ItemSpec Shaft = 0x1BD4;
     public static readonly ItemSpec Wire = 0x1879;
+    public static readonly ItemSpec Nails = 0x102E;
+    public static readonly ItemSpec Lockpick = 0x14FB;
     public static readonly ItemSpec CopperWire = new ItemSpec(0x1879, (Color)0x0000);
     public static readonly ItemSpec Feathers = 0x1BD1;
     public static readonly ItemSpec PileOfHides = 0x1078;

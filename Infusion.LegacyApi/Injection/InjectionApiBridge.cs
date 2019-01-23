@@ -21,6 +21,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly EquipmentSubrutines equipmentSubrutines;
         private readonly Morphing morphing;
         private readonly WavPlayer wavPlayer;
+        private readonly GumpSubrutines gumps;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
             PacketDefinitionRegistry packetRegistry)
@@ -37,6 +38,7 @@ namespace Infusion.LegacyApi.Injection
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
             this.wavPlayer = new WavPlayer(console);
+            this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers);
 
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
@@ -265,6 +267,9 @@ namespace Infusion.LegacyApi.Injection
                     throw new NotImplementedException($"Unknown spell {spellName}");
             }
         }
+
+        public void WaitGump(int triggerId) => gumps.WaitGump(triggerId);
+        public void SendGumpSelect(int triggerId) => gumps.SendGumpSelect(triggerId);
 
         public void Terminate(string subrutineName) => injectionHost.Terminate(subrutineName);
         public void Error(string message) => console.Error(message);

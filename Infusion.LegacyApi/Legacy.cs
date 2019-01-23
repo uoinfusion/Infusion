@@ -46,6 +46,8 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
+        internal GumpObservers GumpObservers => this.gumpObservers;
+
         internal event Action<TargetInfo?> TargetInfoReceived
         {
             add => targeting.TargetInfoReceived += value;

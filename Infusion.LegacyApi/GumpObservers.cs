@@ -24,6 +24,7 @@ namespace Infusion.LegacyApi
         private bool currentGumpVisible;
 
         internal AutoResetEvent WaitForGumpStartedEvent { get; } = new AutoResetEvent(false);
+        internal event Action GumpReceived;
 
         public GumpObservers(UltimaServer server, UltimaClient client, EventJournalSource eventSource,
             Cancellation cancellation, PacketDefinitionRegistry packetRegistry)
@@ -38,9 +39,14 @@ namespace Infusion.LegacyApi
             IClientPacketSubject clientPacketSubject = client;
             clientPacketSubject.RegisterFilter(FilterGumpMenuSelection);
             clientPacketSubject.Subscribe(PacketDefinitions.GumpMenuSelection, GumpMenuSelectionRequest);
+
+            IServerPacketSubject serverPacketSubject = server;
+            serverPacketSubject.Subscribe(PacketDefinitions.SendGumpMenuDialog, HandleGump);
         }
 
         public Gump CurrentGump { get; private set; }
+
+        private void HandleGump(SendGumpMenuDialogPacket packet) => GumpReceived?.Invoke();
 
         private void GumpMenuSelectionRequest(GumpMenuSelectionRequest packet)
         {
@@ -81,12 +87,12 @@ namespace Infusion.LegacyApi
             {
                 var nextGumpNotVisible = false;
 
+                Gump gump;
                 lock (gumpLock)
                 {
                     var packet = packetRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
-                    var gump = new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
+                    gump = new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
                     CurrentGump = gump;
-                    eventSource.Publish(new GumpReceivedEvent(gump));
 
                     if (!showNextAwaitedGump)
                     {
@@ -98,6 +104,7 @@ namespace Infusion.LegacyApi
                         currentGumpVisible = true;
                 }
 
+                eventSource.Publish(new GumpReceivedEvent(gump));
                 gumpReceivedEvent.Set();
 
                 if (nextGumpNotVisible)
@@ -131,6 +138,7 @@ namespace Infusion.LegacyApi
 
                     cancellation.Check();
                 }
+
                 return CurrentGump;
             }
             finally

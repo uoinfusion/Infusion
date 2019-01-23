@@ -98,6 +98,7 @@
     <Compile Include="Injection\EquipmentSubrutines.cs" />
     <Compile Include="Injection\FindTypeSubrutine.cs" />
     <Compile Include="Injection\Grabbing.cs" />
+    <Compile Include="Injection\GumpSubrutines.cs" />
     <Compile Include="Injection\InjectionApiBridge.cs" />
     <Compile Include="Injection\InjectionHost.cs" />
     <Compile Include="Injection\ItemObservers.cs" />

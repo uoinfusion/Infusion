@@ -14,13 +14,14 @@ public static class Afk
     public static string[] AfkNames { get; set; } =
     {
         "desttro", "elbereth", "finn", "gothmog", "houba", "iustus", "myke", "yavanna",
-        "nightmare", "sirglorg", "ustus", "levtar", "lustus", "total", "tangata nui", "guardian"
+        "nightmare", "sirglorg", "ustus", "levtar", "lustus", "total", "tangata nui", "guardian",
+        "alatar"
     };
 
     public static string[] AfkMessages { get; set; } =
     {
         "afk", "kontrola", "makro", "maker", "jsi t",
-        "gm", "halo", "lagr"
+        "halo", "lagr"
     };
     
     public static string[] IgnoredNames { get; set; } = { };
@@ -44,10 +45,26 @@ public static class Afk
  
     public static void Check()
     {
-        if (IsAfkAlertRequired)
+        var trigger = GetAfkAlertTriggerWord();
+        if (trigger != null)
         {
+            UO.Log($"Alert triggered by:");
+            UO.Log(trigger);
             Alert();
         }
+    }
+
+    public static string GetAfkAlertTriggerWord()
+    {
+        var trigger =
+            afkCheckJournal.ByAnyName(AfkNames).Select(x => x.Text).FirstOrDefault()
+            ?? afkCheckJournal.Where(x => !IgnoredNames.Any(ignored => x.Name.IndexOf(ignored, StringComparison.OrdinalIgnoreCase) >= 0))         
+                .Where(x => AfkMessages.Any(msg => x.Message.IndexOf(msg, StringComparison.OrdinalIgnoreCase) >= 0))
+                .Select(x => x.Text)
+                .FirstOrDefault();                
+
+        afkCheckJournal.Delete();
+        return trigger;
     }
 
     public static bool IsAfkAlertRequired

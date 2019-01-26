@@ -33,6 +33,6 @@ namespace Infusion
 
         public override string ToString() => $"0x{Value:X8}";
 
+        public bool IsMobile => Value < 0x40000000;
     }
-
 }

@@ -8,7 +8,8 @@ namespace Infusion.Packets.Server
     {
         private Packet rawPacket;
         private ModelId type;
-
+        private Location3D location;
+        private Color color;
 
         public ObjectId Id { get; private set; }
         public ModelId Type { get => type;
@@ -21,7 +22,21 @@ namespace Infusion.Packets.Server
                 writer.WriteModelId(value);
             }
         }
-        public Location3D Location { get; private set; }
+
+        public Location3D Location
+        {
+            get => location;
+            set
+            {
+                location = value;
+                var writer = new ArrayPacketWriter(rawPacket.Payload);
+
+                writer.Position = 1 + 2 + 4 + 2;
+                writer.WriteUShort((ushort)value.X);
+                writer.WriteUShort((ushort)value.Y);
+                writer.WriteSByte((sbyte)value.Z);
+            }
+        }
 
         public override Packet RawPacket => rawPacket;
         public Direction Direction { get; private set; }
@@ -38,8 +53,8 @@ namespace Infusion.Packets.Server
             reader.Skip(3);
 
             Id = reader.ReadObjectId();
-            Type = reader.ReadModelId();
-            Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadSByte());
+            this.type = reader.ReadModelId();
+            this.location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadSByte());
             (Direction, MovementType) = reader.ReadDirection();
             Color = (Color) reader.ReadUShort();
             Flags = reader.ReadByte();
@@ -49,13 +64,13 @@ namespace Infusion.Packets.Server
             var itemId = reader.ReadUInt();
             while (itemId != 0x00000000)
             {
-                var type = reader.ReadUShort();
+                var itemType = reader.ReadUShort();
                 var layer = (Layer) reader.ReadByte();
                 Color? color = null;
 
-                DeserializeColor(reader, ref type, ref color);
+                DeserializeTypeAndColor(reader, ref itemType, ref color);
 
-                var item = new Item(new ObjectId(itemId), new ModelId(type), 1, new Location3D(0, 0, 0), containerId: Id,
+                var item = new Item(new ObjectId(itemId), new ModelId(itemType), 1, new Location3D(0, 0, 0), containerId: Id,
                     layer: layer, color: color);
 
                 items.Add(item);
@@ -66,7 +81,7 @@ namespace Infusion.Packets.Server
             Items = items.ToArray();
         }
 
-        protected virtual void DeserializeColor(ArrayPacketReader reader, ref ushort type, ref Color? color)
+        protected virtual void DeserializeTypeAndColor(ArrayPacketReader reader, ref ushort type, ref Color? color)
         {
             if ((type & 0x8000) != 0)
             {

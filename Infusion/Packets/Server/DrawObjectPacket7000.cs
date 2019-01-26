@@ -4,7 +4,7 @@ namespace Infusion.Packets.Server
 {
     internal class DrawObjectPacket7000 : DrawObjectPacket
     {
-        protected override void DeserializeColor(ArrayPacketReader reader, ref ushort type, ref Color? color)
+        protected override void DeserializeTypeAndColor(ArrayPacketReader reader, ref ushort type, ref Color? color)
         {
             if ((type & 0x8000) != 0)
             {

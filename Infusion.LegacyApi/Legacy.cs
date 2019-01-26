@@ -112,8 +112,11 @@ namespace Infusion.LegacyApi
             ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
             RegisterDefaultCommands();
 
+            Phantoms = new Phantoms(Client, Server, packetRegistry);
             Injection = new InjectionHost(this, console, packetRegistry, timeSource);
         }
+
+        public Phantoms Phantoms { get; }
 
         public InjectionHost Injection { get; }
 

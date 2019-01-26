@@ -118,6 +118,7 @@
     <Compile Include="OrderedEvent.cs" />
     <Compile Include="Events\SkillRequestedEvent.cs" />
     <Compile Include="Events\SpeechReceivedEvent.cs" />
+    <Compile Include="Phantoms.cs" />
     <Compile Include="ScriptTrace.cs" />
     <Compile Include="ScriptTraceLogger.cs" />
     <Compile Include="GlobalTrace.cs" />

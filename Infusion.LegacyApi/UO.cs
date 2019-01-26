@@ -13,6 +13,8 @@ namespace Infusion.LegacyApi
 
         public static Injection.InjectionHost Injection => Current.Injection;
 
+        public static Phantoms Phantoms => Current.Phantoms;
+
         public static LogConfiguration LogConfig => Current.LogConfig;
 
         public static Gump CurrentGump => Current.CurrentGump;

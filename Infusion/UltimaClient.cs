@@ -60,21 +60,27 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
-        internal void UpdateCurrentStamina(ObjectId playerId, ushort currentStamina, ushort maxStamina)
+        public void UpdateCurrentStamina(ObjectId playerId, ushort currentStamina, ushort maxStamina)
         {
             Send(new UpdateCurrentStaminaPacket(playerId, currentStamina, maxStamina).RawPacket);
         }
 
-        internal void CloseGump(GumpTypeId gumpTypeId)
+        public void CloseGump(GumpTypeId gumpTypeId)
         {
             Send(new CloseGenericGumpPacket(gumpTypeId).RawPacket);
         }
 
         public void DrawGamePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, MovementType movementType, Color color)
         {
-            DrawGamePlayerPacket drawGamePlayerPacket = new DrawGamePlayerPacket(playerId, bodyType,
+            var drawGamePlayerPacket = new DrawGamePlayerPacket(playerId, bodyType,
                 location, direction, movementType, color);
             Send(drawGamePlayerPacket.RawPacket);
+        }
+
+        public void UpdatePlayer(ObjectId playerId, ModelId bodyType, Location3D location, Direction direction, Color color)
+        {
+            var packet = new UpdatePlayerPacket(playerId, bodyType, location, direction, color);
+            Send(packet.RawPacket);
         }
 
         public void TargetCursor(CursorTarget location, CursorId cursorId, CursorType type)
@@ -100,15 +106,6 @@ namespace Infusion
         {
             ObjectInfoPacket packet = new ObjectInfoPacket(id, type, location, color);
             Send(packet.RawPacket);
-        }
-
-        public Item CreatePhantom(ObjectId id, ModelId modelId, Location3D location, Color? color)
-        {
-            Item item = new Item(id, modelId, 1, location, color, null, null);
-
-            ObjectInfo(id, modelId, location, color);
-
-            return item;
         }
 
         public void DeleteItem(ObjectId id)

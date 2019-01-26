@@ -335,7 +335,7 @@ public static class Phantoms
         {
             if (Id.HasValue)
             {
-                UO.Client.DeleteItem(Id.Value);
+                UO.Phantoms.Remove(Id.Value);
                 Id = null;
             }
         }
@@ -347,12 +347,8 @@ public static class Phantoms
             {
                 Id = NextPhantomId();
             }
-            else
-            {
-                UO.Client.DeleteItem(Id.Value);
-            }
         
-            UO.Client.CreatePhantom(Id.Value, Type, Location, color);
+            UO.Phantoms.Show(Id.Value, Type, Location, color);
         }
     }    
 }

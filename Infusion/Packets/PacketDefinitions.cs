@@ -41,8 +41,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<DropItemRequest> DropItem6017 = new PacketDefinition<DropItemRequest>(0x08,
             new StaticPacketLength(15), "DropItem", () => new DropItemRequest(true, 15));
 
-        public static readonly PacketDefinition SingleClick = new PacketDefinition(0x09,
-            new StaticPacketLength(5), "SingleClick");
+        public static readonly PacketDefinition<SingleClickRequest> SingleClick = new PacketDefinition<SingleClickRequest>(0x09,
+            new StaticPacketLength(5), "SingleClick", () => new SingleClickRequest());
 
         public static readonly PacketDefinition EditTileData = new PacketDefinition(0x0C,
             new VariablePacketLength(), "EditTileData");

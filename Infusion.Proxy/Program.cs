@@ -194,13 +194,14 @@ namespace Infusion.Proxy
             }
             catch (IOException ioex) when (ioex.InnerException is SocketException socex && socex.SocketErrorCode == SocketError.ConnectionReset)
             {
-                Console.Error("Connection to client lost.");
-                throw;
+                Console.Error("Connection to client lost. Please restart infusion.");
+                Console.Debug(socex.ToString());
             }
             catch (Exception ex)
             {
-                Console.Error(serverDiagnosticPullStream.Flush());
-                Console.Error(ex.ToString());
+                Console.Error("Connection to client lost. Please restart infusion.");
+                Console.Debug(serverDiagnosticPullStream.Flush());
+                Console.Debug(ex.ToString());
                 throw;
             }
             finally
@@ -299,7 +300,7 @@ namespace Infusion.Proxy
                         }
                         catch (EndOfStreamException ex)
                         {
-                            Console.Error(ex.ToString());
+                            Console.Debug(ex.ToString());
                             // just swallow this exception, wait for the next batch
                         }
                     }
@@ -308,8 +309,9 @@ namespace Infusion.Proxy
             }
             catch (Exception ex)
             {
-                Console.Error(serverDiagnosticPullStream.Flush());
-                Console.Error(ex.ToString());
+                Console.Error("Disconnected from server. Please, restart Infusion.");
+                Console.Debug(serverDiagnosticPullStream.Flush());
+                Console.Debug(ex.ToString());
                 throw;
             }
         }

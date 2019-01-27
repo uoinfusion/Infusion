@@ -19,13 +19,13 @@ namespace Infusion.Desktop.Console
             this.wpfConsole = wpfConsole;
         }
 
-        public void WriteSpeech(string name, string message, ObjectId? speakerId, Color color)
+        public void WriteSpeech(string name, string message, ObjectId? speakerId, Color color, ModelId bodyType, SpeechType type)
         {
             var now = DateTime.UtcNow;
             Enqueue(() =>
             {
                 string text = !string.IsNullOrEmpty(name) ? $"{name}: {message}" : message;
-                    wpfConsole.WriteSpeech(now, name, message, text, color);
+                    wpfConsole.WriteSpeech(now, name, message, text, color, bodyType, type);
                     fileConsole.WriteLine(now, text);
             });
         }

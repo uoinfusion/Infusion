@@ -79,6 +79,7 @@ namespace Infusion.Desktop
             UO.CommandHandler.RegisterCommand(new Command("console-show-speechonly", () => Dispatcher.Invoke(() => _console.ShowSpeechOnly()), false, true));
             UO.CommandHandler.RegisterCommand(new Command("console-show-game", () => Dispatcher.Invoke(() => _console.ShowGame()), false, true));
             UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll()), false, true));
+            UO.CommandHandler.RegisterCommand(new Command("console-show-nodebug", () => Dispatcher.Invoke(() => _console.ShowNoDebug()), false, true));
 
             if (!string.IsNullOrEmpty(profile.LauncherOptions.InitialScriptFileName))
                 Load(profile.LauncherOptions.InitialScriptFileName);

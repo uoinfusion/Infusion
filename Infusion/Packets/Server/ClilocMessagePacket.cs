@@ -16,18 +16,18 @@ namespace Infusion.Packets.Server
         public MessageId MessageId { get; set; }
         public string Name { get; set; }
         public string Arguments { get; set; }
+        public SpeechType Type { get; set; }
 
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;
 
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Skip(1);
+            reader.Skip(3);
 
-            var packetSize = reader.ReadUShort();
             SpeakerId = reader.ReadObjectId();
             SpeakerBody = reader.ReadModelId();
-            reader.ReadByte(); // type
+            Type = (SpeechType)reader.ReadByte();
             Color = reader.ReadColor();
             Font = reader.ReadUShort();
             MessageId = new MessageId(reader.ReadInt());

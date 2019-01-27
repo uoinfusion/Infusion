@@ -45,7 +45,7 @@ namespace Infusion.LegacyApi.Injection
                     Message = entry.Message,
                     Name = entry.Name,
                     SpeakerId = entry.SpeakerId,
-                    Type = entry.Type,
+                    Type = entry.SpeakerBody,
                 });
                 while (journal.Count > MaxEntries)
                     journal.RemoveLast();

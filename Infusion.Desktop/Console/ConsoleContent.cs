@@ -1,3 +1,4 @@
+using Infusion.LegacyApi.Console;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,6 +11,10 @@ namespace Infusion.Desktop.Console
         private ObservableCollection<ConsoleLine> consoleOutput = new ObservableCollection<ConsoleLine>();
         private readonly List<ConsoleLine> unfilteredConsoleOutput = new List<ConsoleLine>();
 
+        private Func<ConsoleLine, bool> filter = x => true;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public ObservableCollection<ConsoleLine> ConsoleOutput
         {
             get => consoleOutput;
@@ -20,39 +25,28 @@ namespace Infusion.Desktop.Console
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private Func<ConsoleLine, bool> filter = (line) => true;
 
         private bool GameFilter(ConsoleLine line)
         {
             return line is ConsoleSpeechLine;
         }
 
-        private bool SpeechOnlyFilter(ConsoleLine line)
+        private bool SpeechOnlyFilter(ConsoleLine line) 
+            => line is ConsoleSpeechLine speech && speech.IsSpeech;
+
+        private bool NoDebugFilter(ConsoleLine line)
         {
-            if (line is ConsoleSpeechLine speech)
-            {
-                if (string.IsNullOrEmpty(speech.Name) || speech.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
-                    return false;
-                if (speech.Name.Equals(speech.Message, StringComparison.OrdinalIgnoreCase))
-                    return false;
-            }
+            if (line is ConsoleInfusionLine infusionLine)
+                return infusionLine.Type != ConsoleLineType.Debug;
             else
-                return false;
-
-            return true;
+                return true;
         }
 
-        private bool NoFilter(ConsoleLine line)
-        {
-            return true;
-        }
+        private bool NoFilter(ConsoleLine line) => true;
 
         private void SetFilter(Func<ConsoleLine, bool> filter)
         {
@@ -101,27 +95,20 @@ namespace Infusion.Desktop.Console
 
         internal void ShowToggle()
         {
-            if (filter != GameFilter && filter != SpeechOnlyFilter)
-                SetFilter(GameFilter);
-            else if (filter != SpeechOnlyFilter)
-                SetFilter(SpeechOnlyFilter);
-            else
-                SetFilter(NoFilter);
+            if (filter == NoFilter)
+                ShowNoDebug();
+            else if (filter == NoDebugFilter)
+                ShowGame();
+            else if (filter == GameFilter)
+                ShowSpeechOnly();
+            else if (filter == SpeechOnlyFilter)
+                ShowAll();
         }
 
-        internal void ShowSpeechOnly()
-        {
-            SetFilter(SpeechOnlyFilter);
-        }
+        internal void ShowSpeechOnly() => SetFilter(SpeechOnlyFilter);
+        internal void ShowGame() => SetFilter(GameFilter);
+        internal void ShowNoDebug() => SetFilter(NoDebugFilter);
 
-        internal void ShowGame()
-        {
-            SetFilter(GameFilter);
-        }
-
-        internal void ShowAll()
-        {
-            SetFilter(NoFilter);
-        }
+        internal void ShowAll() => SetFilter(NoFilter);
     }
 }

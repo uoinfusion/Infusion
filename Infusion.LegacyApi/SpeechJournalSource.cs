@@ -52,7 +52,7 @@ namespace Infusion.LegacyApi
             LastActionJournalEntryId = CurrentJournalEntryId;
         }
 
-        public void AddMessage(string name, string message, ObjectId speakerId, ModelId type, Color color)
+        public void AddMessage(string name, string message, ObjectId speakerId, ModelId speakerType, Color color, SpeechType type = SpeechType.Normal)
         {
             JournalEntry entry;
 
@@ -61,7 +61,7 @@ namespace Infusion.LegacyApi
                 if (currentJournalEntryId == long.MaxValue)
                     throw new InvalidOperationException("Maximum number of received journal entries exceeded, cannot continue receiving journal entries.");
 
-                entry = new JournalEntry(CurrentJournalEntryId, name, message, speakerId, type, color);
+                entry = new JournalEntry(CurrentJournalEntryId, name, message, speakerId, speakerType, color, type);
                 currentJournalEntryId++;
 
                 journal = journal.Enqueue(entry);

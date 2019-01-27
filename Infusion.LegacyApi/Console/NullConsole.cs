@@ -28,7 +28,7 @@ namespace Infusion.LegacyApi.Console
         {
         }
 
-        public void WriteSpeech(string name, string message, ObjectId? speakerId, Color color)
+        public void WriteSpeech(string name, string message, ObjectId? speakerId, Color color, ModelId bodyType, SpeechType type)
         {
         }
 

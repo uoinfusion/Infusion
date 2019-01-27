@@ -665,7 +665,7 @@ namespace Infusion.LegacyApi
         {
             Client.SendSpeech(message, name, itemId, itemModel, type, color);
             if (log)
-                console.WriteSpeech(name, message, itemId, color);
+                console.WriteSpeech(name, message, itemId, color, itemModel, type);
         }
 
         public void ClientPrint(string message, bool log = true)

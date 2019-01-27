@@ -72,11 +72,14 @@ namespace Infusion.Desktop.Console
 
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
+
+            consoleContent.ShowAll();
         }
 
         internal void ShowToggle() => consoleContent.ShowToggle();
         internal void ShowSpeechOnly() => consoleContent.ShowSpeechOnly();
         internal void ShowAll() => consoleContent.ShowAll();
+        internal void ShowNoDebug() => consoleContent.ShowNoDebug();
         internal void ShowGame() => consoleContent.ShowGame();
 
         public void Dispose()

@@ -28,28 +28,28 @@ namespace Infusion.LegacyApi
             if (!string.IsNullOrEmpty(packet.Affix))
                 message += packet.Affix;
             
-            journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color);
-            console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color);
+            journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color, packet.Type);
+            console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color, packet.SpeakerBody, packet.Type);
         }
 
         private void HandleClilocMessage(ClilocMessagePacket packet)
         {
             var message = clilocDictionary.Value.GetString(packet.MessageId.Value) ?? $"Unknown Cliloc #{packet.MessageId.Value}";
 
-            journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color);
-            console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color);
+            journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color, packet.Type);
+            console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color, packet.SpeakerBody, packet.Type);
         }
 
         private void HandleSpeechMessagePacket(SpeechMessagePacket packet)
         {
-            journalSource.AddMessage(packet.Name, packet.Message, packet.Id, packet.Model, packet.Color);
-            console.WriteSpeech(packet.Name, packet.Message, packet.Id, packet.Color);
+            journalSource.AddMessage(packet.Name, packet.Message, packet.Id, packet.Model, packet.Color, packet.Type);
+            console.WriteSpeech(packet.Name, packet.Message, packet.Id, packet.Color, packet.Model, packet.Type);
         }
 
         private void HanldeSendSpeechPacket(SendSpeechPacket packet)
         {
-            journalSource.AddMessage(packet.Name, packet.Message, packet.Id, packet.Model, packet.Color);
-            console.WriteSpeech(packet.Name, packet.Message, packet.Id, packet.Color);
+            journalSource.AddMessage(packet.Name, packet.Message, packet.Id, packet.Model, packet.Color, packet.Type);
+            console.WriteSpeech(packet.Name, packet.Message, packet.Id, packet.Color, packet.Model, packet.Type);
         }
     }
 }

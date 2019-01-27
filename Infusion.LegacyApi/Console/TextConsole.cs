@@ -33,7 +33,7 @@ namespace Infusion.LegacyApi.Console
             System.Console.WriteLine(message);
         }
 
-        public void WriteSpeech(string name, string message, ObjectId? speakerId, Color color)
+        public void WriteSpeech(string name, string message, ObjectId? speakerId, Color color, ModelId bodyType, SpeechType type)
         {
             System.Console.WriteLine($"{name ?? string.Empty}: {message}");
         }

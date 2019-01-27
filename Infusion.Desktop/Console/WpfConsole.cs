@@ -16,51 +16,7 @@ namespace Infusion.Desktop.Console
             this.dispatcher = dispatcher;
         }
 
-        internal void WriteSpeech(DateTime timeStamp, string name, string message, string text, Color color)
-        {
-            DispatchWrtieSpeech(timeStamp, name, message, text, color);
-        }
-
-        internal void WriteLine(DateTime timeStamp, ConsoleLineType type, string message)
-        {
-            switch (type)
-            {
-                case ConsoleLineType.Debug:
-                    DispatchWriteLine(timeStamp, message, Brushes.DimGray);
-                    break;
-                case ConsoleLineType.Error:
-                    DispatchWriteLine(timeStamp, message, Brushes.DarkRed);
-                    break;
-                case ConsoleLineType.Important:
-                    DispatchWriteLine(timeStamp, message, Brushes.White);
-                    break;
-                case ConsoleLineType.Critical:
-                    DispatchWriteLine(timeStamp, message, Brushes.Red);
-                    break;
-                case ConsoleLineType.Information:
-                    DispatchWriteLine(timeStamp, message, Brushes.Gray);
-                    break;
-                case ConsoleLineType.ScriptEcho:
-                    DispatchWriteLine(timeStamp, message, Brushes.LightGray);
-                    break;
-                case ConsoleLineType.ScriptResult:
-                    DispatchWriteLine(timeStamp, message, Brushes.LightSkyBlue);
-                    break;
-                case ConsoleLineType.Warning:
-                    DispatchWriteLine(timeStamp, message, Brushes.Yellow);
-                    break;
-                case ConsoleLineType.SkillChanged:
-                    DispatchWriteLine(timeStamp, message, Brushes.Azure);
-                    break;
-            }
-        }
-
-        private void DispatchWriteLine(DateTime timeStamp, string message, Brush textBrush)
-        {
-            dispatcher.BeginInvoke((Action)(() => { WriteLine(timeStamp, new ConsoleLine(timeStamp, message, textBrush)); }));
-        }
-
-        private void DispatchWrtieSpeech(DateTime timeStamp, string name, string message, string text, Color color)
+        internal void WriteSpeech(DateTime timeStamp, string name, string message, string text, Color color, ModelId bodyType, SpeechType type)
         {
             dispatcher.BeginInvoke((Action)(() =>
             {
@@ -71,8 +27,13 @@ namespace Infusion.Desktop.Console
 
                 var brush = new SolidColorBrush(wpfColor);
 
-                WriteLine(timeStamp, new ConsoleSpeechLine(timeStamp, name, message, text, brush));
+                WriteLine(timeStamp, new ConsoleSpeechLine(timeStamp, name, message, text, bodyType, type, brush));
             }));
+        }
+
+        internal void WriteLine(DateTime timeStamp, ConsoleLineType type, string message)
+        {
+            dispatcher.BeginInvoke((Action)(() => { WriteLine(timeStamp, new ConsoleInfusionLine(timeStamp, message, type)); }));
         }
 
         private DateTime? lastWriteLineDate;
@@ -88,7 +49,7 @@ namespace Infusion.Desktop.Console
         {
             if (!lastWriteLineDate.HasValue || lastWriteLineDate.Value != timeStamp.Date)
             {
-                consoleContent.Add(new ConsoleLine($"{timeStamp.Date:d}", Brushes.White));
+                consoleContent.Add(new ConsoleInfusionLine(timeStamp, $"{timeStamp.Date:d}", ConsoleLineType.Debug));
                 lastWriteLineDate = timeStamp.Date;
             }
         }

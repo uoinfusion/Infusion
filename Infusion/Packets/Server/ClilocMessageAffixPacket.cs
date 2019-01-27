@@ -12,6 +12,7 @@ namespace Infusion.Packets.Server
         public ModelId SpeakerBody { get; set; }
         public Color Color { get; set; }
         public ushort Font { get; set; }
+        public SpeechType Type { get; set; }
         public MessageId MessageId { get; set; }
         public string Name { get; set; }
         public string Affix { get; set; }
@@ -21,12 +22,11 @@ namespace Infusion.Packets.Server
             this.rawPacket = rawPacket;
 
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Skip(1);
+            reader.Skip(3);
 
-            var packetSize = reader.ReadUShort();
             SpeakerId = reader.ReadObjectId();
             SpeakerBody = reader.ReadModelId();
-            reader.ReadByte(); // type
+            Type = (SpeechType)reader.ReadByte();
             Color = reader.ReadColor();
             Font = reader.ReadUShort();
             MessageId = new MessageId(reader.ReadInt());

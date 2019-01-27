@@ -7,7 +7,7 @@ namespace Infusion.Desktop.Console
     public abstract class ConsoleLine
     {
         protected static string FormatMessage(DateTime timeStamp, string text) =>
-            $"{timeStamp:HH:mm:ss:fff} - {text}";
+            $"{timeStamp.ToLocalTime():HH:mm:ss:fff} - {text}";
 
         protected ConsoleLine(DateTime timeStamp, string text, Brush brush)
             : this(FormatMessage(timeStamp, text), brush)

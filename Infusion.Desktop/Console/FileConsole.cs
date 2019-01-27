@@ -13,6 +13,7 @@ namespace Infusion.Desktop.Console
         private bool firstWrite = true;
         private FileStream stream;
         private StreamWriter writer;
+        private readonly RingBuffer<string> notLoggedMessages = new RingBuffer<string>(8192);
 
         public FileConsole(LogConfiguration logConfig, CircuitBreaker loggingBreaker)
         {
@@ -41,7 +42,13 @@ namespace Infusion.Desktop.Console
         public void WriteLine(DateTime timeStamp, string message)
         {
             if (!logConfig.LogToFileEnabled)
-                return;
+            {
+                lock (logLock)
+                {
+                    notLoggedMessages.Add(FormatMessage(timeStamp, message));
+                    return;
+                }
+            }
 
             loggingBreaker.Protect(() =>
             {
@@ -80,13 +87,23 @@ namespace Infusion.Desktop.Console
                                 $"Log created on {timeStamp.Date:d}, unknown timezone");
                         }
 
-                        writer.WriteLine($@"Infusion {VersionHelpers.ProductVersion}");
                         firstWrite = false;
                     }
-                    writer.WriteLine($@"{timeStamp:HH:mm:ss:fffff}: {message}");
+
+                    if (notLoggedMessages.Count > 0)
+                    {
+                        foreach (var msg in notLoggedMessages)
+                            writer.WriteLine(msg);
+                        notLoggedMessages.Clear();
+                    }
+
+                    writer.WriteLine(FormatMessage(timeStamp, message));
                     writer.Flush();
                 }
             });
         }
+
+        private string FormatMessage(DateTime timeStamp, string message)
+            => $@"{timeStamp:HH:mm:ss:fffff}: {message}";
     }
 }

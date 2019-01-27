@@ -73,7 +73,7 @@ namespace Infusion.Desktop.Console
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
 
-            consoleContent.ShowAll();
+            consoleContent.ShowNoDebug();
         }
 
         internal void ShowToggle() => consoleContent.ShowToggle();

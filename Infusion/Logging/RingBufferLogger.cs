@@ -1,31 +1,24 @@
-﻿using System.Collections.Generic;
+﻿using Infusion.Utilities;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Infusion.Logging
 {
     internal sealed class RingBufferLogger : ILogger
     {
-        private readonly int capacity;
-        private readonly Queue<string> ringBufferQueue;
+        private readonly RingBuffer<string> ringBuffer;
         private readonly object bufferLock = new object();
 
         public RingBufferLogger(int capacity)
         {
-            this.capacity = capacity;
-            ringBufferQueue = new Queue<string>(capacity);
+            ringBuffer = new RingBuffer<string>(capacity);
         }
 
         public void WriteLine(string message)
         {
             lock (bufferLock)
             {
-                if (ringBufferQueue.Count + 1 >= capacity)
-                {
-                    ringBufferQueue.Dequeue();
-                }
-
-                ringBufferQueue.Enqueue(message);
-
+                ringBuffer.Add(message);
             }
         }
 
@@ -33,12 +26,13 @@ namespace Infusion.Logging
         {
             lock (bufferLock)
             {
-                StringBuilder dumpBuilder = new StringBuilder();
-                while (ringBufferQueue.Count > 0)
+                var dumpBuilder = new StringBuilder();
+                foreach (var msg in ringBuffer)
                 {
-                    dumpBuilder.AppendLine(ringBufferQueue.Dequeue());
+                    dumpBuilder.AppendLine(msg);
                 }
 
+                ringBuffer.Clear();
                 return dumpBuilder.ToString();
             }
         }
@@ -52,7 +46,7 @@ namespace Infusion.Logging
         {
             lock (bufferLock)
             {
-                return ringBufferQueue.ToArray();
+                return ringBuffer.ToArray();
             }
         }
 
@@ -60,7 +54,7 @@ namespace Infusion.Logging
         {
             lock (bufferLock)
             {
-                ringBufferQueue.Clear();
+                ringBuffer.Clear();
             }
         }
 

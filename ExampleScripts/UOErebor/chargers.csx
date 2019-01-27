@@ -4,9 +4,11 @@ public static class Chargers
 
     public static int FireLevel => GetLevel(fireCharger);
     public static int EnergyLevel => GetLevel(energyCharger);
+    public static int MindLevel => GetLevel(mindCharger);
 
     private static EventJournal journal = UO.CreateEventJournal();    
 
+    private static Charger mindCharger = new Charger(2270, 6253, Trace);
     private static Charger fireCharger = new Charger(2257, 6254, Trace);
     private static Charger energyCharger = new Charger(2281, 6256, Trace);
 
@@ -30,12 +32,14 @@ public static class Chargers
     {
         fireCharger.ProcessCloseRequest(ev);
         energyCharger.ProcessCloseRequest(ev);
+        mindCharger.ProcessCloseRequest(ev);
     }
     
     private static void ProcessGump(GumpReceivedEvent ev)
     {
         fireCharger.ProcessGump(ev);
         energyCharger.ProcessGump(ev);
+        mindCharger.ProcessGump(ev);
     }
     
     public static void TrackChargers() => GetAwaiter().Incomming();

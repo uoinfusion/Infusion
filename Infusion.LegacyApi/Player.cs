@@ -105,6 +105,8 @@ namespace Infusion.LegacyApi
 
         public bool HasMount => hasMount != null && hasMount();
 
+        public Notoriety Notoriety { get; internal set; }
+
         public ImmutableDictionary<Skill, SkillValue> Skills { get; private set; } =
             ImmutableDictionary<Skill, SkillValue>.Empty;
 

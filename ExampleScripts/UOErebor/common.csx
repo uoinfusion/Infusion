@@ -157,6 +157,37 @@ class MobileLookupLinqWrapper : IMobileLookup
     IEnumerator IEnumerable.GetEnumerator() => enumerable.GetEnumerator();
 }
 
+class CompositeMobileLookup : IMobileLookup
+{
+    private readonly IMobileLookup[] lookups;
+
+    public CompositeMobileLookup(params IMobileLookup[] lookups)
+    {
+        this.lookups = lookups;
+    }
+
+    public Mobile this[ObjectId id]
+    {
+        get
+        {
+            foreach (var lookup in lookups)
+            {
+                var mobile = lookup[id];
+                if (mobile != null)
+                    return null;
+            }
+            
+            return null;
+        }
+    }
+
+    public bool Contains(ObjectId id) => lookups.Any(lookup => lookup.Contains(id));
+
+    public IEnumerator<Mobile> GetEnumerator() => lookups.SelectMany(lookup => lookup).GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => lookups.SelectMany(lookup => lookup).GetEnumerator();
+}
+
 public interface IMobileLookup : IEnumerable<Mobile>
 {
     bool Contains(ObjectId id);

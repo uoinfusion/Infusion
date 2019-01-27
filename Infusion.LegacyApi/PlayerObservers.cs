@@ -256,6 +256,7 @@ namespace Infusion.LegacyApi
                 player.Color = packet.Color;
                 player.BodyType = packet.Type;
                 player.Flags = packet.Flags;
+                player.Notoriety = packet.Notoriety;
 
                 player.ResetWalkRequestQueue();
                 player.CurrentSequenceKey = 0;

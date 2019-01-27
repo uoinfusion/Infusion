@@ -1,5 +1,6 @@
 #r "Infusion.Scripts.UOErebor.Extensions.dll"
 #load "RequestStatusQueue.csx"
+#load "common.csx"
 
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ public static class Party
             .Where(x => UO.Mobiles[x.Id] != null)
             .Select(x => (ObjectId)x.Id).ToArray();
 
+    public static IMobileLookup Members { get; }
+
     private static ObjectId? lastTargetId = null; 
     
     public static bool UsingExplicitDataSource { get; set; } = false;
@@ -37,6 +40,8 @@ public static class Party
         };
 
         requestStatusQueue.StartProcessing();
+
+        Members = new MobileLookupLinqWrapper(statuses.StatusBars.Select(x => UO.Mobiles[x.Id]));
     }
     
     public static void Enable()

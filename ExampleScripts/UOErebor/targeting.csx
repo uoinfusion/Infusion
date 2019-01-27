@@ -24,10 +24,18 @@ public static class TargetingModes
     public static TargetingMode Pvp = () =>
         UO.Mobiles.MaxDistance(20)
                 .Matching(Specs.Player)
-                .Where(i => i.Id != UO.Me.PlayerId && (i.Notoriety == Notoriety.Murderer 
+                .Where(i => i.Id != UO.Me.PlayerId && (i.Notoriety == GetEnemyNotoriety() 
                     || ((i.Notoriety == Notoriety.Grey ||  i.Notoriety == Notoriety.Criminal) && Specs.Player.Matches(i)))
-                    && !Targeting.Ignored.Contains(i. Id)&& (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
+                    && !Targeting.Ignored.Contains(i. Id) && (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
                 .OrderByDistance();
+
+    private static Notoriety GetEnemyNotoriety()
+    {
+        if (UO.Me.Notoriety == Notoriety.Innocent)
+            return Notoriety.Murderer;
+        
+        return Notoriety.Innocent;
+    }
 
     public static TargetingMode PvpFriend = () =>
         UO.Mobiles.MaxDistance(20)
@@ -47,7 +55,7 @@ public static class Targeting
 
     public static TargetingMode Mode { get; set; } = TargetingModes.Pvm;
 
-    public static IMobileLookup Ignored { get; set; } = Pets.MyPets;
+    public static IMobileLookup Ignored { get; set; } = new CompositeMobileLookup(Pets.MyPets, Party.Members);
     
     public static MobileSpec IgnoredSpec { get; set; } = null;
     

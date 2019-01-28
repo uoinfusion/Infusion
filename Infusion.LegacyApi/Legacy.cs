@@ -274,7 +274,7 @@ namespace Infusion.LegacyApi
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? Items.Matching(spec).InBackPack().FirstOrDefault()
+                       ?? Items.Matching(spec).InBackPack(true).FirstOrDefault()
                        ?? Items.Matching(spec).OnLayer(Layer.Backpack)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
 
@@ -305,7 +305,7 @@ namespace Infusion.LegacyApi
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? items.OnLayer(Layer.TwoHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
-                       ?? items.InBackPack().FirstOrDefault()
+                       ?? items.InBackPack(true).FirstOrDefault()
                        ?? items.OnLayer(Layer.Backpack)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId);
             if (item != null)
@@ -327,7 +327,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            var item = Items.OfType(types).InBackPack()
+            var item = Items.OfType(types).InBackPack(true)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)
                        ?? Items.OfType(types).OnLayer(Layer.OneHandedWeapon)
                            .FirstOrDefault(i => i.ContainerId.HasValue && i.ContainerId == Me.PlayerId)

@@ -158,7 +158,6 @@
     <Compile Include="Packets\Server\CloseContainerPacket.cs" />
     <Compile Include="DialogBoxResponse.cs" />
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
-    <Compile Include="Packets\Server\DrawContainerPacket7090.cs" />
     <Compile Include="Packets\Server\DrawObjectPacket7000.cs" />
     <Compile Include="Packets\Server\GraphicalEffectPacket.cs" />
     <Compile Include="Packets\Server\OpenDialogBoxPacket.cs" />
@@ -168,6 +167,7 @@
     <Compile Include="Packets\Server\PlaySoundEffectPacket.cs" />
     <Compile Include="Packets\Server\QuestArrowPacket.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
+    <Compile Include="Packets\Server\SecondAgeObjectInformation.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />
     <Compile Include="Parsers\OutputLogParser.cs" />

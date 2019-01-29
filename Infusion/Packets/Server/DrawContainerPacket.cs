@@ -9,9 +9,18 @@ namespace Infusion.Packets.Server
 {
     internal class DrawContainerPacket : MaterializedPacket
     {
+        protected Packet rawPacket;
+        private readonly int protocolVersion;
+        public override Packet RawPacket => rawPacket;
+
         public ObjectId ContainerId { get; protected set; }
 
         public ModelId GumpModel { get; protected set; }
+
+        public DrawContainerPacket(int protocolVersion = 0)
+        {
+            this.protocolVersion = protocolVersion;
+        }
 
         public override void Deserialize(Packet rawPacket)
         {
@@ -22,11 +31,9 @@ namespace Infusion.Packets.Server
 
             ContainerId = reader.ReadObjectId();
             GumpModel = reader.ReadModelId();
+
+            if (protocolVersion >= 7090)
+                reader.ReadUShort();
         }
-
-        public override Packet RawPacket => rawPacket;
-
-        protected Packet rawPacket;
-
     }
 }

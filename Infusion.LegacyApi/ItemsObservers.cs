@@ -41,6 +41,7 @@ namespace Infusion.LegacyApi
             serverPacketSubject.Subscribe(PacketDefinitions.AddItemToContainer, HandleAddItemToContainer);
             serverPacketSubject.Subscribe(PacketDefinitions.DeleteObject, HandleDeleteObjectPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.ObjectInfo, HandleObjectInfoPacket);
+            serverPacketSubject.Subscribe(PacketDefinitions.SecondAgeObjectInformation7090, HandleSecondAgeObjectInfoPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.UpdateCurrentHealth, HandleUpdateCurrentHealthPacket);
@@ -221,9 +222,27 @@ namespace Infusion.LegacyApi
             eventJournalSource.Publish(new ObjectDeletedEvent(packet.Id));
         }
 
+        private void HandleSecondAgeObjectInfoPacket(SecondAgeObjectInformationPacket packet)
+        {
+            if (gameObjects.TryGet(packet.Id, out var existingObject) && existingObject is Item existingItem)
+            {
+                gameObjects.UpdateObject(existingItem.Update(packet.Type, packet.Amount, packet.Location,
+                    existingItem.Color,
+                    existingItem.ContainerId));
+            }
+            else
+            {
+                var item = packet.Type == 0x2006
+                    ? new Corpse(packet.Id, packet.Type, packet.Amount, packet.Location, packet.Color, null, null)
+                    : new Item(packet.Id, packet.Type, packet.Amount, packet.Location, packet.Color, null, null);
+                gameObjects.AddObject(item);
+                OnItemEnteredView(item);
+            }
+        }
+
         private void HandleObjectInfoPacket(ObjectInfoPacket packet)
         {
-            if (gameObjects.TryGet(packet.Id, out GameObject existingObject) && existingObject is Item existingItem)
+            if (gameObjects.TryGet(packet.Id, out var existingObject) && existingObject is Item existingItem)
             {
                 gameObjects.UpdateObject(existingItem.Update(packet.Type, packet.Amount, packet.Location,
                     existingItem.Color,

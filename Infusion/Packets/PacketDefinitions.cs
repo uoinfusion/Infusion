@@ -254,7 +254,7 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<DrawContainerPacket> DrawContainer = new PacketDefinition<DrawContainerPacket>(0x24,
             new StaticPacketLength(7), "DrawContainer", () => new DrawContainerPacket());
         public static readonly PacketDefinition<DrawContainerPacket> DrawContainer7090 = new PacketDefinition<DrawContainerPacket>(0x24,
-            new StaticPacketLength(9), "DrawContainer", () => new DrawContainerPacket7090());
+            new StaticPacketLength(9), "DrawContainer", () => new DrawContainerPacket(7090));
 
         public static readonly PacketDefinition<AddItemToContainerPacket> AddItemToContainer = new PacketDefinition<AddItemToContainerPacket>(0x25,
             new StaticPacketLength(20), "AddItemToContainer", () => new AddItemToContainerPacket(false));
@@ -488,8 +488,9 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition SecondAgeObjectInformation = new PacketDefinition(0xF3,
             new StaticPacketLength(24), "SecondAgeObjectInformation");
-        public static readonly PacketDefinition SecondAgeObjectInformation7090 = new PacketDefinition(0xF3,
-            new StaticPacketLength(26), "SecondAgeObjectInformation");
+        public static readonly PacketDefinition<SecondAgeObjectInformationPacket> SecondAgeObjectInformation7090 
+            = new PacketDefinition<SecondAgeObjectInformationPacket>(0xF3, new StaticPacketLength(26),
+                "SecondAgeObjectInformation", () => new SecondAgeObjectInformationPacket());
 
         public static readonly PacketDefinition NewMapMessage = new PacketDefinition(0xF5,
             new StaticPacketLength(21), "NewMapMessage");

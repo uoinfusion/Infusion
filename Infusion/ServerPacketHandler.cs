@@ -114,6 +114,8 @@ namespace Infusion
                 packetHandler.Publish<OpenDialogBoxPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.GraphicalEffect.Id)
                 packetHandler.Publish<GraphicalEffectPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.SecondAgeObjectInformation.Id)
+                packetHandler.Publish<SecondAgeObjectInformationPacket>(rawPacket);
 
             return rawPacket;
         }

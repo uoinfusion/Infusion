@@ -43,7 +43,7 @@ namespace Infusion.LegacyApi.Injection
             var item = api.Items[(ObjectId)id];
             if (item != null)
             {
-                api.DragItem(item.Id, 1);
+                api.DragItem(item.Id);
                 api.Wear(item.Id, Convert(layer));
             }
         }
@@ -54,7 +54,7 @@ namespace Infusion.LegacyApi.Injection
 
             if (item != null)
             {
-                api.DragItem(item.Id, 1);
+                api.DragItem(item.Id);
                 api.DropItem(item, api.Me.BackPack);
             }
         }

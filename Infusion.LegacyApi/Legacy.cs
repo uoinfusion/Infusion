@@ -572,8 +572,7 @@ namespace Infusion.LegacyApi
 
         public void DragItem(Item item) => DragItem(item.Id, item.Amount);
         public void DragItem(Item item, int amount) => DragItem(item.Id, amount);
-        public void DragItem(ObjectId itemId) => DragItem(itemId, 1);
-
+        public void DragItem(ObjectId itemId) => DragItem(itemId, 0);
 
         public void DragItem(ObjectId itemId, int amount)
         {

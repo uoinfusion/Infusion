@@ -15,7 +15,7 @@
         {
             foreach (var item in equipments)
             {
-                api.DragItem(item.Id, 1);
+                api.DragItem(item.Id);
                 api.Wear(item.Id, item.Layer);
             }
         }

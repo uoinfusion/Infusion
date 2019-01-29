@@ -294,6 +294,9 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<AddMultipleItemsInContainerPacket> AddMultipleItemsInContainer
             = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C, new VariablePacketLength(),
                 "AddMultipleItemsInContainer", () => new AddMultipleItemsInContainerPacket());
+        public static readonly PacketDefinition<AddMultipleItemsInContainerPacket> AddMultipleItemsInContainer6017
+            = new PacketDefinition<AddMultipleItemsInContainerPacket>(0x3C, new VariablePacketLength(),
+                "AddMultipleItemsInContainer", () => new AddMultipleItemsInContainerPacket(6017));
 
         public static readonly PacketDefinition<PauseClientPacket> PauseClient = new PacketDefinition<PauseClientPacket>(0x33,
             new StaticPacketLength(2), "PauseClient", () => new PauseClientPacket());

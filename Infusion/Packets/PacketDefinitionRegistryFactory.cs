@@ -69,7 +69,6 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.FightOccuring);
             registry.Register(PacketDefinitions.AttackOk);
             registry.Register(PacketDefinitions.AttackEnded);
-            registry.Register(PacketDefinitions.AddMultipleItemsInContainer);
             registry.Register(PacketDefinitions.PersonalLightLevel);
             registry.Register(PacketDefinitions.OverallLightLevel);
             registry.Register(PacketDefinitions.RejectCharacterLogon);
@@ -212,6 +211,11 @@ namespace Infusion.Packets
             {
                 registry.Register(PacketDefinitions.DropItem6017);
                 registry.Register(PacketDefinitions.AddItemToContainer6017);
+                registry.Register(PacketDefinitions.AddMultipleItemsInContainer6017);
+            }
+            else
+            {
+                registry.Register(PacketDefinitions.AddMultipleItemsInContainer);
             }
 
             if (version >= new Version(6, 0, 14, 2))

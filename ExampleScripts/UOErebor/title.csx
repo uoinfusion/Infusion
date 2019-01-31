@@ -13,7 +13,7 @@ public static class Title
         $"Food: {Amount(Specs.Food)}";
 
     public static string Amount(ItemSpec itemSpec)
-        => UO.Items.InBackPack().Matching(itemSpec).Sum(x => x.Amount).ToString();
+        => UO.Items.InBackPack(true).Matching(itemSpec).Sum(x => x.Amount).ToString();
 
     public static void Run()
     {

@@ -38,6 +38,7 @@ namespace Infusion.Packets.Server
             Type = reader.ReadModelId();
             Facing = (Direction)reader.ReadByte();
             Amount = reader.ReadUShort();
+            reader.ReadUShort(); // second amount?
             Location = new Location3D(reader.ReadUShort(), reader.ReadUShort(), reader.ReadSByte());
             Layer = reader.ReadLayer();
             Color = reader.ReadColor();

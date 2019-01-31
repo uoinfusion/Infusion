@@ -27,12 +27,13 @@ namespace Infusion.Packets.Both
             {
                 case 0x00:
                 case 0x02:
+                case 0xDF:
                     while (reader.Position < packetSize && (skillNumber = reader.ReadUShort()) != 0)
                     {
                         value = reader.ReadUShort();
                         unmodifiedValue = reader.ReadUShort();
                         reader.Skip(1); // skill lock
-                        if (type == 0x02)
+                        if (type == 0x02 || type == 0xDF)
                             reader.Skip(2); // skill cap
 
                         values.Add(new SkillValue((Skill)skillNumber, value, unmodifiedValue));

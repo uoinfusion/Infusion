@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Infusion.LegacyApi.Injection
@@ -26,6 +27,8 @@ namespace Infusion.LegacyApi.Injection
             // cannot close it. Core is completely rotten and needs to be rewritten.
             Task.Run(() =>
             {
+                Thread.Sleep(10);
+
                 lock (gumpLock)
                 {
                     if (nextTriggerId.HasValue)

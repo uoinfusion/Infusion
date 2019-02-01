@@ -41,7 +41,7 @@ public static class Party
 
         requestStatusQueue.StartProcessing();
 
-        Members = new MobileLookupLinqWrapper(statuses.StatusBars.Select(x => UO.Mobiles[x.Id]));
+        Members = new MobileLookupLinqWrapper(statuses.StatusBars.Select(x => UO.Mobiles[x.Id]).Where(x => x != null));
     }
     
     public static void Enable()

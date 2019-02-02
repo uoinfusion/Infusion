@@ -84,6 +84,8 @@ public class Warehouse
     public void Reload(ObjectId targetContainerId, ContainerLayout layout, ItemSpec spec,
         int targetAmount, bool forceLayout = false)
     {
+        Common.OpenContainer(targetContainerId);
+
         var currentAmount = UO.Items.InContainer(targetContainerId)
             .Matching(spec)
             .Sum(x => x.Amount);
@@ -101,6 +103,7 @@ public class Warehouse
         doLayout &= layout != null;         
         if (doLayout && layout.TryGetContainerLocation(spec, out Location2D location))
         {
+            UO.ClientPrint("Choosing location");
             Items.Reload(container.Id, targetContainerId, targetAmount, location, spec);
         }
         else

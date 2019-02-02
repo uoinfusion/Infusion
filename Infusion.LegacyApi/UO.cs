@@ -2,6 +2,7 @@
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 
 namespace Infusion.LegacyApi
@@ -18,6 +19,8 @@ namespace Infusion.LegacyApi
         public static LogConfiguration LogConfig => Current.LogConfig;
 
         public static Gump CurrentGump => Current.CurrentGump;
+
+        public static IConsole Console => Current.Console;
 
         public static bool IsLoginConfirmed => Current.IsLoginConfirmed;
 

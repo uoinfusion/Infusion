@@ -56,14 +56,17 @@ public static class Looting
     public static ItemSpec LootContainerSpec { get; set; }
     public static ItemSpec KnivesSpec { get; set; } = Specs.Knives;
     
-    public static IgnoredItems ignoredItems = new IgnoredItems();
-    public static HashSet<ObjectId> rippedCorpses = new HashSet<ObjectId>();
+    public static event Action<ObjectId> CorpseRipped;
+    public static event Action<ObjectId> CorpseLooted;
+    
+    public static IgnoredItems lootedCorpses = new IgnoredItems();
+    public static IgnoredItems rippedCorpses = new IgnoredItems();
 
     public static IEnumerable<Corpse> GetLootableCorpses()
     {
         var corpses = UO.Corpses
             .MaxDistance(20)
-            .Where(x => !ignoredItems.IsIgnored(x))
+            .Where(x => !lootedCorpses.IsIgnored(x))
             .OrderByDistance().ToArray();
 
         return corpses;
@@ -73,7 +76,7 @@ public static class Looting
     {
         var corpses = UO.Corpses
             .MaxDistance(20)
-            .Where(x => !rippedCorpses.Contains(x.Id))
+            .Where(x => !rippedCorpses.IsIgnored(x.Id))
             .OrderByDistance().ToArray();
 
         return corpses;
@@ -116,6 +119,7 @@ public static class Looting
         catch (Exception ex)
         {
             UO.Log($"Cannot loot corpse: {ex.Message}");
+            UO.Console.Debug(ex.ToString());
         }
 
         if (previousEquipmentSet != null)
@@ -399,12 +403,13 @@ public static class Looting
         }
 
         UO.ClientPrint("Looting finished", UO.Me, Colors.Green);
-        ignoredItems.Ignore(container);
+        lootedCorpses.Ignore(container);
+        CorpseLooted?.Invoke(container.Id);
     }
 
     public static bool Rip(Corpse corpse)
     {
-        if (rippedCorpses.Contains(corpse.Id))
+        if (rippedCorpses.IsIgnored(corpse.Id))
         {
             UO.ClientPrint($"{Specs.TranslateToName(corpse)} already ripped.");
             return true;
@@ -429,10 +434,10 @@ public static class Looting
             
             journal
                 .When("Rozrezal jsi mrtvolu.", () => result = true)
-                .When("You are frozen and can not move.", "you can't reach anything in your state.", () => 
+                .When("Jsi paralyzovan", "You are frozen and can not move.", "you can't reach anything in your state.", () => 
                 {
                     result = false;
-                    UO.ClientPrint("I'm paralyzed, cannot loot.", UO.Me);
+                    throw new InvalidOperationException("I'm paralyzed, cannot loot.");
                 })
                 .When("Unexpected target info", () => 
                 {
@@ -443,7 +448,10 @@ public static class Looting
                 .WaitAny();
             
             if (result)
-                rippedCorpses.Add(corpse.Id);
+            {
+                rippedCorpses.Ignore(corpse.Id);
+                CorpseRipped?.Invoke(corpse.Id);
+            }
 
             return result;
         }
@@ -499,6 +507,25 @@ public static class Looting
         }
     }
     
+    public static void IgnoreLootingCorpseCommand(string parameter)
+    {
+        if (parameter.StartsWith("0x"))
+            parameter = parameter.Substring(2);
+        int id = int.Parse(parameter, System.Globalization.NumberStyles.HexNumber);
+        
+        lootedCorpses.Ignore((ObjectId)id);
+    }
+    
+    public static void IgnoreRippedCorpseCommand(string parameter)
+    {
+        if (parameter.StartsWith("0x"))
+            parameter = parameter.Substring(2);
+        int id = int.Parse(parameter, System.Globalization.NumberStyles.HexNumber);
+        
+        rippedCorpses.Ignore((ObjectId)id);
+    }
+
+    
     private static LootMode currentLootMode;
     
     private enum LootMode
@@ -516,3 +543,5 @@ UO.RegisterCommand("loot-dungeon", Looting.SetDungeonLoot);
 UO.RegisterCommand("loot-all", Looting.SetAllLoot);
 UO.RegisterCommand("loot-interesting", Looting.SetInterestingLoot);
 UO.RegisterCommand("loot-toggle", Looting.ToggleLoot);
+UO.RegisterCommand("loot-ignore-ripped", Looting.IgnoreRippedCorpseCommand);
+UO.RegisterCommand("loot-ignore-looted", Looting.IgnoreLootingCorpseCommand);

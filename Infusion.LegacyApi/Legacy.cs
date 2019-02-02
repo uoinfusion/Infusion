@@ -146,6 +146,7 @@ namespace Infusion.LegacyApi
         public ItemCollection Items { get; }
         public MobileCollection Mobiles { get; }
         public CorpseCollection Corpses { get; }
+        public IConsole Console => console;
 
         public Player Me { get; }
 

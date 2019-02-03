@@ -3,8 +3,8 @@
 	url = https://github.com/JakubLinhart/ultimasdk.git
 [submodule "RoslynPad"]
 	path = RoslynPad
-	url = git@github.com:JakubLinhart/RoslynPad.git
+	url = https://github.com/JakubLinhart/RoslynPad.git
 [submodule "InjectionScript"]
 	path = InjectionScript
-	url = git@github.com:uoinfusion/InjectionScript.git
+	url = https://github.com/uoinfusion/InjectionScript.git
 	branch = master

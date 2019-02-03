@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:Launcher="clr-namespace:Infusion.Desktop.Launcher"
+        xmlns:Desktop="clr-namespace:Infusion.Desktop"
         mc:Ignorable="d"
         x:ClassModifier="internal"
         ResizeMode="NoResize"
@@ -12,12 +13,6 @@
         SizeToContent="WidthAndHeight"
         Title="Infusion launcher" Height="397.489" Width="405.049">
     <Window.Resources>
-        <ObjectDataProvider x:Key="ultimaClientTypeValues" MethodName="GetValues"
-                            ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="Launcher:UltimaClientType"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="0,0,0,5" />
@@ -66,8 +61,10 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="2" Margin="0 10 0 0" Padding="0 2 0 0">Client type:</TextBlock>
                 <ComboBox Grid.Column="1" Grid.Row="2" Margin="0 10 0 0" Padding="5 2 5 0" IsEditable="False" IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
-                          ItemsSource="{Binding Source={StaticResource ultimaClientTypeValues}}"
-                          SelectedItem="{Binding Path=SelectedClientType}" />
+                          ItemsSource="{Desktop:EnumToItemsSource {x:Type Launcher:UltimaClientType}}"
+                          SelectedValue="{Binding Path=SelectedClientType}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedValuePath="Value"/>
 
                 <TextBlock Grid.Column="0" Grid.Row="3" Margin="0 10 0 0">Server address:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="3" Margin="0 10 0 5" Text="{Binding Path=SelectedProfile.LauncherOptions.ServerEndpoint}" />

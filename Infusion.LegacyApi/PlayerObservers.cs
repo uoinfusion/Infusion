@@ -322,14 +322,10 @@ namespace Infusion.LegacyApi
                     if (player.Direction != walkRequest.Direction)
                         player.Direction = walkRequest.Direction;
                     else
-                    {
                         player.Location = player.Location.LocationInDirection(walkRequest.Direction);
-                        if (gameObjects[player.PlayerId] is Mobile mobile)
-                        {
-                            gameObjects.UpdateObject(mobile.UpdateLocation(player.Location, player.Direction, player.MovementType));
-                        }
-                    }
 
+                    if (gameObjects[player.PlayerId] is Mobile updatedMobile)
+                        gameObjects.UpdateObject(updatedMobile.UpdateLocation(player.Location, player.Direction, player.MovementType));
                 }
                 finally
                 {

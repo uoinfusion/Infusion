@@ -119,7 +119,6 @@ public static class Looting
         catch (Exception ex)
         {
             UO.Log($"Cannot loot corpse: {ex.Message}");
-            UO.Console.Debug(ex.ToString());
         }
 
         if (previousEquipmentSet != null)

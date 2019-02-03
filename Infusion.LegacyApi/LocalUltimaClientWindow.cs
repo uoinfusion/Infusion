@@ -41,12 +41,13 @@ namespace Infusion.LegacyApi
 
         public void PressKey(char ch)
         {
-            SendChar(ultimaClientProcess.MainWindowHandle, (int)ch);
+            SendChar(ultimaClientProcess.MainWindowHandle, ch);
         }
 
         public void PressKey(KeyCode keyCode)
         {
-            PostMessage(ultimaClientProcess.MainWindowHandle, WM_KEYDOWN, (int)keyCode, 1);
+            SendMessage(ultimaClientProcess.MainWindowHandle, WM_KEYDOWN, (int)keyCode, (IntPtr)1);
+            SendMessage(ultimaClientProcess.MainWindowHandle, WM_KEYUP, (int)keyCode, (IntPtr)0xC0000001);
         }
 
         private static void SendChar(IntPtr hWnd, int value)
@@ -91,6 +92,9 @@ namespace Infusion.LegacyApi
 
         [DllImport("User32")]
         public static extern bool PostMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, int Msg, int wParam, IntPtr lParam);
 
         [DllImport("User32")]
         public static extern int OemKeyScan(int wOemChar);

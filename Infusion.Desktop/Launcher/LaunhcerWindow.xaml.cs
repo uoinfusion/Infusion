@@ -121,7 +121,13 @@ namespace Infusion.Desktop.Launcher
         private void OnSelectOrionPath(object sender, RoutedEventArgs e)
         {
             launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath
-                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "CrossUO|crossuo.exe|Orion|OrionUO.exe|*.exe|*.exe");
+                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "Orion|OrionUO.exe|*.exe|*.exe");
+        }
+
+        private void OnSelectCrossPath(object sender, RoutedEventArgs e)
+        {
+            launcherViewModel.SelectedProfile.LauncherOptions.Cross.ClientExePath
+                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "CrossUO|crossuo.exe|*.exe|*.exe");
         }
 
         private string SelectPath(string initialPath, string filter)

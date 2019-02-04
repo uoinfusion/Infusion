@@ -6,11 +6,11 @@ using System.Threading;
 
 namespace Infusion.Desktop.Launcher
 {
-    public static class OrionLauncher
+    public static class CrossUOLauncher
     {
         public static void Launch(LauncherOptions options, ushort proxyPort)
         {
-            var ultimaExecutablePath = options.Orion.ClientExePath;
+            var ultimaExecutablePath = options.Cross.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
             {
                 Program.Console.Error($"File {ultimaExecutablePath} doesn't exist.");
@@ -35,7 +35,6 @@ namespace Infusion.Desktop.Launcher
             }
 
             Program.SetClientWindowHandle(ultimaClientProcess);
-
         }
     }
 }

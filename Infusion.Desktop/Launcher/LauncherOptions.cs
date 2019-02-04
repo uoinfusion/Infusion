@@ -23,7 +23,8 @@ namespace Infusion.Desktop.Launcher
         public string UserName { get; set; }
         public string Password { get; set; }
 
-        public OrionLanuncherOptions Orion { get; set; } = new OrionLanuncherOptions();
+        public OrionLauncherOptions Orion { get; set; } = new OrionLauncherOptions();
+        public CrossUOLauncherOptions Cross { get; set; } = new CrossUOLauncherOptions();
         public ClassicClientLauncherOptions Classic { get; set; } = new ClassicClientLauncherOptions();
 
         public string InitialScriptFileName
@@ -69,6 +70,8 @@ namespace Infusion.Desktop.Launcher
                         return Classic.ClientExePath;
                     case UltimaClientType.Orion:
                         return Orion.ClientExePath;
+                    case UltimaClientType.CrossUO:
+                        return Cross.ClientExePath;
                     default:
                         throw new NotImplementedException();
                 }
@@ -119,6 +122,8 @@ namespace Infusion.Desktop.Launcher
             }
 
             if (ClientType == UltimaClientType.Orion && !Orion.Validate(out validationMessage))
+                return false;
+            else if (ClientType == UltimaClientType.CrossUO && !Cross.Validate(out validationMessage))
                 return false;
 
             validationMessage = string.Empty;

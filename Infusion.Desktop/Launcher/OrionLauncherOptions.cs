@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Infusion.Desktop.Launcher
 {
-    public class OrionLanuncherOptions : INotifyPropertyChanged
+    public class OrionLauncherOptions : INotifyPropertyChanged
     {
         private string clientExePath;
         public string ClientExePath

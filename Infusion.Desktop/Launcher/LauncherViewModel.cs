@@ -88,6 +88,7 @@ namespace Infusion.Desktop.Launcher
 
         public bool ClassicClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
         public bool OrionOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Orion;
+        public bool CrossOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.CrossUO;
 
         public ProtocolVersion SelectedProtocolVersion
         {
@@ -125,6 +126,7 @@ namespace Infusion.Desktop.Launcher
             OnPropertyChanged("SelectedClientType");
             OnPropertyChanged("ClassicClientOptionsVisible");
             OnPropertyChanged("OrionOptionsVisible");
+            OnPropertyChanged("CrossOptionsVisible");
             OnPropertyChanged("SelectedProtocolVersion");
             OnPropertyChanged("Encrypted");
         }

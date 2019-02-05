@@ -5,21 +5,20 @@ namespace Infusion.IO
 {
     internal sealed class LoginPullStream : IPullStream
     {
-        private readonly bool encrypted;
-        private LoginCrypt loginCrypt;
+        private readonly LoginCrypt loginCrypt;
         private readonly byte[] output = new byte[1];
         private readonly byte[] input = new byte[1];
 
         public IPullStream BaseStream { get; set; }
 
-        public LoginPullStream(bool encrypted)
+        public LoginPullStream() : this(0, null)
         {
-            this.encrypted = encrypted;
         }
 
-        public void SetSeed(uint seed)
+        public LoginPullStream(uint seed, LoginEncryptionKey? key)
         {
-            loginCrypt = new LoginCrypt(seed);
+            if (key.HasValue)
+                loginCrypt = new LoginCrypt(seed, key.Value);
         }
 
         public bool DataAvailable => BaseStream?.DataAvailable ?? false;
@@ -27,7 +26,7 @@ namespace Infusion.IO
         public void Dispose() => BaseStream?.Dispose();
         public int Read(byte[] buffer, int offset, int count)
         {
-            if (encrypted && loginCrypt != null)
+            if (loginCrypt != null)
             {
                 for (var i = 0; i < count; i++)
                 {
@@ -44,7 +43,7 @@ namespace Infusion.IO
 
         public int ReadByte()
         {
-            if (encrypted && loginCrypt != null)
+            if (loginCrypt != null)
             {
                 input[0] = (byte)BaseStream.ReadByte();
                 loginCrypt.Encrypt(input, output, 1);
@@ -102,10 +101,10 @@ namespace Infusion.IO
         private readonly uint key1;
         private readonly uint key2;
 
-        public LoginCrypt(uint seed)
+        public LoginCrypt(uint seed, LoginEncryptionKey loginKey)
         {
-            uint k1 = 0x2cc3ed9d;
-            var k2 = 0xa374227f;
+            uint k1 = loginKey.Key1;
+            var k2 = loginKey.Key2;
 
             key = new uint[2];
 
@@ -118,6 +117,12 @@ namespace Infusion.IO
 
             key1 = k1;
             key2 = k2;
+
+        }
+
+        public LoginCrypt(uint seed)
+            : this(seed, new LoginEncryptionKey(0x2cc3ed9d, 0xa374227f))
+        {
         }
 
         public void Encrypt(byte[] input, byte[] output, long len)

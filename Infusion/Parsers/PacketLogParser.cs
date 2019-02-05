@@ -38,7 +38,18 @@ namespace Infusion.Parsers
             return new Packet(packetId, payload);
         }
 
-        private int GetPacketLength(StreamPacketReader reader, int packetId)
+        public Packet ParsePacket(byte[] buffer)
+        {
+            var reader = new ArrayPacketReader(buffer);
+            int packetId = reader.ReadByte();
+            int packetLength = GetPacketLength(reader, packetId);
+            var payload = new byte[packetLength];
+            Array.Copy(buffer, 0, payload, 0, packetLength);
+
+            return new Packet(packetId, payload);
+        }
+
+        private int GetPacketLength(IPacketReader reader, int packetId)
         {
             PacketDefinition packetDefinition;
 

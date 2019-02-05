@@ -13,10 +13,12 @@ namespace Infusion
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly Parsers.PacketLogParser packetLogParser;
-        private readonly LoginPullStream loginStream;
+        private LoginPullStream loginStream;
         private NewGameStream receiveNewGameStream;
         private NewGameStream sendNewGameStream;
-        private byte[] seed;
+        private uint loginSeed;
+        private byte[] receivedSeed = new byte[21];
+        private int receivedPosition = 0;
 
         public UltimaClientConnection() : this(
             UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
@@ -36,7 +38,7 @@ namespace Infusion
             this.diagnosticPushStream = diagnosticPushStream;
             Status = status;
             packetLogParser = new PacketLogParser(packetRegistry);
-            loginStream = new LoginPullStream(true);
+            loginStream = new LoginPullStream();
             loginStream.BaseStream = diagnosticPullStream;
             receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, true, true);
         }
@@ -55,7 +57,12 @@ namespace Infusion
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
-                    ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.ServerLogin);
+                    int processedBytes = ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.AfterInitialSeed);
+                    currentStream = loginStream;
+                    DetectEncryption(diagnosticPullStream);
+                    break;
+                case UltimaClientConnectionStatus.AfterInitialSeed:
+                    DetectEncryption(diagnosticPullStream);
                     currentStream = loginStream;
                     break;
                 case UltimaClientConnectionStatus.ServerLogin:
@@ -90,8 +97,23 @@ namespace Infusion
             }
         }
 
-        private byte[] receivedSeed = new byte[21];
-        private int receivedPosition = 0;
+        private readonly LoginEncryptionDetector loginEncryptionDetector
+            = new LoginEncryptionDetector();
+
+        private void DetectEncryption(IDiagnosticPullStream inputStream)
+        {
+            if (!inputStream.DataAvailable)
+                return;
+
+            var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream);
+            loginStream = new LoginPullStream(this.loginSeed, result.Key);
+            loginStream.BaseStream = diagnosticPullStream;
+
+            var packet = packetLogParser.ParsePacket(result.DecryptedPacket);
+            OnPacketReceived(packet);
+
+            Status = UltimaClientConnectionStatus.ServerLogin;
+        }
 
         private int ReceiveSeed(IPullStream inputStream, int batchLength, UltimaClientConnectionStatus nextStatus)
         {
@@ -112,10 +134,9 @@ namespace Infusion
                     OnPacketReceived(packet);
                     Status = nextStatus;
                     receivedPosition = 0;
-                    loginStream.SetSeed(BitConverter.ToUInt32(seed.Reverse().ToArray(), 0));
+                    this.loginSeed = BitConverter.ToUInt32(seed.Reverse().ToArray(), 0);
                     receiveNewGameStream = new NewGameStream(seed, true, true);
                     sendNewGameStream = new NewGameStream(seed, true, true);
-                    this.seed = seed;
                     return 4;
                 }
             }

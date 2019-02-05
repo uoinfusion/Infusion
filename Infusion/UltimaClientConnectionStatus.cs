@@ -3,6 +3,7 @@
     internal enum UltimaClientConnectionStatus
     {
         Initial,
+        AfterInitialSeed,
         ServerLogin,
         PreGameLogin,
         GameLogin,

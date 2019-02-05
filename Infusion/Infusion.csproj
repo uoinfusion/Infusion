@@ -103,6 +103,7 @@
     <Compile Include="Diagnostic\InfusionBinaryDiagnosticPushStream.cs" />
     <Compile Include="Diagnostic\InfusionDiagnosticPushStreamProvider.cs" />
     <Compile Include="Diagnostic\TextDiagnosticPushStream.cs" />
+    <Compile Include="IO\LoginEncryptionDetector.cs" />
     <Compile Include="IO\IDiagnosticPullStream.cs" />
     <Compile Include="IO\CipherMode.cs" />
     <Compile Include="Diagnostic\TextDiagnosticPullStream.cs" />

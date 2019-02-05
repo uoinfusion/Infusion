@@ -14,7 +14,7 @@ namespace Infusion
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly Parsers.PacketLogParser packetLogParser;
         private LoginPullStream loginStream;
-        private NewGameStream receiveNewGameStream;
+        private ClientNewGamePullStream receiveNewGameStream;
         private NewGameStream sendNewGameStream;
         private uint loginSeed;
         private byte[] receivedSeed = new byte[21];
@@ -40,7 +40,8 @@ namespace Infusion
             packetLogParser = new PacketLogParser(packetRegistry);
             loginStream = new LoginPullStream();
             loginStream.BaseStream = diagnosticPullStream;
-            receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, true, true);
+            receiveNewGameStream = new ClientNewGamePullStream();
+            receiveNewGameStream.BaseStream = diagnosticPullStream;
         }
 
         public UltimaClientConnectionStatus Status { get; private set; }
@@ -50,7 +51,7 @@ namespace Infusion
         public void ReceiveBatch(IPullStream inputStream, int batchLength)
         {
             diagnosticPullStream.BaseStream = inputStream;
-            receiveNewGameStream.BasePullStream = diagnosticPullStream;
+            receiveNewGameStream.BaseStream = diagnosticPullStream;
             // IPullStream currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
             IPullStream currentStream = diagnosticPullStream;
 
@@ -70,12 +71,10 @@ namespace Infusion
                     break;
                 case UltimaClientConnectionStatus.PreGameLogin:
                     ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.GameLogin);
-                    receiveNewGameStream.BasePullStream = diagnosticPullStream;
-                    currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
+                    currentStream = receiveNewGameStream;
                     break;
                 case UltimaClientConnectionStatus.Game:
-                    receiveNewGameStream.BasePullStream = diagnosticPullStream;
-                    currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
+                    currentStream = receiveNewGameStream;
                     break;
             }
 
@@ -135,7 +134,8 @@ namespace Infusion
                     Status = nextStatus;
                     receivedPosition = 0;
                     this.loginSeed = BitConverter.ToUInt32(seed.Reverse().ToArray(), 0);
-                    receiveNewGameStream = new NewGameStream(seed, true, true);
+                    receiveNewGameStream = new ClientNewGamePullStream(seed);
+                    receiveNewGameStream.BaseStream = diagnosticPullStream;
                     sendNewGameStream = new NewGameStream(seed, true, true);
                     return 4;
                 }

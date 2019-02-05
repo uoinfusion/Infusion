@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.Packets;
@@ -12,6 +13,10 @@ namespace Infusion
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly Parsers.PacketLogParser packetLogParser;
+        private readonly LoginPullStream loginStream;
+        private NewGameStream receiveNewGameStream;
+        private NewGameStream sendNewGameStream;
+        private byte[] seed;
 
         public UltimaClientConnection() : this(
             UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
@@ -31,6 +36,9 @@ namespace Infusion
             this.diagnosticPushStream = diagnosticPushStream;
             Status = status;
             packetLogParser = new PacketLogParser(packetRegistry);
+            loginStream = new LoginPullStream(true);
+            loginStream.BaseStream = diagnosticPullStream;
+            receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, true, true);
         }
 
         public UltimaClientConnectionStatus Status { get; private set; }
@@ -40,20 +48,34 @@ namespace Infusion
         public void ReceiveBatch(IPullStream inputStream, int batchLength)
         {
             diagnosticPullStream.BaseStream = inputStream;
+            receiveNewGameStream.BasePullStream = diagnosticPullStream;
+            // IPullStream currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
+            IPullStream currentStream = diagnosticPullStream;
 
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
                     ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.ServerLogin);
+                    currentStream = loginStream;
+                    break;
+                case UltimaClientConnectionStatus.ServerLogin:
+                    currentStream = loginStream;
                     break;
                 case UltimaClientConnectionStatus.PreGameLogin:
                     ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.GameLogin);
+                    receiveNewGameStream.BasePullStream = diagnosticPullStream;
+                    currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
+                    break;
+                case UltimaClientConnectionStatus.Game:
+                    receiveNewGameStream.BasePullStream = diagnosticPullStream;
+                    currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
                     break;
             }
 
-            foreach (var packet in packetLogParser.ParseBatch(diagnosticPullStream))
+            foreach (var packet in packetLogParser.ParseBatch(currentStream))
             {
                 OnPacketReceived(packet);
+
                 switch (Status)
                 {
                     case UltimaClientConnectionStatus.ServerLogin:
@@ -90,6 +112,10 @@ namespace Infusion
                     OnPacketReceived(packet);
                     Status = nextStatus;
                     receivedPosition = 0;
+                    loginStream.SetSeed(BitConverter.ToUInt32(seed.Reverse().ToArray(), 0));
+                    receiveNewGameStream = new NewGameStream(seed, true, true);
+                    sendNewGameStream = new NewGameStream(seed, true, true);
+                    this.seed = seed;
                     return 4;
                 }
             }
@@ -135,8 +161,10 @@ namespace Infusion
                     break;
                 case UltimaClientConnectionStatus.Game:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    var huffmanStream = new HuffmanStream(new PushStreamToStreamAdapter(diagnosticPushStream));
+                    sendNewGameStream.BasePushStream = new PushStreamToStreamAdapter(diagnosticPushStream);
+                    var huffmanStream = new HuffmanStream(sendNewGameStream);
                     huffmanStream.Write(packet.Payload, 0, packet.Length);
+
                     break;
                 default:
                     throw new NotImplementedException($"Sending packets while in {Status} Status.");

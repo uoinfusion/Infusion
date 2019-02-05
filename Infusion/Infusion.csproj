@@ -119,7 +119,7 @@
     <Compile Include="IO\NetworkStreamToPullStreamAdapter.cs" />
     <Compile Include="IO\PushStreamToStreamAdapter.cs" />
     <Compile Include="IO\StreamPacketWriter.cs" />
-    <Compile Include="IO\StreamToPullStreamAdaptet.cs" />
+    <Compile Include="IO\StreamToPullStreamAdapter.cs" />
     <Compile Include="IO\StreamToPushStreamAdapter.cs" />
     <Compile Include="IO\SynchronizedPushStream.cs" />
     <Compile Include="IO\TwoFishBase.cs" />

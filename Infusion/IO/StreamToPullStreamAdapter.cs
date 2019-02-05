@@ -2,11 +2,11 @@
 
 namespace Infusion.IO
 {
-    internal sealed class StreamToPullStreamAdaptet : IPullStream
+    internal sealed class StreamToPullStreamAdapter : IPullStream
     {
         private readonly Stream baseStream;
 
-        public StreamToPullStreamAdaptet(Stream baseStream)
+        public StreamToPullStreamAdapter(Stream baseStream)
         {
             this.baseStream = baseStream;
         }

@@ -179,6 +179,9 @@ namespace Infusion.Proxy
 
                     while ((receivedLength = ClientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                     {
+                        Console.Info("client -> proxy");
+                        Console.Info(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+
                         var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
                         clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
                     }
@@ -234,7 +237,12 @@ namespace Infusion.Proxy
                     using (var memoryStream = new MemoryStream(1024))
                     {
                         clientConnection.Send(filteredPacket.Value, memoryStream);
-                        ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                        var buffer = memoryStream.GetBuffer();
+
+                        Console.Info("proxy -> client");
+                        Console.Info(buffer.Take((int)memoryStream.Length).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+
+                        ClientStream.Write(buffer, 0, (int) memoryStream.Length);
                     }
                 }
             }
@@ -349,7 +357,12 @@ namespace Infusion.Proxy
                     using (var memoryStream = new MemoryStream(1024))
                     {
                         serverConnection.Send(filteredPacket.Value, memoryStream);
-                        ServerStream.Write(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                        var buffer = memoryStream.GetBuffer();
+                        Console.Info("proxy -> server");
+                        Console.Info(buffer.Take((int)memoryStream.Length).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+
+
+                        ServerStream.Write(buffer, 0, (int)memoryStream.Length);
                     }
                 }
             }

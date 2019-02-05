@@ -16,7 +16,7 @@ namespace Infusion
         private readonly NewGameStream receiveNewGameStream;
         private readonly NewGameStream sendNewGameStream;
         private readonly PullStreamToStreamAdapter preLoginStream;
-        private readonly LoginStream loginStream;
+        private readonly LoginPushStream loginStream;
 
         public ServerConnectionStatus Status { get; private set; }
 
@@ -45,7 +45,7 @@ namespace Infusion
             this.diagnosticPullStream = diagnosticPullStream;
             this.diagnosticPushStream = diagnosticPushStream;
             this.packetRegistry = packetRegistry;
-            this.loginStream = new LoginStream(null, encrypted);
+            this.loginStream = new LoginPushStream(encrypted);
 
             this.receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
             this.sendNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
@@ -131,7 +131,7 @@ namespace Infusion
                     break;
                 case ServerConnectionStatus.PreLogin:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    loginStream.BaseStream = new PushStreamToStreamAdapter(diagnosticPushStream);
+                    loginStream.BaseStream = diagnosticPushStream;
                     loginStream.Write(packet.Payload, 0, packet.Length);
                     break;
                 case ServerConnectionStatus.PreGame:

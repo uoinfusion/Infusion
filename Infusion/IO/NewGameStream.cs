@@ -19,15 +19,17 @@ namespace Infusion.IO
 
         private readonly byte[] cryptoKey;
         private readonly bool isEncrypted;
+        private readonly bool reversed;
         private readonly byte[] m_subData3 = new byte[256];
         private uint dwIndex;
         private TwofishEncryption encTwofish;
         private int m_pos;
 
-        public NewGameStream(byte[] cryptoKey, bool encrypted)
+        public NewGameStream(byte[] cryptoKey, bool encrypted, bool reversed = false)
         {
             this.cryptoKey = cryptoKey;
             this.isEncrypted = encrypted;
+            this.reversed = reversed;
             Initialize();
         }
 
@@ -94,6 +96,14 @@ namespace Infusion.IO
 
         private void Decrypt(byte[] input, byte[] output, long len)
         {
+            if (reversed)
+                EncryptCore(input, output, len);
+            else
+                DecryptCore(input, output, len);
+        }
+
+        private void DecryptCore(byte[] input, byte[] output, long len)
+        {
             var dwTmpIndex = dwIndex;
             for (var i = 0; i < len; i++)
             {
@@ -105,6 +115,14 @@ namespace Infusion.IO
 
         private void Encrypt(byte[] input, byte[] output, long len)
         {
+            if (reversed)
+                DecryptCore(input, output, len);
+            else
+                EncryptCore(input, output, len);
+        }
+
+        private void EncryptCore(byte[] input, byte[] output, long len)
+        {
             var tmpBuff = new byte[0x100];
 
             for (var i = 0; i < len; i++)
@@ -112,7 +130,6 @@ namespace Infusion.IO
                 if (m_pos == 0x100)
                 {
                     Encrypt(m_subData3, tmpBuff, 0x100);
-                    //					encTwofish.TransformBlock(m_subData3, 0, 0x800, tmpBuff, 0);
 
                     for (var j = 0; j < 0x100; j++)
                         m_subData3[j] = tmpBuff[j];

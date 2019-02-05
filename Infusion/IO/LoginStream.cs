@@ -3,116 +3,139 @@ using System.IO;
 
 namespace Infusion.IO
 {
-    internal class LoginStream : Stream
+    internal sealed class LoginPullStream : IPullStream
     {
-        private uint[] m_key;
-        private uint m_key1;
-        private uint m_key2;
         private readonly bool encrypted;
+        private LoginCrypt loginCrypt;
+        private readonly byte[] output = new byte[1];
+        private readonly byte[] input = new byte[1];
 
-        public LoginStream(Stream baseStream, bool encrypted = true)
+        public IPullStream BaseStream { get; set; }
+
+        public LoginPullStream(bool encrypted)
         {
-            SetSeed(0xA9FE5050);
-
-            BaseStream = baseStream;
             this.encrypted = encrypted;
         }
 
         public void SetSeed(uint seed)
         {
+            loginCrypt = new LoginCrypt(seed);
+        }
+
+        public bool DataAvailable => BaseStream?.DataAvailable ?? false;
+
+        public void Dispose() => BaseStream?.Dispose();
+        public int Read(byte[] buffer, int offset, int count)
+        {
+            if (encrypted && loginCrypt != null)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    input[0] = (byte)BaseStream.ReadByte();
+                    loginCrypt.Encrypt(input, output, 1);
+                    buffer[i + offset] = output[0];
+                }
+
+                return count;
+            }
+            else
+                return BaseStream.Read(buffer, offset, count);
+        }
+
+        public int ReadByte()
+        {
+            if (encrypted && loginCrypt != null)
+            {
+                input[0] = (byte)BaseStream.ReadByte();
+                loginCrypt.Encrypt(input, output, 1);
+                return output[0];
+            }
+            else
+                return BaseStream.ReadByte();
+        }
+    }
+
+    internal sealed class LoginPushStream : IPushStream
+    {
+        private readonly byte[] output = new byte[1];
+        private readonly byte[] input = new byte[1];
+        private readonly bool encrypted;
+        private LoginCrypt loginCrypt;
+
+        public LoginPushStream(bool encrypted)
+        {
+            this.encrypted = encrypted;
+        }
+
+        public void SetSeed(uint seed)
+        {
+            loginCrypt = new LoginCrypt(seed);
+        }
+
+        public IPushStream BaseStream { get; set; }
+
+        public void Dispose() => BaseStream?.Dispose();
+        public void Flush() => BaseStream?.Flush();
+        public void Write(byte[] buffer, int offset, int count)
+        {
+            for (var i = 0; i < count; i++)
+                WriteByte(buffer[i + offset]);
+        }
+
+        public void WriteByte(byte value)
+        {
+            if (encrypted && loginCrypt != null)
+            {
+                input[0] = value;
+                loginCrypt.Encrypt(input, output, 1);
+
+                BaseStream.WriteByte(output[0]);
+            }
+            else
+                BaseStream.WriteByte(value);
+        }
+    }
+
+    internal sealed class LoginCrypt
+    {
+        private readonly uint[] key;
+        private readonly uint key1;
+        private readonly uint key2;
+
+        public LoginCrypt(uint seed)
+        {
             uint k1 = 0x2cc3ed9d;
             var k2 = 0xa374227f;
 
-            m_key = new uint[2];
+            key = new uint[2];
 
-            m_key[0] =
+            key[0] =
                 ((~seed ^ 0x00001357) << 16)
                 | ((seed ^ 0xffffaaaa) & 0x0000ffff);
-            m_key[1] =
+            key[1] =
                 ((seed ^ 0x43210000) >> 16)
                 | ((~seed ^ 0xabcdffff) & 0xffff0000);
 
-            m_key1 = k1;
-            m_key2 = k2;
+            key1 = k1;
+            key2 = k2;
         }
 
-        public Stream BaseStream { get; set; }
-
-        public override bool CanRead => true;
-
-        public override bool CanSeek => false;
-
-        public override bool CanWrite => true;
-
-        public override long Length => BaseStream.Length;
-
-        public override long Position
-        {
-            get { return BaseStream.Position; }
-            set { throw new NotSupportedException(); }
-        }
-
-        public override void Flush()
-        {
-            BaseStream.Flush();
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            return BaseStream.Read(buffer, offset, count);
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void SetLength(long value)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override void Write(byte[] buffer, int offset, int count)
-        {
-            if (encrypted)
-            {
-                var output = new byte[1];
-                var input = new byte[1];
-
-                for (var i = 0; i < count; i++)
-                {
-                    input[0] = buffer[i + offset];
-
-                    Encrypt(input, output, 1);
-
-                    BaseStream.WriteByte(output[0]);
-                }
-            }
-            else
-            {
-                BaseStream.Write(buffer, offset, count);
-            }
-        }
-
-        private void Encrypt(byte[] input, byte[] output, long len)
+        public void Encrypt(byte[] input, byte[] output, long len)
         {
             for (var i = 0; i < len; i++)
             {
-                output[i] = (byte) (input[i] ^ (byte) m_key[0]);
+                output[i] = (byte)(input[i] ^ (byte)key[0]);
 
-                var table0 = m_key[0];
-                var table1 = m_key[1];
+                var table0 = key[0];
+                var table1 = key[1];
 
-                m_key[1] = (((((table1 >> 1) | (table0 << 31)) ^ m_key1) >> 1)
-                            | (table0 << 31)) ^ m_key1;
-                m_key[0] = ((table0 >> 1) | (table1 << 31)) ^ m_key2;
+                key[1] = (((((table1 >> 1) | (table0 << 31)) ^ key1) >> 1)
+                            | (table0 << 31)) ^ key1;
+                key[0] = ((table0 >> 1) | (table1 << 31)) ^ key2;
             }
         }
 
-        private void Decrypt(byte[] input, byte[] output, long len)
-        {
-            for (var i = 0; i < len; i++)
-                output[i] = input[i];
-        }
+        public void Decrypt(byte[] input, byte[] output, long len)
+            => Encrypt(input, output, len);
     }
 }

@@ -24,7 +24,7 @@ namespace Infusion.Diagnostic
             this.inputStream = inputStream;
             this.packetRegistry = packetRegistry;
             inputStreamReader = new BinaryReader(inputStream);
-            pullStream = new StreamToPullStreamAdaptet(this.inputStream);
+            pullStream = new StreamToPullStreamAdapter(this.inputStream);
             packetLogParser = new Parsers.PacketLogParser(packetRegistry);
         }
 

@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using Infusion.Diagnostic;
 using Infusion.IO;
+using Infusion.IO.Encryption.Login;
+using Infusion.IO.Encryption.NewGame;
 using Infusion.Packets;
 using PacketLogParser = Infusion.Parsers.PacketLogParser;
 
@@ -15,7 +17,7 @@ namespace Infusion
         private readonly Parsers.PacketLogParser packetLogParser;
         private LoginPullStream loginStream;
         private ClientNewGamePullStream receiveNewGameStream;
-        private NewGameStream sendNewGameStream;
+        private ClientNewGamePushStream sendNewGameStream;
         private uint loginSeed;
         private byte[] receivedSeed = new byte[21];
         private int receivedPosition = 0;
@@ -51,14 +53,12 @@ namespace Infusion
         public void ReceiveBatch(IPullStream inputStream, int batchLength)
         {
             diagnosticPullStream.BaseStream = inputStream;
-            receiveNewGameStream.BaseStream = diagnosticPullStream;
-            // IPullStream currentStream = new StreamToPullStreamAdapter(receiveNewGameStream);
             IPullStream currentStream = diagnosticPullStream;
 
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
-                    int processedBytes = ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.AfterInitialSeed);
+                    ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.AfterInitialSeed);
                     currentStream = loginStream;
                     DetectEncryption(diagnosticPullStream);
                     break;
@@ -73,6 +73,7 @@ namespace Infusion
                     ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.GameLogin);
                     currentStream = receiveNewGameStream;
                     break;
+                case UltimaClientConnectionStatus.GameLogin:
                 case UltimaClientConnectionStatus.Game:
                     currentStream = receiveNewGameStream;
                     break;
@@ -136,7 +137,7 @@ namespace Infusion
                     this.loginSeed = BitConverter.ToUInt32(seed.Reverse().ToArray(), 0);
                     receiveNewGameStream = new ClientNewGamePullStream(seed);
                     receiveNewGameStream.BaseStream = diagnosticPullStream;
-                    sendNewGameStream = new NewGameStream(seed, true, true);
+                    sendNewGameStream = new ClientNewGamePushStream(seed);
                     return 4;
                 }
             }
@@ -182,8 +183,8 @@ namespace Infusion
                     break;
                 case UltimaClientConnectionStatus.Game:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    sendNewGameStream.BasePushStream = new PushStreamToStreamAdapter(diagnosticPushStream);
-                    var huffmanStream = new HuffmanStream(sendNewGameStream);
+                    sendNewGameStream.BaseStream = diagnosticPushStream;
+                    var huffmanStream = new HuffmanStream(new PushStreamToStreamAdapter(sendNewGameStream));
                     huffmanStream.Write(packet.Payload, 0, packet.Length);
 
                     break;

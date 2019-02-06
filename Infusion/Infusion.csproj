@@ -103,18 +103,28 @@
     <Compile Include="Diagnostic\InfusionBinaryDiagnosticPushStream.cs" />
     <Compile Include="Diagnostic\InfusionDiagnosticPushStreamProvider.cs" />
     <Compile Include="Diagnostic\TextDiagnosticPushStream.cs" />
-    <Compile Include="IO\LoginEncryptionDetector.cs" />
+    <Compile Include="IO\Encryption\Login\LoginCrypt.cs" />
+    <Compile Include="IO\Encryption\Login\LoginEncryptionDetectionResult.cs" />
+    <Compile Include="IO\Encryption\Login\LoginEncryptionKey.cs" />
+    <Compile Include="IO\Encryption\Login\LoginPullStream.cs" />
+    <Compile Include="IO\Encryption\Login\LoginPushStream.cs" />
+    <Compile Include="IO\Encryption\NewGame\ClientNewGamePullStream.cs" />
+    <Compile Include="IO\Encryption\NewGame\ClientNewGamePushStream.cs" />
+    <Compile Include="IO\Encryption\NewGame\NewGameCrypt.cs" />
+    <Compile Include="IO\Encryption\NewGame\NewGamePullStream.cs" />
+    <Compile Include="IO\Encryption\NewGame\NewGamePushStream.cs" />
+    <Compile Include="IO\Encryption\NewGame\ServerNewGamePullStream.cs" />
+    <Compile Include="IO\Encryption\NewGame\ServerNewGamePushStream.cs" />
+    <Compile Include="IO\Encryption\Login\LoginEncryptionDetector.cs" />
     <Compile Include="IO\IDiagnosticPullStream.cs" />
-    <Compile Include="IO\CipherMode.cs" />
+    <Compile Include="IO\Encryption\NewGame\CipherMode.cs" />
     <Compile Include="Diagnostic\TextDiagnosticPullStream.cs" />
     <Compile Include="IO\HuffmanStream.cs" />
     <Compile Include="IO\IPullStream.cs" />
     <Compile Include="IO\IDiagnosticPushStream.cs" />
     <Compile Include="IO\IPushStream.cs" />
-    <Compile Include="IO\LoginStream.cs" />
     <Compile Include="IO\MemoryBatchedStream.cs" />
     <Compile Include="IO\MemoryStreamToPullStreamAdapter.cs" />
-    <Compile Include="IO\NewGameStream.cs" />
     <Compile Include="Diagnostic\NullDiagnosticPushStream.cs" />
     <Compile Include="IO\PullStreamToStreamAdapter.cs" />
     <Compile Include="IO\NetworkStreamToPullStreamAdapter.cs" />
@@ -123,8 +133,8 @@
     <Compile Include="IO\StreamToPullStreamAdapter.cs" />
     <Compile Include="IO\StreamToPushStreamAdapter.cs" />
     <Compile Include="IO\SynchronizedPushStream.cs" />
-    <Compile Include="IO\TwoFishBase.cs" />
-    <Compile Include="IO\TwoFishEncryption.cs" />
+    <Compile Include="IO\Encryption\NewGame\TwoFishBase.cs" />
+    <Compile Include="IO\Encryption\NewGame\TwoFishEncryption.cs" />
     <Compile Include="Diagnostic\NullDiagnosticPullStream.cs" />
     <Compile Include="IClientPacketSubject.cs" />
     <Compile Include="IServerPacketSubject.cs" />
@@ -247,6 +257,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

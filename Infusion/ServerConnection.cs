@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using Infusion.Diagnostic;
 using Infusion.IO;
+using Infusion.IO.Encryption.Login;
+using Infusion.IO.Encryption.NewGame;
 using Infusion.Packets;
 
 namespace Infusion
@@ -13,8 +15,8 @@ namespace Infusion
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly PacketDefinitionRegistry packetRegistry;
         private readonly HuffmanStream huffmanStream;
-        private readonly NewGameStream receiveNewGameStream;
-        private readonly NewGameStream sendNewGameStream;
+        private readonly ServerNewGamePullStream receiveNewGameStream;
+        private readonly ServerNewGamePushStream sendNewGameStream;
         private readonly PullStreamToStreamAdapter preLoginStream;
         private readonly LoginPushStream loginStream;
 
@@ -47,10 +49,10 @@ namespace Infusion
             this.packetRegistry = packetRegistry;
             this.loginStream = new LoginPushStream(encrypted);
 
-            this.receiveNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
-            this.sendNewGameStream = new NewGameStream(new byte[] { 127, 0, 0, 1 }, encrypted);
+            this.receiveNewGameStream = new ServerNewGamePullStream();
+            this.sendNewGameStream = new ServerNewGamePushStream();
 
-            huffmanStream = new HuffmanStream(receiveNewGameStream);
+            huffmanStream = new HuffmanStream(new PullStreamToStreamAdapter(receiveNewGameStream));
             preLoginStream = new PullStreamToStreamAdapter(diagnosticPullStream);
         }
 
@@ -103,7 +105,7 @@ namespace Infusion
                     return preLoginStream;
 
                 case ServerConnectionStatus.Game:
-                    receiveNewGameStream.BasePullStream = diagnosticPullStream;
+                    receiveNewGameStream.BaseStream = diagnosticPullStream;
 
                     return huffmanStream;
 
@@ -141,7 +143,7 @@ namespace Infusion
                     break;
                 case ServerConnectionStatus.Game:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    sendNewGameStream.BasePushStream = new PushStreamToStreamAdapter(diagnosticPushStream);
+                    sendNewGameStream.BaseStream = diagnosticPushStream;
                     sendNewGameStream.Write(packet.Payload, 0, packet.Length);
                     break;
             }

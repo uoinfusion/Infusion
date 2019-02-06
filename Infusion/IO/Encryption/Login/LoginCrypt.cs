@@ -29,11 +29,6 @@ namespace Infusion.IO.Encryption.Login
 
         }
 
-        public LoginCrypt(uint seed)
-            : this(seed, new LoginEncryptionKey(0x2cc3ed9d, 0xa374227f))
-        {
-        }
-
         public void Encrypt(byte[] input, byte[] output, long len)
         {
             for (var i = 0; i < len; i++)

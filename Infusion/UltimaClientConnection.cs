@@ -21,6 +21,10 @@ namespace Infusion
         private uint loginSeed;
         private byte[] receivedSeed = new byte[21];
         private int receivedPosition = 0;
+        private bool requiresEncryption = false;
+
+        public event Action<byte[]> NewGameEncryptionStarted;
+        public event Action<uint, LoginEncryptionKey> LoginEncryptionStarted;
 
         public UltimaClientConnection() : this(
             UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
@@ -44,6 +48,7 @@ namespace Infusion
             loginStream.BaseStream = diagnosticPullStream;
             receiveNewGameStream = new ClientNewGamePullStream();
             receiveNewGameStream.BaseStream = diagnosticPullStream;
+            sendNewGameStream = new ClientNewGamePushStream();
         }
 
         public UltimaClientConnectionStatus Status { get; private set; }
@@ -106,8 +111,13 @@ namespace Infusion
                 return;
 
             var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream);
-            loginStream = new LoginPullStream(this.loginSeed, result.Key);
-            loginStream.BaseStream = diagnosticPullStream;
+            if (result.IsEncrypted)
+            {
+                requiresEncryption = true;
+                loginStream = new LoginPullStream(this.loginSeed, result.Key);
+                loginStream.BaseStream = diagnosticPullStream;
+                LoginEncryptionStarted?.Invoke(loginSeed, result.Key.Value);
+            }
 
             var packet = packetLogParser.ParsePacket(result.DecryptedPacket);
             OnPacketReceived(packet);
@@ -135,9 +145,13 @@ namespace Infusion
                     Status = nextStatus;
                     receivedPosition = 0;
                     this.loginSeed = BitConverter.ToUInt32(seed.Reverse().ToArray(), 0);
-                    receiveNewGameStream = new ClientNewGamePullStream(seed);
-                    receiveNewGameStream.BaseStream = diagnosticPullStream;
-                    sendNewGameStream = new ClientNewGamePushStream(seed);
+                    if (requiresEncryption)
+                    {
+                        receiveNewGameStream = new ClientNewGamePullStream(seed);
+                        receiveNewGameStream.BaseStream = diagnosticPullStream;
+                        sendNewGameStream = new ClientNewGamePushStream(seed);
+                        NewGameEncryptionStarted?.Invoke(seed);
+                    }
                     return 4;
                 }
             }

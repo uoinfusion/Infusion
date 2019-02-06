@@ -101,16 +101,6 @@ namespace Infusion.Desktop.Launcher
             }
         }
 
-        public bool Encrypted
-        {
-            get => SelectedProfile.LauncherOptions.Encrypted;
-            set
-            {
-                SelectedProfile.LauncherOptions.Encrypted = value;
-                OnPropertyChanged();
-            }
-        }
-
         public UltimaClientType SelectedClientType
         {
             get => SelectedProfile.LauncherOptions.ClientType;
@@ -128,7 +118,6 @@ namespace Infusion.Desktop.Launcher
             OnPropertyChanged("OrionOptionsVisible");
             OnPropertyChanged("CrossOptionsVisible");
             OnPropertyChanged("SelectedProtocolVersion");
-            OnPropertyChanged("Encrypted");
         }
 
         public void DeleteSelectedProfile()

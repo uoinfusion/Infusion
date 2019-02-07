@@ -260,6 +260,8 @@ namespace Infusion.Proxy
             if (rawPacket.Id == PacketDefinitions.ConnectToGameServer.Id)
             {
                 var packet = packetRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
+                serverEndpoint = new IPEndPoint(new IPAddress(packet.GameServerIp), packet.GameServerPort);
+                
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
                 packet.GameServerPort = proxyLocalPort;
                 rawPacket = packet.RawPacket;

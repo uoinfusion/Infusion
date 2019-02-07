@@ -111,10 +111,10 @@ namespace Infusion
                 return;
 
             var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream);
-            if (result.IsEncrypted)
+            if (result.Encryption != null)
             {
                 requiresEncryption = true;
-                loginStream = new LoginPullStream(this.loginSeed, result.Key);
+                loginStream = new LoginPullStream(result.Encryption);
                 loginStream.BaseStream = diagnosticPullStream;
                 LoginEncryptionStarted?.Invoke(loginSeed, result.Key.Value);
             }
@@ -172,6 +172,15 @@ namespace Infusion
                 OnPacketReceived(packet);
                 Status = nextStatus;
                 receivedPosition = 0;
+
+                this.loginSeed = BitConverter.ToUInt32(receivedSeed.Skip(1).Take(4).Reverse().ToArray(), 0);
+                if (requiresEncryption)
+                {
+                    receiveNewGameStream = new ClientNewGamePullStream(receivedSeed);
+                    receiveNewGameStream.BaseStream = diagnosticPullStream;
+                    sendNewGameStream = new ClientNewGamePushStream(receivedSeed);
+                    NewGameEncryptionStarted?.Invoke(receivedSeed);
+                }
             }
 
             return byteReceived;

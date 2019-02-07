@@ -12,6 +12,11 @@
         {
         }
 
+        public LoginPullStream(LoginCrypt loginCrypt)
+        {
+            this.loginCrypt = loginCrypt;
+        }
+
         public LoginPullStream(uint seed, LoginEncryptionKey? key)
         {
             if (key.HasValue)

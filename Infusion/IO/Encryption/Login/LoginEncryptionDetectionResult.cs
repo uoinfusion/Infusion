@@ -3,20 +3,21 @@
     internal sealed class LoginEncryptionDetectionResult
     {
         public byte[] DecryptedPacket { get; }
-        public LoginEncryptionKey? Key { get; }
+        public LoginCrypt Encryption { get; }
+        public LoginEncryptionKey? Key { get; set; }
 
-        public bool IsEncrypted => Key.HasValue;
-
-        public LoginEncryptionDetectionResult(byte[] decryptedPacket, LoginEncryptionKey encryption)
+        public LoginEncryptionDetectionResult(byte[] decryptedPacket, LoginCrypt encryption, LoginEncryptionKey key)
         {
             DecryptedPacket = decryptedPacket;
-            Key = encryption;
+            Encryption = encryption;
+            Key = key;
         }
 
         public LoginEncryptionDetectionResult(byte[] decryptedPacket)
         {
             DecryptedPacket = decryptedPacket;
             Key = null;
+            Encryption = null;
         }
     }
 }

@@ -182,8 +182,10 @@ namespace Infusion.Proxy
 
                     while ((receivedLength = ClientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                     {
+#if DUMP_RAW
                         Console.Info("client -> proxy");
                         Console.Info(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+#endif
 
                         var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
                         clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);

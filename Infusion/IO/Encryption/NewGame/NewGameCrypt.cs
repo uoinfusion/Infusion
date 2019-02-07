@@ -1,4 +1,6 @@
-﻿namespace Infusion.IO.Encryption.NewGame
+﻿using System.Linq;
+
+namespace Infusion.IO.Encryption.NewGame
 {
     internal sealed class NewGameCrypt
     {
@@ -8,12 +10,7 @@
             0x62, 0xDC, 0x60, 0x8C, 0xD6, 0xFE, 0x7C, 0x25, 0x69
         };
 
-        private static readonly byte[] key =
-        {
-            0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01, 0x7f, 0x00, 0x00, 0x01,
-            0x7f, 0x00, 0x00, 0x01
-        };
-
+        private readonly byte[] key;
         private readonly byte[] cryptoKey;
         private readonly byte[] m_subData3 = new byte[256];
         private uint dwIndex;
@@ -22,6 +19,7 @@
 
         public NewGameCrypt(byte[] cryptoKey)
         {
+            key = Enumerable.Repeat(cryptoKey, 4).SelectMany(x => x).ToArray();
             this.cryptoKey = cryptoKey;
             Initialize();
         }

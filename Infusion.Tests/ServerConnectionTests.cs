@@ -75,7 +75,7 @@ namespace Infusion.Tests
         {
             return new ServerConnection(status, diagnosticPullStream,
                 diagnosticPushStream, newGameKey: new byte[] { 127, 0, 0, 1 },
-                loginSeed: 0xA9FE5050, loginKey: new LoginEncryptionKey(0x2cc3ed9d, 0xa374227f));
+                loginSeed: 0xA9FE5050, loginKey: new LoginEncryptionKey(0x2cc3ed9d, 0xa374227f, 0));
         }
 
         private ServerConnection CreateEncryptedConnection(ServerConnectionStatus status)

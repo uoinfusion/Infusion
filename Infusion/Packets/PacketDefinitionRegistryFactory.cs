@@ -35,6 +35,7 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.GameServerLoginRequest);
             registry.Register(PacketDefinitions.GeneralInformationPacket);
             registry.Register(PacketDefinitions.GetClientStatus);
+            registry.Register(PacketDefinitions.ToggleHackMover);
             registry.Register(PacketDefinitions.GodModeRequest);
             registry.Register(PacketDefinitions.GraphicalEffect);
             registry.Register(PacketDefinitions.HealthBarStatusUpdate);
@@ -152,6 +153,7 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.LoadArea);
             registry.Register(PacketDefinitions.LoadAreaRequest);
             registry.Register(PacketDefinitions.ChangeTextColor);
+            registry.Register(PacketDefinitions.NotifyFriend);
             registry.Register(PacketDefinitions.RenameCharacter);
             registry.Register(PacketDefinitions.ResponseToDialogBox);
             registry.Register(PacketDefinitions.DeleteCharacter);

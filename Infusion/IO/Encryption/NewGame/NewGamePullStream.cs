@@ -5,14 +5,9 @@ namespace Infusion.IO.Encryption.NewGame
 {
     internal abstract class NewGamePullStream : IPullStream
     {
-        private readonly Action<byte[], byte[], long> encrypt;
+        protected Action<byte[], byte[], long> encrypt;
 
         public IPullStream BaseStream { get; set; }
-
-        public NewGamePullStream(Action<byte[], byte[], long> encrypt)
-        {
-            this.encrypt = encrypt;
-        }
 
         public bool DataAvailable => BaseStream?.DataAvailable ?? false;
 

@@ -3,8 +3,13 @@
 
     internal sealed class ServerNewGamePullStream : NewGamePullStream
     {
-        public ServerNewGamePullStream() : base(null) { }
+        public ServerNewGamePullStream() { }
 
-        public ServerNewGamePullStream(byte[] cryptoKey) : base(new NewGameCrypt(cryptoKey).Decrypt) { }
+        public ServerNewGamePullStream(byte[] cryptoKey)
+        {
+            var crypt = new NewGameCrypt(cryptoKey);
+            crypt.InitializeMD5();
+            this.encrypt = crypt.Decrypt;
+        }
     }
 }

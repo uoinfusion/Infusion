@@ -2,8 +2,11 @@
 {
     internal sealed class ClientNewGamePullStream : NewGamePullStream
     {
-        public ClientNewGamePullStream() : base(null) { }
+        public ClientNewGamePullStream() { }
 
-        public ClientNewGamePullStream(byte[] cryptoKey) : base(new NewGameCrypt(cryptoKey).Encrypt) { }
+        public ClientNewGamePullStream(byte[] cryptoKey) {
+            var crypt = new NewGameCrypt(cryptoKey);
+            encrypt = crypt.Encrypt;
+        }
     }
 }

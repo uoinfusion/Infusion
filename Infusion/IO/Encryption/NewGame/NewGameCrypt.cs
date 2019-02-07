@@ -65,6 +65,15 @@ namespace Infusion.IO.Encryption.NewGame
             dwIndex = 0;
         }
 
+        public void InitializeMD5()
+        {
+            using (System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
+            {
+                var hash = md5.ComputeHash(m_subData3, 0, m_subData3.Length);
+                hash.CopyTo(sm_bData,0);
+            }
+        }
+
         public void Decrypt(byte[] input, byte[] output, long len)
         {
             var dwTmpIndex = dwIndex;

@@ -79,10 +79,8 @@
 
                 <TextBlock Grid.Column="0" Grid.Row="7">Initial Script:</TextBlock>
                 <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Path=SelectedProfile.LauncherOptions.InitialScriptFileName}" />
-                <TextBlock Grid.Column="0" Grid.Row="8">Encryption:</TextBlock>
-                <CheckBox  Grid.Column="1" Grid.Row="8" Margin="0 0 0 5" IsChecked="{Binding Path=Encrypted}" />
-                <TextBlock Grid.Column="0" Grid.Row="9">Protocol:</TextBlock>
-                <ComboBox Grid.Column="1" Grid.Row="9" Padding="5 2 5 0" IsEditable="False"
+                <TextBlock Grid.Column="0" Grid.Row="8">Protocol:</TextBlock>
+                <ComboBox Grid.Column="1" Grid.Row="8" Padding="5 2 5 0" IsEditable="False"
                           IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
                           ItemsSource="{Binding Path=ProtocolVersions}" DisplayMemberPath="Label"
                           SelectedItem="{Binding Path=SelectedProtocolVersion, Mode=TwoWay}" />

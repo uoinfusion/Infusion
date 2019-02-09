@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Infusion.Diagnostic;
 using Infusion.IO;
+using Infusion.IO.Encryption.Login;
+using Infusion.IO.Encryption.NewGame;
 using Infusion.Packets;
 using PacketLogParser = Infusion.Parsers.PacketLogParser;
 
@@ -12,6 +15,16 @@ namespace Infusion
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly Parsers.PacketLogParser packetLogParser;
+        private LoginPullStream loginStream;
+        private ClientNewGamePullStream receiveNewGameStream;
+        private ClientNewGamePushStream sendNewGameStream;
+        private uint loginSeed;
+        private byte[] receivedSeed = new byte[21];
+        private int receivedPosition = 0;
+        private bool requiresEncryption = false;
+
+        public event Action<byte[]> NewGameEncryptionStarted;
+        public event Action<uint, LoginEncryptionKey> LoginEncryptionStarted;
 
         public UltimaClientConnection() : this(
             UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
@@ -31,6 +44,11 @@ namespace Infusion
             this.diagnosticPushStream = diagnosticPushStream;
             Status = status;
             packetLogParser = new PacketLogParser(packetRegistry);
+            loginStream = new LoginPullStream();
+            loginStream.BaseStream = diagnosticPullStream;
+            receiveNewGameStream = new ClientNewGamePullStream();
+            receiveNewGameStream.BaseStream = diagnosticPullStream;
+            sendNewGameStream = new ClientNewGamePushStream();
         }
 
         public UltimaClientConnectionStatus Status { get; private set; }
@@ -40,20 +58,36 @@ namespace Infusion
         public void ReceiveBatch(IPullStream inputStream, int batchLength)
         {
             diagnosticPullStream.BaseStream = inputStream;
+            IPullStream currentStream = diagnosticPullStream;
 
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
-                    ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.ServerLogin);
+                    ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.AfterInitialSeed);
+                    currentStream = loginStream;
+                    DetectEncryption(diagnosticPullStream);
+                    break;
+                case UltimaClientConnectionStatus.AfterInitialSeed:
+                    DetectEncryption(diagnosticPullStream);
+                    currentStream = loginStream;
+                    break;
+                case UltimaClientConnectionStatus.ServerLogin:
+                    currentStream = loginStream;
                     break;
                 case UltimaClientConnectionStatus.PreGameLogin:
                     ReceiveSeed(diagnosticPullStream, batchLength, UltimaClientConnectionStatus.GameLogin);
+                    currentStream = receiveNewGameStream;
+                    break;
+                case UltimaClientConnectionStatus.GameLogin:
+                case UltimaClientConnectionStatus.Game:
+                    currentStream = receiveNewGameStream;
                     break;
             }
 
-            foreach (var packet in packetLogParser.ParseBatch(diagnosticPullStream))
+            foreach (var packet in packetLogParser.ParseBatch(currentStream))
             {
                 OnPacketReceived(packet);
+
                 switch (Status)
                 {
                     case UltimaClientConnectionStatus.ServerLogin:
@@ -68,8 +102,28 @@ namespace Infusion
             }
         }
 
-        private byte[] receivedSeed = new byte[21];
-        private int receivedPosition = 0;
+        private readonly LoginEncryptionDetector loginEncryptionDetector
+            = new LoginEncryptionDetector();
+
+        private void DetectEncryption(IDiagnosticPullStream inputStream)
+        {
+            if (!inputStream.DataAvailable)
+                return;
+
+            var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream);
+            if (result.Encryption != null)
+            {
+                requiresEncryption = true;
+                loginStream = new LoginPullStream(result.Encryption);
+                loginStream.BaseStream = diagnosticPullStream;
+                LoginEncryptionStarted?.Invoke(loginSeed, result.Key.Value);
+            }
+
+            var packet = packetLogParser.ParsePacket(result.DecryptedPacket);
+            OnPacketReceived(packet);
+
+            Status = UltimaClientConnectionStatus.ServerLogin;
+        }
 
         private int ReceiveSeed(IPullStream inputStream, int batchLength, UltimaClientConnectionStatus nextStatus)
         {
@@ -90,6 +144,14 @@ namespace Infusion
                     OnPacketReceived(packet);
                     Status = nextStatus;
                     receivedPosition = 0;
+                    this.loginSeed = BitConverter.ToUInt32(seed.Reverse().ToArray(), 0);
+                    if (requiresEncryption)
+                    {
+                        receiveNewGameStream = new ClientNewGamePullStream(seed);
+                        receiveNewGameStream.BaseStream = diagnosticPullStream;
+                        sendNewGameStream = new ClientNewGamePushStream(seed);
+                        NewGameEncryptionStarted?.Invoke(seed);
+                    }
                     return 4;
                 }
             }
@@ -110,6 +172,15 @@ namespace Infusion
                 OnPacketReceived(packet);
                 Status = nextStatus;
                 receivedPosition = 0;
+
+                this.loginSeed = BitConverter.ToUInt32(receivedSeed.Skip(1).Take(4).Reverse().ToArray(), 0);
+                if (requiresEncryption)
+                {
+                    receiveNewGameStream = new ClientNewGamePullStream(receivedSeed);
+                    receiveNewGameStream.BaseStream = diagnosticPullStream;
+                    sendNewGameStream = new ClientNewGamePushStream(receivedSeed);
+                    NewGameEncryptionStarted?.Invoke(receivedSeed);
+                }
             }
 
             return byteReceived;
@@ -135,8 +206,10 @@ namespace Infusion
                     break;
                 case UltimaClientConnectionStatus.Game:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);
-                    var huffmanStream = new HuffmanStream(new PushStreamToStreamAdapter(diagnosticPushStream));
+                    sendNewGameStream.BaseStream = diagnosticPushStream;
+                    var huffmanStream = new HuffmanStream(new PushStreamToStreamAdapter(sendNewGameStream));
                     huffmanStream.Write(packet.Payload, 0, packet.Length);
+
                     break;
                 default:
                     throw new NotImplementedException($"Sending packets while in {Status} Status.");

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Infusion.Commands;
 using Infusion.Diagnostic;
 using Infusion.IO;
+using Infusion.IO.Encryption.Login;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
@@ -153,7 +154,7 @@ namespace Infusion.Proxy
             serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy", packetRegistry);
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
-                serverDiagnosticPushStream, proxyStartConfig.Encrypted, packetRegistry);
+                serverDiagnosticPushStream, packetRegistry);
             serverConnection.PacketReceived += ServerConnectionOnPacketReceived;
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
@@ -161,6 +162,8 @@ namespace Infusion.Proxy
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client", packetRegistry),
                     new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry);
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
+            clientConnection.NewGameEncryptionStarted += ClientConnectionOnNewGameEncryptionStarted;
+            clientConnection.LoginEncryptionStarted += ClientConnectionOnLoginEncryptionStarted;
 
             diagnosticProvider.ClientConnection = clientConnection;
             diagnosticProvider.ServerConnection = serverConnection;
@@ -179,6 +182,11 @@ namespace Infusion.Proxy
 
                     while ((receivedLength = ClientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                     {
+#if DUMP_RAW
+                        Console.Info("client -> proxy");
+                        Console.Info(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+#endif
+
                         var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
                         clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
                     }
@@ -234,7 +242,14 @@ namespace Infusion.Proxy
                     using (var memoryStream = new MemoryStream(1024))
                     {
                         clientConnection.Send(filteredPacket.Value, memoryStream);
-                        ClientStream.Write(memoryStream.GetBuffer(), 0, (int) memoryStream.Length);
+                        var buffer = memoryStream.GetBuffer();
+
+#if DUMP_RAW
+                        Console.Info("proxy -> client");
+                        Console.Info(buffer.Take((int)memoryStream.Length).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+#endif
+
+                        ClientStream.Write(buffer, 0, (int) memoryStream.Length);
                     }
                 }
             }
@@ -245,6 +260,8 @@ namespace Infusion.Proxy
             if (rawPacket.Id == PacketDefinitions.ConnectToGameServer.Id)
             {
                 var packet = packetRegistry.Materialize<ConnectToGameServerPacket>(rawPacket);
+                serverEndpoint = new IPEndPoint(new IPAddress(packet.GameServerIp), packet.GameServerPort);
+                
                 packet.GameServerIp = new byte[] {0x7F, 0x00, 0x00, 0x01};
                 packet.GameServerPort = proxyLocalPort;
                 rawPacket = packet.RawPacket;
@@ -349,7 +366,14 @@ namespace Infusion.Proxy
                     using (var memoryStream = new MemoryStream(1024))
                     {
                         serverConnection.Send(filteredPacket.Value, memoryStream);
-                        ServerStream.Write(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+                        var buffer = memoryStream.GetBuffer();
+
+#if DUMP_RAW
+                        Console.Info("proxy -> server");
+                        Console.Info(buffer.Take((int)memoryStream.Length).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+#endif
+
+                        ServerStream.Write(buffer, 0, (int)memoryStream.Length);
                     }
                 }
             }
@@ -357,6 +381,16 @@ namespace Infusion.Proxy
 
         private static readonly LatencyMeter clientProxyLatencyMeter = new LatencyMeter();
         private static readonly LatencyMeter serverProxyLatencyMeter = new LatencyMeter();
+
+        private static void ClientConnectionOnNewGameEncryptionStarted(byte[] key)
+        {
+            serverConnection.InitNewGameEncryption(key);
+        }
+
+        private static void ClientConnectionOnLoginEncryptionStarted(uint seed, LoginEncryptionKey key)
+        {
+            serverConnection.InitLoginEncryption(seed, key);
+        }
 
         private static void ClientConnectionOnPacketReceived(object sender, Packet rawPacket)
         {

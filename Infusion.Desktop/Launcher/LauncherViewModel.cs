@@ -35,6 +35,7 @@ namespace Infusion.Desktop.Launcher
             new ProtocolVersion() { Version = new Version(7, 0, 0, 0), Label = ">= 7.0.0.0" },
             new ProtocolVersion() { Version = new Version(7, 0, 9, 0), Label = ">= 7.0.9.0" },
             new ProtocolVersion() { Version = new Version(7, 0, 16, 0), Label = ">= 7.0.16.0" },
+            new ProtocolVersion() { Version = new Version(7, 0, 18, 0), Label = ">= 7.0.18.0" },
         };
 
         public ObservableCollection<Profile> Profiles
@@ -101,16 +102,6 @@ namespace Infusion.Desktop.Launcher
             }
         }
 
-        public bool Encrypted
-        {
-            get => SelectedProfile.LauncherOptions.Encrypted;
-            set
-            {
-                SelectedProfile.LauncherOptions.Encrypted = value;
-                OnPropertyChanged();
-            }
-        }
-
         public UltimaClientType SelectedClientType
         {
             get => SelectedProfile.LauncherOptions.ClientType;
@@ -128,7 +119,6 @@ namespace Infusion.Desktop.Launcher
             OnPropertyChanged("OrionOptionsVisible");
             OnPropertyChanged("CrossOptionsVisible");
             OnPropertyChanged("SelectedProtocolVersion");
-            OnPropertyChanged("Encrypted");
         }
 
         public void DeleteSelectedProfile()

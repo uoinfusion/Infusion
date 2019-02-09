@@ -31,7 +31,7 @@ namespace Infusion.Diagnostic
             {
                 using (var reader = new BinaryReader(stream))
                 {
-                    using (var pullStream = new StreamToPullStreamAdaptet(stream))
+                    using (var pullStream = new StreamToPullStreamAdapter(stream))
                     {
                         while (stream.Position < stream.Length)
                         {

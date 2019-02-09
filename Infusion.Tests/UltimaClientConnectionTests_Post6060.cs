@@ -16,7 +16,7 @@ namespace Infusion.Tests
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial);
             connection.ReceiveBatch(inputStream, inputStream.Length);
 
-            connection.Status.Should().Be(UltimaClientConnectionStatus.ServerLogin);
+            connection.Status.Should().Be(UltimaClientConnectionStatus.AfterInitialSeed);
         }
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace Infusion.Tests
 
             connection.ReceiveBatch(inputStream, 16);
 
-            connection.Status.Should().Be(UltimaClientConnectionStatus.ServerLogin);
+            connection.Status.Should().Be(UltimaClientConnectionStatus.AfterInitialSeed);
         }
 
         [TestMethod]

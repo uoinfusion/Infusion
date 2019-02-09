@@ -30,7 +30,6 @@ namespace Infusion.Desktop.Launcher
                 {
                     ServerAddress = serverEndPoint,
                     LocalProxyPort = proxyPort,
-                    Encrypted = options.Encrypted,
                     ProtocolVersion = options.ProtocolVersion,
                 });
                 if (!connectedToServerEvent.WaitOne(TimeSpan.FromSeconds(30)))

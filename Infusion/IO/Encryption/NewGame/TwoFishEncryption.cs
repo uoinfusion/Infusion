@@ -1,4 +1,4 @@
-﻿namespace Infusion.IO
+﻿namespace Infusion.IO.Encryption.NewGame
 {
     internal sealed class TwofishEncryption : TwofishBase
     {

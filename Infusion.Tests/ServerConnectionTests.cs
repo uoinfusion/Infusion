@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Infusion.Diagnostic;
 using Infusion.IO;
+using Infusion.IO.Encryption.Login;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -42,8 +44,7 @@ namespace Infusion.Tests
             });
 
             var diagnosticStream = new TextDiagnosticPullStream(packetRegistry);
-            var connection = new ServerConnection(ServerConnectionStatus.Game, diagnosticStream,
-                NullDiagnosticPushStream.Instance, true, packetRegistry);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.Game, diagnosticStream);
             connection.Receive(inputData);
 
             var output = diagnosticStream.Flush();
@@ -61,8 +62,7 @@ namespace Infusion.Tests
             });
             var expectedPackets = new[] {new Packet(0xB9, FakePackets.EnableLockedClientFeatures)};
 
-            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
-                NullDiagnosticPushStream.Instance);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.Game);
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
             connection.Receive(inputData);
@@ -70,10 +70,27 @@ namespace Infusion.Tests
             expectedPackets.AreEqual(receivedPackets);
         }
 
+        private ServerConnection CreateEncryptedConnection(ServerConnectionStatus status,
+            IDiagnosticPullStream diagnosticPullStream, IDiagnosticPushStream diagnosticPushStream)
+        {
+            return new ServerConnection(status, diagnosticPullStream,
+                diagnosticPushStream, newGameKey: new byte[] { 127, 0, 0, 1 },
+                loginSeed: 0xA9FE5050, loginKey: new LoginEncryptionKey(0x2cc3ed9d, 0xa374227f, 0));
+        }
+
+        private ServerConnection CreateEncryptedConnection(ServerConnectionStatus status)
+            => CreateEncryptedConnection(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance);
+
+        private ServerConnection CreateEncryptedConnection(ServerConnectionStatus status, TextDiagnosticPullStream diagnosticStream)
+            => CreateEncryptedConnection(status, diagnosticStream, NullDiagnosticPushStream.Instance);
+
+        private ServerConnection CreateEncryptedConnection(ServerConnectionStatus status, TextDiagnosticPushStream diagnosticStream)
+            => CreateEncryptedConnection(status, NullDiagnosticPullStream.Instance, diagnosticStream);
+
         [TestMethod]
         public void Can_send_prelogin_packet()
         {
-            var connection = new ServerConnection(ServerConnectionStatus.PreLogin);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.PreLogin);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
 
@@ -114,8 +131,7 @@ namespace Infusion.Tests
         {
             var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
 
-            var connection = new ServerConnection(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance,
-                diagnosticStream, true, packetRegistry);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.PreLogin, diagnosticStream);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
 
@@ -129,8 +145,7 @@ namespace Infusion.Tests
         public void Can_write_diagnostic_info_about_sent_Game_packet()
         {
             var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
-            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
-                diagnosticStream, true, packetRegistry);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.Game, diagnosticStream);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.GameServerLoginRequestPacket, testStream);
 
@@ -144,8 +159,7 @@ namespace Infusion.Tests
         [TestMethod]
         public void Can_send_game_packet()
         {
-            var connection = new ServerConnection(ServerConnectionStatus.Game, NullDiagnosticPullStream.Instance,
-                NullDiagnosticPushStream.Instance);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.Game);
             var testStream = new TestMemoryStream();
             connection.Send(FakePackets.Instantiate(FakePackets.GameServerLoginRequest), testStream);
 
@@ -178,7 +192,7 @@ namespace Infusion.Tests
                 new Packet(PacketDefinitions.CharactersStartingLocations.Id, FakePackets.CharactersStartingLocations), 
             };
 
-            var connection = new ServerConnection(ServerConnectionStatus.Game);
+            var connection = CreateEncryptedConnection(ServerConnectionStatus.Game);
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
             connection.Receive(inputData);

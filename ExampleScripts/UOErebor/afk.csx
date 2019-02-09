@@ -15,7 +15,7 @@ public static class Afk
     {
         "desttro", "elbereth", "finn", "gothmog", "houba", "iustus", "myke", "yavanna",
         "nightmare", "sirglorg", "ustus", "levtar", "lustus", "total", "tangata nui", "guardian",
-        "alatar"
+        "alatar", "lazar"
     };
 
     public static string[] AfkMessages { get; set; } =

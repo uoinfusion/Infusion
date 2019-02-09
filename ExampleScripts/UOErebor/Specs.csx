@@ -102,6 +102,8 @@ public static class Specs
 
     // Resources
     public static readonly ItemSpec Shaft = 0x1BD4;
+    public static readonly ItemSpec SpruceShaft = new ItemSpec(0x1BD4, (Color)0x0000);
+    public static readonly ItemSpec ChestnutShaft = new ItemSpec(0x1BD4, (Color)0x05E5);
     public static readonly ItemSpec Wire = 0x1879;
     public static readonly ItemSpec Nails = 0x102E;
     public static readonly ItemSpec Lockpick = 0x14FB;

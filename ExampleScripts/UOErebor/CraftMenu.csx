@@ -191,7 +191,7 @@ public sealed class CraftProducer
     {
         Item item = null;
         if (!ignoreBackpack)
-            item = UO.Items.Matching(spec).InBackPack().FirstOrDefault()
+            item = UO.Items.Matching(spec).InBackPack(true).FirstOrDefault()
                     ?? UO.Items.Matching(spec).OnLayer(Layer.OneHandedWeapon).FirstOrDefault()
                     ?? UO.Items.Matching(spec).OnLayer(Layer.TwoHandedWeapon).FirstOrDefault();
         
@@ -205,7 +205,7 @@ public sealed class CraftProducer
             if (!spec.Matches(item))
                 throw new InvalidOperationException($"Selected item ({Specs.TranslateToName(item)}) is not a {Specs.TranslateToName(spec)}. Crafting canceled.");
             
-            if (item.ContainerId != UO.Me.BackPack.Id)
+            if (!UO.Items.InBackPack(true).Any(x => x.Id == item.Id))
                 Items.Pickup(item);
         }
         

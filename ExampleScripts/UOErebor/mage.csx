@@ -13,7 +13,9 @@ public static class Mage
     public static TwoStateAbility Concentration { get; } = new TwoStateAbility(".concentration",
         "Nyni jsi schopen kouzlit za mene many.", "Jsi zpatky v normalnim stavu.");
     public static TwoStateAbility StandCast { get; } = new TwoStateAbility(".standcast",
-        "Nyni budes kouzlit s vetsim usilim.", "Tve usili polevilo.", new[] { "Jsi prilis vycerpany udrzovanim stitu." });
+        "Nyni budes kouzlit s vetsim usilim.", "Tve usili polevilo.", 
+        new[] { "Jsi prilis vycerpany udrzovanim stitu." },
+        new StateIndicator(0x80000000, 0x99000000, 2260, 0x20, 0));
         
     public static int FireChargerLevel => Chargers.FireLevel;
     public static int EnergyChargerLevel => Chargers.EnergyLevel;

@@ -5,8 +5,8 @@ using System.Collections.Generic;
 
 public class IgnoredItems
 {
-    private static object ignoredItemsLock = new object();
-    private static HashSet<ObjectId> alreadyLootedItems = new HashSet<ObjectId>();
+    private object ignoredItemsLock = new object();
+    private  HashSet<ObjectId> alreadyLootedItems = new HashSet<ObjectId>();
 
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
         

@@ -88,16 +88,6 @@ namespace Infusion.Tests
             => CreateEncryptedConnection(status, NullDiagnosticPullStream.Instance, diagnosticStream);
 
         [TestMethod]
-        public void Can_send_prelogin_packet()
-        {
-            var connection = CreateEncryptedConnection(ServerConnectionStatus.PreLogin);
-            var testStream = new TestMemoryStream();
-            connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
-
-            testStream.ActualBytes.Should().BeEquivalentTo(FakePackets.InitialLoginRequestEncrypted);
-        }
-
-        [TestMethod]
         public void Given_connection_in_Initial_status_When_sends_login_seed_Then_enters_PreLogin_status()
         {
             var connection = new ServerConnection(ServerConnectionStatus.Initial);
@@ -124,21 +114,6 @@ namespace Infusion.Tests
             connection.Send(FakePackets.LoginSeedPacket, new TestMemoryStream());
 
             connection.Status.Should().Be(ServerConnectionStatus.Game);
-        }
-
-        [TestMethod]
-        public void Can_write_diagnostic_info_about_sent_PreLogin_packet()
-        {
-            var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
-
-            var connection = CreateEncryptedConnection(ServerConnectionStatus.PreLogin, diagnosticStream);
-            var testStream = new TestMemoryStream();
-            connection.Send(FakePackets.Instantiate(FakePackets.InitialLoginRequest), testStream);
-
-            var output = diagnosticStream.Flush();
-
-            output.Should().Contain("0x80, 0x61, 0x64, 0x6D, 0x69, 0x6E")
-                .And.Contain("0x7A, 0x63, 0x9A, 0xED, 0x56, 0x0E");
         }
 
         [TestMethod]

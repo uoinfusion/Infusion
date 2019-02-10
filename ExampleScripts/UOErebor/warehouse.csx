@@ -48,6 +48,20 @@ public class Warehouse
         
         throw new InvalidOperationException($"No registered container for {Specs.TranslateToName(item)}"); 
     }
+
+    public Item AskForContainer(ItemSpec spec, string prompt)
+    {
+        Item containerItem;
+        if (Warehouse.Global.TryGetContainer(spec, out IContainer container))
+        {
+            container.Open();
+            containerItem = container.Item;
+        }
+        else
+            containerItem = Common.AskForContainer(prompt);
+            
+        return containerItem;
+    }
     
     public bool TryGetContainer(Item item, out IContainer container)
     {

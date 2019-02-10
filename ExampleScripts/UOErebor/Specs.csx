@@ -55,6 +55,8 @@ public static class Specs
     public static readonly ItemSpec TightBoots = 0x1711;
 
     // Containers
+    public static readonly ItemSpec Bag = 0x0E76;
+    public static readonly ItemSpec BeltPouch = 0x09B0;
     public static readonly ItemSpec BackPack = 0xE75;
     public static readonly ItemSpec MagickyPytlik = new ItemSpec(0x0E76, (Color)0x0430);
     public static readonly ItemSpec MagickyVacek = new[]
@@ -74,6 +76,8 @@ public static class Specs
     public static readonly ItemSpec Knives = new[] { VikingSword, Dagger, Katana };
     public static readonly ItemSpec PickAxe = new[] { 0x0E85, 0x0E86 };
     public static readonly ItemSpec FishingPole = 0x0DBF;
+    public static readonly ItemSpec Scissors = 0x0F9E;
+    public static readonly ItemSpec SewingKit = 0x0F9D;
     public static readonly ItemSpec Hatchets = new[] { Hatchet, CopperExecutionersAxe };
     public static readonly ItemSpec Campfire = 0x0DE3;
     public static readonly ItemSpec Forge = new[] { 0x0FB1, 0x198E };
@@ -116,11 +120,13 @@ public static class Specs
     public static readonly ItemSpec PilesOfWool = 0x0DF8;
     public static readonly ItemSpec Cotton = 0x0C4F;
     public static readonly ItemSpec BaleOfCotton = 0x0DF9;
+    public static readonly ItemSpec SpoolsOfThread = 0x0FA0;
     public static readonly ItemSpec Wheat = 0x0C5A;
     public static readonly ItemSpec Bandage = 0x0E21;
     public static readonly ItemSpec BloodyBandage = 0x0E20;
 
     public static readonly ItemSpec FoldedCloth = 0x175D;
+    public static readonly ItemSpec FoldedTowel = 0x0A6C;
 
     public static readonly ItemSpec BlankScroll = new ItemSpec(0x0E34, (Color)0x0000);
     public static readonly ItemSpec Paper = 0x14ED;

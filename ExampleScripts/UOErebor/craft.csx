@@ -3,6 +3,7 @@
 #load "tinkering.csx"
 #load "carpentry.csx"
 #load "bowcraft.csx"
+#load "tailoring.csx"
 #load "doors.csx"
 #load "looting.csx"
 #load "hpnotify.csx"

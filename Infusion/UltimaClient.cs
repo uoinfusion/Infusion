@@ -65,6 +65,19 @@ namespace Infusion
             Send(new UpdateCurrentStaminaPacket(playerId, currentStamina, maxStamina).RawPacket);
         }
 
+        public void ShowGump(GumpInstanceId id, GumpTypeId type, int x, int y, string commands, string[] textLines)
+        {
+            var gumpPacket = new SendGumpMenuDialogPacket();
+            gumpPacket.GumpId = id;
+            gumpPacket.GumpTypeId = type;
+            gumpPacket.X = (uint)x;
+            gumpPacket.Y = (uint)y;
+            gumpPacket.Commands = commands;
+            gumpPacket.TextLines = textLines;
+
+            Send(gumpPacket.Serialize());
+        }
+
         public void CloseGump(GumpTypeId gumpTypeId)
         {
             Send(new CloseGenericGumpPacket(gumpTypeId).RawPacket);

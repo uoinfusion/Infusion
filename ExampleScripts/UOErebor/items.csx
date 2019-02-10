@@ -101,11 +101,11 @@ public static class Items
         
         journal
             .When<Infusion.LegacyApi.Events.ItemEnteredViewEvent>(
-                e => e.NewItem.Id == item.Id,
+                e => e.NewItem.Id == item.Id && e.NewItem.ContainerId == targetContainerId,
                 e =>
                 {
                     result = true;
-                    Trace.Log($"Item drop confirmed: {item}");
+                    Trace.Log($"Item drop confirmed: {item}, container: {e.NewItem.ContainerId}, targetContainer: {targetContainerId}");
                 })
             .When<MoveItemRequestRejectedEvent>(x =>
             {

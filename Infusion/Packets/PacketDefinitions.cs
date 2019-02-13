@@ -729,15 +729,15 @@ namespace Infusion.Packets
         public static readonly PacketDefinition UnknownE5 = new PacketDefinition(0xE5,
             new VariablePacketLength(), "UnknownE5");
         public static readonly PacketDefinition UnknownE6 = new PacketDefinition(0xE6,
-            new VariablePacketLength(), "UnknownE6");
+            new StaticPacketLength(5), "UnknownE6");
         public static readonly PacketDefinition UnknownE7 = new PacketDefinition(0xE7,
-            new VariablePacketLength(), "UnknownE7");
+            new StaticPacketLength(0x0C), "UnknownE7");
         public static readonly PacketDefinition UnknownE8 = new PacketDefinition(0xE8,
-            new VariablePacketLength(), "UnknownE8");
+            new StaticPacketLength(0x0D), "UnknownE8");
         public static readonly PacketDefinition UnknownE9 = new PacketDefinition(0xE9,
-            new VariablePacketLength(), "UnknownE9");
+            new StaticPacketLength(0x4B), "UnknownE9");
         public static readonly PacketDefinition UnknownEA = new PacketDefinition(0xEA,
-            new VariablePacketLength(), "UnknownEA");
+            new StaticPacketLength(0x03), "UnknownEA");
         public static readonly PacketDefinition UnknownEB = new PacketDefinition(0xEB,
             new VariablePacketLength(), "UnknownEB");
 

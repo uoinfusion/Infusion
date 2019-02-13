@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using Infusion.Packets;
 using Infusion.Packets.Server;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -33,9 +32,9 @@ namespace Infusion.Tests.Packets.Server
             packet.Deserialize(rawPacket);
 
             packet.Id.Should().Be(new ObjectId(0));
-            packet.Model.Should().Be((ModelId) 0);
+            packet.Model.Should().Be((ModelId)0);
             packet.Type.Should().Be(SpeechType.Normal);
-            packet.Color.Should().Be((Color) 0x03B2);
+            packet.Color.Should().Be((Color)0x03B2);
             packet.Font.Should().Be(3);
             packet.Name.Should().Be("System");
             packet.Message.Should().Be("Targeting Cancelled");
@@ -49,7 +48,7 @@ namespace Infusion.Tests.Packets.Server
                 Id = new ObjectId(0x0006A12A),
                 Model = 0x000,
                 Type = SpeechType.Speech,
-                Color = (Color) 0x0026,
+                Color = (Color)0x0026,
                 Font = 0x0003,
                 Name = "Sedy vlk",
                 Message = "Sedy vlk"
@@ -65,6 +64,38 @@ namespace Infusion.Tests.Packets.Server
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x53, 0x65, 0x64, 0x79,
                     0x20, 0x76, 0x6C, 0x6B, 0x00
                 });
+        }
+
+        [TestMethod]
+        public void Can_deserialize_shorter_form_with_garbage_after_message_null()
+        {
+            var rawPacket = FakePackets.Instantiate(new byte[]
+            {
+                0x1C, // packet
+                0x00, 0x2C, // length
+                0x00, 0x00, 0x00, 0x00, // speaker id
+                0x00, 0x00, // body type
+                0x00, // speech type
+                0xFF, 0xFF, // color
+                0xFF, 0xFF, // font
+                0x53, 0x59, 0x53, 0x54, 0x45, 0x4D, 0x00, // null terminated name
+
+                // null terminated message text
+                0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x41, 0x63, 0x63, 0x6F, 0x75,
+                0x6E, 0x74, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6E, 0x63, 0x79, 0x00,
+                0x75, // garbage after messsage
+            });
+
+            var packet = new SendSpeechPacket();
+            packet.Deserialize(rawPacket);
+
+            packet.Id.Should().Be(new ObjectId(0));
+            packet.Model.Should().Be((ModelId)0);
+            packet.Type.Should().Be(SpeechType.Normal);
+            packet.Color.Should().Be((Color)0xFFFF);
+            packet.Font.Should().Be(0xFFFF);
+            packet.Name.Should().Be("SYSTEM");
+            packet.Message.Should().Be("updateAccountCurrency");
         }
     }
 }

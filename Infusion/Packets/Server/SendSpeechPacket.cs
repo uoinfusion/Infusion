@@ -24,14 +24,18 @@ namespace Infusion.Packets.Server
         {
             this.rawPacket = rawPacket;
             var reader = new ArrayPacketReader(rawPacket.Payload);
-            reader.Skip(3);
+            reader.Skip(1);
+            int size = reader.ReadUShort();
 
             Id = reader.ReadObjectId();
             Model = reader.ReadModelId();
             Type = (SpeechType) reader.ReadByte();
             Color = (Color) reader.ReadUShort();
             Font = reader.ReadUShort();
-            Name = reader.ReadString(30);
+
+            Name = reader.ReadNullTerminatedString();
+            if (size > 44)
+                reader.Position = 44;
             Message = reader.ReadNullTerminatedString();
         }
 

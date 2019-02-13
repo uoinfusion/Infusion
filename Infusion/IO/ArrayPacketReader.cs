@@ -13,7 +13,7 @@ namespace Infusion.IO
             this.array = array;
         }
 
-        public int Position { get; private set; }
+        public int Position { get; set; }
 
         public byte ReadByte() => array[Position++];
 

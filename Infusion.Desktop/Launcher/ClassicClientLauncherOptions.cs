@@ -27,9 +27,9 @@ namespace Infusion.Desktop.Launcher
                 if (string.IsNullOrEmpty(clientExePath))
                 {
                     if (!string.IsNullOrEmpty(Files.RootDir))
-                        clientExePath = Path.Combine(Files.RootDir, "NoCryptClient.exe");
+                        clientExePath = Path.Combine(Files.RootDir, "client.exe");
                     else
-                        clientExePath = "NoCryptClient.exe";
+                        clientExePath = "client.exe";
                 }
 
                 return clientExePath;

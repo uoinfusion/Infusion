@@ -21,21 +21,14 @@ namespace Infusion.Desktop.Launcher
 
                 CheckMulFiles(options);
 
-                var connectedToServerEvent = new AutoResetEvent(false);
-                Program.ConnectedToServer += (sender, args) =>
-                {
-                    connectedToServerEvent.Set();
-                };
                 var proxyTask = Program.Start(new ProxyStartConfig()
                 {
-                    ServerAddress = serverEndPoint,
+                    ServerAddress = options.ServerEndpoint,
+                    ServerEndPoint = serverEndPoint,
                     LocalProxyPort = proxyPort,
                     ProtocolVersion = options.ProtocolVersion,
+
                 });
-                if (!connectedToServerEvent.WaitOne(TimeSpan.FromSeconds(30)))
-                {
-                    throw new TimeoutException("Server connection timeout.");
-                }
 
                 switch (options.ClientType)
                 {

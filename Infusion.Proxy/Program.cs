@@ -117,7 +117,7 @@ namespace Infusion.Proxy
                 "Lists running commands"));
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
 
-            serverEndpoint = config.ServerAddress;
+            serverEndpoint = config.ServerEndPoint;
             return Main(config.LocalProxyPort, packetRingBufferLogger);
         }
 
@@ -167,8 +167,7 @@ namespace Infusion.Proxy
 
             diagnosticProvider.ClientConnection = clientConnection;
             diagnosticProvider.ServerConnection = serverConnection;
-
-            Task.Run(() => ServerLoop());
+            bool serverLoopStarted = false;
 
             try
             {
@@ -176,6 +175,12 @@ namespace Infusion.Proxy
                 {
                     var client = listener.AcceptTcpClient();
                     ClientStream = client.GetStream();
+
+                    if (!serverLoopStarted)
+                    {
+                        Task.Run(() => ServerLoop());
+                        serverLoopStarted = true;
+                    }
 
                     int receivedLength;
                     var receiveBuffer = new byte[65535];
@@ -301,6 +306,8 @@ namespace Infusion.Proxy
         {
             try
             {
+                Console.Info($"Connecting to {proxyStartConfig.ServerAddress}");
+
                 while (true)
                 {
                     lock (serverStreamLock)

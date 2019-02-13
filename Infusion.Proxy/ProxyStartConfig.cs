@@ -5,7 +5,8 @@ namespace Infusion.Proxy
 {
     public class ProxyStartConfig
     {
-        public IPEndPoint ServerAddress { get; set; }
+        public IPEndPoint ServerEndPoint { get; set; }
+        public string ServerAddress { get; set; }
         public ushort LocalProxyPort { get; set; } = 33333;
         public Version ProtocolVersion { get; set; }
     }

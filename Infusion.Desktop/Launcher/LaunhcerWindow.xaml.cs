@@ -63,10 +63,6 @@ namespace Infusion.Desktop.Launcher
             IsEnabled = false;
             string originalTitle = Title;
 
-            string message = $"Connecting to {launcherOptions.ServerEndpoint}";;
-            Title = message;
-            Program.Console.Info(message);
-
             try
             {
                 await Launcher.Launch(launcherOptions);

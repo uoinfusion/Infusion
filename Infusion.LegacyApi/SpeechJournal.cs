@@ -164,6 +164,9 @@ namespace Infusion.LegacyApi
         internal IEnumerable<JournalEntry> AfterLastAction() =>
             source.AfterLastAction().Where(line => line.Id >= LastWaitEntryId);
 
+        public JournalEntry First()
+            => source.FirstOrDefault(line => line.Id >= journalEntryStartId);
+
         public JournalEntry First(params string[] words)
         {
             return source.Where(line => line.Id >= journalEntryStartId)

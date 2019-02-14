@@ -51,6 +51,7 @@
     <Compile Include="AttackResult.cs" />
     <Compile Include="BlockedClientPacketsFilters.cs" />
     <Compile Include="Cancellation.cs" />
+    <Compile Include="Cliloc\ClilocTranslator.cs" />
     <Compile Include="Console\ConsoleLineType.cs" />
     <Compile Include="Console\IConsole.cs" />
     <Compile Include="Console\NullConsole.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Filters\IShapeshiftingFilter.cs" />
     <Compile Include="Filters\ShapeshiftingFilter.cs" />
     <Compile Include="Events\GraphicalEffectStartedEvent.cs" />
+    <Compile Include="Cliloc\IClilocSource.cs" />
     <Compile Include="IEventJournalSource.cs" />
     <Compile Include="Events\MobileDeletedEvent.cs" />
     <Compile Include="Events\MobileLeftViewEvent.cs" />
@@ -114,6 +116,8 @@
     <Compile Include="LegacyFilters.cs" />
     <Compile Include="LocalUltimaClientWindow.cs" />
     <Compile Include="LogConfiguration.cs" />
+    <Compile Include="Cliloc\MemoryClilocSource.cs" />
+    <Compile Include="Cliloc\MulClilocSource.cs" />
     <Compile Include="NullUltimaClientWindow.cs" />
     <Compile Include="OrderedEvent.cs" />
     <Compile Include="Events\SkillRequestedEvent.cs" />

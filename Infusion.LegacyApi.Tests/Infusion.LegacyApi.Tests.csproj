@@ -57,6 +57,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClilocTests.cs" />
     <Compile Include="ConcurrencyTester.cs" />
     <Compile Include="CorpsesTests.cs" />
     <Compile Include="EventJournalTests\TestEventJournalSource.cs" />

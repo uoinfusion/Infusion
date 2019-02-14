@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using Infusion.Commands;
 using Infusion.Gumps;
+using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.LegacyApi.Filters;
@@ -56,14 +57,15 @@ namespace Infusion.LegacyApi
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry)
-            : this(logConfig, commandHandler, ultimaServer, ultimaClient, console, packetRegistry, new RealTimeSource())
+            : this(logConfig, commandHandler, ultimaServer, ultimaClient, console, packetRegistry,
+                  new RealTimeSource(), new MulClilocSource())
         {
 
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
-            ITimeSource timeSource)
+            ITimeSource timeSource, IClilocSource clilocSource)
         {
             this.console = console;
 
@@ -84,7 +86,7 @@ namespace Infusion.LegacyApi
             JournalSource.NewMessageReceived +=
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
-            journalObservers = new JournalObservers(JournalSource, ultimaServer, console);
+            journalObservers = new JournalObservers(JournalSource, ultimaServer, console, clilocSource);
             targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource, packetRegistry);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);

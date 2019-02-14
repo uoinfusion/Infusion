@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Infusion.Commands;
+using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Packets;
@@ -36,7 +37,8 @@ namespace Infusion.LegacyApi
             });
 
             var console = new NullConsole();
-            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry, timeSource);
+            Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry,
+                timeSource, ClilocSource);
             UO.Initialize(Api);
             ServerApi = new TestServerApi(PacketReceivedFromServer, Api);
         }
@@ -58,5 +60,6 @@ namespace Infusion.LegacyApi
         internal ServerPacketHandler ServerPacketHandler { get; }
         internal ClientPacketHandler ClientPacketHandler { get; }
         public TestServerApi ServerApi { get; }
+        internal MemoryClilocSource ClilocSource { get; } = new MemoryClilocSource();
     }
 }

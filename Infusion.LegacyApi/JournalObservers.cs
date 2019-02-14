@@ -1,8 +1,7 @@
-﻿using Infusion.LegacyApi.Console;
+﻿using Infusion.LegacyApi.Cliloc;
+using Infusion.LegacyApi.Console;
 using Infusion.Packets;
 using Infusion.Packets.Server;
-using System;
-using Ultima;
 
 namespace Infusion.LegacyApi
 {
@@ -10,12 +9,17 @@ namespace Infusion.LegacyApi
     {
         private readonly SpeechJournalSource journalSource;
         private readonly IConsole console;
-        private static readonly Lazy<StringList> clilocDictionary = new Lazy<StringList>(() => new StringList("ENU"));
+        private readonly IClilocSource clilocSource;
+        private readonly ClilocTranslator translator;
 
-        public JournalObservers(SpeechJournalSource journalSource, IServerPacketSubject serverPacketSubject, IConsole console)
+        public JournalObservers(SpeechJournalSource journalSource, IServerPacketSubject serverPacketSubject, IConsole console,
+            IClilocSource clilocSource)
         {
             this.journalSource = journalSource;
             this.console = console;
+            this.clilocSource = clilocSource;
+            translator = new ClilocTranslator(clilocSource);
+
             serverPacketSubject.Subscribe(PacketDefinitions.SpeechMessage, HandleSpeechMessagePacket);
             serverPacketSubject.Subscribe(PacketDefinitions.SendSpeech, HanldeSendSpeechPacket);
             serverPacketSubject.Subscribe(PacketDefinitions.ClilocMessage, HandleClilocMessage);
@@ -24,7 +28,7 @@ namespace Infusion.LegacyApi
 
         private void HandleClilocMessageAffix(ClilocMessageAffixPacket packet)
         {
-            var message = clilocDictionary.Value.GetString(packet.MessageId.Value) ?? $"Unknown Cliloc #{packet.MessageId.Value}";
+            var message = clilocSource.GetString(packet.MessageId.Value);
             if (!string.IsNullOrEmpty(packet.Affix))
                 message += packet.Affix;
             
@@ -34,7 +38,7 @@ namespace Infusion.LegacyApi
 
         private void HandleClilocMessage(ClilocMessagePacket packet)
         {
-            var message = clilocDictionary.Value.GetString(packet.MessageId.Value) ?? $"Unknown Cliloc #{packet.MessageId.Value}";
+            var message = translator.Translate(packet.MessageId.Value, packet.Arguments);
 
             journalSource.AddMessage(packet.Name, message, packet.SpeakerId, packet.SpeakerBody, packet.Color, packet.Type);
             console.WriteSpeech(packet.Name, message, packet.SpeakerId, packet.Color, packet.SpeakerBody, packet.Type);

@@ -31,7 +31,7 @@ namespace Infusion.Packets.Server
             Color = reader.ReadColor();
             Font = reader.ReadUShort();
             MessageId = new MessageId(reader.ReadInt());
-            Name = reader.ReadString(30);
+            Name = reader.ReadString(29);
             Arguments = reader.ReadNullTerminatedUnicodeString();
         }
 

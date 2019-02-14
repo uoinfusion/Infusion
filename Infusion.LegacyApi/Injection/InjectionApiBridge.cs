@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi.Injection
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
             this.wavPlayer = new WavPlayer(console);
-            this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers);
+            this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers, console);
 
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 

@@ -22,6 +22,7 @@ namespace Infusion.Packets.Both
             ushort skillNumber;
             ushort value;
             ushort unmodifiedValue;
+            bool isLocked = false;
 
             switch (type)
             {
@@ -32,11 +33,12 @@ namespace Infusion.Packets.Both
                     {
                         value = reader.ReadUShort();
                         unmodifiedValue = reader.ReadUShort();
-                        reader.Skip(1); // skill lock
+                        isLocked = reader.ReadBool();
+                        ushort cap = 0;
                         if (type == 0x02 || type == 0xDF)
-                            reader.Skip(2); // skill cap
+                            cap = reader.ReadUShort();
 
-                        values.Add(new SkillValue((Skill)skillNumber, value, unmodifiedValue));
+                        values.Add(new SkillValue((Skill)skillNumber, value, unmodifiedValue, cap, isLocked));
                     }
                     break;
                 case 0xFF:
@@ -44,8 +46,8 @@ namespace Infusion.Packets.Both
                     var skill = skillNumber != 0 ? (Skill)(skillNumber + 1) : Skill.Alchemy;
                     value = reader.ReadUShort();
                     unmodifiedValue = reader.ReadUShort();
-                    reader.Skip(1); // skill lock
-                    values.Add(new SkillValue(skill, value, unmodifiedValue));
+                    isLocked = reader.ReadBool();
+                    values.Add(new SkillValue(skill, value, unmodifiedValue,0, isLocked));
                     break;
                 default:
                     throw new NotImplementedException($"Unknown type {type} of SendSkills packet.");
@@ -63,16 +65,24 @@ namespace Infusion.Packets.Both
     public struct SkillValue : IEquatable<SkillValue>
     {
         public Skill Skill { get; }
-        public ushort Value { get; }
         public ushort UnmodifiedValue { get; }
         public decimal UnmodifiedPercentage => decimal.Divide(UnmodifiedValue, 10);
+
+        public ushort Value { get; }
         public decimal Percentage => decimal.Divide(Value, 10);
 
-        public SkillValue(Skill skill, ushort value, ushort unmodifiedValue)
+        public ushort Cap { get; }
+        public decimal CapPercentage => decimal.Divide(Cap, 10);
+
+        public bool Lock { get; }
+
+        public SkillValue(Skill skill, ushort value, ushort unmodifiedValue, ushort cap, bool isLocked)
         {
             Skill = skill;
             Value = value;
             UnmodifiedValue = unmodifiedValue;
+            Cap = cap;
+            Lock = isLocked;
         }
 
         public override bool Equals(object obj)

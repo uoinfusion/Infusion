@@ -20,7 +20,7 @@ namespace Infusion.Tests.Packets.Both
             packet.Deserialize(rawPacket);
 
             packet.Values.Length.Should().Be(1);
-            packet.Values[0].Should().Be(new SkillValue(Skill.Lumberjacking, 0x0A, 0x0A));
+            packet.Values[0].Should().Be(new SkillValue(Skill.Lumberjacking, 0x0A, 0x0A, 0, false));
         }
 
         [TestMethod]
@@ -88,8 +88,8 @@ namespace Infusion.Tests.Packets.Both
             packet.Deserialize(rawPacket);
 
             packet.Values.Length.Should().Be(0x32);
-            packet.Values.First().Should().Be(new SkillValue(Skill.Alchemy, 0x12C, 0x12F));
-            packet.Values.Last().Should().Be(new SkillValue(Skill.Necromancy, 0x12C, 0x12D));
+            packet.Values.First().Should().Be(new SkillValue(Skill.Alchemy, 0x12C, 0x12F, 0, false));
+            packet.Values.Last().Should().Be(new SkillValue(Skill.Necromancy, 0x12C, 0x12D, 0, false));
         }
 
         [TestMethod]
@@ -110,9 +110,9 @@ namespace Infusion.Tests.Packets.Both
             packet.Deserialize(rawPacket);
 
             packet.Values.Length.Should().Be(3);
-            packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0));
-            packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0x12c, 0x12c));
-            packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0));
+            packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0, 0, false));
+            packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0x12c, 0x12c, 0, false));
+            packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0, 0, false));
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace Infusion.Tests.Packets.Both
             var rawPacket = FakePackets.Instantiate(new byte[]
             {
                 0x3A, // packet
-                0x00, 0x1E, // size
+                0x00, 0x1F, // size
                 0x02, // type
                 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xBC,
                 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xBC,
@@ -132,9 +132,9 @@ namespace Infusion.Tests.Packets.Both
             packet.Deserialize(rawPacket);
 
             packet.Values.Length.Should().Be(3);
-            packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0));
-            packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0, 0));
-            packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0));
+            packet.Values[0].Should().Be(new SkillValue(Skill.Alchemy, 0x0, 0x0, 0, false));
+            packet.Values[1].Should().Be(new SkillValue(Skill.Anatomy, 0, 0, 0, false));
+            packet.Values[2].Should().Be(new SkillValue(Skill.AnimalLore, 0x0, 0x0, 0, false));
         }
     }
 }

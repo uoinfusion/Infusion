@@ -1,18 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Infusion.Gumps;
 using Infusion.LegacyApi.Tests.Packets;
 using Infusion.Packets;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Threading.Tasks;
 
 namespace Infusion.LegacyApi.Tests
 {
     [TestClass]
     public class GumpObserversTests
     {
+        [TestMethod]
+        public void Can_handle_compressed_gump()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Compressed);
+
+            testProxy.Api.CurrentGump.Should().NotBeNull();
+            testProxy.Api.CurrentGump.Commands.Should().Contain("{ ButtonTileArt 266 113 129 129 1 0 2 6571 0 0 0 }");
+            testProxy.Api.CurrentGump.TextLines.Should().HaveCount(3);
+            testProxy.Api.CurrentGump.TextLines[0].Should().Contain("Forja Pequena");
+        }
+
         [TestMethod]
         public void Can_wait_for_gump()
         {

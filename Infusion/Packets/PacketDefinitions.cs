@@ -699,8 +699,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition SecondAgeRevision = new PacketDefinition(0xDC,
             new StaticPacketLength(9), "SecondAgeRevision");
 
-        public static readonly PacketDefinition CompressedGump = new PacketDefinition(0xDD,
-            new VariablePacketLength(), "CompressedGump");
+        public static readonly PacketDefinition<CompressedGumpPacket> CompressedGump = new PacketDefinition<CompressedGumpPacket>(0xDD,
+            new VariablePacketLength(), "CompressedGump", () => new CompressedGumpPacket());
 
         public static readonly PacketDefinition UpdateMobileStatus = new PacketDefinition(0xDE,
             new VariablePacketLength(), "UpdateMobileStatus");

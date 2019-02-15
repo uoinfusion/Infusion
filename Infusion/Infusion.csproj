@@ -168,6 +168,7 @@
     <Compile Include="Packets\Server\ClilocMessagePacket.cs" />
     <Compile Include="Packets\Server\CloseContainerPacket.cs" />
     <Compile Include="DialogBoxResponse.cs" />
+    <Compile Include="Packets\Server\CompressedGumpPacket.cs" />
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
     <Compile Include="Packets\Server\DrawObjectPacket7000.cs" />
     <Compile Include="Packets\Server\GraphicalEffectPacket.cs" />

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Infusion.Commands;
 using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
@@ -17,6 +18,8 @@ namespace Infusion.LegacyApi
             : this(new RealTimeSource(), packetRegistry)
         {
         }
+
+        internal void PacketReceivedFromServer(object compressed) => throw new NotImplementedException();
 
         internal InfusionTestProxy(ITimeSource timeSource, PacketDefinitionRegistry packetRegistry = null)
         {

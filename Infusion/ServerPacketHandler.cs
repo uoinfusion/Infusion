@@ -116,6 +116,8 @@ namespace Infusion
                 packetHandler.Publish<GraphicalEffectPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.SecondAgeObjectInformation.Id)
                 packetHandler.Publish<SecondAgeObjectInformationPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.CompressedGump.Id)
+                packetHandler.Publish<CompressedGumpPacket>(rawPacket);
 
             return rawPacket;
         }

@@ -42,11 +42,13 @@ namespace Infusion.LegacyApi
 
             IServerPacketSubject serverPacketSubject = server;
             serverPacketSubject.Subscribe(PacketDefinitions.SendGumpMenuDialog, HandleGump);
+            serverPacketSubject.Subscribe(PacketDefinitions.CompressedGump, HandleGump);
         }
 
         public Gump CurrentGump { get; private set; }
 
         private void HandleGump(SendGumpMenuDialogPacket packet) => GumpReceived?.Invoke();
+        private void HandleGump(CompressedGumpPacket packet) => GumpReceived?.Invoke();
 
         private void GumpMenuSelectionRequest(GumpMenuSelectionRequest packet)
         {
@@ -74,6 +76,35 @@ namespace Infusion.LegacyApi
             return rawPacket;
         }
 
+        private bool HandleGump(Func<Gump> instantiateGump)
+        {
+            var nextGumpNotVisible = false;
+
+            Gump gump;
+            lock (gumpLock)
+            {
+                gump = instantiateGump();
+                CurrentGump = gump;
+
+                if (!showNextAwaitedGump)
+                {
+                    currentGumpVisible = false;
+                    nextGumpNotVisible = true;
+                    showNextAwaitedGump = true;
+                }
+                else
+                    currentGumpVisible = true;
+            }
+
+            eventSource.Publish(new GumpReceivedEvent(gump));
+            gumpReceivedEvent.Set();
+
+            if (nextGumpNotVisible)
+                return true;
+
+            return false;
+        }
+
         private Packet? FilterSendGumpMenuDialog(Packet rawPacket)
         {
             if (rawPacket.Id == PacketDefinitions.GeneralInformationPacket.Id && rawPacket.Payload[4] == 4)
@@ -83,31 +114,26 @@ namespace Infusion.LegacyApi
 
                 eventSource.Publish(new ServerRequestedGumpCloseEvent(packet.GumpTypeId));
             }
-            if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
+            else if (rawPacket.Id == PacketDefinitions.SendGumpMenuDialog.Id)
             {
-                var nextGumpNotVisible = false;
-
-                Gump gump;
-                lock (gumpLock)
+                bool discard = HandleGump(() =>
                 {
                     var packet = packetRegistry.Materialize<SendGumpMenuDialogPacket>(rawPacket);
-                    gump = new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
-                    CurrentGump = gump;
+                    return new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
+                });
 
-                    if (!showNextAwaitedGump)
-                    {
-                        currentGumpVisible = false;
-                        nextGumpNotVisible = true;
-                        showNextAwaitedGump = true;
-                    }
-                    else
-                        currentGumpVisible = true;
-                }
+                if (discard)
+                    return null;
+            }
+            else if (rawPacket.Id == PacketDefinitions.CompressedGump.Id)
+            {
+                bool discard = HandleGump(() =>
+                {
+                    var packet = packetRegistry.Materialize<CompressedGumpPacket>(rawPacket);
+                    return new Gump(packet.GumpId, packet.GumpTypeId, packet.Commands, packet.TextLines);
+                });
 
-                eventSource.Publish(new GumpReceivedEvent(gump));
-                gumpReceivedEvent.Set();
-
-                if (nextGumpNotVisible)
+                if (discard)
                     return null;
             }
 

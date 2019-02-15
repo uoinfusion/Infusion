@@ -25,6 +25,7 @@ public static class Looting
 
     public static ItemSpec UselessLoot { get; } = new[]
     {
+        Specs.Club, Specs.SpruceArrow, Specs.TightBoots, Specs.HorseShoes,
         Specs.Torsos, Specs.Rocks, Specs.Corpse,
         // ignoring some "invisible" items
         Specs.Hairs

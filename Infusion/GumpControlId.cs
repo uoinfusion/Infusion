@@ -6,6 +6,7 @@
         public uint Value { get; }
 
         public static explicit operator GumpControlId(uint value) => new GumpControlId(value);
+        public static explicit operator GumpControlId(int value) => new GumpControlId((uint)value);
 
         public static explicit operator uint(GumpControlId id) => id.Value;
 

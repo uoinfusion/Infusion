@@ -227,6 +227,9 @@ namespace Infusion.LegacyApi
         public static void TriggerGump(GumpControlId triggerId)
             => Current.TriggerGump(triggerId);
 
+        public static void TriggerGump(int triggerId)
+            => Current.TriggerGump((GumpControlId)triggerId);
+
         public static GumpResponseBuilder GumpResponse()
             => Current.GumpResponse();
 

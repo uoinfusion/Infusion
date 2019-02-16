@@ -115,7 +115,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             injection.ServerApi.AddNewItemToGround(0xEED, new Location2D(1001, 1001), 20, (Color)0);
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(1);
         }
@@ -127,7 +127,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             injection.ServerApi.AddNewItemToBackpack(0xEED);
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, "my");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("my"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(1);
         }
@@ -139,7 +139,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             var subContainerId = injection.ServerApi.AddNewItemToBackpack(0x0E75);
             injection.ServerApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, "my");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("my"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(0);
         }
@@ -151,7 +151,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             var subContainerId = injection.ServerApi.AddNewItemToBackpack(0x0E75);
             injection.ServerApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, NumberConversions.Int2Hex(subContainerId));
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue((int)subContainerId));
 
             injection.InjectionHost.UO.FindCount().Should().Be(1);
         }
@@ -163,7 +163,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             var subContainerId = injection.ServerApi.AddNewItemToBackpack(0x0E75);
             injection.ServerApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, NumberConversions.Int2Hex(injection.TestProxy.Api.Me.BackPack.Id));
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue((int)injection.TestProxy.Api.Me.BackPack.Id));
 
             injection.InjectionHost.UO.FindCount().Should().Be(0);
         }
@@ -214,7 +214,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1001, 1001));
 
             injection.InjectionHost.UO.Set("finddistance", 1);
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(9);
         }
@@ -286,7 +286,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 1002));
 
             injection.InjectionHost.UO.Set("finddistance", "1");
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(0);
         }
@@ -300,7 +300,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1000, 1000));
 
             injection.InjectionHost.UO.Set("finddistance", "asdf");
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(1);
         }
@@ -314,7 +314,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.AddNewItemToGround(0xeed, new Location2D(1015, 1015));
 
             injection.InjectionHost.UO.Set("finddistance", "-10");
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(2);
         }
@@ -331,7 +331,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.InjectionHost.UO.Ignore(NumberConversions.Int2Hex(itemId1));
             injection.InjectionHost.UO.Ignore(NumberConversions.Int2Hex(itemId2));
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(1);
         }
@@ -349,7 +349,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.InjectionHost.UO.Ignore((int)itemId2);
             injection.InjectionHost.UO.IgnoreReset();
 
-            injection.InjectionHost.UO.FindType(0xEED, -1, "ground");
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(3);
         }

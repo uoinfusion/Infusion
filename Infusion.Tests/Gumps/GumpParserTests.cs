@@ -33,6 +33,59 @@ namespace Infusion.Tests.Gumps
         }
 
         [TestMethod]
+        public void Can_parse_ButtonTileArt()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{ ButtonTileArt 266 113 129 129 1 0 2 6571 0 0 0 }", new string[] { });
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Should().Be($"ButtonTileArt: x = 266, y = 113, width = 129, height = 129, isTrigger, pageId = 0, triggerId = 2, gumpId = 6571{Environment.NewLine}");
+        }
+
+        [TestMethod]
+        public void Ends_parsing_at_null_char()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 1 0 2}\0{Button 13 158 4005 4007 1 0 2}", new string[] { });
+
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Should().Be($"Button: x = 13, y = 158, isTrigger, pageId = 0, triggerId = 2{Environment.NewLine}");
+        }
+
+        [TestMethod]
+        public void Can_parse_trailing_whitespace()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{Button 13 158 4005 4007 1 0 2}\t ", new string[] { });
+
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Should().Be($"Button: x = 13, y = 158, isTrigger, pageId = 0, triggerId = 2{Environment.NewLine}");
+        }
+
+        [TestMethod]
+        public void Can_parse_leading_whitespace()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "\t {Button 13 158 4005 4007 1 0 2}", new string[] { });
+
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Should().Be($"Button: x = 13, y = 158, isTrigger, pageId = 0, triggerId = 2{Environment.NewLine}");
+        }
+
+        [TestMethod]
+        public void Can_parse_trigger_button_with_whitespace()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{ Button 13 158 4005 4007 1 0 2 }", new string[] { });
+
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Should().Be($"Button: x = 13, y = 158, isTrigger, pageId = 0, triggerId = 2{Environment.NewLine}");
+        }
+        [TestMethod]
         public void Can_parse_checkbox()
         {
             var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{CheckBox 13 57 9904 9903 0 100}", new string[] { });

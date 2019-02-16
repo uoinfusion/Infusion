@@ -4,7 +4,7 @@ using Infusion.Packets;
 namespace Infusion.Gumps
 {
     internal sealed class GumpParserDescriptionProcessor : IProcessButton, IProcessText, IProcessCheckBox, IProcessTextEntry, IProcessGumpPic,
-        IProcessTilePicHue
+        IProcessTilePicHue, IProcessButtonTileArt
     {
         private readonly StringBuilder builder = new StringBuilder();
 
@@ -13,6 +13,10 @@ namespace Infusion.Gumps
             builder.AppendLine(
                 $"Button: x = {x}, y = {y}{(isTrigger ? ", isTrigger" : string.Empty)}, pageId = {pageId}, triggerId = {triggerId.Value}");
         }
+
+        public void OnButtonTileArt(int x, int y, int width, int height, bool isTrigger, uint pageId, GumpControlId triggerId, int gumpId)
+            => builder.AppendLine($"ButtonTileArt: x = {x}, y = {y}, width = {width}, height = {height}{(isTrigger ? ", isTrigger" : string.Empty)}, pageId = {pageId}, triggerId = {triggerId.Value}, gumpId = {gumpId}");
+
 
         void IProcessText.OnText(int x, int y, uint hue, string text)
         {

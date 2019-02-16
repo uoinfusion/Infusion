@@ -15,6 +15,11 @@ namespace Infusion.Gumps
         void OnButton(int x, int y, int down, int up, bool isTrigger, uint pageId, GumpControlId triggerId);
     }
 
+    public interface IProcessButtonTileArt : IGumpParserProcessor
+    {
+        void OnButtonTileArt(int x, int y, int width, int height, bool isTrigger, uint pageId, GumpControlId triggerId, int gumpId);
+    }
+
     public interface IProcessText : IGumpParserProcessor
     {
         void OnText(int x, int y, uint hue, string text);

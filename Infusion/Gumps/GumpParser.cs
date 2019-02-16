@@ -20,11 +20,17 @@ namespace Infusion.Gumps
             position = 0;
             this.gump = gump;
 
-            while (position < gump.Commands.Length)
+            while (position < gump.Commands.Length && gump.Commands[position] != '\0')
             {
-                Consume('{');
-                ParseControl();
-                Consume('}');
+                SkipWhiteSpace();
+                if (position < gump.Commands.Length)
+                {
+                    Consume('{');
+                    SkipWhiteSpace();
+                    ParseControl();
+                    SkipWhiteSpace();
+                    Consume('}');
+                }
             }
         }
 
@@ -35,6 +41,9 @@ namespace Infusion.Gumps
             {
                 case "button":
                     ParseButton();
+                    break;
+                case "buttontileart":
+                    ParseButtonTileArt();
                     break;
                 case "text":
                     ParseText();
@@ -139,6 +148,25 @@ namespace Infusion.Gumps
                 buttonProcessor.OnButton(x, y, down, up, isTrigger, pageId, new GumpControlId(triggerId));
         }
 
+        private void ParseButtonTileArt()
+        {
+            var x = ParseIntParameter();
+            var y = ParseIntParameter();
+            var width = ParseIntParameter();
+            var height = ParseIntParameter();
+            var isTrigger = ParseBoolParameter();
+            var pageId = (uint)ParseIntParameter();
+            var triggerId = (uint)ParseIntParameter();
+            var gumpId = ParseIntParameter();
+            ParseIntParameter(); // unknown1
+            ParseIntParameter(); // unknown2
+            ParseIntParameter(); // unknown3
+
+            if (parserProcessor is IProcessButtonTileArt buttonProcessor)
+                buttonProcessor.OnButtonTileArt(x, y, width, height, isTrigger, pageId, new GumpControlId(triggerId), gumpId);
+        }
+
+
         private bool ParseBoolParameter()
         {
             var parameter = ParseIntParameter();
@@ -173,7 +201,7 @@ namespace Infusion.Gumps
 
         private void SkipWhiteSpace()
         {
-            while (char.IsWhiteSpace(gump.Commands[position]))
+            while (position < gump.Commands.Length && char.IsWhiteSpace(gump.Commands[position]))
             {
                 position++;
             }
@@ -193,6 +221,8 @@ namespace Infusion.Gumps
 
         private void Consume(char c)
         {
+            if (gump.Commands[position] != c)
+                throw new GumpException($"Expecting {c} at {position} but {gump.Commands[position]} found in: {gump.Commands}");
             position++;
         }
     }

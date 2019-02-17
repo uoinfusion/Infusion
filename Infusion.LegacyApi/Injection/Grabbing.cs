@@ -12,6 +12,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly Legacy api;
         private readonly InjectionHost host;
         private ObjectId? receiveingContainerId;
+        private int? grabDelay;
 
         public Grabbing(Legacy api, InjectionHost host)
         {
@@ -32,6 +33,9 @@ namespace Infusion.LegacyApi.Injection
             var targetContainerId = receiveingContainerId ?? api.Me.BackPack.Id;
 
             api.DropItem((uint)id, targetContainerId);
+
+            if (grabDelay.HasValue)
+                api.Wait(grabDelay.Value);
         }
 
         public void UnsetReceivingContainer() => receiveingContainerId = null;
@@ -49,5 +53,7 @@ namespace Infusion.LegacyApi.Injection
 
             api.DropItem((ObjectId)id, (ObjectId)targetContainerId);
         }
+
+        internal void SetGrabDelay(int delay) => grabDelay = delay;
     }
 }

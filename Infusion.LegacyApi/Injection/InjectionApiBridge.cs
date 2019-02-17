@@ -22,6 +22,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly Morphing morphing;
         private readonly WavPlayer wavPlayer;
         private readonly GumpSubrutines gumps;
+        private readonly ObjectNameReceiver objectNameReceiver;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
             PacketDefinitionRegistry packetRegistry)
@@ -39,6 +40,7 @@ namespace Infusion.LegacyApi.Injection
             this.morphing = new Morphing(infusionApi, packetRegistry);
             this.wavPlayer = new WavPlayer(console);
             this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers, console);
+            this.objectNameReceiver = new ObjectNameReceiver(infusionApi);
 
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
@@ -69,7 +71,10 @@ namespace Infusion.LegacyApi.Injection
         public int GetX(int id) => infusionApi.GameObjects[(ObjectId)id]?.Location.X ?? 0;
         public int GetY(int id) => infusionApi.GameObjects[(ObjectId)id]?.Location.Y ?? 0;
         public int GetZ(int id) => infusionApi.GameObjects[(ObjectId)id]?.Location.Z ?? 0;
+
         public void SetFindDistance(int distance) => findType.Distance = distance;
+        public void SetGrabDelay(int delay) => grabbing.SetGrabDelay(delay);
+
         public void Wait(int ms) => infusionApi.Wait(ms);
 
         public int GetDistance(int id)
@@ -207,6 +212,8 @@ namespace Infusion.LegacyApi.Injection
 
             return string.Empty;
         }
+
+        public void ReceiveObjectName(int id, int timeout) => objectNameReceiver.Receive(id, timeout);
 
         public void Snap(string name)
         {

@@ -86,6 +86,8 @@ namespace Infusion.LegacyApi.Injection
         public int GetGraphics(int id) => infusionApi.GameObjects[(uint)id]?.Type ?? 0;
         public int GetDir(int id) => (int)(infusionApi.Mobiles[(uint)id]?.Orientation ?? Direction.North);
         public int IsNpc(int id) => infusionApi.Mobiles[(uint)id] != null ? 1 : 0;
+        public int GetColor(int id) => infusionApi.Mobiles[(uint)id]?.Color ?? infusionApi.Items[(uint)id]?.Color ?? 0;
+        public int GetLayer(int id) => (int)(infusionApi.Items[(uint)id]?.Layer ?? 0);
 
         public int GetQuantity(int id)
         {
@@ -147,6 +149,7 @@ namespace Infusion.LegacyApi.Injection
 
         public void TextOpen() { /* just do nothing */ }
         public void TextPrint(string text) => infusionApi.Log(text);
+        public void TextClear() => infusionApi.CommandHandler.Invoke("cls");
 
         public void ServerPrint(string message) => infusionApi.Say(message);
         public void Print(string msg) => infusionApi.ClientPrint(msg);
@@ -164,9 +167,9 @@ namespace Infusion.LegacyApi.Injection
 
         public void Arm(string name) => equipmentSubrutines.Arm(name);
         public void SetArm(string name) => equipmentSubrutines.SetArm(name);
-        public void Unequip(string layer) => equipmentSubrutines.Unequip(layer);
-        public void Equip(string layer, int id) => equipmentSubrutines.Equip(layer, id);
-        public int ObjAtLayer(string layer) => equipmentSubrutines.ObjAtLayer(layer);
+        public void Unequip(int layer) => equipmentSubrutines.Unequip(layer);
+        public void Equip(int layer, int id) => equipmentSubrutines.Equip(layer, id);
+        public int ObjAtLayer(int layer) => equipmentSubrutines.ObjAtLayer(layer);
         public void WaitTargetObject(int id) => targeting.WaitTargetObject((ObjectId)id);
         public void WaitTargetObject(int id1, int id2) => targeting.WaitTargetObject((ObjectId)id1, (ObjectId)id2);
         public void WaitTargetTile(int type, int x, int y, int z) => targeting.WaitTargetTile(type, x, y, z);

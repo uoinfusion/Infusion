@@ -38,19 +38,19 @@ namespace Infusion.LegacyApi.Injection
                 api.ClientPrint($"No weapons set with setarm for {name}");
         }
 
-        public void Equip(string layer, int id)
+        public void Equip(int layer, int id)
         {
             var item = api.Items[(ObjectId)id];
             if (item != null)
             {
                 api.DragItem(item.Id);
-                api.Wear(item.Id, Convert(layer));
+                api.Wear(item.Id, (Layer)layer);
             }
         }
 
-        public void Unequip(string layer)
+        public void Unequip(int layer)
         {
-            var item = api.Items.OnLayer(Convert(layer)).FirstOrDefault();
+            var item = api.Items.OnLayer((Layer)layer).FirstOrDefault();
 
             if (item != null)
             {
@@ -59,64 +59,13 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        public int ObjAtLayer(string layer)
+        public int ObjAtLayer(int layer)
         {
-            var item = UO.Items.OnLayer(Convert(layer)).FirstOrDefault();
+            var item = UO.Items.OnLayer((Layer)layer).FirstOrDefault();
             if (item == null)
                 return 0;
 
             return (int)item.Id;
-        }
-
-        private Layer Convert(string layer)
-        {
-            switch (layer)
-            {
-                case "Rhand":
-                    return Layer.OneHandedWeapon;
-                case "Lhand":
-                    return Layer.TwoHandedWeapon;
-                case "Shoes":
-                    return Layer.Shoes;
-                case "Pants":
-                    return Layer.Pants;
-                case "Shirt":
-                    return Layer.Shirt;
-                case "Hat":
-                    return Layer.Helm;
-                case "Gloves":
-                    return Layer.Gloves;
-                case "Ring":
-                    return Layer.Ring;
-                case "Neck":
-                    return Layer.Neck;
-                case "Hair":
-                    return Layer.Hair;
-                case "Waist":
-                    return Layer.Waist;
-                case "Torso":
-                    return Layer.Torso;
-                case "Brace":
-                    return Layer.Bracelet;
-                case "Beard":
-                    return Layer.FacialHair;
-                case "Ear":
-                    return Layer.Earrings;
-                case "Arms":
-                    return Layer.Arms;
-                case "Bpack":
-                    return Layer.Backpack;
-                case "Bank":
-                    return Layer.BankBox;
-                case "Rstk":
-                    return Layer.RestockContainer;
-                case "NRstk":
-                    return Layer.NoRestockContainer;
-                case "Sell":
-                    return Layer.SellContainer;
-                default:
-                    throw new NotImplementedException($"layer {layer}");
-            }
         }
     }
 }

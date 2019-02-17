@@ -96,6 +96,18 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
+        public void Finds_in_backpack_when_container_is_backpack_string()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            injection.ServerApi.AddNewItemToBackpack(0xEED);
+
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("backpack"));
+
+            injection.InjectionHost.UO.FindCount().Should().Be(1);
+        }
+
+        [TestMethod]
         public void Finds_nearest_item_on_ground()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
@@ -105,7 +117,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             injection.InjectionHost.UO.FindType(0xEED, -1, 1);
 
-            injection.InjectionHost.UO.GetSerial("finditem").Should().Be(NumberConversions.Int2Hex((int)nearestId));
+            injection.InjectionHost.UO.GetSerial("finditem").Should().Be(NumberConversions.ToHex((int)nearestId));
         }
 
         [TestMethod]

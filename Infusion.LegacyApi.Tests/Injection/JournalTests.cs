@@ -207,9 +207,9 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.ServerApi.Say(qwerSerial, "player name", "qwer");
             injection.ServerApi.Say(zxcvSerial, "player name", "zxcv");
 
-            injection.InjectionHost.UO.JournalSerial(0).Should().Be(NumberConversions.Int2Hex((int)zxcvSerial));
-            injection.InjectionHost.UO.JournalSerial(1).Should().Be(NumberConversions.Int2Hex((int)qwerSerial));
-            injection.InjectionHost.UO.JournalSerial(2).Should().Be(NumberConversions.Int2Hex((int)asdfSerial));
+            injection.InjectionHost.UO.JournalSerial(0).Should().Be(NumberConversions.ToHex((int)zxcvSerial));
+            injection.InjectionHost.UO.JournalSerial(1).Should().Be(NumberConversions.ToHex((int)qwerSerial));
+            injection.InjectionHost.UO.JournalSerial(2).Should().Be(NumberConversions.ToHex((int)asdfSerial));
         }
 
 
@@ -244,7 +244,7 @@ namespace Infusion.LegacyApi.Tests.Injection
             var foundIndex = injection.InjectionHost.UO.InJournal("asdf");
             foundIndex.Should().Be(3);
 
-            injection.InjectionHost.UO.JournalSerial(foundIndex - 1).Should().Be(NumberConversions.Int2Hex((int)asdfSerial));
+            injection.InjectionHost.UO.JournalSerial(foundIndex - 1).Should().Be(NumberConversions.ToHex((int)asdfSerial));
         }
 
         [TestMethod]

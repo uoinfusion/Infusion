@@ -1,5 +1,6 @@
 public class GraphicsEffect
 {
+    public static readonly GraphicsEffect Fire = new GraphicsEffect(0x10FE);
     public static readonly GraphicsEffect Sparkles = new GraphicsEffect(0x375A);
     public static readonly GraphicsEffect Spike = new GraphicsEffect(0x37c4);
     public static readonly GraphicsEffect Explosion = new GraphicsEffect(0x36b0);

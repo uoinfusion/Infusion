@@ -119,7 +119,7 @@ public class StandardPrinter : IPrintHitPointNotification
 
     public Color PlayerHealColor { get; set; } = Colors.None;
     public Color PlayerHarmColor { get; set; } = Colors.Red;
-    public GraphicsEffect PlayerHarmEffect { get; set; }
+    public GraphicsEffect PlayerHarmEffect { get; set; } = GraphicsEffect.EnergyTwister;
     public Color OthersHealColor { get; set; } = Colors.None;
     public Color OthersHarmColor { get; set; } = Colors.None;
    

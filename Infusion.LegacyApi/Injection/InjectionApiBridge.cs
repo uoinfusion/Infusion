@@ -23,6 +23,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly WavPlayer wavPlayer;
         private readonly GumpSubrutines gumps;
         private readonly ObjectNameReceiver objectNameReceiver;
+        private readonly Walker walker;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
             PacketDefinitionRegistry packetRegistry)
@@ -41,6 +42,7 @@ namespace Infusion.LegacyApi.Injection
             this.wavPlayer = new WavPlayer(console);
             this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers, console);
             this.objectNameReceiver = new ObjectNameReceiver(infusionApi);
+            this.walker = new Walker(infusionApi);
 
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
@@ -201,6 +203,7 @@ namespace Infusion.LegacyApi.Injection
         public void Cast(string spellName) => throw new NotImplementedException();
 
         public void Morph(int type) => morphing.Morph(type);
+        public void MakeStepByKey(int key) => walker.MakeStepByKey(key);
 
         public string PrivateGetTile(int x, int y, int unknown, int tileMin, int tileMax)
         {

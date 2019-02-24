@@ -1,6 +1,6 @@
 # Infusion
 
-[![Join the chat at https://gitter.im/ultimaonlineinfusion/infusion](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ultimaonlineinfusion/infusion)
+[![Join the chat at https://gitter.im/ultimaonlineinfusion/infusion](https://img.shields.io/discord/522669579466440704.svg)](https://discord.gg/RYx8jzs)
 
 Infusion is an Ultima Online assistant similar to Injection. Infusion focuses on powerful and easy scripting features.
 You can write scripts in C# using either built in code editor that has source code highlighting, auto-complete and
@@ -19,7 +19,7 @@ debugging capabilities.
 - If you know Injection, take a look to a brief [comparison with Infusion](https://github.com/uoinfusion/Infusion/wiki/Comparison-with-Injection).
 - Look at [example scripts](https://github.com/uoinfusion/Infusion/tree/master/ExampleScripts).
 
-You may take a look at some videos:
+You may take a look at some [videos](https://www.youtube.com/channel/UCfQMN3_FpX4wx1yQc1IGOIw):
 
 - [Debugging scripts with Visual Studio 2017 Community edition](https://www.youtube.com/watch?v=X2hyImvCSHg)
 - [Using Hotride/UOPatcher to enable FPS patch](https://www.youtube.com/watch?v=hagheyX6Odo)

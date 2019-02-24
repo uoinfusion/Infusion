@@ -1,6 +1,6 @@
 # Infusion
 
-[![Join the chat at https://gitter.im/ultimaonlineinfusion/infusion](https://img.shields.io/discord/522669579466440704.svg)](https://discord.gg/RYx8jzs)
+[![Join the chat at Discord](https://img.shields.io/discord/522669579466440704.svg)](https://discord.gg/RYx8jzs)
 
 Infusion is an Ultima Online assistant similar to Injection. Infusion focuses on powerful and easy scripting features.
 You can write scripts in C# using either built in code editor that has source code highlighting, auto-complete and

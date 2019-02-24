@@ -31,7 +31,7 @@ namespace Infusion.LegacyApi
 
         private readonly IConsole console;
         private readonly PlayerObservers playerObservers;
-        private readonly QuestArrowObserver questArrowObserver;
+        private readonly MapObserver mapObserver;
         private readonly SoundObserver soundObserver;
         private readonly ShapeshiftingFilter shapeShifter;
 
@@ -93,7 +93,7 @@ namespace Infusion.LegacyApi
             lightObserver = new LightObserver(ultimaServer, ultimaClient, Me, this, packetRegistry);
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, this);
             soundObserver = new SoundObserver(ultimaServer, eventJournalSource, packetRegistry);
-            questArrowObserver = new QuestArrowObserver(ultimaServer, eventJournalSource);
+            mapObserver = new MapObserver(ultimaServer, eventJournalSource);
             shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient, packetRegistry);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, console, packetRegistry);
             var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);

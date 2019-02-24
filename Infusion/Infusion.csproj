@@ -157,6 +157,7 @@
     <Compile Include="ObjectId.cs" />
     <Compile Include="PacketHandler.cs" />
     <Compile Include="Packets\Both\CloseGenericGumpPacket.cs" />
+    <Compile Include="Packets\Both\MapMessagePacket.cs" />
     <Compile Include="Packets\Client\TalkRequest.cs" />
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
     <Compile Include="Packets\Client\ResponseToDialogBoxRequest.cs" />

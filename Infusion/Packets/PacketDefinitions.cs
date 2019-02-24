@@ -460,8 +460,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition Unknown8F = new PacketDefinition(0x8F,
             new VariablePacketLength(), "Unknown8F");
 
-        public static readonly PacketDefinition MapMessage = new PacketDefinition(0x90,
-            new StaticPacketLength(0x13), "MapMessage");
+        public static readonly PacketDefinition<MapMessagePacket> MapMessage = new PacketDefinition<MapMessagePacket>(0x90,
+            new StaticPacketLength(0x13), "MapMessage", () => new MapMessagePacket());
 
         public static readonly PacketDefinition GameServerLoginRequest = new PacketDefinition(0x91,
             new StaticPacketLength(0x41), "GameServerLoginRequest");

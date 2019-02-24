@@ -71,6 +71,7 @@
     <Compile Include="ItemManipulationTests\DropItemTests.cs" />
     <Compile Include="ItemManipulationTests\LayerHandlingTests.cs" />
     <Compile Include="ItemManipulationTests\WaitForItemDraggedTests.cs" />
+    <Compile Include="MapTests.cs" />
     <Compile Include="Packets\GumpMenuSelectionRequests.cs" />
     <Compile Include="GumpObserversTests.cs" />
     <Compile Include="Packets\RejectMoveItemRequestPackets.cs" />

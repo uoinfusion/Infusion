@@ -69,6 +69,7 @@
     <Compile Include="Events\GumpReceivedEvent.cs" />
     <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\ItemWornEvent.cs" />
+    <Compile Include="Events\MapMessageEvent.cs" />
     <Compile Include="Events\MoveItemRequestRejectedEvent.cs" />
     <Compile Include="Events\ObjectDeletedEvent.cs" />
     <Compile Include="Events\LoginConfirmedEvent.cs" />
@@ -147,7 +148,7 @@
     <Compile Include="MobileCollectionExtensions.cs" />
     <Compile Include="MobileSpec.cs" />
     <Compile Include="Events\QuestArrowEvent.cs" />
-    <Compile Include="QuestArrowObserver.cs" />
+    <Compile Include="MapObserver.cs" />
     <Compile Include="Events\SoundEffectPlayedEvent.cs" />
     <Compile Include="Filters\SoundObserver.cs" />
     <Compile Include="SpecSpecificity.cs" />

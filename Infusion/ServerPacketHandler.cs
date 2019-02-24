@@ -118,6 +118,8 @@ namespace Infusion
                 packetHandler.Publish<SecondAgeObjectInformationPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.CompressedGump.Id)
                 packetHandler.Publish<CompressedGumpPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.MapMessage.Id)
+                packetHandler.Publish<MapMessagePacket>(rawPacket);
 
             return rawPacket;
         }

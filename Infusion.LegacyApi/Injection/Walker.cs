@@ -31,18 +31,15 @@ namespace Infusion.LegacyApi.Injection
                 do
                 {
                     api.NotifyAction();
-                    api.Log("PressKey");
                     this.api.ClientWindow.PressKey((KeyCode)key);
 
                     journal.When<Events.PlayerMoveRequestedEvent>(request =>
                         {
                             moveRequestSent = true;
-                            api.Log("PlayerMoveRequestedEvent");
                         })
                         .WhenTimeout(() =>
                         {
                             moveRequestSent = false;
-                            api.Log("PlayerMoveRequestedEvent timeout");
                         })
                         .WaitAny(TimeSpan.FromSeconds(1));
                 } while (!moveRequestSent);
@@ -52,18 +49,15 @@ namespace Infusion.LegacyApi.Injection
                 journal.When<Events.PlayerMoveRejectedEvent>(p =>
                     {
                         moveRequestFailed = true;
-                        api.Log("PlayerMoveRejectedEvent");
                     })
                     .When<Events.PlayerMoveAcceptedEvent>(p =>
                     {
                         moveRequestFailed = false;
-                        api.Log("PlayerMoveAcceptedEvent");
                     })
                     .WhenTimeout(() => {
                         if (attempts > maxAttempts)
                             throw new InjectionException("Cannot walk");
                         moveRequestFailed = true;
-                        api.Log("timeout");
                     })
                     .WaitAny(TimeSpan.FromSeconds(30));
 

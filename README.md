@@ -21,9 +21,11 @@ debugging capabilities.
 
 You may take a look at some [videos](https://www.youtube.com/channel/UCfQMN3_FpX4wx1yQc1IGOIw):
 
+- [Push a button on a gump via Yoko Injection Script](https://www.youtube.com/watch?v=0x00bxTG8-c)
 - [Debugging scripts with Visual Studio 2017 Community edition](https://www.youtube.com/watch?v=X2hyImvCSHg)
 - [Using Hotride/UOPatcher to enable FPS patch](https://www.youtube.com/watch?v=hagheyX6Odo)
 
+If you want to write Yoko Injection scripts, you can install [Injection script](https://marketplace.visualstudio.com/items?itemName=uoinfusion.injection-vscode) extension for [Visual Studio Code](https://code.visualstudio.com/).
 
 ## Current Status
 

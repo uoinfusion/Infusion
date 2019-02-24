@@ -10,9 +10,9 @@ namespace Infusion.LegacyApi
         EventId LastEventId { get; }
         EventId LastActionEventId { get; }
         int MaximumCapacity { get; }
-        event EventHandler<IEvent> NewEventReceived;
+        event EventHandler<OrderedEvent> NewEventReceived;
         void Publish(IEvent ev);
         void NotifyAction();
-        void GatherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId);
+        void GatherEvents(ICollection<OrderedEvent> targetCollection, EventId minEventId, EventId maxEventId);
     }
 }

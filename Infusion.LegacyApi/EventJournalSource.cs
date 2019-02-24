@@ -13,14 +13,16 @@ namespace Infusion.LegacyApi
         private readonly LinkedList<OrderedEvent> events = new LinkedList<OrderedEvent>();
         private readonly object sourceLock = new object();
         private int counter;
-        public event EventHandler<IEvent> NewEventReceived;
+        public event EventHandler<OrderedEvent> NewEventReceived;
 
         public void Publish(IEvent ev)
         {
+            OrderedEvent orderedEvent;
             lock (sourceLock)
             {
                 var id = GenerateId();
-                events.AddLast(new OrderedEvent(id, ev));
+                orderedEvent = new OrderedEvent(id, ev);
+                events.AddLast(orderedEvent);
                 LastEventId = id;
                 counter++;
 
@@ -31,7 +33,7 @@ namespace Infusion.LegacyApi
                 }
             }
 
-            NewEventReceived?.Invoke(this, ev);
+            NewEventReceived?.Invoke(this, orderedEvent);
         }
 
         // ReSharper disable once InconsistentlySynchronizedField
@@ -41,7 +43,7 @@ namespace Infusion.LegacyApi
         public EventId LastActionEventId { get; private set; }
         public int MaximumCapacity => MaxEventCount;
 
-        public void GatherEvents(ICollection<IEvent> targetCollection, EventId minEventId, EventId maxEventId)
+        public void GatherEvents(ICollection<OrderedEvent> targetCollection, EventId minEventId, EventId maxEventId)
         {
             lock (sourceLock)
             {
@@ -51,7 +53,7 @@ namespace Infusion.LegacyApi
                         return;
 
                     if (ev.Id > minEventId)
-                        targetCollection.Add(ev.Event);
+                        targetCollection.Add(ev);
                 }
             }
         }

@@ -18,6 +18,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             var executedEvent = new AutoResetEvent(false);
             QuestArrowEvent receivedEvent = null;
 
+            var x = journal.AwaitingStarted;
             var task = Task.Run(() =>
             {
                 journal.When<QuestArrowEvent>(e =>
@@ -25,7 +26,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     receivedEvent = e;
                     executedEvent.Set();
                 })
-                    .WaitAny();
+                .WaitAny();
             });
 
             journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
@@ -267,9 +268,9 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             task = Task.Run(() =>
             {
                 journal
-                    .When<ContainerOpenedEvent>(e => result = "published after second WaitAny started")
-                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "qwer", e => { result = "published before first WaitAny"; })
-                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "asdf", e => { result = "published after first WaitAny before second WaitAny"; })
+                    .When<ContainerOpenedEvent>(e => result = "published after the second WaitAny started")
+                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "qwer", e => { result = "processed by the first WaitAny"; })
+                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "asdf", e => { result = "not processed by the first WaitAny"; })
                     .WaitAny();
             });
 
@@ -277,7 +278,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             source.Publish(new ContainerOpenedEvent(1));
 
             task.Wait(100).Should().BeTrue();
-            result.Should().Be("published after first WaitAny before second WaitAny");
+            result.Should().Be("not processed by the first WaitAny");
         }
 
         [TestMethod]

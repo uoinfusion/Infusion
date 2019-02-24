@@ -17,10 +17,10 @@ namespace Infusion.LegacyApi
         private readonly Dictionary<Type, List<EventSubscription>> eventSubscriptions =
             new Dictionary<Type, List<EventSubscription>>();
 
-        private readonly List<IEvent> preallocatedAllEvents;
+        private readonly List<OrderedEvent> preallocatedAllEvents;
 
         private Queue<Tuple<Delegate, IEvent>> incommingEventQueue;
-        private IEvent receivedEvent;
+        private OrderedEvent? receivedEvent;
 
         private Delegate whenActionToExecute;
         private readonly IEventJournalSource source;
@@ -35,21 +35,21 @@ namespace Infusion.LegacyApi
             this.journal = journal;
             this.defaultTimeout = defaultTimeout;
             source.NewEventReceived += HandleNewEvent;
-            preallocatedAllEvents = new List<IEvent>();
+            preallocatedAllEvents = new List<OrderedEvent>();
         }
 
-        private void HandleNewEvent(object sender, IEvent ev)
+        private void HandleNewEvent(object sender, OrderedEvent ev)
         {
-            if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
+            if (eventSubscriptions.TryGetValue(ev.Event.GetType(), out var subscriptionsList))
             {
                 var subscription =
-                    subscriptionsList.FirstOrDefault(x => x.Predicate == null || (bool) x.Predicate.DynamicInvoke(ev));
+                    subscriptionsList.FirstOrDefault(x => x.Predicate == null || (bool) x.Predicate.DynamicInvoke(ev.Event));
                 if (subscription == null)
                     return;
 
                 lock (eventReceivedLock)
                 {
-                    incommingEventQueue?.Enqueue(new Tuple<Delegate, IEvent>(subscription.WhenAction, ev));
+                    incommingEventQueue?.Enqueue(new Tuple<Delegate, IEvent>(subscription.WhenAction, ev.Event));
 
                     if (whenActionToExecute == null)
                     {
@@ -86,14 +86,14 @@ namespace Infusion.LegacyApi
             {
                 cancellation?.Check();
 
-                if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
+                if (eventSubscriptions.TryGetValue(ev.Event.GetType(), out var subscriptionsList))
                 {
                     foreach (var subscription in subscriptionsList)
                     {
-                        if (subscription.Predicate == null || (bool) subscription.Predicate.DynamicInvoke(ev))
+                        if (subscription.Predicate == null || (bool) subscription.Predicate.DynamicInvoke(ev.Event))
                         {
-                            journal.NotifyWait();
-                            subscription.WhenAction.DynamicInvoke(ev);
+                            journal.NotifyWait(ev.Id);
+                            subscription.WhenAction.DynamicInvoke(ev.Event);
                             return;
                         }
                     }
@@ -123,18 +123,18 @@ namespace Infusion.LegacyApi
                 }
 
                 Delegate whenAction;
-                IEvent ev;
+                OrderedEvent ev;
                 lock (eventReceivedLock)
                 {
                     whenAction = whenActionToExecute;
                     whenActionToExecute = null;
 
-                    ev = receivedEvent;
+                    ev = receivedEvent.Value;
                     receivedEvent = null;
                 }
 
-                whenAction.DynamicInvoke(ev);
-                journal.NotifyWait();
+                whenAction.DynamicInvoke(ev.Event);
+                journal.NotifyWait(ev.Id);
             }
             finally
             {
@@ -252,12 +252,12 @@ namespace Infusion.LegacyApi
                 {
                     cancellation?.Check();
 
-                    if (eventSubscriptions.TryGetValue(ev.GetType(), out var subscriptionsList))
+                    if (eventSubscriptions.TryGetValue(ev.Event.GetType(), out var subscriptionsList))
                     {
                         foreach (var subscription in subscriptionsList)
                         {
-                            if (subscription.Predicate == null || (bool)subscription.Predicate.DynamicInvoke(ev))
-                                subscription.WhenAction.DynamicInvoke(ev);
+                            if (subscription.Predicate == null || (bool)subscription.Predicate.DynamicInvoke(ev.Event))
+                                subscription.WhenAction.DynamicInvoke(ev.Event);
                         }
                     }
                 }

@@ -14,7 +14,15 @@ public static class QuestArrow
     public static void Run() =>
         journal
             .When<QuestArrowEvent>(HandleQuestChange)
+            .When<MapMessageEvent>(HandleMapMessage)
             .Incomming();
+
+    private static void HandleMapMessage(MapMessageEvent e)
+    {
+        var location = new Location2D(e.UpperLeft.X + e.Width, e.UpperLeft.Y + e.Height);
+        UO.ClientPrint($"Center of shown map: {location}");        
+        Uoam.SetMarker(location);
+    }
 
     private static void HandleQuestChange(QuestArrowEvent e)
     {

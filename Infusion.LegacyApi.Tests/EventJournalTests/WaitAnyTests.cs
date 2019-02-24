@@ -212,9 +212,6 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                 var speechEvent = new SpeechRequestedEvent("second message");
                 source.Publish(speechEvent);
 
-                source.SignalEventReceived(questArrowEvent);
-                source.SignalEventReceived(speechEvent);
-
                 task.Wait(100).Should().BeTrue();
 
                 receivedSpeech.Should().NotBeNull();
@@ -239,8 +236,14 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
         }
 
         [TestMethod]
-        public void Publish_after_WaitAny_doesnt_influence_next_call_to_WaitAny()
+        public void Unprocessed_events_by_first_WaitAny_are_visible_to_second_WaitAny()
         {
+            // It covers a case when script waits for an event and then has to wait for a second event.
+            // The second event may arrive nearly at the same time as the first event.
+            // There are two WaitAny calls in a single code block. There is just one action,
+            // before the first WaitAny.
+            // In other words, two consecutive calls to WaitAny have to process all events, no unhandled "holes"
+            // are allowed.
             var source = new EventJournalSource();
             var journal = new EventJournal(source);
             string result = string.Empty;
@@ -255,17 +258,18 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
 
             journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
             source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0, (Color)0)));
+            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "asdf", "asdf", 0, 0, (Color)0)));
             task.Wait(100).Should().BeTrue();
             result.Should().Be("x");
 
-            source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0, (Color)0)));
 
             result = "z";
             task = Task.Run(() =>
             {
                 journal
-                    .When<ContainerOpenedEvent>(e => result = "y")
-                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "qwer", e => { result = "x"; })
+                    .When<ContainerOpenedEvent>(e => result = "published after second WaitAny started")
+                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "qwer", e => { result = "published before first WaitAny"; })
+                    .When<SpeechReceivedEvent>(e => e.Speech.Message == "asdf", e => { result = "published after first WaitAny before second WaitAny"; })
                     .WaitAny();
             });
 
@@ -273,7 +277,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             source.Publish(new ContainerOpenedEvent(1));
 
             task.Wait(100).Should().BeTrue();
-            result.Should().Be("y");
+            result.Should().Be("published after first WaitAny before second WaitAny");
         }
 
         [TestMethod]

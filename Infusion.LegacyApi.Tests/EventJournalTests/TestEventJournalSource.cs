@@ -7,7 +7,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
     internal class TestEventJournalSource : IEventJournalSource
     {
         private readonly EventJournalSource source = new EventJournalSource();
-        public event EventHandler<IEvent> NewEventReceived;
+        public event EventHandler<IEvent> NewEventReceived
+        {
+            add { source.NewEventReceived += value; }
+            remove { source.NewEventReceived -= value; }
+        }
 
         public void Publish(IEvent ev)
         {
@@ -31,11 +35,6 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                 if (ev.Id >= minEventId)
                     targetCollection.Add(ev.Event);
             }
-        }
-
-        public void SignalEventReceived(IEvent ev)
-        {
-            NewEventReceived?.Invoke(this, ev);
         }
     }
 }

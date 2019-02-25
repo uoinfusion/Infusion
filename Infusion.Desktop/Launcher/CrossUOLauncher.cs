@@ -20,12 +20,12 @@ namespace Infusion.Desktop.Launcher
 
             Program.Console.Info($"Staring {ultimaExecutablePath}");
 
-            var account = BitConverter.ToString(System.Text.Encoding.UTF8.GetBytes(options.UserName)).Replace("-", "");
-            var password = BitConverter.ToString(System.Text.Encoding.UTF8.GetBytes(options.Password)).Replace("-", "");
+            var account = options.UserName;
+            var password = options.Password;
 
             var info = new ProcessStartInfo(ultimaExecutablePath);
             info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
-            info.Arguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\" -account:{account},{password}";
+            info.Arguments = $"--host 127.0.0.1 --port {proxyPort} --login {account} --password {password}";
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)

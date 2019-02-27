@@ -97,6 +97,7 @@
     <Compile Include="CorpseCollection.cs" />
     <Compile Include="CorpseCollectionExtensions.cs" />
     <Compile Include="Injection\ArmSet.cs" />
+    <Compile Include="Injection\DebuggerBridge.cs" />
     <Compile Include="Injection\Equipment.cs" />
     <Compile Include="Injection\EquipmentSubrutines.cs" />
     <Compile Include="Injection\FindTypeSubrutine.cs" />

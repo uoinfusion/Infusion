@@ -58,5 +58,3 @@ stable on this shard and there is a lot of example scripts you can immediately s
 - Easier item manipulation (moving food/regs only, moving the same type).
 - [Predefined names](ExampleScripts/UOErebor/Specs.csx) for many item types/color combinations (spell scrolls, food, regs, tools, resources, doors and many others).
 - Popular UO client patches (like [FPS patch](https://www.youtube.com/watch?v=hagheyX6Odo)) using [UOPatcher](https://github.com/Hotride/UOPatcher).
-
-[![Join the chat at https://gitter.im/ultimaonlineinfusion/infusion](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ultimaonlineinfusion/infusion-erebor)

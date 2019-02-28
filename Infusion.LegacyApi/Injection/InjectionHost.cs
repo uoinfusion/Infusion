@@ -113,11 +113,11 @@ namespace Infusion.LegacyApi.Injection
             }
             catch (ScriptFailedException ex)
             {
-                console.Error($"Line {ex.Line}, {runtime.CurrentFileName} - {ex.Message}");
+                console.Error($"Line {ex.Line}, {runtime.CurrentScript.FileName} - {ex.Message}");
             }
             catch (InternalInterpretationException ex)
             {
-                console.Error($"Line {ex.Line}, {runtime.CurrentFileName} - {ex.Message}");
+                console.Error($"Line {ex.Line}, {runtime.CurrentScript.FileName} - {ex.Message}");
                 console.Debug(ex.InnerException.ToString());
             }
         }

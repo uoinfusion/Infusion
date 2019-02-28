@@ -37,7 +37,10 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public void HandleBreakHit(DebuggerBreak debuggerBreak)
-            => console.Info($"Debugger stopped at {FormatBreak(debuggerBreak)}.");
+        { 
+            console.Info($"Debugger stopped at {FormatBreak(debuggerBreak)}.");
+            console.Info(runtime.CurrentScript.GetLine(debuggerBreak.Location.Line - 1));
+        }
 
         private void ListBreakpoints()
         {
@@ -57,7 +60,7 @@ namespace Infusion.LegacyApi.Injection
         {
             if (int.TryParse(lineStr, out int line))
             {
-                if (debuggerServer.RemoveBreakpoint(runtime.CurrentFileName, line))
+                if (debuggerServer.RemoveBreakpoint(runtime.CurrentScript.FileName, line))
                     console.Info($"Breakpoint removed from {FormatBreak(line)}.");
                 else
                     console.Info($"Breakpoint not found {FormatBreak(line)}");
@@ -70,9 +73,9 @@ namespace Infusion.LegacyApi.Injection
         {
             if (int.TryParse(lineStr, out int line))
             {
-                if (!string.IsNullOrEmpty(runtime.CurrentFileName))
+                if (!string.IsNullOrEmpty(runtime.CurrentScript.FileName))
                 {
-                    debuggerServer.AddBreakpoint(runtime.CurrentFileName, line);
+                    debuggerServer.AddBreakpoint(runtime.CurrentScript.FileName, line);
                     console.Info($"Breakpoint added {FormatBreak(line)}.");
                 }
                 else
@@ -95,7 +98,7 @@ namespace Infusion.LegacyApi.Injection
             debuggerServer.Step();
         }
 
-        private string FormatBreak(int line) => FormatBreak(runtime.CurrentFileName, line);
+        private string FormatBreak(int line) => FormatBreak(runtime.CurrentScript.FileName, line);
         private string FormatBreak(Breakpoint br) => FormatBreak(br.FileName, br.Line);
         private string FormatBreak(DebuggerBreak br) => FormatBreak(br.Location.FileName, br.Location.Line);
 

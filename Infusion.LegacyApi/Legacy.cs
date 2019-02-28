@@ -494,6 +494,7 @@ namespace Infusion.LegacyApi
 
         private void InfoCommand()
         {
+            ClientPrint("Target item or tile to get info");
             var info = Info();
             if (info.HasValue)
             {

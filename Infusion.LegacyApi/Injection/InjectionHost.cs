@@ -26,9 +26,9 @@ namespace Infusion.LegacyApi.Injection
             this.console = console;
 
             var bridge = new InjectionApiBridge(api, this, console, packetRegistry);
-            var debuggerServer = new DebuggerServer();
+            var debuggerServer = new DebuggerServer(() => api.CancellationToken);
             debuggerServer.DebuggerBreakHit += (sender, e) => debuggerBridge.HandleBreakHit(e);
-            runtime = new InjectionRuntime(bridge, debuggerServer, timeSource);
+            runtime = new InjectionRuntime(bridge, debuggerServer, timeSource, () => api.CancellationToken.Value);
 
             debuggerBridge = new DebuggerBridge(api.CommandHandler, debuggerServer, console, runtime);
             debuggerBridge.RegisterCommands();

@@ -88,6 +88,7 @@ public static class Specs
     public static readonly ItemSpec SmithsHammer = new[] { 0x13E3, 0x013E4 };
     public static readonly ItemSpec Saw = 0x1034;
     public static readonly ItemSpec Torch = 0x0F64;
+    public static readonly ItemSpec Lantern = new[] { 0x0A18 };
     public static readonly ItemSpec BurningTorch = 0x0A12;
     public static readonly ItemSpec Mortar = 0x0E9B;
     public static readonly ItemSpec Candle = 0x1430;

@@ -65,6 +65,8 @@ namespace Infusion.LegacyApi.Injection
 
         }
 
+        public void ExecSubrutine(string subrutineName) => ExecCommand(subrutineName);
+
         private void ExecCommand(string parameters)
         {
             var subrutine = runtime.Metadata.GetSubrutine(parameters, 0);
@@ -73,7 +75,7 @@ namespace Infusion.LegacyApi.Injection
 
             var commandName = GetCommandName(subrutine);
 
-            this.api.CommandHandler.InvokeSyntax("," + commandName);
+            this.api.CommandHandler.InvokeSyntax("," + commandName, CommandExecutionMode.AlwaysParallel);
         }
 
         public void Terminate(string subrutineName)

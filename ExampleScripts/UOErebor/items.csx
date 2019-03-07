@@ -1,3 +1,4 @@
+#load "common.csx"
 #load "Specs.csx"
 
 using System;
@@ -421,6 +422,38 @@ public static class Items
             
         UO.ClientPrint(amount.ToString());
     }
+        
+    public static void GpAmount()
+    {
+        var container = Common.AskForContainer("Select container with GP");
+        if (container == null)
+            return;
+            
+        var journal = UO.CreateSpeechJournal();
+        var gpItems = UO.Items.InContainer(container).Matching(Specs.MoneyDeposit);
+        foreach (var gp in gpItems)
+        {
+            UO.Click(gp);
+            UO.Wait(100);
+        }
+        UO.Wait(1000);
+       
+        int total = 0;
+
+        foreach (var entry in journal.ToArray())
+        {
+            var start = entry.Message.IndexOf("(");
+            var end = entry.Message.IndexOf(" gp)");
+    
+            if (start >= 0 && end > start)
+            {
+                var amountText = entry.Message.Substring(start + 1, end - start - 1);
+                int amount = int.Parse(amountText);
+                total += amount;
+            }
+        }
+        UO.ClientPrint($"Total: {total}");
+    }
     
     public static void MoveSameItems()
     {
@@ -615,4 +648,5 @@ UO.RegisterCommand("itemsamount-same", Items.AmountItemsSame);
 UO.RegisterCommand("itemsamount-sametype", Items.AmountItemsSameType);
 UO.RegisterCommand("itemsamount-all", Items.ItemsAmountAll);
 UO.RegisterCommand("itemsamount-sub", Items.ItemsAmountSub);
+UO.RegisterCommand("gpamount", Items.GpAmount);
 UO.RegisterCommand("batchmove", Items.BatchMoveAllCommand);

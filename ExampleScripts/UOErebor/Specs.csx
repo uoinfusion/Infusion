@@ -20,6 +20,18 @@ public static class Specs
     public static readonly ItemSpec TravelStone = 0x1174;
     public static readonly ItemSpec HouseMenu = 0x0BD1;
     public static readonly ItemSpec Gold = 0x0eed;
+    public static readonly ItemSpec Mesec = new ItemSpec(0x0E76, (Color)0x0995);
+    public static readonly ItemSpec Pokladnicka = new[]
+    {
+        new ItemSpec(0x0E80, (Color)0x0995),
+        new ItemSpec(0x09A8, (Color)0x0995)
+    }; 
+    public static readonly ItemSpec CashiersCheck = new[]
+    {
+        new ItemSpec(0x14F0, (Color)0x0035),
+        new ItemSpec(0x14EF, (Color)0x0035)
+    }; 
+    public static readonly ItemSpec MoneyDeposit = new[] { Pokladnicka, CashiersCheck, Mesec };
     
     public static readonly ItemSpec VanocniBanka = 0x186F;
 

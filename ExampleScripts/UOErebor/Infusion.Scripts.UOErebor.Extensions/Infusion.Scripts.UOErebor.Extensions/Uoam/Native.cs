@@ -18,6 +18,7 @@ namespace Infusion.Scripts.UOErebor.Extensions.Uoam
             public IntPtr lParam;
             public uint time;
             public System.Drawing.Point p;
+            public uint lPrivate;
         }
 
 #pragma warning disable S101 // Types should be named in PascalCase

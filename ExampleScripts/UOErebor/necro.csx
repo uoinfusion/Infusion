@@ -42,7 +42,7 @@ public static class Necro
     public static TwoStateAbility DarkPower { get; } = new TwoStateAbility(".darkpower",
         "Nyni ti muze byt navracena spotrebovana mana.", "Jsi zpatky v normalnim stavu.");
     public static TwoStateAbility StandCast { get; } = new TwoStateAbility(".standcast",
-        "Nyni budes kouzlit s vetsim usilim.", "Tve usili polevilo.",
+        "Nyni budes kouzlit s vetsim usilim.", new[] { "Tve usili polevilo.", "Vztycil jsi stit z ciste energie!" },
         new[] { "Jsi prilis vycerpany udrzovanim stitu." },
         new StateIndicator(0x80000000, 0x99000000, 2260, 0x20, 0));
     

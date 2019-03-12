@@ -1,6 +1,7 @@
 #load "startup.csx"
 
 using System;
+using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -14,8 +15,8 @@ public class TwoStateAbility : ITwoStateAbility
     public bool? IsTurnedOn { get; private set; }
     private SpeechJournal abilityJournal = UO.CreateSpeechJournal();
 
-    public string TurnedOffMessage { get; }
-    public string TurnedOnMessage { get; }
+    public string[] TurnedOffMessages { get; }
+    public string[] TurnedOnMessages { get; }
     public string[] FailMessages { get; }
     public string ToggleCommand { get; }
     
@@ -24,16 +25,34 @@ public class TwoStateAbility : ITwoStateAbility
     public int LowStaminaThreshold { get; set; } = 5;
     
     public TwoStateAbility(string toggleCommand, string turnedOnMessage, string turnedOffMessage)
-        : this(toggleCommand, turnedOnMessage, turnedOffMessage, Array.Empty<string>())
+        : this(toggleCommand, new[] { turnedOnMessage }, new[] { turnedOffMessage }, Array.Empty<string>())
     {
     }
-    
+
     public TwoStateAbility(string toggleCommand, string turnedOnMessage, string turnedOffMessage,
+        string[] failMessages, StateIndicator indicator = null)
+        : this(toggleCommand, new[] { turnedOnMessage }, new[] { turnedOffMessage }, failMessages, indicator)
+    {
+    }
+
+    public TwoStateAbility(string toggleCommand, string turnedOnMessage, string[] turnedOffMessages,
+        string[] failMessages, StateIndicator indicator = null)
+        : this(toggleCommand, new[] { turnedOnMessage }, turnedOffMessages, failMessages, indicator)
+    {
+    }
+
+    public TwoStateAbility(string toggleCommand, string[] turnedOnMessages, string turnedOffMessage,
+        string[] failMessages, StateIndicator indicator = null)
+        : this(toggleCommand, turnedOnMessages, new[] { turnedOffMessage }, failMessages, indicator)
+    {
+    }
+
+    public TwoStateAbility(string toggleCommand, string[] turnedOnMessages, string[] turnedOffMessages,
         string[] failMessages, StateIndicator indicator = null)
     {
         ToggleCommand = toggleCommand;
-        TurnedOnMessage = turnedOnMessage;
-        TurnedOffMessage = turnedOffMessage;
+        TurnedOnMessages = turnedOnMessages;
+        TurnedOffMessages = turnedOffMessages;
         FailMessages = failMessages;
         Indicator = indicator;
 
@@ -42,12 +61,12 @@ public class TwoStateAbility : ITwoStateAbility
 
     public void TrackState(string message)
     {
-        if (TurnedOnMessage.IndexOf(message, StringComparison.OrdinalIgnoreCase) >= 0)
+        if (TurnedOnMessages.Any(msg => message.IndexOf(msg, StringComparison.OrdinalIgnoreCase) >= 0))
         {
             IsTurnedOn = true;
             Indicator?.Show();
         }
-        else if (TurnedOffMessage.IndexOf(message, StringComparison.OrdinalIgnoreCase) >= 0)
+        else if (TurnedOffMessages.Any(msg => message.IndexOf(msg, StringComparison.OrdinalIgnoreCase) >= 0))
         {
             IsTurnedOn = false;
             Indicator?.Hide();
@@ -81,7 +100,7 @@ public class TwoStateAbility : ITwoStateAbility
             {
                 // doesn't work if this method is called rarelly,
                 // so a message is scrolled out from the journal
-                if (!abilityJournal.Contains(TurnedOffMessage))
+                if (!TurnedOffMessages.Any(msg => abilityJournal.Contains(msg)))
                 {
                     abilityJournal.Delete();
                     return;
@@ -90,13 +109,13 @@ public class TwoStateAbility : ITwoStateAbility
         
             UO.Say(ToggleCommand);
             abilityJournal
-                .When(TurnedOnMessage, () => { })
-                .When(TurnedOffMessage, () =>
+                .When(TurnedOnMessages, () => { })
+                .When(TurnedOffMessages, () =>
                 {
                     UO.Say(ToggleCommand);
                     abilityJournal
-                        .When(TurnedOffMessage, () => UO.ClientPrint($"Waning: cannot turn on {ToggleCommand}", UO.Me))
-                        .When(TurnedOnMessage, () => { })
+                        .When(TurnedOffMessages, () => UO.ClientPrint($"Waning: cannot turn on {ToggleCommand}", UO.Me))
+                        .When(TurnedOnMessages, () => { })
                         .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                         .WaitAny();
                 })
@@ -119,22 +138,22 @@ public class TwoStateAbility : ITwoStateAbility
         {
             if (IsTurnedOn.HasValue && !IsTurnedOn.Value)
             {
-                if (!abilityJournal.Contains(TurnedOnMessage))
+                if (!TurnedOnMessages.Any(msg => abilityJournal.Contains(msg)))
                     return;
             }
     
             UO.Say(ToggleCommand);
             abilityJournal
-                .When(TurnedOnMessage, () =>
+                .When(TurnedOnMessages, () =>
                 {
                     UO.Say(ToggleCommand);
                     abilityJournal
-                        .When(TurnedOnMessage, () => UO.Log($"Warning: cannot turn off {ToggleCommand}"))
-                        .When(TurnedOffMessage, () => { })
+                        .When(TurnedOnMessages, () => UO.Log($"Warning: cannot turn off {ToggleCommand}"))
+                        .When(TurnedOffMessages, () => { })
                         .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                         .WaitAny();
                 })
-                .When(TurnedOffMessage, () => { })
+                .When(TurnedOffMessages, () => { })
                 .When(FailMessages, () => UO.ClientPrint($"Warning: {ToggleCommand} failed.", UO.Me))
                 .WaitAny();
     

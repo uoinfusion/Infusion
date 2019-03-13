@@ -21,7 +21,7 @@ namespace Infusion.Desktop.Profiles
 
         public bool Install()
         {
-            if (!Directory.Exists(profilesPath))
+            if (!Directory.Exists(profilesPath) || !Directory.GetFiles(profilesPath).Any())
             {
                 console.Info($"Creating folder {profilesPath}");
                 try

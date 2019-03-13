@@ -12,7 +12,7 @@
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
         </PropertyGroup>
 
-        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\scripts;.\testresults" />
+        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\profiles;.\release\scripts;.\testresults" />
 
         <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Tests\bin\release\Infusion.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Tests.log&quot;" />
         <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Proxy.Tests\bin\release\Infusion.Proxy.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Proxy.Tests.log&quot;" />

@@ -8,12 +8,12 @@ using Newtonsoft.Json.Converters;
 
 namespace Infusion.Desktop.Profiles
 {
-    internal static class ProfileRepositiory
+    internal static class AppDataProfileRepositiory
     {
-        private static readonly string ProfilesPath =
+        public static string ProfilesPath { get; } =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Infusion");
 
-        public static Profile SelectedProfile { get; set; }
+        public static LaunchProfile SelectedProfile { get; set; }
 
         public static string LoadSelectedProfileId()
         {
@@ -44,15 +44,16 @@ namespace Infusion.Desktop.Profiles
             }
         }
 
-        public static Profile[] LoadProfiles()
+        public static LaunchProfile[] LoadProfiles()
         {
-            EnsureProfileDirectoryExists();
+            if (!Directory.Exists(ProfilesPath))
+                return Array.Empty<LaunchProfile>();
 
-            var profiles = new List<Profile>();
+            var profiles = new List<LaunchProfile>();
 
             foreach (var profileFileName in Directory.GetFiles(ProfilesPath, "*.profile"))
             {
-                Profile profile;
+                LaunchProfile profile;
                 try
                 {
                     profile = LoadProfile(profileFileName);
@@ -67,12 +68,20 @@ namespace Infusion.Desktop.Profiles
             }
 
             if (!profiles.Any())
-                profiles.Add(new Profile() { Name = "new profile" });
+                profiles.Add(new LaunchProfile() { Name = "new profile" });
 
             return profiles.ToArray();
         }
 
-        public static void DeleteProfile(Profile profile)
+        internal static void DeleteProfilesDirectory()
+        {
+            if (Directory.Exists(ProfilesPath))
+            {
+                Directory.Delete(ProfilesPath, true);
+            }
+        }
+
+        public static void DeleteProfile(LaunchProfile profile)
         {
             try
             {
@@ -84,17 +93,17 @@ namespace Infusion.Desktop.Profiles
             }
         }
 
-        public static Profile LoadProfile(string profileFileName)
+        public static LaunchProfile LoadProfile(string profileFileName)
         {
             string profileJson = File.ReadAllText(profileFileName);
-            var profile = JsonConvert.DeserializeObject<Profile>(profileJson, new VersionConverter());
+            var profile = JsonConvert.DeserializeObject<LaunchProfile>(profileJson, new VersionConverter());
 
             ProvideDefaults(profile);
 
             return profile;
         }
 
-        private static void ProvideDefaults(Profile profile)
+        private static void ProvideDefaults(LaunchProfile profile)
         {
             // if a property doesn't exist in version 1.0 and the property is added in version 2.0
             // the json put null, to this property
@@ -115,7 +124,7 @@ namespace Infusion.Desktop.Profiles
             }
         }
 
-        public static void SaveProfiles(IEnumerable<Profile> profiles)
+        public static void SaveProfiles(IEnumerable<LaunchProfile> profiles)
         {
             foreach (var profile in profiles)
             {
@@ -123,7 +132,7 @@ namespace Infusion.Desktop.Profiles
             }
         }
 
-        public static void SaveProfile(Profile profile)
+        public static void SaveProfile(LaunchProfile profile)
         {
             try
             {

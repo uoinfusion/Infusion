@@ -43,6 +43,9 @@
     <ApplicationIcon>infusion.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommandLineParser.2.4.3\lib\netstandard2.0\CommandLine.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CodeAnalysis, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
@@ -182,6 +185,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CommandHistory.cs" />
+    <Compile Include="CommandLine\Handler.cs" />
+    <Compile Include="CommandLine\Options.cs" />
     <Compile Include="Console\ConsoleControl.xaml.cs">
       <DependentUpon>ConsoleControl.xaml</DependentUpon>
     </Compile>
@@ -195,6 +200,9 @@
     <Compile Include="Launcher\CrossUOLauncherOptions.cs" />
     <Compile Include="Launcher\CrossUOLauncher.cs" />
     <Compile Include="Launcher\ProtocolVersion.cs" />
+    <Compile Include="PathUtilities.cs" />
+    <Compile Include="Profiles\AppDataProfileRepository.cs" />
+    <Compile Include="Profiles\ProfilesInstaller.cs" />
     <Compile Include="Scripts\ScriptEngine.cs" />
     <Compile Include="Scripts\CSharpScriptEngine.cs" />
     <Compile Include="InfusionWindow.xaml.cs">
@@ -210,8 +218,8 @@
       <DependentUpon>TestOuputWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Launcher\UltimaClientType.cs" />
-    <Compile Include="Profiles\Profile.cs" />
-    <Compile Include="Profiles\ProfileRepositiory.cs" />
+    <Compile Include="Profiles\LaunchProfile.cs" />
+    <Compile Include="Profiles\ProfileRepository.cs" />
     <Compile Include="Scripts\InjectionScriptEngine.cs" />
     <Compile Include="Scripts\IScriptEngine.cs" />
     <Compile Include="UltimaConfiguration.cs" />

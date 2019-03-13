@@ -24,6 +24,8 @@ namespace Infusion.Desktop
                 }
             }
 
+            CommandLine.Handler.Handle(e.Args);
+
             base.OnStartup(e);
         }
     }

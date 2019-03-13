@@ -20,7 +20,7 @@ namespace Infusion.Desktop
     {
         private NotifyIcon notifyIcon;
         private string scriptFileName;
-        private Profile profile;
+        private LaunchProfile profile;
 
         public InfusionWindow()
         {
@@ -60,7 +60,7 @@ namespace Infusion.Desktop
             Reload();
         }
 
-        internal void Initialize(Profile profile)
+        internal void Initialize(LaunchProfile profile)
         {
             this.profile = profile;
             Title = $"{profile.Name}";
@@ -133,8 +133,8 @@ namespace Infusion.Desktop
 
         protected override void OnClosed(EventArgs e)
         {
-            if (ProfileRepositiory.SelectedProfile != null)
-                ProfileRepositiory.SaveProfile(ProfileRepositiory.SelectedProfile);
+            if (ProfileRepository.SelectedProfile != null)
+                ProfileRepository.SaveProfile(ProfileRepository.SelectedProfile);
 
             if (notifyIcon != null)
             {
@@ -172,7 +172,7 @@ namespace Infusion.Desktop
             profile.ConsoleOptions.Width = Width;
             profile.ConsoleOptions.Height = Height;
 
-            ProfileRepositiory.SaveProfile(profile);
+            ProfileRepository.SaveProfile(profile);
         }
     }
 }

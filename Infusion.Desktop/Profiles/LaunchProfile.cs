@@ -7,7 +7,7 @@ using Infusion.Desktop.Launcher;
 
 namespace Infusion.Desktop.Profiles
 {
-    internal sealed class Profile : INotifyPropertyChanged
+    internal sealed class LaunchProfile : INotifyPropertyChanged
     {
         private string name;
 

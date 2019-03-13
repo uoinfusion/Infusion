@@ -17,7 +17,7 @@ namespace Infusion.Desktop.Launcher
 {
     internal partial class LauncherWindow : Window
     {
-        private readonly Action<Profile> launchCallback;
+        private readonly Action<LaunchProfile> launchCallback;
         private readonly LauncherViewModel launcherViewModel;
 
 
@@ -26,17 +26,19 @@ namespace Infusion.Desktop.Launcher
             Program.Console.Error(errorMessage);
         }
 
-        internal LauncherWindow(Action<Profile> launchCallback)
+        internal LauncherWindow(Action<LaunchProfile> launchCallback)
         {
             this.launchCallback = launchCallback;
             InitializeComponent();
             launcherViewModel = new LauncherViewModel(pwd => passwordBox.Password = pwd);
 
-            var profiles = ProfileRepositiory.LoadProfiles();
+            var profileInstaller = new ProfilesInstaller(Program.Console, ProfileRepository.ProfilesPath);
+            profileInstaller.Install();
+            var profiles = ProfileRepository.LoadProfiles();
             if (profiles != null)
-                launcherViewModel.Profiles = new ObservableCollection<Profile>(profiles);
+                launcherViewModel.Profiles = new ObservableCollection<LaunchProfile>(profiles);
 
-            string selectedProfileId = ProfileRepositiory.LoadSelectedProfileId();
+            string selectedProfileId = ProfileRepository.LoadSelectedProfileId();
             if (profiles != null && !string.IsNullOrEmpty(selectedProfileId))
             {
                 launcherViewModel.SelectedProfile = launcherViewModel.Profiles.FirstOrDefault(p => p.Id == selectedProfileId) ?? launcherViewModel.Profiles.FirstOrDefault();
@@ -48,9 +50,9 @@ namespace Infusion.Desktop.Launcher
         {
             (sender as System.Windows.Controls.Button).Focus();
 
-            ProfileRepositiory.SaveProfiles(launcherViewModel.Profiles);
-            ProfileRepositiory.SelectedProfile = launcherViewModel.SelectedProfile;
-            ProfileRepositiory.SaveSelectedProfileId(launcherViewModel.SelectedProfile.Id);
+            ProfileRepository.SaveProfiles(launcherViewModel.Profiles);
+            ProfileRepository.SelectedProfile = launcherViewModel.SelectedProfile;
+            ProfileRepository.SaveSelectedProfileId(launcherViewModel.SelectedProfile.Id);
 
             var launcherOptions = launcherViewModel.SelectedProfile.LauncherOptions;
             string validationMessage;

@@ -9,10 +9,10 @@ namespace Infusion.Desktop.Launcher
 {
     internal sealed class LauncherViewModel : INotifyPropertyChanged
     {
-        private Profile selectedProfile;
-        private ObservableCollection<Profile> profiles = new ObservableCollection<Profile>
+        private LaunchProfile selectedProfile;
+        private ObservableCollection<LaunchProfile> profiles = new ObservableCollection<LaunchProfile>
         {
-            new Profile {Name = "new profile"}
+            new LaunchProfile {Name = "new profile"}
         };
         private readonly Action<string> passwordSetter;
 
@@ -38,7 +38,7 @@ namespace Infusion.Desktop.Launcher
             new ProtocolVersion() { Version = new Version(7, 0, 18, 0), Label = ">= 7.0.18.0" },
         };
 
-        public ObservableCollection<Profile> Profiles
+        public ObservableCollection<LaunchProfile> Profiles
         {
             get => profiles;
             set
@@ -57,7 +57,7 @@ namespace Infusion.Desktop.Launcher
             SelectedProfile = Profiles.First();
         }
 
-        public Profile SelectedProfile
+        public LaunchProfile SelectedProfile
         {
             get => selectedProfile;
             set
@@ -77,7 +77,7 @@ namespace Infusion.Desktop.Launcher
 
         public void NewProfile()
         {
-            var profile = new Profile { Name = "new profile" };
+            var profile = new LaunchProfile { Name = "new profile" };
             Profiles.Add(profile);
             SelectedProfile = profile;
 
@@ -128,7 +128,7 @@ namespace Infusion.Desktop.Launcher
                 var profileToRemove = SelectedProfile;
                 SelectedProfile = Profiles.First(x => x != profileToRemove);
                 Profiles.Remove(profileToRemove);
-                ProfileRepositiory.DeleteProfile(profileToRemove);
+                ProfileRepository.DeleteProfile(profileToRemove);
 
             }
             // ReSharper disable once ExplicitCallerInfoArgument

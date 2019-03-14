@@ -311,8 +311,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition LoginCharacter = new PacketDefinition(0x5D,
             new StaticPacketLength(0x49), "LoginCharacter");
 
-        public static readonly PacketDefinition ServerListing = new PacketDefinition(0x5E,
-            new VariablePacketLength(), "ServerListing");
+        public static readonly PacketDefinition<ServerListingPacket> ServerListing 
+            = new PacketDefinition<ServerListingPacket>(0x5E, new VariablePacketLength(), "ServerListing", () => new ServerListingPacket());
 
         public static readonly PacketDefinition ServerListAddEntry = new PacketDefinition(0x5F,
             new StaticPacketLength(0x31), "ServerListAddEntry");
@@ -510,8 +510,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition SellListReply = new PacketDefinition(0x9F,
             new VariablePacketLength(), "SellListReply");
 
-        public static readonly PacketDefinition SelectServerRequest = new PacketDefinition(0xA0,
-            new StaticPacketLength(3), "SelectServerRequest");
+        public static readonly PacketDefinition<SelectServerRequest> SelectServerRequest 
+            = new PacketDefinition<SelectServerRequest>(0xA0, new StaticPacketLength(3), "SelectServerRequest", () => new Client.SelectServerRequest());
 
         public static readonly PacketDefinition<UpdateCurrentHealthPacket> UpdateCurrentHealth =
             new PacketDefinition<UpdateCurrentHealthPacket>(0xA1,
@@ -536,8 +536,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition RequestTipNoticeWindow = new PacketDefinition(0xA7,
             new StaticPacketLength(4), "RequestTipNoticeWindow");
 
-        public static readonly PacketDefinition GameServerList = new PacketDefinition(0xA8,
-            new VariablePacketLength(), "GameServerList");
+        public static readonly PacketDefinition<GameServerListPacket> GameServerList = new PacketDefinition<GameServerListPacket>(0xA8,
+            new VariablePacketLength(), "GameServerList", () => new GameServerListPacket());
 
         public static readonly PacketDefinition CharactersStartingLocations = new PacketDefinition(0xA9,
             new VariablePacketLength(), "CharactersStartingLocations");

@@ -158,6 +158,7 @@
     <Compile Include="PacketHandler.cs" />
     <Compile Include="Packets\Both\CloseGenericGumpPacket.cs" />
     <Compile Include="Packets\Both\MapMessagePacket.cs" />
+    <Compile Include="Packets\Client\SelectServerRequest.cs" />
     <Compile Include="Packets\Client\TalkRequest.cs" />
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />
     <Compile Include="Packets\Client\ResponseToDialogBoxRequest.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="Packets\Server\CompressedGumpPacket.cs" />
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
     <Compile Include="Packets\Server\DrawObjectPacket7000.cs" />
+    <Compile Include="Packets\Server\GameServerListPacket.cs" />
     <Compile Include="Packets\Server\GraphicalEffectPacket.cs" />
     <Compile Include="Packets\Server\OpenDialogBoxPacket.cs" />
     <Compile Include="Packets\Server\PauseClientChoice.cs" />
@@ -181,6 +183,7 @@
     <Compile Include="Packets\Server\QuestArrowPacket.cs" />
     <Compile Include="Packets\Server\RejectMoveItemRequestPacket.cs" />
     <Compile Include="Packets\Server\SecondAgeObjectInformation.cs" />
+    <Compile Include="Packets\Server\ServerListingPacket.cs" />
     <Compile Include="Packets\Server\UpdateCurrentManaPacket.cs" />
     <Compile Include="Parsers\IOutputLogProcessor.cs" />
     <Compile Include="Parsers\OutputLogParser.cs" />

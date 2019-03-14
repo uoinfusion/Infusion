@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace Infusion.LegacyApi
 {
-    internal class PlayerObservers
+    internal sealed class PlayerObservers
     {
         private readonly UltimaClient client;
         private readonly UltimaServer server;
@@ -20,6 +20,8 @@ namespace Infusion.LegacyApi
         private readonly GameObjectCollection gameObjects;
         private readonly EventJournalSource eventJournalSource;
         private readonly PacketDefinitionRegistry packetRegistry;
+
+        public event Action LoginConfirmed;
 
         public PlayerObservers(Player player, UltimaClient client, UltimaServer server, IConsole console,
             Legacy legacyApi, GameObjectCollection gameObjects, EventJournalSource eventJournalSource,
@@ -205,9 +207,9 @@ namespace Infusion.LegacyApi
             player.Direction = packet.Direction;
             player.MovementType = packet.MovementType;
             player.PredictedDirection = player.Direction;
-            legacyApi.IsLoginConfirmed = true;
 
             eventJournalSource.Publish(new LoginConfirmedEvent());
+            LoginConfirmed?.Invoke();
         }
 
         private void HandleDrawGamePlayerPacket(DrawGamePlayerPacket packet)

@@ -10,6 +10,7 @@ using Infusion.LegacyApi.Filters;
 using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
 using Infusion.Packets;
+using Infusion.Packets.Server;
 using InjectionScript.Runtime;
 
 namespace Infusion.LegacyApi
@@ -41,6 +42,7 @@ namespace Infusion.LegacyApi
 
         private readonly EventJournalSource eventJournalSource;
         private readonly DialogBoxObservers dialogBoxObervers;
+        private readonly ServerObservers serverObservers;
 
         internal AutoResetEvent WaitForTargetStartedEvent => targeting.WaitForTargetStartedEvent;
         internal AutoResetEvent AskForTargetStartedEvent => targeting.AskForTargetStartedEvent;
@@ -48,6 +50,8 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
         internal GumpObservers GumpObservers => this.gumpObservers;
+
+        internal event Action LoginConfirmed;
 
         internal event Action<TargetInfo?> TargetInfoReceived
         {
@@ -116,7 +120,17 @@ namespace Infusion.LegacyApi
 
             Phantoms = new Phantoms(Client, Server, packetRegistry);
             Injection = new InjectionHost(this, console, packetRegistry, timeSource);
+
+            serverObservers = new ServerObservers(ultimaServer, ultimaClient);
+            serverObservers.ServerSelected += server => ServerName = server.Name;
+            playerObservers.LoginConfirmed += () =>
+            {
+                IsLoginConfirmed = true;
+                LoginConfirmed?.Invoke();
+            };
         }
+
+        public string ServerName { get; private set; }
 
         public Phantoms Phantoms { get; }
 

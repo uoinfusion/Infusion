@@ -7,8 +7,10 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Infusion.Commands;
+using Infusion.Desktop.Console;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
+using Infusion.Desktop.Scripts;
 using Infusion.LegacyApi;
 using Infusion.Proxy;
 using Infusion.Utilities;
@@ -18,15 +20,22 @@ namespace Infusion.Desktop
 {
     public partial class InfusionWindow
     {
+        private FileConsole fileConsole;
+        private InfusionConsole infusionConsole;
+
         private NotifyIcon notifyIcon;
         private string scriptFileName;
         private LaunchProfile profile;
 
+        internal Lazy<ScriptEngine> ScriptEngine { get; private set; }
+        public Lazy<CSharpScriptEngine> CSharpScriptEngine { get; private set; }
+
         public InfusionWindow()
         {
             InitializeComponent();
+            InitializeInfusion();
 
-            Program.Console.Important($"Infusion {VersionHelpers.ProductVersion}");
+            infusionConsole.Important($"Infusion {VersionHelpers.ProductVersion}");
 
             notifyIcon = new NotifyIcon();
             notifyIcon.Icon = System.Drawing.Icon.FromHandle(new Bitmap(Properties.Resources.infusion).GetHicon());
@@ -46,6 +55,30 @@ namespace Infusion.Desktop
             };
         }
 
+        private void HandleFileLoggingException(Exception ex)
+        {
+            infusionConsole.Error($"Error while writing logs to disk. Please, check that Infusion can write to {Program.LogConfig.LogPath}.");
+            infusionConsole.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
+            infusionConsole.Debug(ex.ToString());
+        }
+
+        private void InitializeInfusion()
+        {
+            fileConsole = new FileConsole(Program.LogConfig, new CircuitBreaker(HandleFileLoggingException));
+            var wpfConsole = _console.CreateWpfConsole();
+            infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
+
+            Program.Console = infusionConsole;
+            var commandHandler = new CommandHandler(Program.Console);
+
+            Program.Initialize(commandHandler);
+
+            CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
+            ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));
+
+            _console.ShowNoDebug();
+        }
+
         private void Cls()
         {
             _console.Clear();
@@ -55,7 +88,7 @@ namespace Infusion.Desktop
         {
             this.scriptFileName = scriptFileName;
             var scriptPath = Path.GetDirectoryName(scriptFileName);
-            _console.ScriptEngine.Value.ScriptRootPath = scriptPath;
+            ScriptEngine.Value.ScriptRootPath = scriptPath;
 
             Reload();
         }
@@ -91,6 +124,14 @@ namespace Infusion.Desktop
                 this.Width = profile.ConsoleOptions.Width;
                 this.Height = profile.ConsoleOptions.Height;
             }
+
+            Program.LegacyApi.LoginConfirmed += HandleLoginConfirmed;
+        }
+
+        private void HandleLoginConfirmed()
+        {
+            var logPath = PathUtilities.GetAbsolutePath($"logs\\{Program.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{Program.LegacyApi.Me.PlayerId:X8}\\");
+            Program.LogConfig.SetDefaultLogPath(logPath);
         }
 
         public void Edit()
@@ -99,11 +140,11 @@ namespace Infusion.Desktop
             {
                 var scriptPath = Path.GetDirectoryName(scriptFileName);
 
-                var roslynPadWindow = new RoslynPad.MainWindow(_console.CSharpScriptEngine.Value, scriptPath);
+                var roslynPadWindow = new RoslynPad.MainWindow(CSharpScriptEngine.Value, scriptPath);
                 roslynPadWindow.Show();
             }
             else
-                Program.Console.Error(
+                infusionConsole.Error(
                     "Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
         }
 
@@ -120,14 +161,14 @@ namespace Infusion.Desktop
             {
                 UO.CommandHandler.BeginTerminate(true);
                 UO.CommandHandler.UnregisterAllPublic();
-                _console.ScriptEngine.Value.Reset();
+                ScriptEngine.Value.Reset();
                 using (var tokenSource = new CancellationTokenSource())
                 {
-                    await _console.ScriptEngine.Value.ExecuteScript(scriptFileName, tokenSource);
+                    await ScriptEngine.Value.ExecuteScript(scriptFileName, tokenSource);
                 }
             }
             else
-                Program.Console.Error(
+                infusionConsole.Error(
                     "Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
         }
 
@@ -142,7 +183,7 @@ namespace Infusion.Desktop
                 notifyIcon = null;
             }
 
-            _console.Dispose();
+            fileConsole.Dispose();
 
             Application.Current.Shutdown();
         }
@@ -153,7 +194,7 @@ namespace Infusion.Desktop
             {
                 _console.Initialize();
 
-                var launcherWindow = new LauncherWindow(Initialize);
+                var launcherWindow = new LauncherWindow(Initialize, infusionConsole);
                 launcherWindow.Show();
                 launcherWindow.Activate();
             }));

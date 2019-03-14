@@ -63,6 +63,8 @@ namespace Infusion
                 packetHandler.Publish<DoubleClickRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.RequestSkills.Id)
                 packetHandler.Publish<SkillRequest>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.SelectServerRequest.Id)
+                packetHandler.Publish<SelectServerRequest>(rawPacket);
 
             return rawPacket;
         }

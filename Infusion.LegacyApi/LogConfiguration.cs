@@ -9,10 +9,10 @@ namespace Infusion.LegacyApi
 {
     public sealed class LogConfiguration : INotifyPropertyChanged, IDiagnosticConfiguration
     {
-        private bool hideWhenMinimized;
         private bool logPacketsToFileEnabled;
         private string logPath;
-        private bool logToFileEnabled;
+        private readonly object logPathLock = new object();
+        private bool logToFileEnabled = true;
 
         public bool LogToFileEnabled
         {
@@ -39,7 +39,10 @@ namespace Infusion.LegacyApi
             get => logPath;
             set
             {
-                logPath = value;
+                lock (logPathLock)
+                {
+                    logPath = value;
+                }
                 OnPropertyChanged();
             }
         }
@@ -49,6 +52,20 @@ namespace Infusion.LegacyApi
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        internal void SetDefaultLogPath(string logPath)
+        {
+            if (string.IsNullOrEmpty(logPath))
+                return; 
+
+            lock (logPathLock)
+            {
+                if (string.IsNullOrEmpty(this.logPath))
+                {
+                    this.logPath = logPath;
+                }
+            }
         }
     }
 }

@@ -214,9 +214,6 @@
     <Compile Include="Launcher\LauncherViewModel.cs" />
     <Compile Include="Launcher\OrionLauncherOptions.cs" />
     <Compile Include="Launcher\OrionLauncher.cs" />
-    <Compile Include="Launcher\TestOuputWindow.xaml.cs">
-      <DependentUpon>TestOuputWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Launcher\UltimaClientType.cs" />
     <Compile Include="Profiles\LaunchProfile.cs" />
     <Compile Include="Profiles\ProfileRepository.cs" />
@@ -246,10 +243,6 @@
       <DependentUpon>LaunhcerWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Launcher\TestOuputWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

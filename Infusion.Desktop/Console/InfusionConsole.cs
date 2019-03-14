@@ -51,29 +51,10 @@ namespace Infusion.Desktop.Console
             }
         }
 
-        void ILogger.Info(string message)
-        {
-            WriteLine(ConsoleLineType.Information, message);
-        }
-
-        void ILogger.Important(string message)
-        {
-            WriteLine(ConsoleLineType.Important, message);
-        }
-
-        void ILogger.Debug(string message)
-        {
-            WriteLine(ConsoleLineType.Debug, message);
-        }
-
-        void ILogger.Critical(string message)
-        {
-            WriteLine(ConsoleLineType.Critical, message);
-        }
-
-        void ILogger.Error(string message)
-        {
-            WriteLine(ConsoleLineType.Error, message);
-        }
+        public void Info(string message) => WriteLine(ConsoleLineType.Information, message);
+        public void Important(string message) => WriteLine(ConsoleLineType.Important, message);
+        public void Debug(string message) => WriteLine(ConsoleLineType.Debug, message);
+        public void Critical(string message) => WriteLine(ConsoleLineType.Critical, message);
+        public void Error(string message) => WriteLine(ConsoleLineType.Error, message);
     }
 }

@@ -82,7 +82,7 @@ namespace Infusion.Proxy
             }
         }
 
-        private static Legacy legacyApi;
+        public static Legacy LegacyApi { get; private set; }
         private static PacketDefinitionRegistry packetRegistry;
         private static ProxyStartConfig proxyStartConfig;
 
@@ -106,8 +106,8 @@ namespace Infusion.Proxy
             clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
 
-            legacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
-            UO.Initialize(legacyApi);
+            LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
+            UO.Initialize(LegacyApi);
 
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
@@ -426,7 +426,7 @@ namespace Infusion.Proxy
 
         public static void SetClientWindowHandle(Process ultimaClientProcess)
         {
-            legacyApi.ClientWindow = new LocalUltimaClientWindow(ultimaClientProcess);
+            LegacyApi.ClientWindow = new LocalUltimaClientWindow(ultimaClientProcess);
         }
     }
 }

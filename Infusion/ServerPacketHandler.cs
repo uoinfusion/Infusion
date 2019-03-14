@@ -120,6 +120,10 @@ namespace Infusion
                 packetHandler.Publish<CompressedGumpPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.MapMessage.Id)
                 packetHandler.Publish<MapMessagePacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.ServerListing.Id)
+                packetHandler.Publish<ServerListingPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.GameServerList.Id)
+                packetHandler.Publish<GameServerListPacket>(rawPacket);
 
             return rawPacket;
         }

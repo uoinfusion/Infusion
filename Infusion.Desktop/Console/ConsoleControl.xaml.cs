@@ -19,25 +19,13 @@ using Infusion.Utilities;
 
 namespace Infusion.Desktop.Console
 {
-    public partial class ConsoleControl : UserControl, IDisposable
+    public partial class ConsoleControl : UserControl
     {
         private readonly CommandAutocompleter completer;
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
         private readonly CommandHistory history = new CommandHistory();
         private readonly FlowDocument outputDocument;
-        private readonly FileConsole fileConsole;
-        private readonly InfusionConsole infusionConsole;
-
-        internal Lazy<ScriptEngine> ScriptEngine { get; }
-        public Lazy<CSharpScriptEngine> CSharpScriptEngine { get; }
-
-        private void HandleFileLoggingException(Exception ex)
-        {
-            Program.Console.Error($"Error while writing logs to disk. Please, check that Infusion can write to {Program.LogConfig.LogPath}.");
-            Program.Console.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
-            Program.Console.Debug(ex.ToString());
-        }
 
         public ConsoleControl()
         {
@@ -54,26 +42,13 @@ namespace Infusion.Desktop.Console
             outputDocument.FontStretch = _inputBlock.FontStretch;
             outputDocument.FontStyle = _inputBlock.FontStyle;
 
-            fileConsole = new FileConsole(Program.LogConfig, new CircuitBreaker(HandleFileLoggingException));
-            var wpfConsole = new WpfConsole(consoleContent, Dispatcher);
-            infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
-
-            Program.Console = infusionConsole;
-            var commandHandler = new CommandHandler(Program.Console);
-
-            Program.Initialize(commandHandler);
             DataContext = consoleContent;
             consoleContent.ConsoleOutput.CollectionChanged += ConsoleOutputOnCollectionChanged;
-
-            CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
-            ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));
 
             _inputBlock.Focus();
 
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
-
-            consoleContent.ShowNoDebug();
         }
 
         internal void ShowToggle() => consoleContent.ShowToggle();
@@ -81,11 +56,6 @@ namespace Infusion.Desktop.Console
         internal void ShowAll() => consoleContent.ShowAll();
         internal void ShowNoDebug() => consoleContent.ShowNoDebug();
         internal void ShowGame() => consoleContent.ShowGame();
-
-        public void Dispose()
-        {
-            fileConsole.Dispose();
-        }
 
         private static ScrollViewer FindScrollViewer(FlowDocumentScrollViewer flowDocumentScrollViewer)
         {
@@ -99,6 +69,8 @@ namespace Infusion.Desktop.Console
 
             return border?.Child as ScrollViewer;
         }
+
+        internal WpfConsole CreateWpfConsole() => new WpfConsole(consoleContent, Dispatcher);
 
         private void ConsoleOutputOnCollectionChanged(object o,
             NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)

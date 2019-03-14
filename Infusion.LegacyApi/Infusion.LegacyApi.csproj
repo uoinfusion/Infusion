@@ -130,6 +130,7 @@
     <Compile Include="ScriptTrace.cs" />
     <Compile Include="ScriptTraceLogger.cs" />
     <Compile Include="GlobalTrace.cs" />
+    <Compile Include="ServerObservers.cs" />
     <Compile Include="SpeechJournal.cs" />
     <Compile Include="GameObjectCollectionWrapper.cs" />
     <Compile Include="GumpObservers.cs" />

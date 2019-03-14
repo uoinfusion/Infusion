@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Threading;
 using Infusion.Desktop.Profiles;
+using Infusion.LegacyApi.Console;
 using Infusion.Proxy;
 using Newtonsoft.Json;
 
@@ -19,20 +20,21 @@ namespace Infusion.Desktop.Launcher
     {
         private readonly Action<LaunchProfile> launchCallback;
         private readonly LauncherViewModel launcherViewModel;
-
+        private readonly IConsole console;
 
         private void ShowError(string errorMessage)
         {
-            Program.Console.Error(errorMessage);
+            console.Error(errorMessage);
         }
 
-        internal LauncherWindow(Action<LaunchProfile> launchCallback)
+        internal LauncherWindow(Action<LaunchProfile> launchCallback, IConsole console)
         {
+            this.console = console;
             this.launchCallback = launchCallback;
             InitializeComponent();
             launcherViewModel = new LauncherViewModel(pwd => passwordBox.Password = pwd);
 
-            var profileInstaller = new ProfilesInstaller(Program.Console, ProfileRepository.ProfilesPath);
+            var profileInstaller = new ProfilesInstaller(console, ProfileRepository.ProfilesPath);
             profileInstaller.Install();
             var profiles = ProfileRepository.LoadProfiles();
             if (profiles != null)

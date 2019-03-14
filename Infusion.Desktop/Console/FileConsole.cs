@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Infusion.Desktop.Console
 {
-    internal class FileConsole : IDisposable
+    internal sealed class FileConsole : IDisposable
     {
         private readonly LogConfiguration logConfig;
         private readonly CircuitBreaker loggingBreaker;
@@ -41,7 +41,8 @@ namespace Infusion.Desktop.Console
 
         public void WriteLine(DateTime timeStamp, string message)
         {
-            if (!logConfig.LogToFileEnabled)
+            var logsPath = logConfig.LogPath;
+            if (string.IsNullOrEmpty(logsPath) || !logConfig.LogToFileEnabled)
             {
                 lock (logLock)
                 {
@@ -54,13 +55,15 @@ namespace Infusion.Desktop.Console
             {
                 lock (logLock)
                 {
-                    var logsPath = logConfig.LogPath;
-
                     var fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
 
                     var createdNew = false;
+
                     if (!File.Exists(fileName))
                     {
+                        if (!Directory.Exists(logsPath))
+                            Directory.CreateDirectory(logsPath);
+
                         File.Create(fileName).Dispose();
                         createdNew = true;
                     }

@@ -11,25 +11,20 @@ namespace Infusion.Desktop
     {
         private static string explicitRootPath;
         private static Lazy<string> binPath = new Lazy<string>(GetBinPath);
-        private static Lazy<string> rootPath = new Lazy<string>(GetRootPath);
 
         private static string GetBinPath()
-            => Path.GetDirectoryName(new DirectoryInfo(typeof(PathUtilities).Assembly.Location).FullName);
+            => Path.GetDirectoryName(new DirectoryInfo(Path.Combine(typeof(PathUtilities).Assembly.Location, "..")).FullName);
 
-        private static string GetRootPath()
-            => new DirectoryInfo(Path.Combine(binPath.Value, "..")).FullName;
-
-        public static string RootPath => explicitRootPath ?? binPath.Value;
+        public static string RootPath
+            => explicitRootPath ?? binPath.Value;
 
         public static string GetAbsolutePath(string subpath)
             => Path.Combine(RootPath, subpath);
 
         public static void SetRootPath(string rootPath)
-        {
-            explicitRootPath = rootPath;
-        }
+            => explicitRootPath = rootPath;
 
-        public static string GetSafeFilename(string filename) =>
-            string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+        public static string GetSafeFilename(string filename)
+            => string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
     }
 }

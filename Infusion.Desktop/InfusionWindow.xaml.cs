@@ -36,6 +36,7 @@ namespace Infusion.Desktop
             InitializeInfusion();
 
             infusionConsole.Important($"Infusion {VersionHelpers.ProductVersion}");
+            infusionConsole.Info($"Infusion root path {PathUtilities.RootPath}");
 
             notifyIcon = new NotifyIcon();
             notifyIcon.Icon = System.Drawing.Icon.FromHandle(new Bitmap(Properties.Resources.infusion).GetHicon());
@@ -213,6 +214,7 @@ namespace Infusion.Desktop
             profile.ConsoleOptions.Width = Width;
             profile.ConsoleOptions.Height = Height;
 
+            Program.LegacyApi.Config.Save();
             ProfileRepository.SaveProfile(profile);
         }
     }

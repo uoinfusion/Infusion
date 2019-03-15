@@ -47,6 +47,8 @@ namespace Infusion.LegacyApi
             }
         }
 
+        public string CurrentLogFile { get; internal set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

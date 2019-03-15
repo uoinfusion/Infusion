@@ -65,6 +65,7 @@ namespace Infusion.Desktop.Console
                             Directory.CreateDirectory(logsPath);
 
                         File.Create(fileName).Dispose();
+                        logConfig.CurrentLogFile = fileName;
                         createdNew = true;
                     }
 

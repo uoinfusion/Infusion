@@ -56,7 +56,7 @@ public static class Summons
         UO.WarModeOff();
         UO.CastSpell(Spell.SummonCreature);
 
-        if (UO.WaitForDialogBox("You lack ", "You can't make anything with what you have.", "You don't know that spell.") == null)
+        if (UO.WaitForDialogBox("You lack ", "You can't make anything with what you have.", "You don't know that spell.", "You don't have enough mana to cast that spell!") == null)
         {
             UO.Log("Cannot open summon dialog box");
             return false;

@@ -202,6 +202,7 @@
     <Compile Include="Launcher\ProtocolVersion.cs" />
     <Compile Include="PathUtilities.cs" />
     <Compile Include="Profiles\AppDataProfileRepository.cs" />
+    <Compile Include="Profiles\ProfileConfigRepository.cs" />
     <Compile Include="Profiles\ProfilesInstaller.cs" />
     <Compile Include="Scripts\ScriptEngine.cs" />
     <Compile Include="Scripts\CSharpScriptEngine.cs" />

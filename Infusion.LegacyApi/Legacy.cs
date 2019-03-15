@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using Infusion.Commands;
+using Infusion.Config;
 using Infusion.Gumps;
 using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
@@ -60,16 +61,16 @@ namespace Infusion.LegacyApi
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
-            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry)
+            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry, IConfigBagRepository configRepository)
             : this(logConfig, commandHandler, ultimaServer, ultimaClient, console, packetRegistry,
-                  new RealTimeSource(), new MulClilocSource())
+                  new RealTimeSource(), new MulClilocSource(), configRepository)
         {
 
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
-            ITimeSource timeSource, IClilocSource clilocSource)
+            ITimeSource timeSource, IClilocSource clilocSource, IConfigBagRepository configRepository)
         {
             this.console = console;
 
@@ -128,7 +129,11 @@ namespace Infusion.LegacyApi
                 IsLoginConfirmed = true;
                 LoginConfirmed?.Invoke();
             };
+
+            Config = new ConfigBag(configRepository);
         }
+
+        public ConfigBag Config { get; }
 
         public string ServerName { get; private set; }
 

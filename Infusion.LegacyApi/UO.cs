@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using Infusion.Commands;
+using Infusion.Config;
 using Infusion.Gumps;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
@@ -318,5 +319,7 @@ namespace Infusion.LegacyApi
         public static void WaitTargetObject(Player player) => Current.WaitTargetObject(player);
         public static void WaitTargetTile(int type, int x, int y, int z) => Current.WaitTargetTile(type, x, y, z);
         public static void ClearTargetObject() => Current.ClearTargetObject();
+
+        public static ConfigBag Config => Current.Config;
     }
 }

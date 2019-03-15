@@ -56,6 +56,8 @@ namespace Infusion.Desktop.Launcher
             ProfileRepository.SelectedProfile = launcherViewModel.SelectedProfile;
             ProfileRepository.SaveSelectedProfileId(launcherViewModel.SelectedProfile.Id);
 
+            Program.ConfigRepository = new ProfileConfigRepository(launcherViewModel.SelectedProfile);
+
             var launcherOptions = launcherViewModel.SelectedProfile.LauncherOptions;
             string validationMessage;
             if (!launcherOptions.Validate(out validationMessage))

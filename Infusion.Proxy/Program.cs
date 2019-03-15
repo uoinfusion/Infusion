@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Infusion.Commands;
+using Infusion.Config;
 using Infusion.Diagnostic;
 using Infusion.IO;
 using Infusion.IO.Encryption.Login;
@@ -50,6 +51,8 @@ namespace Infusion.Proxy
         private static CommandHandler commandHandler;
 
         internal static IConsole Console { get; set; } = new TextConsole();
+
+        internal static IConfigBagRepository ConfigRepository { get; set; } = new MemoryConfigBagRepository();
         
         public static NetworkStream ClientStream { get; set; }
 
@@ -106,7 +109,7 @@ namespace Infusion.Proxy
             clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
 
-            LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry);
+            LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry, ConfigRepository);
             UO.Initialize(LegacyApi);
 
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,

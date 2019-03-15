@@ -88,12 +88,15 @@ namespace Infusion.Desktop.Profiles
         public static LaunchProfile LoadProfile(string profileFileName)
         {
             string profileJson = File.ReadAllText(profileFileName);
-            var profile = JsonConvert.DeserializeObject<LaunchProfile>(profileJson, new VersionConverter());
+            var profile = DeserializeProfile(profileJson);
 
             ProvideDefaults(profile);
 
             return profile;
         }
+
+        public static LaunchProfile DeserializeProfile(string json) 
+            => JsonConvert.DeserializeObject<LaunchProfile>(json, new VersionConverter());
 
         private static void ProvideDefaults(LaunchProfile profile)
         {
@@ -130,7 +133,7 @@ namespace Infusion.Desktop.Profiles
             {
                 EnsureProfileDirectoryExists();
 
-                string profileJson = JsonConvert.SerializeObject(profile, Formatting.Indented, new VersionConverter());
+                string profileJson = SerializeProfile(profile);
                 string profileFileName = Path.Combine(ProfilesPath, PathUtilities.GetSafeFilename(profile.Name) + ".profile");
 
                 File.WriteAllText(profileFileName, profileJson);
@@ -141,5 +144,8 @@ namespace Infusion.Desktop.Profiles
                 // just ignore
             }
         }
+
+        public static string SerializeProfile(LaunchProfile profile)
+            => JsonConvert.SerializeObject(profile, Formatting.Indented, new VersionConverter());
     }
 }

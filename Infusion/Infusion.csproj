@@ -69,6 +69,9 @@
     <Compile Include="Commands\CommandParameterParser.cs" />
     <Compile Include="Commands\CommandParser.cs" />
     <Compile Include="Commands\CommandSyntax.cs" />
+    <Compile Include="Config\ConfigBag.cs" />
+    <Compile Include="Config\IConfigBagRepository.cs" />
+    <Compile Include="Config\MemoryConfigBagRepository.cs" />
     <Compile Include="Coordinate.cs" />
     <Compile Include="Corpse.cs" />
     <Compile Include="CursorId.cs" />

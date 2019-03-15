@@ -56,6 +56,7 @@ namespace Infusion.Desktop.Console
                 lock (logLock)
                 {
                     var fileName = Path.Combine(logsPath, $"{timeStamp:yyyy-MM-dd}.log");
+                    logConfig.CurrentLogFile = fileName;
 
                     var createdNew = false;
 
@@ -65,7 +66,6 @@ namespace Infusion.Desktop.Console
                             Directory.CreateDirectory(logsPath);
 
                         File.Create(fileName).Dispose();
-                        logConfig.CurrentLogFile = fileName;
                         createdNew = true;
                     }
 

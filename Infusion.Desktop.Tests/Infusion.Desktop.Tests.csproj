@@ -77,6 +77,10 @@
       <Project>{5E814151-7F4C-4D71-BCB2-97FD303F04A8}</Project>
       <Name>Infusion.Proxy</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Infusion\Infusion.csproj">
+      <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
+      <Name>Infusion</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

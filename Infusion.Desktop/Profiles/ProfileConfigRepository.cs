@@ -1,4 +1,5 @@
 ﻿using Infusion.Config;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 
@@ -15,10 +16,17 @@ namespace Infusion.Desktop.Profiles
 
         public T Get<T>(string name)
         {
+            var serializer = new JsonSerializer();
+            serializer.Converters.Add(new ObjectIdConverter());
             if (profile.Options.TryGetValue(name, out var value))
             {
                 if (value is JObject jobj)
-                    return jobj.ToObject<T>();
+                    return jobj.ToObject<T>(serializer);
+                else if (typeof(T) == typeof(ObjectId))
+                {
+                    object result = new ObjectId((uint)Convert.ChangeType(value, typeof(uint)));
+                    return (T)result;
+                }
 
                 return (T)Convert.ChangeType(value, typeof(T));
             }

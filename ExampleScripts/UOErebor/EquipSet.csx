@@ -1,3 +1,5 @@
+#load "colors.csx"
+#load "equip.csx"
 #load "warehouse.csx"
 
 using System.Linq;
@@ -5,90 +7,185 @@ using System.Collections.Generic;
 
 public class EquipSet
 {
-    public ObjectId[] ItemIds { get; }
-    public Container Container { get; }
-    
-    public static void BuildConstructor()
+    public class StoredEquipment
     {
-        var ids = new HashSet<ObjectId>();
-
-        while (true)
+        public Layer Layer { get; set; }
+        public ObjectId Id { get; set; }
+        public ObjectId? ContainerId { get; set; } 
+        
+        public bool HasContainer => ContainerId.HasValue;
+        
+        public StoredEquipment(ObjectId id, Layer layer)
         {
-            UO.ClientPrint("Select item for equip or press esc");
-            Item selectedItem = UO.AskForItem();
-            if (selectedItem == null)
-            {
-                UO.ClientPrint("Equip build canceled");
-                break;
-            }
-            
-            ids.Add(selectedItem.Id);
+            Id = id;
+            Layer = layer;
+            ContainerId = null;
         }
         
-        var idsText = ids.Select(x => x.ToString()).Aggregate(string.Empty, (l, r) => l + "," + r);
-        
-        UO.Log($"var equipSet = new EquipSet(<put container here>{idsText});");
-    }
-    
-    public EquipSet(Container container, params ObjectId[] itemIds)
-    {
-        this.ItemIds = itemIds;
-        Container = container;
-    }
-    
-    public void Equip()
-    {
-        UO.ClientPrint("Equiping set");
-        Common.OpenContainer(Container.Id);
-    
-        foreach (var id in ItemIds)
+        public void Dress()
         {
-            var item = UO.Items[id];
+            var item = UO.Items[Id];
             if (item == null)
             {
-                UO.ClientPrint($"Cannot find item {id}"); 
-                continue;
+                UO.ClientPrint($"Cannot find item {Id}");
+                return;
             }
             
-            UO.Log($"Equiping {Specs.TranslateToName(item)}");
-            UO.Use(item);
+            ContainerId = item.ContainerId;
+            
+            UO.Log($"Dressing up {Specs.TranslateToName(item)}");
+            UO.DragItem(Id);
+            UO.Wear(Id, Layer);
         }
-    }
-    
-    public void Unequip()
-    {
-        UO.ClientPrint("Unequiping set");
-        Common.OpenContainer(Container.Id);
         
-        foreach (var id in ItemIds)
+        public void Undress(ObjectId defaultContainerId)
         {
-            var item = UO.Items[id];
+            var item = UO.Items[Id];
             if (item == null)
-                UO.ClientPrint($"Cannot find {id}");
+                UO.ClientPrint($"Cannot find {Id}");
+                
+            var targetContainerId = ContainerId ?? defaultContainerId;
+                        
+            UO.Log($"Undressing {Specs.TranslateToName(item)} -> {targetContainerId}");
+            if (!Items.TryMoveItem(item, targetContainerId))
+                UO.ClientPrint($"Cannot move {Specs.TranslateToName(item)}");        
+        }
+    }
 
-            if (!Container.Contains(item))
-            {
-                UO.Log($"Unequiping {Specs.TranslateToName(item)} -> {Container.Id}");
-                if (!Items.TryMoveItem(item, Container.Id))
-                    UO.ClientPrint($"Cannot move {Specs.TranslateToName(item)}");
-            }
+    public static readonly Layer[] AllEquipLayers = new[]
+    {
+        Layer.Arms, Layer.Bracelet, Layer.Earrings, Layer.Gloves,
+        Layer.Helm, Layer.Neck, Layer.OneHandedWeapon, Layer.TwoHandedWeapon,
+        Layer.Pants, Layer.Ring, Layer.Shoes, Layer.Torso, Layer.Back, Layer.TorsoOuter,
+        Layer.TorsoMiddle
+    };
+    
+    public static Dictionary<string, EquipSet> EquipmentSets { get; set; }
+        = new Dictionary<string, EquipSet>();
+
+    public StoredEquipment[] Equips { get; set;}
+
+    public ObjectId[] ItemIds => Equips.Select(x => x.Id).ToArray();
+        
+    public void Dress()
+    {
+        UO.ClientPrint("Dressing up set");
+    
+        foreach (var equip in Equips)
+        {
+            equip.Dress();
+            UO.Wait(25);
         }
     }
     
-    public void Open() => Container.Open();
-    
-    public void Load()
+    public void Undress()
     {
-        Container.Open();
-        Items.TryMoveItem(Container.Item, UO.Me.BackPack);
+        var equipWithContainer = Equips.Where(x => x.HasContainer).FirstOrDefault();
+        var defaultContainerId = equipWithContainer?.ContainerId;
+        
+        if (!defaultContainerId.HasValue)
+            defaultContainerId = Common.AskForContainer("Select container to store equipment")?.Id;
+
+        if (!defaultContainerId.HasValue)
+            defaultContainerId = UO.Me.BackPack.Id;
+    
+        UO.ClientPrint("Undressing set");
+        
+        foreach (var equip in Equips)
+        {
+            equip.Undress(defaultContainerId.Value);
+        }
+    }
+
+    public static void CreateSet(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            UO.ClientPrint("Specify equip set name.");
+            return;
+        }
+    
+        var equipment = new List<StoredEquipment>();
+        
+        foreach (var layer in AllEquipLayers)
+        {
+            var item = UO.Items.OnLayer(layer).FirstOrDefault(); 
+            if (item != null)
+                equipment.Add(new StoredEquipment(item.Id, layer));
+        }
+        
+        EquipmentSets[name] = new EquipSet()
+        {
+            Equips = equipment.ToArray(),
+        };
+        
+        UO.ClientPrint($"Set '{name}' created.");
+    }
+
+    private static EquipSet GetEquipSet(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            UO.ClientPrint("Equip set name not specified.");
+            return null;
+        }
+        
+        if (!EquipmentSets.TryGetValue(name, out var equip))
+        {
+            UO.ClientPrint($"Unknwon equip set '{name}'.");
+            return null;
+        }
+        
+        return equip;
+    }    
+
+    public static void DressEquipSet(string name)
+    {
+        var equipSet = GetEquipSet(name);
+        if (equipSet == null)
+            return;
+        
+        equipSet.Dress();
     }
     
-    public void Unload()
+    public static void UndressEquipSet(string name)
     {
-        if (!Container.InParentContainer)
+        var equipSet = GetEquipSet(name);
+        if (equipSet == null)
+            return;
+        
+        equipSet.Undress();
+    }
+    
+    public static void RemoveEquipSet(string name)
+    {
+        var equipSet = GetEquipSet(name);
+        if (equipSet == null)
+            return;
+
+        EquipmentSets.Remove(name);
+        UO.ClientPrint($"Equipment set '{name}' removed.'");
+    }
+    
+    public static void ListEquipSets()
+    {
+        if (!EquipmentSets.Any())
         {
-            Container.Parent.Open();
-            Items.TryMoveItem(Container.Item, Container.Parent.Item);
+            UO.ClientPrint("No equipment sets defined.");
+            return;
+        }
+        
+        UO.ClientPrint("Equipment set names:");
+        foreach (var name in EquipmentSets.Keys)
+        {
+            UO.ClientPrint(name);
         }
     }
 }
+
+UO.Config.Register(() => EquipSet.EquipmentSets);
+UO.RegisterCommand("equip-create", EquipSet.CreateSet);
+UO.RegisterCommand("equip-dress", EquipSet.DressEquipSet);
+UO.RegisterCommand("equip-undress", EquipSet.UndressEquipSet);
+UO.RegisterCommand("equip-list", EquipSet.ListEquipSets);
+UO.RegisterCommand("equip-remove", EquipSet.RemoveEquipSet);

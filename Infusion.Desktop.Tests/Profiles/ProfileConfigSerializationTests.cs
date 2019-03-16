@@ -40,6 +40,22 @@ namespace Infusion.Desktop.Tests.Profiles
         }
 
         [TestMethod]
+        public void Can_roundrip_ObjectId_property_serializing_to_uint()
+        {
+            var result = DoRoundtrip(new ObjectId(0x40001234), out string json);
+            result.Should().Be(new ObjectId(0x40001234));
+            json.Should().NotContain("\"Value\":");
+        }
+
+        [TestMethod]
+        public void Can_roundrip_object_with_ObjectId_property_serializing_to_uint()
+        {
+            var result = DoRoundtrip(new { Id = new ObjectId(0x40001234) }, out string json);
+            result.Id.Should().Be(new ObjectId(0x40001234));
+            json.Should().NotContain("\"Value\":");
+        }
+
+        [TestMethod]
         public void Can_roundtrip_object_with_enumerable_property()
         {
             var result = DoRoundtrip(new ObjectWithEnumerableProperty
@@ -61,18 +77,21 @@ namespace Infusion.Desktop.Tests.Profiles
             }
         }
 
-        private T DoRoundtrip<T>(T value)
+        private T DoRoundtrip<T>(T value, out string json)
         {
             var propertyName = "test";
             var profile = new LaunchProfile();
             profile.Options[propertyName] = value;
 
-            var json = ProfileRepository.SerializeProfile(profile);
+            json = ProfileRepository.SerializeProfile(profile);
             var roundtrippedProfile = ProfileRepository.DeserializeProfile(json);
 
             var profileConfigRepository = new ProfileConfigRepository(roundtrippedProfile);
 
             return profileConfigRepository.Get<T>(propertyName);
         }
+
+        private T DoRoundtrip<T>(T value)
+            => DoRoundtrip(value, out string json);
     }
 }

@@ -9,10 +9,30 @@ using Newtonsoft.Json.Converters;
 
 namespace Infusion.Desktop.Profiles
 {
+    internal class ObjectIdConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType) => objectType == typeof(ObjectId);
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.ValueType == typeof(long))
+                return new ObjectId((uint)(long)reader.Value);
+            throw new NotImplementedException();
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((ObjectId)value).Value);
+        }
+    }
+
+
     internal static class ProfileRepository
     {
+        private static JsonConverter[] jsonConverters = { new VersionConverter(), new ObjectIdConverter(), new StringEnumConverter() };
+
         public static string ProfilesPath { get; } =
-            PathUtilities.GetAbsolutePath("Profiles");
+            PathUtilities.GetAbsolutePath("profiles");
 
         public static LaunchProfile SelectedProfile { get; set; }
 
@@ -96,7 +116,7 @@ namespace Infusion.Desktop.Profiles
         }
 
         public static LaunchProfile DeserializeProfile(string json) 
-            => JsonConvert.DeserializeObject<LaunchProfile>(json, new VersionConverter());
+            => JsonConvert.DeserializeObject<LaunchProfile>(json, jsonConverters);
 
         private static void ProvideDefaults(LaunchProfile profile)
         {
@@ -146,6 +166,6 @@ namespace Infusion.Desktop.Profiles
         }
 
         public static string SerializeProfile(LaunchProfile profile)
-            => JsonConvert.SerializeObject(profile, Formatting.Indented, new VersionConverter());
+            => JsonConvert.SerializeObject(profile, Formatting.Indented, jsonConverters);
     }
 }

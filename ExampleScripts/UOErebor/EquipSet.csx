@@ -24,27 +24,27 @@ public class EquipSet
         
         public void Dress()
         {
-            var item = UO.Items[Id];
-            if (item == null)
+            var item = UO.Items[Id];            
+            
+            if (item != null)
             {
-                UO.ClientPrint($"Cannot find item {Id}");
-                return;
+                UO.Log($"Dressing up {Specs.TranslateToName(item)}");
+                ContainerId = item.ContainerId;
             }
-            
-            ContainerId = item.ContainerId;
-            
-            UO.Log($"Dressing up {Specs.TranslateToName(item)}");
+            else
+                UO.Log($"Dressing up {Id}");
+
             UO.DragItem(Id);
             UO.Wear(Id, Layer);
         }
         
-        public void Undress(ObjectId defaultContainerId)
+        public void Undress(ObjectId defaultContainerId, bool forceDefault = false)
         {
             var item = UO.Items[Id];
             if (item == null)
                 UO.ClientPrint($"Cannot find {Id}");
                 
-            var targetContainerId = ContainerId ?? defaultContainerId;
+            var targetContainerId = (forceDefault) ? defaultContainerId : ContainerId ?? defaultContainerId;
                         
             UO.Log($"Undressing {Specs.TranslateToName(item)} -> {targetContainerId}");
             if (!Items.TryMoveItem(item, targetContainerId))
@@ -78,6 +78,19 @@ public class EquipSet
         }
     }
     
+    public void UndressTo()
+    {
+        var containerId = Common.AskForContainer("Select container to store equipment")?.Id;
+        
+        if (!containerId.HasValue)
+        {
+            UO.ClientPrint("Undress cancelled.");
+            return;
+        }
+        
+        Undress(containerId.Value, true);
+    }
+    
     public void Undress()
     {
         var equipWithContainer = Equips.Where(x => x.HasContainer).FirstOrDefault();
@@ -88,12 +101,17 @@ public class EquipSet
 
         if (!defaultContainerId.HasValue)
             defaultContainerId = UO.Me.BackPack.Id;
+
+        Undress(defaultContainerId.Value, false);
+    }
     
+    public void Undress(uint defaultContainerId, bool forceDefault)
+    {
         UO.ClientPrint("Undressing set");
         
         foreach (var equip in Equips)
         {
-            equip.Undress(defaultContainerId.Value);
+            equip.Undress(defaultContainerId, forceDefault);
         }
     }
 
@@ -132,18 +150,23 @@ public class EquipSet
         
         if (!EquipmentSets.TryGetValue(name, out var equip))
         {
-            UO.ClientPrint($"Unknwon equip set '{name}'.");
+            UO.ClientPrint($"Unknown equip set '{name}'.");
             return null;
         }
         
         return equip;
-    }    
-
+    }
+    
     public static void DressEquipSet(string name)
     {
         var equipSet = GetEquipSet(name);
         if (equipSet == null)
             return;
+        
+        var closedContainerIds = equipSet.Equips
+            .Where(x => x.HasContainer && UO.Items[x.Id] == null)
+            .Select(x => x.ContainerId.Value)
+            .Distinct();
         
         equipSet.Dress();
     }
@@ -155,6 +178,15 @@ public class EquipSet
             return;
         
         equipSet.Undress();
+    }
+    
+    public static void UndressEquipSetTo(string name)
+    {
+        var equipSet = GetEquipSet(name);
+        if (equipSet == null)
+            return;
+        
+        equipSet.UndressTo();
     }
     
     public static void RemoveEquipSet(string name)
@@ -187,5 +219,6 @@ UO.Config.Register(() => EquipSet.EquipmentSets);
 UO.RegisterCommand("equip-create", EquipSet.CreateSet);
 UO.RegisterCommand("equip-dress", EquipSet.DressEquipSet);
 UO.RegisterCommand("equip-undress", EquipSet.UndressEquipSet);
+UO.RegisterCommand("equip-undress-to", EquipSet.UndressEquipSetTo);
 UO.RegisterCommand("equip-list", EquipSet.ListEquipSets);
 UO.RegisterCommand("equip-remove", EquipSet.RemoveEquipSet);

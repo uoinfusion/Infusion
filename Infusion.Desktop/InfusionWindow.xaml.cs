@@ -162,6 +162,9 @@ namespace Infusion.Desktop
             {
                 UO.CommandHandler.BeginTerminate(true);
                 UO.CommandHandler.UnregisterAllPublic();
+
+                Program.LegacyApi.Config.Save();
+
                 ScriptEngine.Value.Reset();
                 using (var tokenSource = new CancellationTokenSource())
                 {

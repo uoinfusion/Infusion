@@ -78,6 +78,39 @@ public static class Potions
         else
             Enable();
     }
+    
+    public static void Heal()
+    {
+        int deltaHP = UO.Me.MaxHealth - UO.Me.CurrentHealth;
+        
+        if (deltaHP <= 0)
+        {
+            UO.ClientPrint("Full HP, no need to drink heal potion.");
+            return;
+        }
+        
+        Item healPotion = null;
+        if (deltaHP <= 30)
+            healPotion = FindBackpackItem(Specs.HealLesserPotion) ?? FindBackpackItem(Specs.HealPotion);
+        else if (deltaHP <= 50)
+            healPotion = FindBackpackItem(Specs.HealPotion);
+            
+        if (healPotion == null)
+            UO.Say(".potionheal");
+        else
+            UO.Use(healPotion);
+    }
+    
+    private static Item FindBackpackItem(ItemSpec spec)
+        => UO.Items.InBackPack(true).Matching(spec).FirstOrDefault();
+    
+    public static void Invis()
+    {
+        UO.WarModeOn();
+        UO.WarModeOff();
+        
+        UO.Say(".potioninvis");
+    }
 
     public static void Run()
     {
@@ -189,3 +222,5 @@ UO.RegisterBackgroundCommand("potions", Potions.Run);
 UO.RegisterCommand("potions-enable", Potions.Enable);
 UO.RegisterCommand("potions-disable", Potions.Disable);
 UO.RegisterCommand("potions-toggle", Potions.Toggle);
+UO.RegisterCommand("potioninvis", Potions.Invis);
+UO.RegisterCommand("potionheal", Potions.Heal)

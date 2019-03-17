@@ -91,7 +91,7 @@ public static class Items
     public static bool TryMoveItem(Item item, ushort amount, ObjectId targetContainerId, Location2D? location)
     {
         bool result = false;
-    
+
         if (!Drag(item, amount))
             return false;
         
@@ -101,6 +101,8 @@ public static class Items
             UO.DropItem(item, targetContainerId);
         
         journal
+            // Sphere sometimes drops the item to the source container and deletes it again before
+            // dropping the item to the target container -> script has to check target container id also.
             .When<Infusion.LegacyApi.Events.ItemEnteredViewEvent>(
                 e => e.NewItem.Id == item.Id && e.NewItem.ContainerId == targetContainerId,
                 e =>
@@ -108,6 +110,14 @@ public static class Items
                     result = true;
                     Trace.Log($"Item drop confirmed: {item}, container: {e.NewItem.ContainerId}, targetContainer: {targetContainerId}");
                 })
+            // When it is not possible to drop item to target container
+            // (e.g. cannot see target container or the item is too large for target container),
+            // then Sphere sends "You put the <item name> in your pack."
+            .When<Infusion.LegacyApi.Events.SpeechReceivedEvent>(
+                e => e.Speech.Message.StartsWith("You put ", StringComparison.OrdinalIgnoreCase) &&
+                    e.Speech.Message.EndsWith("in your pack.", StringComparison.OrdinalIgnoreCase),
+                e => result = false
+            )
             .When<MoveItemRequestRejectedEvent>(x =>
             {
                 Trace.Log($"Item drop rejected: {item}");

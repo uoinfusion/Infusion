@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Infusion.Desktop.Profiles;
+using Infusion.LegacyApi.Console;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
@@ -86,7 +87,7 @@ namespace Infusion.Desktop.Tests.Profiles
             json = ProfileRepository.SerializeProfile(profile);
             var roundtrippedProfile = ProfileRepository.DeserializeProfile(json);
 
-            var profileConfigRepository = new ProfileConfigRepository(roundtrippedProfile);
+            var profileConfigRepository = new ProfileConfigRepository(roundtrippedProfile, new NullConsole());
 
             return profileConfigRepository.Get<T>(propertyName);
         }

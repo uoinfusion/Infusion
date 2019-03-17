@@ -42,14 +42,14 @@ namespace Infusion.LegacyApi
 
                     Task.Run(() =>
                     {
-                        logger.Debug(text);
+                        logger.Info(text);
                         commandHandler.InvokeSyntax(text);
                     });
 
                     return null;
                 }
 
-                logger.Debug(text);
+                logger.Info(text);
                 eventSource.Publish(new SpeechRequestedEvent(text));
             }
 

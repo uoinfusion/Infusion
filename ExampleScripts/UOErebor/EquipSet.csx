@@ -2,6 +2,7 @@
 #load "equip.csx"
 #load "warehouse.csx"
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -64,8 +65,6 @@ public class EquipSet
         = new Dictionary<string, EquipSet>();
 
     public StoredEquipment[] Equips { get; set;}
-
-    public ObjectId[] ItemIds => Equips.Select(x => x.Id).ToArray();
         
     public void Dress()
     {
@@ -151,6 +150,7 @@ public class EquipSet
         if (!EquipmentSets.TryGetValue(name, out var equip))
         {
             UO.ClientPrint($"Unknown equip set '{name}'.");
+            ListEquipSets();
             return null;
         }
         

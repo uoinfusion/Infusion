@@ -27,7 +27,7 @@ namespace Infusion.Desktop.Profiles
 
         public ConsoleOptions ConsoleOptions { get; set; }
 
-        public Dictionary<string, object> Options { get; } = new Dictionary<string, object>();
+        public Dictionary<string, object> Options { get; internal set; } = new Dictionary<string, object>();
 
         public event PropertyChangedEventHandler PropertyChanged;
 

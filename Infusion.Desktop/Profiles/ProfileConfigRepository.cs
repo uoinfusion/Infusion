@@ -31,13 +31,20 @@ namespace Infusion.Desktop.Profiles
                     return (T)result;
                 }
 
-                try
+                if (value is IConvertible)
                 {
-                    return (T)Convert.ChangeType(value, typeof(T));
+                    try
+                    {
+                        return (T)Convert.ChangeType(value, typeof(T));
+                    }
+                    catch (Exception ex)
+                    {
+                        console.Error(ex.ToString());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    console.Error(ex.ToString());
+                    return (T)value;
                 }
             }
 

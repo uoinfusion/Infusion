@@ -9,24 +9,6 @@ using Newtonsoft.Json.Converters;
 
 namespace Infusion.Desktop.Profiles
 {
-    internal class ObjectIdConverter : JsonConverter
-    {
-        public override bool CanConvert(Type objectType) => objectType == typeof(ObjectId);
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            if (reader.ValueType == typeof(long))
-                return new ObjectId((uint)(long)reader.Value);
-            throw new NotImplementedException();
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            writer.WriteValue(((ObjectId)value).Value);
-        }
-    }
-
-
     internal static class ProfileRepository
     {
         private static JsonConverter[] jsonConverters = { new VersionConverter(), new ObjectIdConverter(), new StringEnumConverter() };
@@ -145,6 +127,14 @@ namespace Infusion.Desktop.Profiles
             {
                 SaveProfile(profile);
             }
+        }
+
+        internal static void FixOptions(LaunchProfile profile)
+        {
+            var json = SerializeProfile(profile);
+            var refreshedProfile = DeserializeProfile(json);
+
+            profile.Options = refreshedProfile.Options;
         }
 
         public static void SaveProfile(LaunchProfile profile)

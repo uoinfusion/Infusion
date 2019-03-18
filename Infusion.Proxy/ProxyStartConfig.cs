@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infusion.IO.Encryption.Login;
+using System;
 using System.Net;
 
 namespace Infusion.Proxy
@@ -9,5 +10,7 @@ namespace Infusion.Proxy
         public string ServerAddress { get; set; }
         public ushort LocalProxyPort { get; set; } = 33333;
         public Version ProtocolVersion { get; set; }
+        public EncryptionSetup Encryption { get; set; }
+        public LoginEncryptionKey? LoginEncryptionKey { get; set; }
     }
 }

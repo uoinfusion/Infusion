@@ -27,7 +27,8 @@ namespace Infusion.Desktop.Launcher
                     ServerEndPoint = serverEndPoint,
                     LocalProxyPort = proxyPort,
                     ProtocolVersion = options.ProtocolVersion,
-
+                    Encryption = options.Encryption,
+                    LoginEncryptionKey = options.Classic.EncryptionVersion?.Key 
                 });
 
                 switch (options.ClientType)

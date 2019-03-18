@@ -163,7 +163,8 @@ namespace Infusion.Proxy
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
                 new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy", packetRegistry),
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client", packetRegistry),
-                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry);
+                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry,
+                    proxyStartConfig.Encryption, proxyStartConfig.LoginEncryptionKey);
             clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
             clientConnection.NewGameEncryptionStarted += ClientConnectionOnNewGameEncryptionStarted;
             clientConnection.LoginEncryptionStarted += ClientConnectionOnLoginEncryptionStarted;

@@ -80,6 +80,7 @@
     <Compile Include="DialogBox.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="DragResult.cs" />
+    <Compile Include="EncryptionSetup.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="GumpControlId.cs" />
     <Compile Include="GumpInstanceId.cs" />

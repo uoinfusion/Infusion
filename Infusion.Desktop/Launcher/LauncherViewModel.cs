@@ -38,6 +38,8 @@ namespace Infusion.Desktop.Launcher
             new ProtocolVersion() { Version = new Version(7, 0, 18, 0), Label = ">= 7.0.18.0" },
         };
 
+        public EncryptionVersion[] EncryptionVersions => EncryptionVersion.Versions;
+
         public ObservableCollection<LaunchProfile> Profiles
         {
             get => profiles;
@@ -73,6 +75,40 @@ namespace Infusion.Desktop.Launcher
         {
             get => SelectedProfile.Name;
             set => SelectedProfile.Name = value;
+        }
+
+        public EncryptionSetup ClassicEncryption
+        {
+            get => SelectedProfile.LauncherOptions.Classic.Encryption;
+            set
+            {
+                SelectedProfile.LauncherOptions.Classic.Encryption = value;
+                OnPropertyChanged();
+                OnPropertyChanged("ClassicClientEncryptionVersion");
+                OnPropertyChanged("EncryptionVersionRequired");
+            }
+        }
+
+        public EncryptionVersion ClassicClientEncryptionVersion
+        {
+            get => SelectedProfile.LauncherOptions.Classic.EncryptionVersion;
+            set
+            {
+                SelectedProfile.LauncherOptions.Classic.EncryptionVersion = value;
+                OnPropertyChanged();
+                OnPropertyChanged("EncryptionVersionRequired");
+            }
+        }
+
+        public bool EncryptionVersionRequired
+        {
+            get
+            {
+                if (SelectedClientType != UltimaClientType.Classic)
+                    return false;
+
+                return SelectedProfile.LauncherOptions.Classic.Encryption == EncryptionSetup.EncryptedServer;
+            }
         }
 
         public void NewProfile()
@@ -119,6 +155,9 @@ namespace Infusion.Desktop.Launcher
             OnPropertyChanged("OrionOptionsVisible");
             OnPropertyChanged("CrossOptionsVisible");
             OnPropertyChanged("SelectedProtocolVersion");
+            OnPropertyChanged("ClassicEncryption");
+            OnPropertyChanged("ClassicClientEncryptionVersion");
+            OnPropertyChanged("EncryptionVersionRequired");
         }
 
         public void DeleteSelectedProfile()

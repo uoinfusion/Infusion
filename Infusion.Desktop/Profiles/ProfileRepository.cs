@@ -11,7 +11,11 @@ namespace Infusion.Desktop.Profiles
 {
     internal static class ProfileRepository
     {
-        private static JsonConverter[] jsonConverters = { new VersionConverter(), new ObjectIdConverter(), new StringEnumConverter() };
+        private static JsonConverter[] jsonConverters =
+        {
+            new VersionConverter(), new ObjectIdConverter(), new StringEnumConverter(),
+            new LoginEncryptionKeyConverter()
+        };
 
         public static string ProfilesPath { get; } =
             PathUtilities.GetAbsolutePath("profiles");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infusion.Proxy;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,6 +19,19 @@ namespace Infusion.Desktop.Launcher
         public string ServerEndpoint { get; set; }
         public UltimaClientType ClientType { get; set; } = UltimaClientType.Classic;
         public Version ProtocolVersion { get; set; } = new Version(3, 0, 0);
+        public EncryptionSetup Encryption
+        {
+            get
+            {
+                switch (ClientType)
+                {
+                    case UltimaClientType.Classic:
+                        return Classic.Encryption;
+                    default:
+                        return EncryptionSetup.Autodetect;
+                }
+            }
+        }
 
         public string UserName { get; set; }
         public string Password { get; set; }

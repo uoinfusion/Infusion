@@ -199,9 +199,11 @@
     <Compile Include="EnumToItemSource.cs" />
     <Compile Include="Launcher\CrossUOLauncherOptions.cs" />
     <Compile Include="Launcher\CrossUOLauncher.cs" />
+    <Compile Include="Launcher\EncryptionVersion.cs" />
     <Compile Include="Launcher\ProtocolVersion.cs" />
     <Compile Include="PathUtilities.cs" />
     <Compile Include="Profiles\AppDataProfileRepository.cs" />
+    <Compile Include="Profiles\LoginEncryptionKeyConverter.cs" />
     <Compile Include="Profiles\ObjectIdConverter.cs" />
     <Compile Include="Profiles\ProfileConfigRepository.cs" />
     <Compile Include="Profiles\ProfilesInstaller.cs" />

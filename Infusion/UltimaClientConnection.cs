@@ -14,6 +14,8 @@ namespace Infusion
     {
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
+        private readonly EncryptionSetup encryption;
+        private readonly LoginEncryptionKey? configuedLoginEncryptionKey;
         private readonly Parsers.PacketLogParser packetLogParser;
         private LoginPullStream loginStream;
         private ClientNewGamePullStream receiveNewGameStream;
@@ -28,20 +30,25 @@ namespace Infusion
 
         public UltimaClientConnection() : this(
             UltimaClientConnectionStatus.Initial, NullDiagnosticPullStream.Instance,
-            NullDiagnosticPushStream.Instance, PacketDefinitionRegistryFactory.CreateClassicClient())
+            NullDiagnosticPushStream.Instance, PacketDefinitionRegistryFactory.CreateClassicClient(),
+            EncryptionSetup.Autodetect, null)
         {
         }
 
         public UltimaClientConnection(UltimaClientConnectionStatus status)
-            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance, PacketDefinitionRegistryFactory.CreateClassicClient())
+            : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance,
+                  PacketDefinitionRegistryFactory.CreateClassicClient(), EncryptionSetup.Autodetect, null)
         {
         }
 
         public UltimaClientConnection(UltimaClientConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
-            IDiagnosticPushStream diagnosticPushStream, PacketDefinitionRegistry packetRegistry)
+            IDiagnosticPushStream diagnosticPushStream, PacketDefinitionRegistry packetRegistry,
+            EncryptionSetup encryption, LoginEncryptionKey? configuedLoginEncryptionKey)
         {
             this.diagnosticPullStream = diagnosticPullStream;
             this.diagnosticPushStream = diagnosticPushStream;
+            this.encryption = encryption;
+            this.configuedLoginEncryptionKey = configuedLoginEncryptionKey;
             Status = status;
             packetLogParser = new PacketLogParser(packetRegistry);
             loginStream = new LoginPullStream();
@@ -111,12 +118,29 @@ namespace Infusion
                 return;
 
             var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream);
-            if (result.Encryption != null)
+
+            switch (encryption)
             {
-                requiresEncryption = true;
-                loginStream = new LoginPullStream(result.Encryption);
-                loginStream.BaseStream = diagnosticPullStream;
-                LoginEncryptionStarted?.Invoke(loginSeed, result.Key.Value);
+                case EncryptionSetup.Autodetect:
+                    if (result.Encryption != null)
+                    {
+                        requiresEncryption = true;
+                        loginStream = new LoginPullStream(result.Encryption);
+                        loginStream.BaseStream = diagnosticPullStream;
+                        LoginEncryptionStarted?.Invoke(loginSeed, result.Key.Value);
+                    }
+                    break;
+                case EncryptionSetup.EncryptedServer:
+                    if (!configuedLoginEncryptionKey.HasValue)
+                        throw new InvalidOperationException("Unecrypted client and encrypted server specified, without encryption key");
+
+                    requiresEncryption = false;
+                    loginStream = new LoginPullStream(result.Encryption);
+                    loginStream.BaseStream = diagnosticPullStream;
+                    LoginEncryptionStarted?.Invoke(loginSeed, configuedLoginEncryptionKey.Value);
+                    break;
+                default:
+                    throw new NotImplementedException($"EncryptionSetup {encryption}");
             }
 
             var packet = packetLogParser.ParsePacket(result.DecryptedPacket);
@@ -152,6 +176,11 @@ namespace Infusion
                         sendNewGameStream = new ClientNewGamePushStream(seed);
                         NewGameEncryptionStarted?.Invoke(seed);
                     }
+                    else if (encryption == EncryptionSetup.EncryptedServer)
+                    {
+                        NewGameEncryptionStarted?.Invoke(seed);
+                    }
+
                     return 4;
                 }
             }
@@ -179,6 +208,10 @@ namespace Infusion
                     receiveNewGameStream = new ClientNewGamePullStream(receivedSeed);
                     receiveNewGameStream.BaseStream = diagnosticPullStream;
                     sendNewGameStream = new ClientNewGamePushStream(receivedSeed);
+                    NewGameEncryptionStarted?.Invoke(receivedSeed);
+                }
+                else if (encryption == EncryptionSetup.EncryptedServer)
+                {
                     NewGameEncryptionStarted?.Invoke(receivedSeed);
                 }
             }

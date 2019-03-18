@@ -6,12 +6,13 @@
         xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:Launcher="clr-namespace:Infusion.Desktop.Launcher"
         xmlns:Desktop="clr-namespace:Infusion.Desktop"
+        xmlns:Infusion="clr-namespace:Infusion;assembly=Infusion"
         mc:Ignorable="d"
         x:ClassModifier="internal"
         ResizeMode="NoResize"
         Icon="pack://application:,,,/infusion.png"
         SizeToContent="WidthAndHeight"
-        Title="Infusion launcher" Height="397.489" Width="405.049">
+        Title="Infusion launcher" Height="411.489" Width="405.049">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="{x:Type TextBox}">
@@ -21,7 +22,7 @@
             <Setter Property="Margin" Value="0,0,5,5" />
         </Style>
         <Style TargetType="{x:Type ComboBox}">
-            <Setter Property="Margin" Value="0,0,5,5" />
+            <Setter Property="Margin" Value="0,0,0,5" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -86,13 +87,15 @@
                           SelectedItem="{Binding Path=SelectedProtocolVersion, Mode=TwoWay}" />
             </Grid>
             
-            <Grid Grid.Row="2" Margin="10 10 10 0"
+            <Grid Grid.Row="2" Margin="10 10 10 10"
                   Visibility="{Binding Path=ClassicClientOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="90"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
                     <RowDefinition />
                 </Grid.RowDefinitions>
 
@@ -105,7 +108,23 @@
                     <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Classic.ClientExePath}" />
                     <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectClassicPath" />
                 </Grid>
-
+                <TextBlock Grid.Column="0" Grid.Row="1">Encryption:</TextBlock>
+                <ComboBox Grid.Column="1" Grid.Row="1" Padding="5 2 5 0" IsEditable="False"
+                          IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
+                          ItemsSource="{Desktop:EnumToItemsSource {x:Type Infusion:EncryptionSetup}}"
+                          SelectedValue="{Binding Path=ClassicEncryption, Mode=TwoWay}"
+                          DisplayMemberPath="DisplayName"
+                          SelectedValuePath="Value" />
+                <TextBlock Grid.Column="0" Grid.Row="2"
+                           Visibility="{Binding Path=EncryptionVersionRequired, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Encrypt. version:
+                </TextBlock>
+                <ComboBox Grid.Column="1" Grid.Row="3" Padding="5 2 5 0" IsEditable="False"
+                          IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
+                          ItemsSource="{Binding Path=EncryptionVersions}"
+                          SelectedValue="{Binding Path=ClassicClientEncryptionVersion, Mode=TwoWay}"
+                          DisplayMemberPath="Name"
+                          Visibility="{Binding Path=EncryptionVersionRequired, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </Grid>
             <Grid Grid.Row="2" Margin="10 10 10 0"
                   Visibility="{Binding Path=OrionOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
@@ -147,7 +166,7 @@
                     <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectCrossPath" />
                 </Grid>
             </Grid>
-            <Grid Grid.Row="3" Margin="0,0,0,20">
+            <Grid Grid.Row="3" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="41*"/>
                     <ColumnDefinition Width="189*"/>

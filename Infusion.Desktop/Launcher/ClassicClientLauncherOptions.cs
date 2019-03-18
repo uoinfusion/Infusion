@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infusion.IO.Encryption.Login;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -38,6 +39,28 @@ namespace Infusion.Desktop.Launcher
             set
             {
                 clientExePath = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private EncryptionSetup encryption = EncryptionSetup.Autodetect;
+        public EncryptionSetup Encryption
+        {
+            get => encryption;
+            set
+            {
+                encryption = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private EncryptionVersion encryptionVersion;
+        public EncryptionVersion EncryptionVersion
+        {
+            get => encryptionVersion;
+            set
+            {
+                encryptionVersion = value;
                 OnPropertyChanged();
             }
         }

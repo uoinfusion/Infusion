@@ -114,7 +114,7 @@ namespace Infusion.Tests
             var packet = FakePackets.Instantiate(FakePackets.ConnectToGameServer);
             var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.PreGameLogin, NullDiagnosticPullStream.Instance,
-                diagnosticStream, packetRegistry);
+                diagnosticStream, packetRegistry, EncryptionSetup.Autodetect, null);
             var outputStream = new TestMemoryStream();
 
             connection.Send(packet, outputStream);
@@ -130,7 +130,7 @@ namespace Infusion.Tests
             var packet = FakePackets.Instantiate(FakePackets.EnableLockedClientFeatures);
             var diagnosticStream = new TextDiagnosticPushStream(packetRegistry);
             var connection = new UltimaClientConnection(UltimaClientConnectionStatus.Game, NullDiagnosticPullStream.Instance,
-                diagnosticStream, packetRegistry);
+                diagnosticStream, packetRegistry, EncryptionSetup.Autodetect, null);
             var outputStream = new TestMemoryStream();
 
             connection.Send(packet, outputStream);

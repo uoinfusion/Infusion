@@ -16,9 +16,14 @@ namespace Infusion.LegacyApi
         private readonly UltimaServer server;
         private readonly EventJournalSource eventJournalSource;
         private readonly PacketDefinitionRegistry packetRegistry;
+        private readonly object blockedQuestionLock = new object();
+
+        private string blockedQuestion;
 
         internal bool ShowDialogBox { get; set; } = true;
         public DialogBox CurrentDialogBox { get; private set; }
+
+        internal event Action<DialogBox> DialogBoxOpened;
 
         public DialogBoxObservers(UltimaServer server, EventJournalSource eventJournalSource, PacketDefinitionRegistry packetRegistry)
         {
@@ -35,9 +40,21 @@ namespace Infusion.LegacyApi
                 var packet = packetRegistry.Materialize<OpenDialogBoxPacket>(rawPacket);
                 var dialogBox = new DialogBox(packet.DialogId, packet.MenuId, packet.Question, packet.Responses);
                 CurrentDialogBox = dialogBox;
-                eventJournalSource.Publish(new DialogBoxOpenedEvent(dialogBox));
 
-                if (!ShowDialogBox)
+                bool block = false;
+                lock (blockedQuestionLock)
+                {
+                    if (!string.IsNullOrEmpty(blockedQuestion) && dialogBox.Question.IndexOf(blockedQuestion, StringComparison.Ordinal) >= 0)
+                    {
+                        blockedQuestion = null;
+                        block = true;
+                    }
+                }
+
+                eventJournalSource.Publish(new DialogBoxOpenedEvent(dialogBox));
+                DialogBoxOpened?.Invoke(dialogBox);
+
+                if (!ShowDialogBox || block)
                     return null;
             }
 
@@ -71,6 +88,22 @@ namespace Infusion.LegacyApi
             server.DialogBoxResponse(CurrentDialogBox.DialogId, CurrentDialogBox.MenuId, response.Index, response.Type, response.Color);
 
             CurrentDialogBox = null;
+        }
+
+        internal void BlockQuestion(string question)
+        {
+            lock (blockedQuestionLock)
+            {
+                blockedQuestion = question;
+            }
+        }
+
+        internal void UnblockQuestion()
+        {
+            lock (blockedQuestionLock)
+            {
+                blockedQuestion = null;
+            }
         }
 
         internal void CloseDialogBox()

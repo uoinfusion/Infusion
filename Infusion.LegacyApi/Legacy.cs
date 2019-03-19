@@ -51,6 +51,7 @@ namespace Infusion.LegacyApi
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
         internal GumpObservers GumpObservers => this.gumpObservers;
+        internal DialogBoxObservers DialogBoxObservers => this.dialogBoxObervers;
 
         internal event Action LoginConfirmed;
 

@@ -25,6 +25,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly GumpSubrutines gumps;
         private readonly ObjectNameReceiver objectNameReceiver;
         private readonly Walker walker;
+        private readonly Menus menus;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
             PacketDefinitionRegistry packetRegistry)
@@ -44,6 +45,7 @@ namespace Infusion.LegacyApi.Injection
             this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers, console);
             this.objectNameReceiver = new ObjectNameReceiver(infusionApi);
             this.walker = new Walker(infusionApi);
+            this.menus = new Menus(infusionApi.DialogBoxObservers);
 
             infusionApi.JournalSource.NewMessageReceived += (sender, entry) => journal.Add(entry);
 
@@ -261,6 +263,8 @@ namespace Infusion.LegacyApi.Injection
 
         public void WaitGump(int triggerId) => gumps.WaitGump(triggerId);
         public void SendGumpSelect(int triggerId) => gumps.SendGumpSelect(triggerId);
+
+        public void WaitMenu(params string[] parameters) => menus.WaitMenu(parameters);
 
         public void Terminate(string subrutineName) => injectionHost.Terminate(subrutineName);
         public void Error(string message) => console.Error(message);

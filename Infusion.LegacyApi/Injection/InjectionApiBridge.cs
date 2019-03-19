@@ -2,6 +2,7 @@
 using Infusion.Packets;
 using InjectionScript.Runtime;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Infusion.LegacyApi.Injection
@@ -198,7 +199,8 @@ namespace Infusion.LegacyApi.Injection
 
         public int WarMode() => infusionApi.Me.IsInWarMode ? 1 : 0;
 
-        public void UseSkill(string skillName) => infusionApi.UseSkill(TranslateSkill(skillName));
+        public void UseSkill(int skillId) => infusionApi.UseSkill((Skill)skillId);
+        public int SkillVal(int skillId) => infusionApi.Me.Skills[(Skill)skillId].Value;
         public void Cast(string spellName, int id) => infusionApi.CastSpell(TranslateSpell(spellName));
         public void Cast(string spellName) => throw new NotImplementedException();
 
@@ -224,30 +226,6 @@ namespace Infusion.LegacyApi.Injection
                 Screenshot.Snap();
             else
                 Screenshot.Snap(name);
-        }
-
-
-        private Skill TranslateSkill(string skillName)
-        {
-            switch (skillName.ToLower())
-            {
-                case "animal lore":
-                    return Skill.AnimalLore;
-                case "animal taming":
-                    return Skill.AnimalTaming;
-                case "hiding":
-                    return Skill.Hiding;
-                case "peacemaking":
-                    return Skill.Peacemaking;
-                case "meditation":
-                    return Skill.Meditation;
-                case "tracking":
-                    return Skill.Tracking;
-                case "hid":
-                    return Skill.DetectingHidden;
-                default:
-                    throw new NotImplementedException($"Unknown skill {skillName}");
-            }
         }
 
         private Spell TranslateSpell(string spellName)

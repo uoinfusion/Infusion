@@ -173,6 +173,11 @@ namespace Infusion.Proxy
             diagnosticProvider.ServerConnection = serverConnection;
             bool serverLoopStarted = false;
 
+            lock (serverStreamLock)
+            {
+                ServerStream = ConnectToServer();
+            }
+
             try
             {
                 while (true)

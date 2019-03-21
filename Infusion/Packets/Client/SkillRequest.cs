@@ -34,6 +34,7 @@ namespace Infusion.Packets.Client
 
         private static readonly Dictionary<Spell, string> spells = new Dictionary<Spell, string>
         {
+            {Spell.Clumsy, "1"},
             {Spell.CreateFood, "2"},
             {Spell.Feeblemind, "3"},
             {Spell.Heal, "4"},
@@ -91,7 +92,7 @@ namespace Infusion.Packets.Client
             {Spell.Polymorph, "56"},
             {Spell.Earthquake, "57"},
             {Spell.EnergyVortex, "58"},
-            {Spell.Ressurection, "59"},
+            {Spell.Resurrection, "59"},
             {Spell.SummonAirElemental, "60"},
             {Spell.SummonDaemon, "61"},
             {Spell.SummonEarthElemental, "62"},

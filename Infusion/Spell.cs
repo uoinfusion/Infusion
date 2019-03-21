@@ -2,6 +2,7 @@
 {
     public enum Spell
     {
+        Clumsy = 1,
         CreateFood,
         Feeblemind,
         Heal,
@@ -59,7 +60,7 @@
         Polymorph,
         Earthquake,
         EnergyVortex,
-        Ressurection,
+        Resurrection,
         SummonAirElemental,
         SummonDaemon,
         SummonEarthElemental,

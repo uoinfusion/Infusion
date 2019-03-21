@@ -203,8 +203,7 @@ namespace Infusion.LegacyApi.Injection
 
         public void UseSkill(int skillId) => infusionApi.UseSkill((Skill)skillId);
         public int SkillVal(int skillId) => infusionApi.Me.Skills[(Skill)skillId].Value;
-        public void Cast(string spellName, int id) => infusionApi.CastSpell(TranslateSpell(spellName));
-        public void Cast(string spellName) => throw new NotImplementedException();
+        public void Cast(int spellId) => infusionApi.CastSpell((Spell)spellId);
 
         public void Morph(int type) => morphing.Morph(type);
         public void MakeStepByKey(int key) => walker.MakeStepByKey(key);
@@ -228,37 +227,6 @@ namespace Infusion.LegacyApi.Injection
                 Screenshot.Snap();
             else
                 Screenshot.Snap(name);
-        }
-
-        private Spell TranslateSpell(string spellName)
-        {
-            switch (spellName.ToLower())
-            {
-                case "harm":
-                    return Spell.Harm;
-                case "bless":
-                    return Spell.Bless;
-                case "protection":
-                    return Spell.Protection;
-                case "magic reflection":
-                    return Spell.Reflection;
-                case "reactive armor":
-                    return Spell.ReactiveArmor;
-                case "agility":
-                    return Spell.Agility;
-                case "strength":
-                    return Spell.Strength;
-                case "cunning":
-                    return Spell.Cunning;
-                case "night sight":
-                    return Spell.NightSight;
-                case "recall":
-                    return Spell.Recall;
-                case "arch protection":
-                    return Spell.ArchProtection;
-                default:
-                    throw new NotImplementedException($"Unknown spell {spellName}");
-            }
         }
 
         public void WaitGump(int triggerId) => gumps.WaitGump(triggerId);

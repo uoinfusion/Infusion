@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi.Injection
             this.journal = new Journal(1000, () => injectionHost.InjectionApi.Now());
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
             this.useSubrutines = new UseSubrutines(infusionApi);
-            this.targeting = new Targeting(infusionApi, injectionHost);
+            this.targeting = new Targeting(infusionApi, injectionHost, infusionApi.Client);
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
             this.wavPlayer = new WavPlayer(console);
@@ -144,6 +144,8 @@ namespace Infusion.LegacyApi.Injection
         public void UseType(int type, int color) => useSubrutines.UseType(type, color);
 
         public int IsTargeting() => targeting.IsTargeting ? 1 : 0;
+
+        public int[] LastTile() => targeting.LastTile();
 
         public void SetReceivingContainer(int id) => grabbing.SetReceivingContainer(id);
         public void UnsetReceivingContainer() => grabbing.UnsetReceivingContainer();

@@ -204,7 +204,7 @@ namespace Infusion.LegacyApi.Tests.Injection
 
             injection.InjectionHost.UO.FindType(0xEEF);
 
-            injection.InjectionHost.GetObject("finditem").Should().Be(0);
+            injection.InjectionHost.UO.GetObject("finditem").Should().Be(0);
         }
 
         [TestMethod]

@@ -152,6 +152,8 @@ namespace Infusion.LegacyApi.Injection
         public void Grab(int amount, int id) => grabbing.Grab(amount, id);
         public void MoveItem(int id, int amount, int targetContainerId)
             => grabbing.MoveItem(id, amount, targetContainerId);
+        public void MoveItem(int id, int amount, int targetContainerId, int x, int y, int z)
+            => grabbing.MoveItem(id, amount, targetContainerId, x, y, z);
 
         public void LClick(int x, int y) => infusionApi.ClientWindow.Click(x, y);
         public void KeyPress(int key) => infusionApi.ClientWindow.PressKey((KeyCode)key);

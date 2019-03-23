@@ -55,5 +55,19 @@ namespace Infusion.LegacyApi.Injection
         }
 
         internal void SetGrabDelay(int delay) => grabDelay = delay;
+
+        internal void MoveItem(int id, int amount, int targetContainerId, int x, int y, int z)
+        {
+            var objId = (ObjectId)id;
+            if (amount <= 0)
+                amount = api.Items[objId]?.Amount ?? 0;
+
+            api.DragItem((uint)id, amount);
+
+            if (targetContainerId <= 0)
+                targetContainerId = (int)api.Me.BackPack.Id;
+
+            api.DropItem((ObjectId)id, (ObjectId)targetContainerId, new Location2D(x, y));
+        }
     }
 }

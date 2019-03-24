@@ -48,10 +48,15 @@ namespace Infusion.LegacyApi.Injection
 
             api.DragItem((uint)id, amount);
 
-            if (targetContainerId <= 0)
-                targetContainerId = (int)api.Me.BackPack.Id;
+            if (targetContainerId != 1)
+            {
+                if (targetContainerId <= 0)
+                    targetContainerId = (int)api.Me.BackPack.Id;
 
-            api.DropItem((ObjectId)id, (ObjectId)targetContainerId);
+                api.DropItem((ObjectId)id, (ObjectId)targetContainerId);
+            }
+            else
+                api.DropItem((ObjectId)id, api.Me.Location);
         }
 
         internal void SetGrabDelay(int delay) => grabDelay = delay;
@@ -64,10 +69,15 @@ namespace Infusion.LegacyApi.Injection
 
             api.DragItem((uint)id, amount);
 
-            if (targetContainerId <= 0)
-                targetContainerId = (int)api.Me.BackPack.Id;
+            if (targetContainerId != 1)
+            {
+                if (targetContainerId <= 0)
+                    targetContainerId = (int)api.Me.BackPack.Id;
 
-            api.DropItem((ObjectId)id, (ObjectId)targetContainerId, new Location2D(x, y));
+                api.DropItem((ObjectId)id, (ObjectId)targetContainerId, new Location2D(x, y));
+            }
+            else
+                api.DropItem((ObjectId)id, new Location3D(x, y, z));
         }
     }
 }

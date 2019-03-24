@@ -44,11 +44,15 @@ namespace Infusion.LegacyApi
             SendChar(ultimaClientProcess.MainWindowHandle, ch);
         }
 
-        private static IntPtr keyUpLparam = (IntPtr)((1 << 31) | (1 << 30) | 1);
+        private static IntPtr keyUpLParam = (IntPtr)((1 << 31) | (1 << 30) | 1);
         public void PressKey(KeyCode keyCode)
         {
-            SendMessage(ultimaClientProcess.MainWindowHandle, WM_KEYDOWN, (IntPtr)keyCode, (IntPtr)1);
-            SendMessage(ultimaClientProcess.MainWindowHandle, WM_KEYUP, (IntPtr)keyCode, keyUpLparam);
+            uint scanCode = MapVirtualKey((uint)keyCode, 0);
+            uint keyDownLParam = (0x00000001 | (scanCode << 16));
+            keyDownLParam |= 0x01000000;
+
+            SendMessage(ultimaClientProcess.MainWindowHandle, (IntPtr)WM_KEYDOWN, (IntPtr)keyCode, (IntPtr)keyDownLParam);
+            SendMessage(ultimaClientProcess.MainWindowHandle, (IntPtr)WM_KEYUP, (IntPtr)keyCode, keyUpLParam);
         }
 
         private static void SendChar(IntPtr hWnd, int value)
@@ -95,11 +99,12 @@ namespace Infusion.LegacyApi
         public static extern bool PostMessage(IntPtr hWnd, int wMsg, int wParam, int lParam);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, IntPtr wParam, IntPtr lParam);
+        public static extern IntPtr SendMessage(IntPtr hWnd, IntPtr Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("User32")]
         public static extern int OemKeyScan(int wOemChar);
 
-
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern uint MapVirtualKey(uint uCode, uint uMapType);
     }
 }

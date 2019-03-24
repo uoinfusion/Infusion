@@ -176,7 +176,7 @@
     <Compile Include="DialogBoxResponse.cs" />
     <Compile Include="Packets\Server\CompressedGumpPacket.cs" />
     <Compile Include="Packets\Server\DrawContainerPacket.cs" />
-    <Compile Include="Packets\Server\DrawObjectPacket7000.cs" />
+    <Compile Include="Packets\Server\DrawObjectPacket7033.cs" />
     <Compile Include="Packets\Server\GameServerListPacket.cs" />
     <Compile Include="Packets\Server\GraphicalEffectPacket.cs" />
     <Compile Include="Packets\Server\OpenDialogBoxPacket.cs" />

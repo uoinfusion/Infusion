@@ -2,7 +2,7 @@
 
 namespace Infusion.Packets.Server
 {
-    internal class DrawObjectPacket7000 : DrawObjectPacket
+    internal class DrawObjectPacket7033 : DrawObjectPacket
     {
         protected override void DeserializeTypeAndColor(ArrayPacketReader reader, ref ushort type, ref Color? color)
         {

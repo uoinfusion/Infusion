@@ -36,6 +36,7 @@ namespace Infusion.Desktop.Launcher
             new ProtocolVersion() { Version = new Version(7, 0, 9, 0), Label = ">= 7.0.9.0" },
             new ProtocolVersion() { Version = new Version(7, 0, 16, 0), Label = ">= 7.0.16.0" },
             new ProtocolVersion() { Version = new Version(7, 0, 18, 0), Label = ">= 7.0.18.0" },
+            new ProtocolVersion() { Version = new Version(7, 0, 33, 0), Label = ">= 7.0.33.0" },
         };
 
         public EncryptionVersion[] EncryptionVersions => EncryptionVersion.Versions;

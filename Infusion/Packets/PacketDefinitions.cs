@@ -388,8 +388,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition<DrawObjectPacket> DrawObject = new PacketDefinition<DrawObjectPacket>(0x78,
             new VariablePacketLength(), "DrawObject", () => new DrawObjectPacket());
-        public static readonly PacketDefinition<DrawObjectPacket> DrawObject7000 = new PacketDefinition<DrawObjectPacket>(0x78,
-            new VariablePacketLength(), "DrawObject", () => new DrawObjectPacket7000());
+        public static readonly PacketDefinition<DrawObjectPacket> DrawObject7033 = new PacketDefinition<DrawObjectPacket>(0x78,
+            new VariablePacketLength(), "DrawObject", () => new DrawObjectPacket7033());
 
         public static readonly PacketDefinition ResourceQuery = new PacketDefinition(0x79,
             new StaticPacketLength(9), "ResourceQuery");

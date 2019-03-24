@@ -298,9 +298,6 @@ namespace Infusion.Packets
             if (version >= new Version(6, 0, 14, 2))
                 registry.Register(PacketDefinitions.EnableLockedClientFeaturesSince6_0_14_2);
 
-            if (version >= new Version(7, 0, 0, 0))
-                registry.Register(PacketDefinitions.DrawObject7000);
-
             if (version >= new Version(7, 0, 9, 0))
             {
                 registry.Register(PacketDefinitions.DrawContainer7090);
@@ -316,6 +313,9 @@ namespace Infusion.Packets
 
             if (version >= new Version(7, 0, 18, 0))
                 registry.Register(PacketDefinitions.CreateCharacterRequest7018);
+
+            if (version >= new Version(7, 0, 33, 0))
+                registry.Register(PacketDefinitions.DrawObject7033);
 
             return registry;
         }

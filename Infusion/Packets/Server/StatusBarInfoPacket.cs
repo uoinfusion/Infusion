@@ -43,7 +43,7 @@ namespace Infusion.Packets.Server
             if (validStats == 0)
                 return;
 
-            if (validStats != 1 && validStats != 7 && validStats != 4 && validStats != 6)
+            if (validStats != 1 && validStats != 7 && validStats != 4 && validStats != 6 && validStats != 5)
                 throw new NotImplementedException($"unknown validStats {validStats}");
 
             reader.ReadByte(); // sex + race

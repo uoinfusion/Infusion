@@ -40,6 +40,7 @@ namespace Infusion.LegacyApi
                 var packet = packetRegistry.Materialize<OpenDialogBoxPacket>(rawPacket);
                 var dialogBox = new DialogBox(packet.DialogId, packet.MenuId, packet.Question, packet.Responses);
                 CurrentDialogBox = dialogBox;
+                bool showDialogBox = ShowDialogBox;
 
                 bool block = false;
                 lock (blockedQuestionLock)
@@ -54,7 +55,7 @@ namespace Infusion.LegacyApi
                 eventJournalSource.Publish(new DialogBoxOpenedEvent(dialogBox));
                 DialogBoxOpened?.Invoke(dialogBox);
 
-                if (!ShowDialogBox || block)
+                if (!showDialogBox || block)
                     return null;
             }
 

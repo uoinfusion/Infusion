@@ -104,7 +104,12 @@ namespace Infusion.Proxy
         {
             proxyStartConfig = config;
 
+            Console.Info($"Default protocol version: {config.ProtocolVersion}");
+            Console.Info($"Encryption: {config.Encryption}");
+            if (config.LoginEncryptionKey.HasValue)
+                Console.Info($"Encryption key {config.LoginEncryptionKey.Value}");
             packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(proxyStartConfig.ProtocolVersion);
+
             serverPacketHandler = new ServerPacketHandler(packetRegistry);
             clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);

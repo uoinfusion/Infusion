@@ -87,8 +87,17 @@ namespace Infusion.Desktop
 
         private void Load(string scriptFileName)
         {
-            this.scriptFileName = scriptFileName;
+            string name = Path.GetFileName(scriptFileName);
             var scriptPath = Path.GetDirectoryName(scriptFileName);
+
+            if (string.IsNullOrEmpty(scriptPath))
+                scriptPath = PathUtilities.GetAbsolutePath("scripts");
+            else if (!Path.IsPathRooted(scriptPath))
+                scriptPath = Path.Combine(PathUtilities.GetAbsolutePath("scripts"), scriptPath);
+
+            scriptFileName = Path.Combine(scriptPath, name);
+
+            this.scriptFileName = scriptFileName;
             ScriptEngine.Value.ScriptRootPath = scriptPath;
 
             Reload();
@@ -158,24 +167,31 @@ namespace Infusion.Desktop
 
         private async Task Reload(string scriptFileName)
         {
-            if (!string.IsNullOrEmpty(scriptFileName) && File.Exists(scriptFileName))
+            if (string.IsNullOrEmpty(scriptFileName))
             {
-                Program.LegacyApi.Config.Save();
-                ProfileRepository.SaveProfile(profile);
-                ProfileRepository.FixOptions(profile);
-
-                UO.CommandHandler.BeginTerminate(true);
-                UO.CommandHandler.UnregisterAllPublic();
-
-                ScriptEngine.Value.Reset();
-                using (var tokenSource = new CancellationTokenSource())
-                {
-                    await ScriptEngine.Value.ExecuteScript(scriptFileName, tokenSource);
-                }
-            }
-            else
                 infusionConsole.Error(
-                    "Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
+    "Initial script is not set. You can set the initial script by restarting Infusion and setting an absolute path to a script in 'Initial script' edit box at Infusion launcher dialog, or by invoking ,load <absolute path to script>");
+                return;
+            }
+
+            if (!File.Exists(scriptFileName))
+            {
+                infusionConsole.Error($"Script file doesn't exist: '{scriptFileName}'");
+                return;
+            }
+
+            Program.LegacyApi.Config.Save();
+            ProfileRepository.SaveProfile(profile);
+            ProfileRepository.FixOptions(profile);
+
+            UO.CommandHandler.BeginTerminate(true);
+            UO.CommandHandler.UnregisterAllPublic();
+
+            ScriptEngine.Value.Reset();
+            using (var tokenSource = new CancellationTokenSource())
+            {
+                await ScriptEngine.Value.ExecuteScript(scriptFileName, tokenSource);
+            }
         }
 
         protected override void OnClosed(EventArgs e)

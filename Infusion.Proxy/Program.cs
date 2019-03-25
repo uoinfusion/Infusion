@@ -17,6 +17,7 @@ using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
+using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 using Ultima;
 
@@ -113,6 +114,7 @@ namespace Infusion.Proxy
             serverPacketHandler = new ServerPacketHandler(packetRegistry);
             clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
+            clientPacketHandler.Subscribe(PacketDefinitions.ExtendedLoginSeed, HandleExtendedLoginSeed);
 
             LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry, ConfigRepository);
             UO.Initialize(LegacyApi);
@@ -127,6 +129,17 @@ namespace Infusion.Proxy
 
             serverEndpoint = config.ServerEndPoint;
             return Main(config.LocalProxyPort, packetRingBufferLogger);
+        }
+
+        private static void HandleExtendedLoginSeed(ExtendedLoginSeed extendedLoginSeed)
+        {
+            Console.Info($"Detected client version: {extendedLoginSeed.ClientVersion}");
+            var detectedProtocolVersion = PacketDefinitionRegistryFactory.GetProtocolVersion(extendedLoginSeed.ClientVersion);
+            if (detectedProtocolVersion != proxyStartConfig.ProtocolVersion)
+            {
+                Console.Info($"Using detected protocol version {detectedProtocolVersion} instead configured version {proxyStartConfig.ProtocolVersion}.");
+                PacketDefinitionRegistryFactory.CreateClassicClient(packetRegistry, detectedProtocolVersion);
+            }
         }
 
         private static Task Main(ushort port, ILogger logger)

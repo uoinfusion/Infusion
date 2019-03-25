@@ -8,9 +8,35 @@ namespace Infusion.Packets
 {
     internal static class PacketDefinitionRegistryFactory
     {
-        public static PacketDefinitionRegistry CreateClassicClient(Version version)
+        private static readonly Version[] protocolVersions =
         {
-            var registry = new PacketDefinitionRegistry();
+            new Version(0, 0, 0, 0),
+            new Version(3, 0, 0, 0),
+            new Version(5, 0, 0, 0),
+            new Version(5, 0, 9, 0),
+            new Version(6, 0, 6, 0),
+            new Version(6, 0, 1, 3),
+            new Version(6, 0, 1, 7),
+            new Version(6, 0, 14, 2),
+            new Version(7, 0, 9, 0),
+            new Version(7, 0, 16, 0),
+            new Version(7, 0, 18, 0),
+            new Version(7, 0, 33, 0)
+        };
+
+        public static Version GetProtocolVersion(Version clientVersion)
+        {
+            var protocolVersion = protocolVersions.LastOrDefault(v => clientVersion >= v);
+
+            if (protocolVersion == null)
+                throw new ArgumentException($"Unknown protocol version for client version {clientVersion}", nameof(clientVersion));
+
+            return protocolVersion;
+        }
+
+        public static void CreateClassicClient(PacketDefinitionRegistry registry, Version version)
+        {
+            registry.Reset();
 
             registry.Register(PacketDefinitions.AddItemToContainer);
             registry.Register(PacketDefinitions.AttackRequest);
@@ -49,6 +75,7 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.EditNpcSpeech);
             registry.Register(PacketDefinitions.KickPlayer);
             registry.Register(PacketDefinitions.LoginSeed);
+            registry.Register(PacketDefinitions.ExtendedLoginSeed);
             registry.Register(PacketDefinitions.LoginCharacter);
             registry.Register(PacketDefinitions.LoginComplete);
             registry.Register(PacketDefinitions.LoginDenied);
@@ -316,6 +343,13 @@ namespace Infusion.Packets
 
             if (version >= new Version(7, 0, 33, 0))
                 registry.Register(PacketDefinitions.DrawObject7033);
+        }
+
+        public static PacketDefinitionRegistry CreateClassicClient(Version version)
+        {
+            var registry = new PacketDefinitionRegistry();
+
+            CreateClassicClient(registry, version);
 
             return registry;
         }

@@ -65,6 +65,8 @@ namespace Infusion
                 packetHandler.Publish<SkillRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.SelectServerRequest.Id)
                 packetHandler.Publish<SelectServerRequest>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.ExtendedLoginSeed.Id)
+                packetHandler.Publish<ExtendedLoginSeed>(rawPacket);
 
             return rawPacket;
         }

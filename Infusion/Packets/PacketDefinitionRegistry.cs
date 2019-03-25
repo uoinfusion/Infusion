@@ -42,6 +42,13 @@ namespace Infusion.Packets
 
             return definition;
         }
+
+        internal void Reset()
+        {
+            definitionsById.Clear();
+            definitionsByType.Clear();
+        }
+
         public bool TryFind(int packedId, out PacketDefinition packetDefinition)
         {
             return definitionsById.TryGetValue(packedId, out packetDefinition);

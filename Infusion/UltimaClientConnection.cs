@@ -197,7 +197,7 @@ namespace Infusion
 
             if (receivedPosition >= 21)
             {
-                var packet = new Packet(PacketDefinitions.LoginSeed.Id, receivedSeed);
+                var packet = new Packet(PacketDefinitions.ExtendedLoginSeed.Id, receivedSeed);
                 OnPacketReceived(packet);
                 Status = nextStatus;
                 receivedPosition = 0;

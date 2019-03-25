@@ -162,6 +162,7 @@
     <Compile Include="PacketHandler.cs" />
     <Compile Include="Packets\Both\CloseGenericGumpPacket.cs" />
     <Compile Include="Packets\Both\MapMessagePacket.cs" />
+    <Compile Include="Packets\Client\ExtendedLoginSeed.cs" />
     <Compile Include="Packets\Client\SelectServerRequest.cs" />
     <Compile Include="Packets\Client\TalkRequest.cs" />
     <Compile Include="Packets\Client\GetClientStatusRequest.cs" />

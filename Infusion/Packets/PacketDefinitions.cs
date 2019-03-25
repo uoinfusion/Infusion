@@ -9,6 +9,9 @@ namespace Infusion.Packets
         public static readonly PacketDefinition LoginSeed = new PacketDefinition(-1,
             new StaticPacketLength(4), "LoginSeed");
 
+        public static readonly PacketDefinition<ExtendedLoginSeed> ExtendedLoginSeed = new PacketDefinition<ExtendedLoginSeed>(-2,
+            new StaticPacketLength(21), "ExtendedLoginSeed", () => new ExtendedLoginSeed());
+
         public static readonly PacketDefinition CreateCharacterRequest = new PacketDefinition(0x00,
             new StaticPacketLength(0x68), "CreateCharacterRequest");
         public static readonly PacketDefinition CreateCharacterRequest7018 = new PacketDefinition(0x00,

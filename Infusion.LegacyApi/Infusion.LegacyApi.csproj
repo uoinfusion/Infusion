@@ -52,7 +52,6 @@
     <Compile Include="BlockedClientPacketsFilters.cs" />
     <Compile Include="Cancellation.cs" />
     <Compile Include="Cliloc\ClilocTranslator.cs" />
-    <Compile Include="Configuration.cs" />
     <Compile Include="Console\ConsoleLineType.cs" />
     <Compile Include="Console\IConsole.cs" />
     <Compile Include="Console\NullConsole.cs" />

@@ -7,8 +7,20 @@ namespace Infusion.Config
 {
     public sealed class ConfigBag
     {
-        private readonly Dictionary<string, PropertyInfo> expressions
-            = new Dictionary<string, PropertyInfo>();
+        private struct ConfigProperty
+        {
+            public ConfigProperty(PropertyInfo property, object instance)
+            {
+                Property = property;
+                Instance = instance;
+            }
+
+            public PropertyInfo Property { get; }
+            public object Instance { get; }
+        }
+
+        private readonly Dictionary<string, ConfigProperty> expressions
+            = new Dictionary<string, ConfigProperty>();
         private readonly IConfigBagRepository repository;
 
         public ConfigBag(IConfigBagRepository repository)
@@ -18,28 +30,35 @@ namespace Infusion.Config
 
         public void Register<T>(Expression<Func<T>> expression) where T : new()
             => Register(expression, () => new T());
+        public void Register<T>(string name, Expression<Func<T>> expression) where T : new()
+            => Register(expression, () => new T(), name);
 
         public void Register(Expression<Func<int>> expression)
             => Register(expression, () => 0);
+        public void Register(string name, Expression<Func<int>> expression)
+            => Register(expression, () => 0, name);
 
         public void Register(Expression<Func<string>> expression)
             => Register(expression, () => null);
+        public void Register(string name, Expression<Func<string>> expression)
+            => Register(expression, () => null, name);
 
         public void Register<T>(Expression<Func<T>> expression, Func<T> getDefaultValue)
         {
+            Register(expression, getDefaultValue, expression.Body.ToString());
+        }
+
+        public void Register<T>(Expression<Func<T>> expression, Func<T> getDefaultValue, string name)
+        {
             if (expression.Body is MemberExpression memberExpression && memberExpression.Member is PropertyInfo propertyInfo)
             {
-                if (memberExpression.Expression == null)
-                {
-                    var name = expression.Body.ToString();
-                    expressions[name] = propertyInfo;
-                    var value = repository.Get<T>(name);
-                    if (value == null)
-                        value = getDefaultValue();
-                    propertyInfo.SetValue(null, value);
-                }
-                else
-                    throw new NotSupportedException($"Instance level property configuration not supported: {expression.Body.ToString()}");
+                object instance = (memberExpression.Expression as ConstantExpression)?.Value;
+                name = name ?? expression.Body.ToString();
+                expressions[name] = new ConfigProperty(propertyInfo, instance);
+                var value = repository.Get<T>(name);
+                if (value == null)
+                    value = getDefaultValue();
+                propertyInfo.SetValue(instance, value);
             }
             else
                 throw new NotSupportedException($"Unsupported configuration expression {expression.Body.ToString()}");
@@ -49,7 +68,7 @@ namespace Infusion.Config
         {
             foreach (var pair in expressions)
             {
-                repository.Update(pair.Key, pair.Value.GetValue(null));
+                repository.Update(pair.Key, pair.Value.Property.GetValue(pair.Value.Instance));
             }
         }
     }

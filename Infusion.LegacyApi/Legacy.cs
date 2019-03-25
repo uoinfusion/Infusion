@@ -121,6 +121,8 @@ namespace Infusion.LegacyApi
             RegisterDefaultCommands();
 
             Phantoms = new Phantoms(Client, Server, packetRegistry);
+
+            Config = new ConfigBag(configRepository);
             Injection = new InjectionHost(this, console, packetRegistry, timeSource);
 
             serverObservers = new ServerObservers(ultimaServer, ultimaClient);
@@ -130,8 +132,6 @@ namespace Infusion.LegacyApi
                 IsLoginConfirmed = true;
                 LoginConfirmed?.Invoke();
             };
-
-            Config = new ConfigBag(configRepository);
         }
 
         public ConfigBag Config { get; }

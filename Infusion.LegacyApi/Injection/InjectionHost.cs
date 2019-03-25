@@ -5,6 +5,7 @@ using InjectionScript;
 using InjectionScript.Debugging;
 using InjectionScript.Runtime;
 using System;
+using System.Collections.Generic;
 
 namespace Infusion.LegacyApi.Injection
 {
@@ -17,6 +18,29 @@ namespace Infusion.LegacyApi.Injection
 
         public IDebuggerServer Debugger { get; }
         public ITracer Tracer { get; }
+
+        private Dictionary<string, int> injectionObjects
+        {
+            get
+            {
+                var objects = new Dictionary<string, int>();
+                foreach (var pair in runtime.Objects)
+                {
+                    objects.Add(pair.Key, pair.Value);
+                }
+
+                return objects;
+            }
+
+            set
+            {
+                runtime.Objects.Clear();
+                foreach (var pair in value)
+                {
+                    runtime.Objects.Set(pair.Key, pair.Value);
+                }
+            }
+        }
 
         public InjectionApi InjectionApi => runtime.Api;
 
@@ -37,6 +61,8 @@ namespace Infusion.LegacyApi.Injection
             Tracer = debuggerServer;
 
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
+
+            api.Config.Register("injection.Objects", () => injectionObjects);
         }
 
         public void LoadScript(string fileName)

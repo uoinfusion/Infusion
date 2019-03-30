@@ -17,7 +17,7 @@ public static class Pets
     private static readonly Statuses statuses;
     private static readonly RequestStatusQueue requestStatusQueue = new RequestStatusQueue();
 
-    public static MobileSpec PetsSpec = new[] { Specs.NecroSummons, Specs.MageSummons, Specs.Mounts, Specs.Dog, };
+    public static MobileSpec PetsSpec = new[] { Specs.NecroSummons, Specs.MageSummons, Specs.Mounts, Specs.Dog, Specs.ExpingAnimals,};
     public static StatusesConfiguration Window => statuses.Configuration;
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 

@@ -545,6 +545,11 @@ public static class Specs
     public static readonly MobileSpec SedyVlk = new[] { 0x00E1, 0x03B3 };
     public static readonly MobileSpec SneznyLeopard = new MobileSpec(0x00D6, (Color)0x0482);
 
+    public static readonly MobileSpec Drapac = new MobileSpec(0x00E1, (Color)0x0980);
+    public static readonly MobileSpec KrvavyDrapac = new MobileSpec(0x00E1, (Color)0x098C);
+
+    public static readonly MobileSpec ExpingAnimals = new[] { Drapac,KrvavyDrapac };
+
     // Mounts
     public static readonly MobileSpec Lama = 0x00DC;
     public static readonly MobileSpec LamaPack = 0x0124;

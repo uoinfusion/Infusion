@@ -10,9 +10,10 @@
         mc:Ignorable="d"
         x:ClassModifier="internal"
         ResizeMode="NoResize"
+        MinWidth="425"
         Icon="pack://application:,,,/infusion.png"
         SizeToContent="WidthAndHeight"
-        Title="Infusion launcher" Height="411.489" Width="405.049">
+        Title="Infusion launcher" Height="411.489" Width="425">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="{x:Type TextBox}">

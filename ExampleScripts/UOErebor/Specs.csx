@@ -81,7 +81,7 @@ public static class Specs
     
     public static readonly ItemSpec Container = new[]
     {
-        0xE75, 0x0E76, 0x0E42, 0x0E43, 0x0E7D, 0x09AA, 0x09B0, 0x0E79
+        0xE75, 0x0E76, 0x0E42, 0x0E43, 0x0E7D, 0x09AA, 0x09B0, 0x0E79, 0x09A9, 0x0E3F, 0x0E3D, 0x0E7E, 0x0E3C, 0x0E3E
     };
 
     // Tools
@@ -98,7 +98,7 @@ public static class Specs
     public static readonly ItemSpec SpinningWheel = new[] { 0x101C, 0x01019 };
     public static readonly ItemSpec TinkeringTools = 0x1EBC;
     public static readonly ItemSpec SmithsHammer = new[] { 0x13E3, 0x013E4 };
-    public static readonly ItemSpec Saw = 0x1034;
+    public static readonly ItemSpec Saw = new[] { 0x1034, 0x1035 };
     public static readonly ItemSpec Torch = 0x0F64;
     public static readonly ItemSpec Lantern = new[] { 0x0A18 };
     public static readonly ItemSpec BurningTorch = 0x0A12;

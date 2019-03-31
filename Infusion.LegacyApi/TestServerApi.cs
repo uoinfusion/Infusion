@@ -67,6 +67,12 @@ namespace Infusion.LegacyApi
             sendPacket(drawPlayerPayload);
         }
 
+        internal void ObjectInfo(ObjectId id, ModelId type, int amount, Location3D location, Color color)
+        {
+            var packet = new ObjectInfoPacket(id, type, location, color, (ushort)amount);
+            sendPacket(packet.RawPacket.Payload);
+        }
+
         public ObjectId AddNewItemToBackpack(ModelId type, int amount = 1, Color? color = null)
             => AddNewItemToContainer(type, amount, color: color, containerId: api.Me.BackPack.Id);
 

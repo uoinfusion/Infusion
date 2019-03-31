@@ -244,9 +244,12 @@ namespace Infusion.LegacyApi
         {
             if (gameObjects.TryGet(packet.Id, out var existingObject) && existingObject is Item existingItem)
             {
+                // ObjectInfo packet holds information about items that are on ground, not in a container, so if
+                // an item is in a container and it is updated by a ObjectInfo packet, the item has to be
+                // taken out of the container and put on the ground.
                 gameObjects.UpdateObject(existingItem.Update(packet.Type, packet.Amount, packet.Location,
                     existingItem.Color,
-                    existingItem.ContainerId));
+                    null));
             }
             else
             {

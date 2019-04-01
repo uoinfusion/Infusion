@@ -113,6 +113,17 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
+        internal bool FunRunning(string subrutineName)
+        {
+            if (runtime.Metadata.TryGetSubrutine(subrutineName, 0, out var subrutine))
+            {
+                var commandName = GetCommandName(subrutine);
+                return this.api.CommandHandler.IsCommandRunning(commandName);
+            }
+
+            return false;
+        }
+
         private void RegisterCommands()
         {
             foreach (var subrutine in runtime.Metadata.Subrutines)

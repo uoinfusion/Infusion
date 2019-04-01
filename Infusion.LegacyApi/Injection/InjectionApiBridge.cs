@@ -241,5 +241,10 @@ namespace Infusion.LegacyApi.Injection
         public void Terminate(string subrutineName) => injectionHost.Terminate(subrutineName);
         public void Error(string message) => console.Error(message);
         public void Exec(string subrutineName) => injectionHost.ExecSubrutine(subrutineName);
+
+        public bool FunRunning(string subrutineName)
+        {
+            return injectionHost.FunRunning(subrutineName);
+        }
     }
 }

@@ -98,6 +98,14 @@ namespace Infusion.LegacyApi.Injection
         public int IsNpc(int id) => infusionApi.Mobiles[(uint)id] != null ? 1 : 0;
         public int GetColor(int id) => infusionApi.Mobiles[(uint)id]?.Color ?? infusionApi.Items[(uint)id]?.Color ?? 0;
         public int GetLayer(int id) => (int)(infusionApi.Items[(uint)id]?.Layer ?? 0);
+        public int ContainerOf(int id)
+        {
+            var containerId = infusionApi.Items[(uint)id]?.ContainerId;
+            if (containerId.HasValue)
+                return (int)containerId;
+
+            return -1;
+        }
 
         public int GetQuantity(int id)
         {

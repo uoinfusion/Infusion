@@ -25,12 +25,12 @@ namespace Infusion.LegacyApi.Injection
 
         public int Count(int type, int color, int containerId)
         {
-            var items = FindItems(type, color, containerId, -1);
+            var items = FindItems(type, color, containerId, -1, false);
 
             return items.Sum(x => x.Amount);
         }
 
-        private IEnumerable<Item> FindItems(int type, int color, int container, int range)
+        private IEnumerable<Item> FindItems(int type, int color, int container, int range, bool recursive)
         {
             IEnumerable<Item> foundItems = Array.Empty<Item>();
 
@@ -43,9 +43,9 @@ namespace Infusion.LegacyApi.Injection
                 foundItems = foundItems.OrderByDistance();
             }
             else if (container == -1)
-                foundItems = UO.Items.InBackPack(false);
+                foundItems = UO.Items.InBackPack(recursive);
             else if (container > 1)
-                foundItems = UO.Items.InContainer((uint)container, false);
+                foundItems = UO.Items.InContainer((uint)container, recursive);
 
             if (color >= 0)
                 foundItems = foundItems.OfColor((Color)color);
@@ -56,9 +56,9 @@ namespace Infusion.LegacyApi.Injection
         }
 
 
-        public int FindType(int type, int color, int container, int range)
+        public int FindType(int type, int color, int container, int range, bool recursive)
         {
-            var foundItems = FindItems(type, color, container, range);
+            var foundItems = FindItems(type, color, container, range, recursive);
 
             if (foundItems.Any())
             {

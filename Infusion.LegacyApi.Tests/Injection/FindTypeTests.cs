@@ -151,9 +151,21 @@ namespace Infusion.LegacyApi.Tests.Injection
             var subContainerId = injection.ServerApi.AddNewItemToBackpack(0x0E75);
             injection.ServerApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
 
-            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("my"));
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("backpack"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(0);
+        }
+
+        [TestMethod]
+        public void Searches_nested_containers_in_backpack_when_container_is_my()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            var subContainerId = injection.ServerApi.AddNewItemToBackpack(0x0E75);
+            injection.ServerApi.AddNewItemToContainer(0xeed, containerId: subContainerId);
+
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("my"));
+
+            injection.InjectionHost.UO.FindCount().Should().NotBe(0);
         }
 
         [TestMethod]

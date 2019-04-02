@@ -197,6 +197,8 @@ namespace Infusion.LegacyApi.Injection
         public void WaitTargetObject(int id1, int id2) => targeting.WaitTargetObject((ObjectId)id1, (ObjectId)id2);
         public void WaitTargetTile(int type, int x, int y, int z) => targeting.WaitTargetTile(type, x, y, z);
         public void CancelNextTarget() => targeting.CancelNextTarget();
+        public void CancelTarget() => targeting.CancelTarget();
+        public int[] GetWaitTargetQueue() => targeting.GetWaitTargetQueue();
 
         public void CharPrint(int id, int color, string msg)
         {

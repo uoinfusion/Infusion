@@ -376,12 +376,12 @@ namespace Infusion.LegacyApi
             return lastTargetInfo;
         }
 
-        public void NotifyLastAction(DateTime lastActionTime)
+        internal void NotifyLastAction(DateTime lastActionTime)
         {
             this.lastActionTime = lastActionTime;
         }
 
-        public void AddNextTarget(Item[] items)
+        internal void AddNextTarget(Item[] items)
         {
             lock (nextTargetsLock)
             {
@@ -393,7 +393,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void AddNextTarget(Mobile[] mobiles)
+        internal void AddNextTarget(Mobile[] mobiles)
         {
             lock (nextTargetsLock)
             {
@@ -406,7 +406,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void AddNextTarget(Player player)
+        internal void AddNextTarget(Player player)
         {
             lock (nextTargetsLock)
             {
@@ -416,7 +416,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void AddNextTarget(ObjectId[] ids)
+        internal void AddNextTarget(ObjectId[] ids)
         {
             lock (nextTargetsLock)
             {
@@ -426,7 +426,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void AddNextTarget(int type, int x, int y, int z)
+        internal void AddNextTarget(int type, int x, int y, int z)
         {
             lock (nextTargetsLock)
             {
@@ -435,7 +435,7 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void CancelNextTarget()
+        internal void CancelNextTarget()
         {
             lock (nextTargetsLock)
             {
@@ -444,10 +444,12 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public void ClearNextTarget()
+        internal void ClearNextTarget()
         {
             lock (nextTargetsLock)
                 nextTargets.Clear();
         }
+
+        internal IEnumerable<TargetInfo?> GetWaitTargetQueue() => nextTargets;
     }
 }

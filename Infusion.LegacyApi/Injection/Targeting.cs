@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Infusion.Packets;
 using Infusion.Packets.Both;
 using Infusion.Packets.Client;
@@ -95,9 +96,10 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        internal void CancelNextTarget()
-        {
-            targeting.CancelNextTarget();
-        }
+        internal void CancelNextTarget() => targeting.CancelNextTarget();
+        internal void CancelTarget() => targeting.ClearNextTarget();
+        internal int[] GetWaitTargetQueue() => targeting.GetWaitTargetQueue()
+            .Select(x => x.HasValue ? (int)x.Value.Id : 0)
+            .ToArray();
     }
 }

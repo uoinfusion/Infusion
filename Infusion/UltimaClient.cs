@@ -145,6 +145,12 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
+        public void ShowQuestArrow(int x, int y)
+        {
+            var packet = new QuestArrowPacket(new Location2D(x, y), true);
+            Send(packet.RawPacket);
+        }
+
         public void PlayGraphicalEffect(EffectDirectionType directionType, ObjectId characterId, ModelId type,
             Location3D location, byte animationSpeed, byte duration, bool adjustDirection, bool explodeOnImpact)
         {

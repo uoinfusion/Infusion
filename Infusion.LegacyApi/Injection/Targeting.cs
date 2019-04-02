@@ -10,16 +10,17 @@ namespace Infusion.LegacyApi.Injection
     {
         private readonly Legacy api;
         private readonly InjectionHost host;
+        private readonly LegacyApi.Targeting targeting;
         private string currentObjectName;
         private readonly object targetingLock = new object();
         private readonly int[] lastTargetInfo = new int[4];
 
-        public Targeting(Legacy api, InjectionHost host, IClientPacketSubject client)
+        public Targeting(Legacy api, InjectionHost host, IClientPacketSubject client, LegacyApi.Targeting targeting)
         {
             this.api = api;
             this.api.TargetInfoReceived += HandleTargetInfoReceived;
             this.host = host;
-
+            this.targeting = targeting;
             client.Subscribe(PacketDefinitions.TargetCursor, HandleClientTargetCursor);
         }
 
@@ -92,6 +93,11 @@ namespace Infusion.LegacyApi.Injection
 
                 return copy;
             }
+        }
+
+        internal void CancelNextTarget()
+        {
+            targeting.CancelNextTarget();
         }
     }
 }

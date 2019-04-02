@@ -159,6 +159,12 @@ namespace Infusion
             Send(targetRequest.RawPacket);
         }
 
+        public void CancelTarget(CursorId cursorId)
+        {
+            var targetRequest = new TargetLocationRequest(cursorId, 0, CursorType.Harmful, new Location3D(0xFFFF, 0xFFFF, 0), 0);
+            Send(targetRequest.RawPacket);
+        }
+
         public void Move(Direction direction, MovementType movementType, byte sequenceKey)
         {
             var packet = new MoveRequest

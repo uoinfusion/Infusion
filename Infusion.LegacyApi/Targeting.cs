@@ -15,7 +15,7 @@ namespace Infusion.LegacyApi
         private readonly UltimaClient client;
         private readonly EventJournalSource eventSource;
         private readonly PacketDefinitionRegistry packetRegistry;
-        private readonly Queue<TargetInfo> nextTargets = new Queue<TargetInfo>();
+        private readonly Queue<TargetInfo?> nextTargets = new Queue<TargetInfo?>();
         private readonly object nextTargetsLock = new object();
         private readonly AutoResetEvent receivedTargetInfoEvent = new AutoResetEvent(false);
         private readonly UltimaServer server;
@@ -73,6 +73,14 @@ namespace Infusion.LegacyApi
                     if (nextTargets.Count > 0)
                     {
                         targetInfo = nextTargets.Dequeue();
+                        if (!targetInfo.HasValue)
+                        {
+                            var packet = packetRegistry.Materialize<TargetCursorPacket>(rawPacket);
+
+                            server.CancelTarget(packet.CursorId);
+
+                            return null;
+                        }
                     }
                 }
 
@@ -424,6 +432,15 @@ namespace Infusion.LegacyApi
             {
                 nextTargets.Clear();
                 nextTargets.Enqueue(new TargetInfo(new Location3D(x, y, z), TargetType.Tile, (ModelId)type, null));
+            }
+        }
+
+        public void CancelNextTarget()
+        {
+            lock (nextTargetsLock)
+            {
+                nextTargets.Clear();
+                nextTargets.Enqueue(null);
             }
         }
 

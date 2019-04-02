@@ -38,7 +38,7 @@ namespace Infusion.LegacyApi.Injection
             this.journal = new Journal(1000, () => injectionHost.InjectionApi.Now());
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
             this.useSubrutines = new UseSubrutines(infusionApi);
-            this.targeting = new Targeting(infusionApi, injectionHost, infusionApi.Client);
+            this.targeting = new Targeting(infusionApi, injectionHost, infusionApi.Client, infusionApi.Targeting);
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
             this.wavPlayer = new WavPlayer(console);
@@ -195,6 +195,8 @@ namespace Infusion.LegacyApi.Injection
         public void WaitTargetObject(int id) => targeting.WaitTargetObject((ObjectId)id);
         public void WaitTargetObject(int id1, int id2) => targeting.WaitTargetObject((ObjectId)id1, (ObjectId)id2);
         public void WaitTargetTile(int type, int x, int y, int z) => targeting.WaitTargetTile(type, x, y, z);
+        public void CancelNextTarget() => targeting.CancelNextTarget();
+
         public void CharPrint(int id, int color, string msg)
         {
             var objectId = (ObjectId)id;

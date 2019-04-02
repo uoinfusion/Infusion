@@ -37,7 +37,7 @@ namespace Infusion.LegacyApi
         private readonly SoundObserver soundObserver;
         private readonly ShapeshiftingFilter shapeShifter;
 
-        private readonly Targeting targeting;
+        internal Targeting Targeting { get; }
         private readonly WeatherObserver weatherObserver;
         private readonly Cancellation cancellation;
 
@@ -45,8 +45,8 @@ namespace Infusion.LegacyApi
         private readonly DialogBoxObservers dialogBoxObervers;
         private readonly ServerObservers serverObservers;
 
-        internal AutoResetEvent WaitForTargetStartedEvent => targeting.WaitForTargetStartedEvent;
-        internal AutoResetEvent AskForTargetStartedEvent => targeting.AskForTargetStartedEvent;
+        internal AutoResetEvent WaitForTargetStartedEvent => Targeting.WaitForTargetStartedEvent;
+        internal AutoResetEvent AskForTargetStartedEvent => Targeting.AskForTargetStartedEvent;
         internal AutoResetEvent WaitForGumpStartedEvent => gumpObservers.WaitForGumpStartedEvent;
         internal AutoResetEvent WaitForItemDraggedStartedEvent => itemsObserver.WaitForItemDraggedStartedEvent;
 
@@ -57,8 +57,8 @@ namespace Infusion.LegacyApi
 
         internal event Action<TargetInfo?> TargetInfoReceived
         {
-            add => targeting.TargetInfoReceived += value;
-            remove => targeting.TargetInfoReceived -= value;
+            add => Targeting.TargetInfoReceived += value;
+            remove => Targeting.TargetInfoReceived -= value;
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
@@ -93,7 +93,7 @@ namespace Infusion.LegacyApi
                 (sender, entry) => eventJournalSource.Publish(new SpeechReceivedEvent(entry));
             Journal = new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
             journalObservers = new JournalObservers(JournalSource, ultimaServer, console, clilocSource);
-            targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource, packetRegistry);
+            Targeting = new Targeting(ultimaServer, ultimaClient, cancellation, eventJournalSource, packetRegistry);
 
             blockedPacketsFilters = new BlockedClientPacketsFilters(ultimaClient);
             lightObserver = new LightObserver(ultimaServer, ultimaClient, Me, this, packetRegistry);
@@ -241,7 +241,7 @@ namespace Infusion.LegacyApi
         {
             JournalSource.NotifyAction();
             eventJournalSource.NotifyAction();
-            targeting.NotifyLastAction(actionTime);
+            Targeting.NotifyLastAction(actionTime);
         }
 
         public Gump WaitForGump(bool showGump = true, TimeSpan? timeout = null)
@@ -438,7 +438,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
 
             NotifyAction();
-            targeting.TargetTile(tileInfo);
+            Targeting.TargetTile(tileInfo);
         }
 
         public void Target(Location2D location)
@@ -446,7 +446,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
             NotifyAction();
 
-            targeting.TargetTile(location.X, location.Y, 0, 0);
+            Targeting.TargetTile(location.X, location.Y, 0, 0);
         }
 
         public void Target(Location3D location)
@@ -454,7 +454,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
             NotifyAction();
 
-            targeting.TargetTile(location.X, location.Y, location.Z, 0);
+            Targeting.TargetTile(location.X, location.Y, location.Z, 0);
         }
 
         public void Target(TargetInfo targetInfo)
@@ -462,7 +462,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
 
             NotifyAction();
-            targeting.Target(targetInfo);
+            Targeting.Target(targetInfo);
         }
 
         public void Target(GameObject item)
@@ -470,7 +470,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
 
             NotifyAction();
-            targeting.Target(item);
+            Targeting.Target(item);
         }
 
         public void Target(Player player)
@@ -478,7 +478,7 @@ namespace Infusion.LegacyApi
             CheckCancellation();
 
             NotifyAction();
-            targeting.Target(player);
+            Targeting.Target(player);
         }
 
         public void Target(ObjectId id)
@@ -488,9 +488,9 @@ namespace Infusion.LegacyApi
 
             var gameObject = GameObjects[id];
             if (gameObject == null)
-                targeting.Target(id);
+                Targeting.Target(id);
             else
-                targeting.Target(gameObject);
+                Targeting.Target(gameObject);
         }
 
         public void Terminate(string parameters)
@@ -509,8 +509,8 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public TargetInfo? Info() => targeting.Info();
-        internal void AskForTarget() => targeting.AskForTarget();
+        public TargetInfo? Info() => Targeting.Info();
+        internal void AskForTarget() => Targeting.AskForTarget();
 
         private void InfoCommand()
         {
@@ -536,7 +536,7 @@ namespace Infusion.LegacyApi
 
         public Item AskForItem()
         {
-            var itemId = targeting.ItemIdInfo();
+            var itemId = Targeting.ItemIdInfo();
 
             if (!itemId.HasValue || !GameObjects.TryGet(itemId.Value, out var obj))
                 return null;
@@ -546,7 +546,7 @@ namespace Infusion.LegacyApi
 
         public Mobile AskForMobile()
         {
-            var itemId = targeting.ItemIdInfo();
+            var itemId = Targeting.ItemIdInfo();
 
             if (!itemId.HasValue || !GameObjects.TryGet(itemId.Value, out var obj))
                 return null;
@@ -554,7 +554,7 @@ namespace Infusion.LegacyApi
             return obj as Mobile;
         }
 
-        public TargetInfo? AskForLocation() => targeting.LocationInfo();
+        public TargetInfo? AskForLocation() => Targeting.LocationInfo();
 
         public bool WaitForTarget(params string[] failMessages)
             => WaitForTarget(DefaultTimeout, failMessages);
@@ -563,7 +563,7 @@ namespace Infusion.LegacyApi
         {
             CheckCancellation();
 
-            return targeting.WaitForTarget(timeout ?? DefaultTimeout, failMessages);
+            return Targeting.WaitForTarget(timeout ?? DefaultTimeout, failMessages);
         }
 
         public void DropItem(Item item, Item targetContainer) => DropItem(item.Id, targetContainer.Id);
@@ -759,12 +759,12 @@ namespace Infusion.LegacyApi
             dialogBoxObervers.CloseDialogBox();
         }
 
-        public void WaitTargetObject(params ObjectId[] id) => targeting.AddNextTarget(id);
-        public void WaitTargetObject(params Item[] item) => targeting.AddNextTarget(item);
-        public void WaitTargetObject(params Mobile[] mobile) => targeting.AddNextTarget(mobile);
-        public void WaitTargetObject(Player player) => targeting.AddNextTarget(player);
-        public void WaitTargetTile(int type, int x, int y, int z) => targeting.AddNextTarget(type, x, y, z);
+        public void WaitTargetObject(params ObjectId[] id) => Targeting.AddNextTarget(id);
+        public void WaitTargetObject(params Item[] item) => Targeting.AddNextTarget(item);
+        public void WaitTargetObject(params Mobile[] mobile) => Targeting.AddNextTarget(mobile);
+        public void WaitTargetObject(Player player) => Targeting.AddNextTarget(player);
+        public void WaitTargetTile(int type, int x, int y, int z) => Targeting.AddNextTarget(type, x, y, z);
 
-        public void ClearTargetObject() => targeting.ClearNextTarget();
+        public void ClearTargetObject() => Targeting.ClearNextTarget();
     }
 }

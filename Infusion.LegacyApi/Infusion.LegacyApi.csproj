@@ -83,9 +83,11 @@
     <Compile Include="Events\ServerRequestedTargetEvent.cs" />
     <Compile Include="Events\SkillChangedEvent.cs" />
     <Compile Include="Filters\IShapeshiftingFilter.cs" />
+    <Compile Include="Filters\IWalkingFilter.cs" />
     <Compile Include="Filters\ShapeshiftingFilter.cs" />
     <Compile Include="Events\GraphicalEffectStartedEvent.cs" />
     <Compile Include="Cliloc\IClilocSource.cs" />
+    <Compile Include="Filters\WalkingObserver.cs" />
     <Compile Include="IEventJournalSource.cs" />
     <Compile Include="Events\MobileDeletedEvent.cs" />
     <Compile Include="Events\MobileLeftViewEvent.cs" />

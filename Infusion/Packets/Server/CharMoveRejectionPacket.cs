@@ -13,6 +13,29 @@ namespace Infusion.Packets.Server
 
         public MovementType MovementType { get; private set; }
 
+        public CharMoveRejectionPacket()
+        {
+        }
+
+        public CharMoveRejectionPacket(byte sequenceKey, Location3D location, Direction direction)
+        {
+            SequenceKey = sequenceKey;
+            Location = location;
+            Direction = direction;
+
+            var payload = new byte[8];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.CharMoveRejection.Id);
+            writer.WriteByte(sequenceKey);
+            writer.WriteUShort((ushort)location.X);
+            writer.WriteUShort((ushort)location.Y);
+            writer.WriteByte((byte)direction);
+            writer.WriteByte((byte)location.Z);
+
+            rawPacket = new Packet(PacketDefinitions.CharMoveRejection.Id, payload);
+        }
+
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;

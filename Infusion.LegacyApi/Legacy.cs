@@ -36,6 +36,7 @@ namespace Infusion.LegacyApi
         private readonly MapObserver mapObserver;
         private readonly SoundObserver soundObserver;
         private readonly ShapeshiftingFilter shapeShifter;
+        private readonly WalkingObserver walkingObserver;
 
         internal Targeting Targeting { get; }
         private readonly WeatherObserver weatherObserver;
@@ -101,6 +102,7 @@ namespace Infusion.LegacyApi
             soundObserver = new SoundObserver(ultimaServer, eventJournalSource, packetRegistry);
             mapObserver = new MapObserver(ultimaServer, eventJournalSource);
             shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient, packetRegistry);
+            walkingObserver = new WalkingObserver(ultimaClient, ultimaClient, Me);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, console, packetRegistry);
             var staminaFilter = new StaminaFilter(ultimaServer, ultimaClient);
             dialogBoxObervers = new DialogBoxObservers(ultimaServer, eventJournalSource, packetRegistry);
@@ -117,7 +119,7 @@ namespace Infusion.LegacyApi
             LogConfig = logConfig;
             legacyEventJournal = CreateEventJournal();
 
-            ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter);
+            ClientFilters = new LegacyFilters(staminaFilter, lightObserver, weatherObserver, soundObserver, shapeShifter, walkingObserver);
             RegisterDefaultCommands();
 
             Phantoms = new Phantoms(Client, Server, packetRegistry);

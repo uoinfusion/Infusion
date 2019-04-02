@@ -224,6 +224,13 @@ namespace Infusion.LegacyApi.Injection
 
         public void Morph(int type) => morphing.Morph(type);
         public void MakeStepByKey(int key) => walker.MakeStepByKey(key);
+        public void EnableMove(bool enabled)
+        {
+            if (enabled)
+                infusionApi.ClientFilters.Walking.Enable();
+            else
+                infusionApi.ClientFilters.Walking.Disable();
+        }
 
         public string PrivateGetTile(int x, int y, int unknown, int tileMin, int tileMax)
         {

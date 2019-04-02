@@ -26,7 +26,6 @@ namespace Infusion
 
         public void RegisterOutputFilter(Func<Packet, Packet?> filter) => packetSubject.RegisterOutputFilter(filter);
 
-
         void IClientPacketSubject.Subscribe<TPacket>(PacketDefinition<TPacket> definition, Action<TPacket> observer)
         {
             packetSubject.Subscribe(definition, observer);
@@ -156,6 +155,12 @@ namespace Infusion
         {
             GraphicalEffectPacket packet = new GraphicalEffectPacket(characterId, 0, type, location, location,
                 animationSpeed, directionType, duration, adjustDirection, explodeOnImpact);
+            Send(packet.RawPacket);
+        }
+
+        public void RejectMove(Location3D location, Direction direction)
+        {
+            var packet = new CharMoveRejectionPacket(0, location, direction);
             Send(packet.RawPacket);
         }
     }

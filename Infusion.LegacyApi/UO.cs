@@ -283,6 +283,9 @@ namespace Infusion.LegacyApi
         public static void ClientPrint(string message, bool log = true)
             => Current.ClientPrint(message, log);
 
+        public static void ClientPrint(string message, Color color, bool log = true)
+            => Current.ClientPrint(message, color, log);
+
         public static void ClientPrint(string message, string name, Player onBehalfPlayer, bool log = true)
             => Current.ClientPrint(message, name, onBehalfPlayer, log);
 

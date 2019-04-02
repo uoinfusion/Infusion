@@ -693,7 +693,12 @@ namespace Infusion.LegacyApi
 
         public void ClientPrint(string message, bool log = true)
         {
-            ClientPrint(message, "System", new ObjectId(0), 0, SpeechType.Normal, (Color) 0x03B2, log);
+            ClientPrint(message, "System", new ObjectId(0), 0, SpeechType.Normal, (Color)0x03B2, log);
+        }
+
+        public void ClientPrint(string message, Color color, bool log = true)
+        {
+            ClientPrint(message, "System", new ObjectId(0), 0, SpeechType.Normal, color, log);
         }
 
         public void ClientPrint(string message, string name, Player onBehalfPlayer, bool log = true)

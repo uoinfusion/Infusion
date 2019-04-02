@@ -175,6 +175,7 @@ namespace Infusion.LegacyApi.Injection
 
         public void ServerPrint(string message) => infusionApi.Say(message);
         public void Print(string msg) => infusionApi.ClientPrint(msg);
+        public void Print(int color, string msg) => infusionApi.ClientPrint(msg, new Color((ushort)color));
 
         public int InJournal(string pattern) => journal.InJournal(pattern);
         public int InJournalBetweenTimes(string pattern, int startTime, int endTime, int limit) 

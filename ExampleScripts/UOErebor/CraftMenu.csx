@@ -81,9 +81,9 @@ public static class CraftMenu
         private string lastLabel;
         public string[] CurrentPath { get; private set; }
         public Dictionary<string, GumpControlId> CheckBoxes { get; private set; } =
-            new Dictionary<string, GumpControlId>();
+            new Dictionary<string, GumpControlId>(StringComparer.OrdinalIgnoreCase);
         public Dictionary<string, GumpControlId> Buttons { get; private set; } =
-            new Dictionary<string, GumpControlId>();
+            new Dictionary<string, GumpControlId>(StringComparer.OrdinalIgnoreCase);
     
         void IProcessCheckBox.OnCheckBox(int x, int y, GumpControlId id, int uncheckId, int checkId, bool initialState)
         {

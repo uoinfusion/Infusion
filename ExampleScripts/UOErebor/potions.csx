@@ -132,7 +132,7 @@ public static class Potions
             if (args.Message.Equals(potion.Command, StringComparison.OrdinalIgnoreCase))
             {
                 Trace.Log("command found");
-                if (UO.Items.InBackPack().Matching(potion.Spec).Any())
+                if (UO.Items.InBackPack(true).Matching(potion.Spec).Any())
                 {
                     Trace.Log("potion found in backpack");
                     StartPotion(potion);

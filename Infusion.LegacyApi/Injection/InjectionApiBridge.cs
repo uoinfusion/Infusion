@@ -266,5 +266,7 @@ namespace Infusion.LegacyApi.Injection
 
         public void Track(int x, int y) => infusionApi.Client.ShowQuestArrow(x, y);
         public void TrackOff() => infusionApi.Client.CancelQuest();
+
+        public void SaveConfig() => infusionApi.Config.Save();
     }
 }

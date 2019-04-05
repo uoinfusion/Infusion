@@ -18,14 +18,19 @@ namespace Infusion.Desktop.Launcher
                 return;
             }
 
-            Program.Console.Info($"Staring {ultimaExecutablePath}");
-
             var account = BitConverter.ToString(System.Text.Encoding.UTF8.GetBytes(options.UserName)).Replace("-", "");
             var password = BitConverter.ToString(System.Text.Encoding.UTF8.GetBytes(options.Password)).Replace("-", "");
 
             var info = new ProcessStartInfo(ultimaExecutablePath);
             info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
-            info.Arguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\" -account:{account},{password}";
+
+            string insensitiveArguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\"";
+            string sensitiveArguments = $" -account:{account},{password}";
+            info.Arguments = insensitiveArguments + sensitiveArguments;
+
+            string argumentsInfo = insensitiveArguments + $" -account:{account},<password censored>";
+
+            Program.Console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)

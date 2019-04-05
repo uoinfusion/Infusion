@@ -147,6 +147,7 @@ namespace Infusion.Proxy
             proxyLocalPort = port;
             listener = new TcpListener(new IPEndPoint(IPAddress.Any, proxyLocalPort));
             listener.Start();
+            Console.Info($"Listening on port {proxyLocalPort}");
 
             return Task.Run(() => ClientLoop(logger));
         }

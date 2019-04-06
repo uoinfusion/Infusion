@@ -99,6 +99,8 @@ public static class Potions
             UO.Say(".potionheal");
         else
             UO.Use(healPotion);
+
+        StartPotion(Potions.HealPotion);
     }
     
     private static Item FindBackpackItem(ItemSpec spec)
@@ -110,6 +112,7 @@ public static class Potions
         UO.WarModeOff();
         
         UO.Say(".potioninvis");
+        StartPotion(Potions.InvisPotion);
     }
 
     public static void Run()

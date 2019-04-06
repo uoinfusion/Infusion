@@ -14,6 +14,7 @@ public static class AlchemyMenu
     
     public static readonly CraftProduct CureLesser = new CraftProduct(Specs.CureLesserPotion, new[] { new CraftResource(Specs.Garlic, 2), new CraftResource(Specs.EmptyBottle, 1)}, "Cure", "Lesser Cure");
     public static readonly CraftProduct Cure = new CraftProduct(Specs.CurePotion, new[] { new CraftResource(Specs.Garlic, 3), new CraftResource(Specs.Ginseng, 1), new CraftResource(Specs.EmptyBottle, 1)}, "Cure", "Cure");
+    public static readonly CraftProduct CureGreater = new CraftProduct(Specs.CureGreaterPotion, new[] { new CraftResource(Specs.Garlic, 4), new CraftResource(Specs.Ginseng, 2), new CraftResource(Specs.EmptyBottle, 1)}, "Cure", "Greater Cure");
     
     public static readonly CraftProduct HealLesser = new CraftProduct(Specs.HealLesserPotion, new[] { new CraftResource(Specs.Ginseng, 2), new CraftResource(Specs.Garlic, 1), new CraftResource(Specs.EmptyBottle, 1)}, "Heal", "Lesser Heal");
     public static readonly CraftProduct Heal = new CraftProduct(Specs.HealPotion, new[] { new CraftResource(Specs.Ginseng, 4), new CraftResource(Specs.Garlic, 2), new CraftResource(Specs.EmptyBottle, 1)}, "Heal", "Heal");
@@ -54,6 +55,7 @@ UO.RegisterCommand("alchemy-nightsight", () => Alchemy.Produce(AlchemyMenu.Night
 
 UO.RegisterCommand("alchemy-curelesser", () => Alchemy.Produce(AlchemyMenu.CureLesser));
 UO.RegisterCommand("alchemy-cure", () => Alchemy.Produce(AlchemyMenu.Cure));
+UO.RegisterCommand("alchemy-curegreater", () => Alchemy.Produce(AlchemyMenu.CureGreater));
 
 UO.RegisterCommand("alchemy-heallesser", () => Alchemy.Produce(AlchemyMenu.HealLesser));
 UO.RegisterCommand("alchemy-heal", () => Alchemy.Produce(AlchemyMenu.Heal));

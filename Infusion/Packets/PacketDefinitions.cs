@@ -311,8 +311,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition RestartVersion = new PacketDefinition(0x5C,
             new StaticPacketLength(2), "RestartVersion");
 
-        public static readonly PacketDefinition LoginCharacter = new PacketDefinition(0x5D,
-            new StaticPacketLength(0x49), "LoginCharacter");
+        public static readonly PacketDefinition<LoginCharacterRequest> LoginCharacter = new PacketDefinition<LoginCharacterRequest>(0x5D,
+            new StaticPacketLength(0x49), "LoginCharacter", () => new LoginCharacterRequest());
 
         public static readonly PacketDefinition<ServerListingPacket> ServerListing 
             = new PacketDefinition<ServerListingPacket>(0x5E, new VariablePacketLength(), "ServerListing", () => new ServerListingPacket());

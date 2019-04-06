@@ -140,7 +140,7 @@ namespace Infusion.Desktop
 
         private void HandleLoginConfirmed()
         {
-            var logPath = PathUtilities.GetAbsolutePath($"logs\\{Program.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{Program.LegacyApi.Me.PlayerId:X8}\\");
+            var logPath = PathUtilities.GetAbsolutePath($"logs\\{Program.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{Program.LegacyApi.SelectedCharacterName}\\");
             Program.LogConfig.SetDefaultLogPath(logPath);
         }
 

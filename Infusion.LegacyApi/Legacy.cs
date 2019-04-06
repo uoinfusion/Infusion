@@ -128,7 +128,6 @@ namespace Infusion.LegacyApi
             Injection = new InjectionHost(this, console, packetRegistry, timeSource);
 
             serverObservers = new ServerObservers(ultimaServer, ultimaClient);
-            serverObservers.ServerSelected += server => ServerName = server.Name;
             playerObservers.LoginConfirmed += () =>
             {
                 IsLoginConfirmed = true;
@@ -138,7 +137,8 @@ namespace Infusion.LegacyApi
 
         public ConfigBag Config { get; }
 
-        public string ServerName { get; private set; }
+        public string ServerName => serverObservers.SelectedServer.Name;
+        public string SelectedCharacterName => serverObservers.SelectedCharacterName;
 
         public Phantoms Phantoms { get; }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infusion.LegacyApi.Cliloc;
+using System;
 using System.Collections.Generic;
 using Ultima;
 
@@ -23,15 +24,16 @@ namespace Infusion.LegacyApi.Injection
         private const string clilocPrefix = "cliloc# 0x";
         private readonly LinkedList<Entry> journal = new LinkedList<Entry>();
         private readonly object journalLock = new object();
-        private static readonly Lazy<StringList> clilocDictionary = new Lazy<StringList>(() => new StringList("ENU"));
         private readonly Func<int> provideNow;
+        private readonly ClilocTranslator clilocTranslator;
 
         public int MaxEntries { get; }
 
-        internal Journal(int maxEntries, Func<int> provideNow)
+        internal Journal(int maxEntries, Func<int> provideNow, IClilocSource clilocSource)
         {
             MaxEntries = maxEntries;
             this.provideNow = provideNow;
+            this.clilocTranslator = new ClilocTranslator(clilocSource);
         }
 
         internal void Add(JournalEntry entry)
@@ -66,7 +68,7 @@ namespace Infusion.LegacyApi.Injection
                     {
                         var messageIdText = pattern.Substring(clilocPrefix.Length).Trim();
                         var messageId = int.Parse(messageIdText, System.Globalization.NumberStyles.HexNumber) + 0x70000;
-                        word = clilocDictionary.Value.GetString(messageId);
+                        word = clilocTranslator.Translate(messageId, string.Empty);
                     }
 
                     var foundIndex = 1;

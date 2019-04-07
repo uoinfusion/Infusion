@@ -125,7 +125,7 @@ namespace Infusion.LegacyApi
             Phantoms = new Phantoms(Client, Server, packetRegistry);
 
             Config = new ConfigBag(configRepository);
-            Injection = new InjectionHost(this, console, packetRegistry, timeSource);
+            Injection = new InjectionHost(this, console, packetRegistry, timeSource, clilocSource);
 
             serverObservers = new ServerObservers(ultimaServer, ultimaClient);
             playerObservers.LoginConfirmed += () =>

@@ -1,4 +1,5 @@
 ﻿using Infusion.Commands;
+using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
 using Infusion.Packets;
 using InjectionScript;
@@ -44,12 +45,12 @@ namespace Infusion.LegacyApi.Injection
 
         public InjectionApi InjectionApi => runtime.Api;
 
-        internal InjectionHost(Legacy api, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource)
+        internal InjectionHost(Legacy api, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource, IClilocSource clilocSource)
         {
             this.api = api;
             this.console = console;
 
-            var bridge = new InjectionApiBridge(api, this, console, packetRegistry);
+            var bridge = new InjectionApiBridge(api, this, console, packetRegistry, clilocSource);
             var debuggerServer = new DebuggerServer(() => api.CancellationToken);
             debuggerServer.DebuggerBreakHit += (sender, e) => debuggerBridge.HandleBreakHit(e);
             runtime = new InjectionRuntime(bridge, debuggerServer, timeSource, () => api.CancellationToken.Value);

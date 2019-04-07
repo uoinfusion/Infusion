@@ -78,6 +78,7 @@ namespace Infusion.LegacyApi.Tests.Injection
         public void InJournal_accepts_patterns_with_cliloc_message_numbers()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+            injection.TestProxy.ClilocSource.Add(0x70000 + 0xA258, "You cannot reach that.");
 
             injection.ServerApi.Say(injection.Me.PlayerId, "System", "You cannot reach that.");
 

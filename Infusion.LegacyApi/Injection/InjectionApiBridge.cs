@@ -1,4 +1,5 @@
-﻿using Infusion.LegacyApi.Console;
+﻿using Infusion.LegacyApi.Cliloc;
+using Infusion.LegacyApi.Console;
 using Infusion.Packets;
 using InjectionScript.Runtime;
 using System;
@@ -28,14 +29,14 @@ namespace Infusion.LegacyApi.Injection
         private readonly Menus menus;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
-            PacketDefinitionRegistry packetRegistry)
+            PacketDefinitionRegistry packetRegistry, IClilocSource clilocSource)
         {
             this.infusionApi = infusionApi;
             this.injectionHost = injectionHost;
             this.console = console;
             this.packetRegistry = packetRegistry;
             this.findType = new FindTypeSubrutine(infusionApi, injectionHost);
-            this.journal = new Journal(1000, () => injectionHost.InjectionApi.Now());
+            this.journal = new Journal(1000, () => injectionHost.InjectionApi.Now(), clilocSource);
             this.equipmentSubrutines = new EquipmentSubrutines(infusionApi);
             this.useSubrutines = new UseSubrutines(infusionApi);
             this.targeting = new Targeting(infusionApi, injectionHost, infusionApi.Client, infusionApi.Targeting);

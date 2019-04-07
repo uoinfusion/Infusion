@@ -1,9 +1,11 @@
 [submodule "UltimaSdk"]
 	path = UltimaSdk
-	url = https://github.com/JakubLinhart/ultimasdk.git
+	url = https://github.com/uoinfusion/ultimasdk.git
+	branch = master
 [submodule "RoslynPad"]
 	path = RoslynPad
-	url = https://github.com/JakubLinhart/RoslynPad.git
+	url = https://github.com/uoinfusion/RoslynPad.git
+	branch = infusion-1.0.45
 [submodule "InjectionScript"]
 	path = InjectionScript
 	url = https://github.com/uoinfusion/InjectionScript.git

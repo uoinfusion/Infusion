@@ -11,6 +11,7 @@ using Infusion.Desktop.Console;
 using Infusion.Desktop.Launcher;
 using Infusion.Desktop.Profiles;
 using Infusion.Desktop.Scripts;
+using Infusion.EngineScripts;
 using Infusion.LegacyApi;
 using Infusion.Proxy;
 using Infusion.Utilities;
@@ -150,7 +151,7 @@ namespace Infusion.Desktop
             {
                 var scriptPath = Path.GetDirectoryName(scriptFileName);
 
-                var roslynPadWindow = new RoslynPad.MainWindow(CSharpScriptEngine.Value, scriptPath);
+                var roslynPadWindow = new RoslynPad.MainWindow(new RoslynPadScriptEngineBridge(CSharpScriptEngine.Value), scriptPath);
                 roslynPadWindow.Show();
             }
             else

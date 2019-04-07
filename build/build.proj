@@ -5,10 +5,10 @@
 
         <ItemGroup>
             <LauncherFile Include="..\Infusion.Launcher\bin\release\Infusion.exe" />
-            <BinFiles Include="..\Infusion.Desktop\bin\release\**\*.*" /> 
+            <BinFiles Include="..\Infusion.Desktop\bin\release\net47\**\*.*" /> 
         </ItemGroup>
         <PropertyGroup>
-            <MSTestPath>$(VS150COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
+            <MSTestPath>$(VS160COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
         </PropertyGroup>
 

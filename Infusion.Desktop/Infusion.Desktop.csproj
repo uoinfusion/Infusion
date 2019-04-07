@@ -1,330 +1,121 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.DiaSymReader.Native.1.7.0\build\Microsoft.DiaSymReader.Native.props" Condition="Exists('..\packages\Microsoft.DiaSymReader.Native.1.7.0\build\Microsoft.DiaSymReader.Native.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="MSBuild.Sdk.Extras/1.6.65">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CEB9DE65-59E5-4186-A11E-E797F86B97B1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Infusion.Desktop</RootNamespace>
-    <AssemblyName>Infusion.Desktop</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net461</TargetFramework>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <ExtrasEnableWpfProjectSetup>true</ExtrasEnableWpfProjectSetup>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>infusion.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CommandLine, Version=2.4.3.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.4.3\lib\netstandard2.0\CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Features, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Features.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Features.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Scripting, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Scripting.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Features, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Features.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.Features.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Scripting, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Scripting.Common.2.7.0\lib\netstandard1.3\Microsoft.CodeAnalysis.Scripting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.2.7.0\lib\net46\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces.Desktop, Version=2.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Workspaces.Common.2.7.0\lib\net46\Microsoft.CodeAnalysis.Workspaces.Desktop.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.AppContext, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.AppContext.4.3.0\lib\net46\System.AppContext.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Composition.AttributedModel.1.0.31\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Convention, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Composition.Convention.1.0.31\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Hosting, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Composition.Hosting.1.0.31\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Runtime, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Composition.Runtime.1.0.31\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts, Version=1.0.31.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Composition.TypedParts.1.0.31\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Console, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Console.4.3.0\lib\net46\System.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.FileVersionInfo, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.FileVersionInfo.4.3.0\lib\net46\System.Diagnostics.FileVersionInfo.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.StackTrace, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.StackTrace.4.3.0\lib\net46\System.Diagnostics.StackTrace.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.Compression, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.Compression.4.3.0\lib\net46\System.IO.Compression.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.FileSystem, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.4.3.0\lib\net46\System.IO.FileSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.FileSystem.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.Primitives.4.3.0\lib\net46\System.IO.FileSystem.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.IO.FileSystem.Watcher, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.IO.FileSystem.Watcher.4.3.0\lib\net46\System.IO.FileSystem.Watcher.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.4.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.1.4.2\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Algorithms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Algorithms.4.3.0\lib\net46\System.Security.Cryptography.Algorithms.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Encoding, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Encoding.4.3.0\lib\net46\System.Security.Cryptography.Encoding.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.Primitives, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.Primitives.4.3.0\lib\net46\System.Security.Cryptography.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Cryptography.X509Certificates, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Cryptography.X509Certificates.4.3.0\lib\net46\System.Security.Cryptography.X509Certificates.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Encoding.CodePages, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.4.3.0\lib\net46\System.Text.Encoding.CodePages.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading.Thread, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Thread.4.3.0\lib\net46\System.Threading.Thread.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.ReaderWriter, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.ReaderWriter.4.3.0\lib\net46\System.Xml.ReaderWriter.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.XmlDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.XmlDocument.4.3.0\lib\net46\System.Xml.XmlDocument.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.XPath, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.XPath.4.3.0\lib\net46\System.Xml.XPath.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.XPath.XDocument, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Xml.XPath.XDocument.4.3.0\lib\net46\System.Xml.XPath.XDocument.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+    <PackageReference Include="System.Net.Http" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.4.3" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="1.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting.Common" Version="2.7.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="2.7.0" />
+    <PackageReference Include="Microsoft.Composition" Version="1.0.27" />
+    <PackageReference Include="Microsoft.DiaSymReader.Native" Version="1.7.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="System.AppContext" Version="4.3.0" />
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Composition" Version="1.0.31" />
+    <PackageReference Include="System.Composition.AttributedModel" Version="1.0.31" />
+    <PackageReference Include="System.Composition.Convention" Version="1.0.31" />
+    <PackageReference Include="System.Composition.Hosting" Version="1.0.31" />
+    <PackageReference Include="System.Composition.Runtime" Version="1.0.31" />
+    <PackageReference Include="System.Composition.TypedParts" Version="1.0.31" />
+    <PackageReference Include="System.Console" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Contracts" Version="4.0.1" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Tools" Version="4.3.0" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Globalization" Version="4.3.0" />
+    <PackageReference Include="System.IO" Version="4.3.0" />
+    <PackageReference Include="System.IO.Compression" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.3.0" />
+    <PackageReference Include="System.Linq" Version="4.3.0" />
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+    <PackageReference Include="System.Linq.Parallel" Version="4.0.1" />
+    <PackageReference Include="System.ObjectModel" Version="4.3.0" />
+    <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Metadata" Version="1.4.2" />
+    <PackageReference Include="System.Reflection.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Numerics" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Encoding" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.0" />
+    <PackageReference Include="System.Threading" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.Xml.ReaderWriter" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XPath" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XPath.XDocument" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xaml">
-      <RequiredTargetFramework>4.0</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="CommandHistory.cs" />
-    <Compile Include="CommandLine\Handler.cs" />
-    <Compile Include="CommandLine\Options.cs" />
-    <Compile Include="Console\ConsoleControl.xaml.cs">
-      <DependentUpon>ConsoleControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Console\ConsoleContent.cs" />
-    <Compile Include="Console\ConsoleLine.cs" />
-    <Compile Include="Console\ConsoleOptions.cs" />
-    <Compile Include="Console\FileConsole.cs" />
-    <Compile Include="Console\WpfConsole.cs" />
-    <Compile Include="Console\InfusionConsole.cs" />
-    <Compile Include="EnumToItemSource.cs" />
-    <Compile Include="Launcher\CrossUOLauncherOptions.cs" />
-    <Compile Include="Launcher\CrossUOLauncher.cs" />
-    <Compile Include="Launcher\EncryptionVersion.cs" />
-    <Compile Include="Launcher\ProtocolVersion.cs" />
-    <Compile Include="PathUtilities.cs" />
-    <Compile Include="Profiles\AppDataProfileRepository.cs" />
-    <Compile Include="Profiles\LoginEncryptionKeyConverter.cs" />
-    <Compile Include="Profiles\ObjectIdConverter.cs" />
-    <Compile Include="Profiles\ProfileConfigRepository.cs" />
-    <Compile Include="Profiles\ProfilesInstaller.cs" />
-    <Compile Include="Scripts\ScriptEngine.cs" />
-    <Compile Include="Scripts\CSharpScriptEngine.cs" />
-    <Compile Include="InfusionWindow.xaml.cs">
-      <DependentUpon>InfusionWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="InterProcessCommunication.cs" />
-    <Compile Include="Launcher\ClassicClientLauncher.cs" />
-    <Compile Include="Launcher\ClassicClientLauncherOptions.cs" />
-    <Compile Include="Launcher\LauncherViewModel.cs" />
-    <Compile Include="Launcher\OrionLauncherOptions.cs" />
-    <Compile Include="Launcher\OrionLauncher.cs" />
-    <Compile Include="Launcher\UltimaClientType.cs" />
-    <Compile Include="Profiles\LaunchProfile.cs" />
-    <Compile Include="Profiles\ProfileRepository.cs" />
-    <Compile Include="Scripts\InjectionScriptEngine.cs" />
-    <Compile Include="Scripts\IScriptEngine.cs" />
-    <Compile Include="UltimaConfiguration.cs" />
-    <Page Include="Console\ConsoleControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="InfusionWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Launcher\LaunhcerWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Launcher\Launcher.cs" />
-    <Compile Include="Launcher\LauncherOptions.cs" />
-    <Compile Include="Launcher\LoginConfiguration.cs" />
-    <Compile Include="Launcher\LaunhcerWindow.xaml.cs">
-      <DependentUpon>LaunhcerWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj">
-      <Project>{28a5cece-9e74-4524-9dfd-238ed4df12ba}</Project>
-      <Name>Infusion.LegacyApi</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common.UI\RoslynPad.Common.UI.csproj">
-      <Project>{47c8dfa4-e7e9-4e44-86c4-b906229a25e0}</Project>
-      <Name>RoslynPad.Common.UI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common\RoslynPad.Common.csproj">
-      <Project>{fae8af1b-5004-42b6-8b42-eff1db5b677f}</Project>
-      <Name>RoslynPad.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj">
-      <Project>{5fc3a02c-33b5-4e32-8512-7053474d9c57}</Project>
-      <Name>RoslynPad.Editor.Windows</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Roslyn.Windows\RoslynPad.Roslyn.Windows.csproj">
-      <Project>{075292f0-dbcd-4a01-9791-9637d396ccb8}</Project>
-      <Name>RoslynPad.Roslyn.Windows</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Roslyn\RoslynPad.Roslyn.csproj">
-      <Project>{ac9f325f-a3ff-4561-941e-49ce4736cbd0}</Project>
-      <Name>RoslynPad.Roslyn</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RoslynPad\src\RoslynPad\RoslynPad.csproj">
-      <Project>{2f7723c1-297b-416f-9a78-153156d319b9}</Project>
-      <Name>RoslynPad</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj">
-      <Project>{5e814151-7f4c-4d71-bcb2-97fd303f04a8}</Project>
-      <Name>Infusion.Proxy</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Infusion\Infusion.csproj">
-      <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
-      <Name>Infusion</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UltimaSdk\Ultima.csproj">
-      <Project>{5d66ace6-b2a4-400f-b5a5-24525959ac5c}</Project>
-      <Name>Ultima</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common.UI\RoslynPad.Common.UI.csproj" />
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common\RoslynPad.Common.csproj" />
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Editor.Windows\RoslynPad.Editor.Windows.csproj" />
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Roslyn.Windows\RoslynPad.Roslyn.Windows.csproj" />
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad.Roslyn\RoslynPad.Roslyn.csproj" />
+    <ProjectReference Include="..\RoslynPad\src\RoslynPad\RoslynPad.csproj" />
+    <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj" />
+    <ProjectReference Include="..\Infusion\Infusion.csproj" />
+    <ProjectReference Include="..\UltimaSdk\Ultima.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="infusion.png" />
@@ -332,18 +123,4 @@
   <ItemGroup>
     <Resource Include="infusion.ico" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.DiaSymReader.Native.1.7.0\build\Microsoft.DiaSymReader.Native.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.DiaSymReader.Native.1.7.0\build\Microsoft.DiaSymReader.Native.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

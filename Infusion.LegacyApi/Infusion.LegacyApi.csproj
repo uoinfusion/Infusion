@@ -1,198 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{28A5CECE-9E74-4524-9DFD-238ED4DF12BA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Infusion.LegacyApi</RootNamespace>
-    <AssemblyName>Infusion.LegacyApi</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.Net.Http" Version="4.*" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="AttackResult.cs" />
-    <Compile Include="BlockedClientPacketsFilters.cs" />
-    <Compile Include="Cancellation.cs" />
-    <Compile Include="Cliloc\ClilocTranslator.cs" />
-    <Compile Include="Console\ConsoleLineType.cs" />
-    <Compile Include="Console\IConsole.cs" />
-    <Compile Include="Console\NullConsole.cs" />
-    <Compile Include="Console\TextConsole.cs" />
-    <Compile Include="DiagnosticTrace.cs" />
-    <Compile Include="DialogBoxObservers.cs" />
-    <Compile Include="Events\CommandRequestedEvent.cs" />
-    <Compile Include="Events\ContainerOpenedEvent.cs" />
-    <Compile Include="Events\CurrentHealthUpdatedEvent.cs" />
-    <Compile Include="Events\DialogBoxOpenedEvent.cs" />
-    <Compile Include="Events\EventId.cs" />
-    <Compile Include="EventJournal.cs" />
-    <Compile Include="EventJournalAwaiter.cs" />
-    <Compile Include="EventJournalSource.cs" />
-    <Compile Include="Events\GumpReceivedEvent.cs" />
-    <Compile Include="Events\IEvent.cs" />
-    <Compile Include="Events\ItemWornEvent.cs" />
-    <Compile Include="Events\MapMessageEvent.cs" />
-    <Compile Include="Events\MoveItemRequestRejectedEvent.cs" />
-    <Compile Include="Events\ObjectDeletedEvent.cs" />
-    <Compile Include="Events\LoginConfirmedEvent.cs" />
-    <Compile Include="Events\MobileFlagsUpdatedEvent.cs" />
-    <Compile Include="Events\PlayerDirectionChangedEvent.cs" />
-    <Compile Include="Events\PlayerMoveAcceptedEvent.cs" />
-    <Compile Include="Events\PlayerMoveRejectedEvent.cs" />
-    <Compile Include="Events\PlayerMoveRequestedEvent.cs" />
-    <Compile Include="Events\PlayerLocationChangedEvent.cs" />
-    <Compile Include="Events\ServerRequestedGumpCloseEvent.cs" />
-    <Compile Include="Events\ServerRequestedTargetEvent.cs" />
-    <Compile Include="Events\SkillChangedEvent.cs" />
-    <Compile Include="Filters\IShapeshiftingFilter.cs" />
-    <Compile Include="Filters\IWalkingFilter.cs" />
-    <Compile Include="Filters\ShapeshiftingFilter.cs" />
-    <Compile Include="Events\GraphicalEffectStartedEvent.cs" />
-    <Compile Include="Cliloc\IClilocSource.cs" />
-    <Compile Include="Filters\WalkingObserver.cs" />
-    <Compile Include="IEventJournalSource.cs" />
-    <Compile Include="Events\MobileDeletedEvent.cs" />
-    <Compile Include="Events\MobileLeftViewEvent.cs" />
-    <Compile Include="Events\MobileEnteredViewEvent.cs" />
-    <Compile Include="Filters\ILightFilter.cs" />
-    <Compile Include="Filters\ISoundFilter.cs" />
-    <Compile Include="Filters\IStaminaFilter.cs" />
-    <Compile Include="InfusionTestProxy.cs" />
-    <Compile Include="CorpseCollection.cs" />
-    <Compile Include="CorpseCollectionExtensions.cs" />
-    <Compile Include="Injection\ArmSet.cs" />
-    <Compile Include="Injection\DebuggerBridge.cs" />
-    <Compile Include="Injection\Equipment.cs" />
-    <Compile Include="Injection\EquipmentSubrutines.cs" />
-    <Compile Include="Injection\FindTypeSubrutine.cs" />
-    <Compile Include="Injection\Grabbing.cs" />
-    <Compile Include="Injection\GumpSubrutines.cs" />
-    <Compile Include="Injection\InjectionApiBridge.cs" />
-    <Compile Include="Injection\InjectionHost.cs" />
-    <Compile Include="Injection\ItemObservers.cs" />
-    <Compile Include="Injection\Journal.cs" />
-    <Compile Include="Injection\Menus.cs" />
-    <Compile Include="Injection\Morphing.cs" />
-    <Compile Include="Injection\ObjectNameReceiver.cs" />
-    <Compile Include="Injection\Screenshot.cs" />
-    <Compile Include="Injection\Targeting.cs" />
-    <Compile Include="Injection\UseSubrutines.cs" />
-    <Compile Include="Injection\Walker.cs" />
-    <Compile Include="Injection\WavPlayer.cs" />
-    <Compile Include="IUltimaClientWindow.cs" />
-    <Compile Include="Filters\IWeatherFilter.cs" />
-    <Compile Include="KeyCode.cs" />
-    <Compile Include="LegacyFilters.cs" />
-    <Compile Include="LocalUltimaClientWindow.cs" />
-    <Compile Include="LogConfiguration.cs" />
-    <Compile Include="Cliloc\MemoryClilocSource.cs" />
-    <Compile Include="Cliloc\MulClilocSource.cs" />
-    <Compile Include="NullUltimaClientWindow.cs" />
-    <Compile Include="OrderedEvent.cs" />
-    <Compile Include="Events\SkillRequestedEvent.cs" />
-    <Compile Include="Events\SpeechReceivedEvent.cs" />
-    <Compile Include="Phantoms.cs" />
-    <Compile Include="ScriptTrace.cs" />
-    <Compile Include="ScriptTraceLogger.cs" />
-    <Compile Include="GlobalTrace.cs" />
-    <Compile Include="ServerObservers.cs" />
-    <Compile Include="SpeechJournal.cs" />
-    <Compile Include="GameObjectCollectionWrapper.cs" />
-    <Compile Include="GumpObservers.cs" />
-    <Compile Include="GameObjectCollection.cs" />
-    <Compile Include="ItemCollection.cs" />
-    <Compile Include="ItemCollectionExtensions.cs" />
-    <Compile Include="Events\ItemEnteredViewEvent.cs" />
-    <Compile Include="ItemsObservers.cs" />
-    <Compile Include="ItemSpec.cs" />
-    <Compile Include="Events\ItemUseRequestedEvent.cs" />
-    <Compile Include="JournalEntriesExtensions.cs" />
-    <Compile Include="JournalEntry.cs" />
-    <Compile Include="JournalObservers.cs" />
-    <Compile Include="LegacyException.cs" />
-    <Compile Include="Filters\LightObserver.cs" />
-    <Compile Include="MobileCollection.cs" />
-    <Compile Include="MobileCollectionExtensions.cs" />
-    <Compile Include="MobileSpec.cs" />
-    <Compile Include="Events\QuestArrowEvent.cs" />
-    <Compile Include="MapObserver.cs" />
-    <Compile Include="Events\SoundEffectPlayedEvent.cs" />
-    <Compile Include="Filters\SoundObserver.cs" />
-    <Compile Include="SpecSpecificity.cs" />
-    <Compile Include="Events\SpeechRequestedEvent.cs" />
-    <Compile Include="SpeechJournalAwaiter.cs" />
-    <Compile Include="SpeechJournalSource.cs" />
-    <Compile Include="SpeechRequestObserver.cs" />
-    <Compile Include="Filters\StaminaFilter.cs" />
-    <Compile Include="TargetInfo.cs" />
-    <Compile Include="TargetType.cs" />
-    <Compile Include="TestServerApi.cs" />
-    <Compile Include="UO.cs" />
-    <Compile Include="Legacy.cs" />
-    <Compile Include="Player.cs" />
-    <Compile Include="PlayerObservers.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Targeting.cs" />
-    <Compile Include="UltimaMap.cs" />
-    <Compile Include="WalkRequest.cs" />
-    <Compile Include="WalkRequestQueue.cs" />
-    <Compile Include="Filters\WeatherObserver.cs" />
-    <Compile Include="WindowBounds.cs" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Infusion\Infusion.csproj">
-      <Project>{22e3bd2c-8ffe-4d11-8fd8-7764f40f3324}</Project>
-      <Name>Infusion</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InjectionScript\src\InjectionScript\InjectionScript.csproj">
-      <Project>{C076C217-ECB3-4001-A5BA-C0FF2A2B1029}</Project>
-      <Name>InjectionScript</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UltimaSdk\Ultima.csproj">
-      <Project>{5d66ace6-b2a4-400f-b5a5-24525959ac5c}</Project>
-      <Name>Ultima</Name>
-    </ProjectReference>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Infusion\Infusion.csproj" />
+    <ProjectReference Include="..\InjectionScript\src\InjectionScript\InjectionScript.csproj" />
+    <ProjectReference Include="..\UltimaSdk\Ultima.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

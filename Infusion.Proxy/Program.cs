@@ -14,12 +14,10 @@ using Infusion.IO;
 using Infusion.IO.Encryption.Login;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
-using Infusion.LegacyApi.Events;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
-using Ultima;
 
 namespace Infusion.Proxy
 {
@@ -123,8 +121,10 @@ namespace Infusion.Proxy
                 "Dumps packet log - log of network communication between game client and server. Network communication logs are very useful for diagnosing issues like crashes.",
                 executionMode: CommandExecutionMode.Direct));
             commandHandler.RegisterCommand(new Command("help", HelpCommand, false, true, "Shows command help."));
+
             commandHandler.RegisterCommand(new Command(ListCommandName, ListRunningCommands, false, true,
                 "Lists running commands"));
+
             commandHandler.RegisterCommand(new Command("proxy-latency", PrintProxyLatency, false, true, "Shows proxy latency."));
 
             serverEndpoint = config.ServerEndPoint;

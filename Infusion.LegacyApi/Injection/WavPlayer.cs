@@ -1,11 +1,6 @@
 ﻿using Infusion.LegacyApi.Console;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Media;
-using System.Text;
-using System.Threading.Tasks;
+//using System.Media; FIXME
 
 namespace Infusion.LegacyApi.Injection
 {
@@ -22,12 +17,12 @@ namespace Infusion.LegacyApi.Injection
         {
             if (!File.Exists(file))
             {
-                console.Error($"File {file} doesn't exist.");
+                //console.Error($"File {file} doesn't exist.");FIXME
                 return;
             }
 
-            var simpleSound = new SoundPlayer(file);
-            simpleSound.PlaySync();
+            //var simpleSound = new SoundPlayer(file);FIXME
+            //simpleSound.PlaySync(); FIXME
         }
     }
 }

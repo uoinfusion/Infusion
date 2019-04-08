@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using System;
+using System.Text.RegularExpressions;
+using FluentAssertions;
 using Infusion.Desktop.Launcher;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,7 +15,7 @@ namespace Infusion.Desktop.Tests.Launcher
             var input = string.Empty;
             var output = new LoginConfiguration(".").SetServerAddress(input, "test.server.com,2593");
 
-            output.Should().Be(@";Inserted by Infusion
+            AssertNewLineInsensitive(output, @";Inserted by Infusion
 LoginServer=test.server.com,2593");
         }
 
@@ -24,7 +26,7 @@ LoginServer=test.server.com,2593");
 LoginServer=server.com,2593";
             var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
-            output.Should().Be(@";Inserted by Infusion
+            AssertNewLineInsensitive(output, @";Inserted by Infusion
 LoginServer=new.server.com,33333");
         }
 
@@ -46,7 +48,7 @@ LoginServer=new.server.com,33333
 
 ; Some existing comment";
 
-            output.Should().Be(expected);
+            AssertNewLineInsensitive(output, expected);
         }
 
         [TestMethod]
@@ -63,7 +65,7 @@ LoginServer=new.server.com,33333
 ;Inserted by Infusion
 LoginServer=new.server.com,33333";
 
-            output.Should().Be(expected);
+            AssertNewLineInsensitive(output, expected);
         }
 
         [TestMethod]
@@ -76,7 +78,7 @@ LoginServer=new.server.com,33333";
 ;Inserted by Infusion
 LoginServer=new.server.com,33333";
 
-            output.Should().Be(expected);
+            AssertNewLineInsensitive(output, expected);
         }
 
         [TestMethod]
@@ -96,7 +98,7 @@ LoginServer=new.server.com,33333
 
             var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
-            output.Should().Be(expected);
+            AssertNewLineInsensitive(output, expected);
         }
 
         [TestMethod]
@@ -112,7 +114,15 @@ LoginServer=new.server.com,33333";
 
             var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
 
-            output.Should().Be(expected);
+            AssertNewLineInsensitive(output, expected);
+        }
+
+        private void AssertNewLineInsensitive(string actual, string expected)
+        {
+            actual = Regex.Replace(actual, @"\r\n?|\n", Environment.NewLine);
+            expected = Regex.Replace(expected, @"\r\n?|\n", Environment.NewLine);
+
+            actual.Should().Be(expected);
         }
     }
 }

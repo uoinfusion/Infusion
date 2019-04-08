@@ -29,11 +29,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                 .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
 
             source.Publish(new QuestArrowEvent(true, new Location2D(123, 321)));
 
-            executedEvent.WaitOne(100).Should().BeTrue();
+            executedEvent.AssertWaitOneSuccess();
 
             receivedEvent.Should().NotBeNull();
             receivedEvent.Active.Should().BeTrue();
@@ -67,11 +67,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                         .WaitAny();
                 });
 
-                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+                journal.AwaitingStarted.AssertWaitOneSuccess();
 
                 source.Publish(new SpeechRequestedEvent("some message"));
 
-                executedEvent.WaitOne(100).Should().BeTrue("one of when actions has to be executed before timeout");
+                executedEvent.AssertWaitOneSuccess();
 
                 receivedQuest.Should().BeNull();
                 receivedSpeech.Should().NotBeNull();
@@ -105,11 +105,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
 
             source.Publish(new SpeechRequestedEvent("I handle this message"));
 
-            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             conditionalWhenExecuted.Should().BeFalse();
             unconditionalWhenExecuted.Should().BeTrue();
@@ -142,11 +142,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
 
             source.Publish(new SpeechRequestedEvent("something else than I refuse this message"));
 
-            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             unconditionalWhenExecuted.Should().BeTrue();
             conditionalWhenExecuted.Should().BeFalse();
@@ -176,11 +176,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
 
             source.Publish(new SpeechRequestedEvent("something else than I refuse this message"));
 
-            task.Wait(TimeSpan.FromMilliseconds(100)).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             conditionalWhenExecuted.Should().BeFalse();
             unconditionalWhenExecuted.Should().BeTrue();
@@ -205,7 +205,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                         .WaitAny();
                 });
 
-                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+                journal.AwaitingStarted.AssertWaitOneSuccess();
 
                 var questArrowEvent = new SpeechRequestedEvent("first message");
                 source.Publish(questArrowEvent);
@@ -213,7 +213,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                 var speechEvent = new SpeechRequestedEvent("second message");
                 source.Publish(speechEvent);
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
 
                 receivedSpeech.Should().NotBeNull();
                 receivedSpeech.Message.Should().Be("first message");
@@ -257,10 +257,10 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
             source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "qwer", "qwer", 0, 0, (Color)0)));
             source.Publish(new SpeechReceivedEvent(new JournalEntry(1, "asdf", "asdf", 0, 0, (Color)0)));
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
             result.Should().Be("x");
 
 
@@ -274,10 +274,10 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
             source.Publish(new ContainerOpenedEvent(1));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
             result.Should().Be("not processed by the first WaitAny");
         }
 
@@ -293,21 +293,21 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
             var task = Task.Run(() =>
             {
                 canPublishEvent.Set();
-                canAwaitEvent.WaitOne(100).Should().BeTrue();
+                canAwaitEvent.AssertWaitOneSuccess();
 
                 journal.When<SpeechRequestedEvent>(ev => handledMessage = ev.Message)
                     .WaitAny(TimeSpan.FromMilliseconds(100));
             });
 
             source.NotifyAction();
-            canPublishEvent.WaitOne(100).Should().BeTrue();
+            canPublishEvent.AssertWaitOneSuccess();
             source.Publish(new SpeechRequestedEvent("message1"));
             canAwaitEvent.Set();
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
             source.Publish(new SpeechRequestedEvent("message2 - we don't want to get this one"));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             handledMessage.Should().Be("message1");
         }
@@ -328,7 +328,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                         .WaitAny();
                 });
 
-                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+                journal.AwaitingStarted.AssertWaitOneSuccess();
 
                 var task2 = Task.Run(() =>
                 {
@@ -336,13 +336,13 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                         .WaitAny();
                 });
 
-                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+                journal.AwaitingStarted.AssertWaitOneSuccess();
 
                 source.Publish(new SpeechRequestedEvent("test"));
                 source.Publish(new DialogBoxOpenedEvent(new DialogBox(1, 1, "", null)));
 
-                task1.Wait(100).Should().BeTrue();
-                task2.Wait(100).Should().BeTrue();
+                task1.AssertWaitFastSuccess();
+                task2.AssertWaitFastSuccess();
 
                 task1Result.Should().Be("SpeechRequestedEvent");
                 task2Result.Should().Be("DialogBoxOpenedEvent");

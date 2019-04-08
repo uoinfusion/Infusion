@@ -34,14 +34,12 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     action.ShouldThrow<OperationCanceledException>();
                 });
 
-                initializedEvent.WaitOne(100).Should()
-                    .BeTrue("awaiting should start immediatelly, false means a timeout");
+                initializedEvent.AssertWaitOneSuccess();
                 Thread.Yield();
 
                 cancellationTokenSource.Cancel();
 
-                task.Wait(TimeSpan.FromMilliseconds(100)).Should()
-                    .BeTrue("false means timeout - tested task was not executed in time");
+                task.AssertWaitFastSuccess();
             });
         }
 
@@ -75,18 +73,16 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     testedAction.ShouldThrow<OperationCanceledException>();
                 });
 
-                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+                journal.AwaitingStarted.AssertWaitOneSuccess();
 
                 source.Publish(new SpeechRequestedEvent("message1"));
                 source.Publish(new SpeechRequestedEvent("message2"));
                 source.Publish(new SpeechRequestedEvent("message3"));
 
-                finishedEvent.WaitOne(TimeSpan.FromMilliseconds(100)).Should()
-                    .BeTrue("the test didn't finished in time");
+                finishedEvent.AssertWaitOneSuccess();
 
                 cancellationTokenSource.Cancel();
-                task.Wait(TimeSpan.FromMilliseconds(100)).Should()
-                    .BeTrue("false means timeout - tested task was not executed in time");
+                task.AssertWaitFastSuccess();
 
                 resultBuilder.ToString().Should().Be("message1message2message3");
             });

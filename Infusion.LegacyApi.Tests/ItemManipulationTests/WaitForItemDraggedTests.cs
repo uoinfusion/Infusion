@@ -15,10 +15,10 @@ namespace Infusion.LegacyApi.Tests.ItemManipulationTests
         {
             var testProxy = new InfusionTestProxy();
             var task = Task.Run(() => testProxy.Api.WaitForItemDragged(0x12345678, TimeSpan.MaxValue));
-            testProxy.Api.WaitForItemDraggedStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForItemDraggedStartedEvent.AssertWaitOneSuccess();
             testProxy.ServerPacketHandler.HandlePacket(RejectMoveItemRequestPackets.CannotLiftTheItem);
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -26,13 +26,13 @@ namespace Infusion.LegacyApi.Tests.ItemManipulationTests
         {
             var testProxy = new InfusionTestProxy();
             var task = Task.Run(() => testProxy.Api.WaitForItemDragged(0x12345678, TimeSpan.MaxValue));
-            testProxy.Api.WaitForItemDraggedStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForItemDraggedStartedEvent.AssertWaitOneSuccess();
             testProxy.ServerPacketHandler.HandlePacket(new Packet(PacketDefinitions.DeleteObject.Id, new byte[]
             {
                 0x1D, 0x12, 0x34, 0x56, 0x78
             }));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace Infusion.LegacyApi.Tests.ItemManipulationTests
         {
             var testProxy = new InfusionTestProxy();
             var task = Task.Run(() => { testProxy.Api.WaitForItemDragged(0x78563412, TimeSpan.MaxValue); });
-            testProxy.Api.WaitForItemDraggedStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForItemDraggedStartedEvent.AssertWaitOneSuccess();
             testProxy.ServerPacketHandler.HandlePacket(new Packet(PacketDefinitions.DeleteObject.Id, new byte[]
             {
                 0x1D, 0x12, 0x34, 0x56, 0x78
@@ -62,7 +62,7 @@ namespace Infusion.LegacyApi.Tests.ItemManipulationTests
 
             var task = Task.Run(() => testProxy.Api.WaitForItemDragged(0x12345678, TimeSpan.MaxValue));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -89,7 +89,7 @@ namespace Infusion.LegacyApi.Tests.ItemManipulationTests
 
             var task = Task.Run(() => testProxy.Api.WaitForItemDragged(0x12345678, TimeSpan.MaxValue));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]

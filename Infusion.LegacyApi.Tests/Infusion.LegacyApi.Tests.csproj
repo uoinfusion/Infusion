@@ -3,6 +3,10 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(OtherDefineConstants)'!=''">
+    <DefineConstants>$(DefineConstants);$(OtherDefineConstants)</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.5" />

@@ -158,11 +158,11 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                         .All();
                 });
 
-                journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+                journal.AwaitingStarted.AssertWaitOneSuccess();
 
                 source.Publish(new SpeechRequestedEvent("other text"));
                 waitInsideEventHandler.Set();
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
 
                 journal
                     .When<SpeechRequestedEvent>(e => handlerInvoked = true)
@@ -214,11 +214,10 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                 action.ShouldThrow<OperationCanceledException>();
             });
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
 
             cancellationTokenSource.Cancel();
-            task.Wait(TimeSpan.FromMilliseconds(100)).Should()
-                .BeTrue("false means timeout - tested task was not cancelled in time");
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -244,11 +243,10 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                 action.ShouldThrow<OperationCanceledException>();
             });
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
 
             cancellationTokenSource.Cancel();
-            task.Wait(TimeSpan.FromMilliseconds(100)).Should()
-                .BeTrue("false means timeout - tested task was not cancelled in time");
+            task.AssertWaitFastSuccess();
         }
 
     }

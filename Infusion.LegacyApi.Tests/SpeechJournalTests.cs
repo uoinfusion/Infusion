@@ -121,7 +121,7 @@ namespace Infusion.LegacyApi.Tests
 
             nextScriptStep.Set();
 
-            scriptTask.Wait(100).Should().BeTrue();
+            scriptTask.AssertWaitFastSuccess();
 
             message1Received.Should().BeTrue();
             message2Received.Should().BeFalse();

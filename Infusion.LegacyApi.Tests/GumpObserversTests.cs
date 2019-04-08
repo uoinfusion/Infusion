@@ -30,11 +30,11 @@ namespace Infusion.LegacyApi.Tests
             Gump resultGump = null;
 
             var task = Task.Run(() => { resultGump = testProxy.Api.WaitForGump(); });
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().NotBeNull();
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
             resultGump.Should().NotBeNull();
         }
 
@@ -44,11 +44,11 @@ namespace Infusion.LegacyApi.Tests
             var testProxy = new InfusionTestProxy();
 
             var task = Task.Run(() => { testProxy.Api.WaitForGump(false); });
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().BeNull();
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -57,12 +57,12 @@ namespace Infusion.LegacyApi.Tests
             var testProxy = new InfusionTestProxy();
 
             var task = Task.Run(() => { testProxy.Api.WaitForGump(false); });
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().BeNull();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel).Should().NotBeNull();
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -85,9 +85,9 @@ namespace Infusion.LegacyApi.Tests
                 testProxy.Api.GumpResponse().Cancel();
             });
 
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
             testProxy.PacketReceivedFromClient(GumpMenuSelectionRequests.CancelExplevel).Should().BeNull();
         }
 
@@ -110,10 +110,10 @@ namespace Infusion.LegacyApi.Tests
                 testProxy.Api.GumpResponse().Cancel();
             });
 
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
             // script closes hidden gump,
             // but no cancellation request from game client, because there is no 0xBF/0x04 sent to the client
 
@@ -137,10 +137,10 @@ namespace Infusion.LegacyApi.Tests
                 testProxy.Api.GumpResponse().Cancel();
             });
 
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
 
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             testProxy.PacketsSentToClient.Should()
                 .NotContain(packet => packet.Id == PacketDefinitions.GeneralInformationPacket.Id);
@@ -159,9 +159,9 @@ namespace Infusion.LegacyApi.Tests
                     .WaitAny();
             });
 
-            journal.AwaitingStarted.WaitOne(100).Should().BeTrue();
+            journal.AwaitingStarted.AssertWaitOneSuccess();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             resultGump.Should().NotBeNull();
         }
@@ -188,9 +188,9 @@ namespace Infusion.LegacyApi.Tests
                 testProxy.Api.GumpResponse().Cancel();
             });
 
-            testProxy.Api.WaitForGumpStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForGumpStartedEvent.AssertWaitOneSuccess();
             testProxy.PacketReceivedFromServer(SendGumpMenuDialogPackets.Explevel);
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
             // second gump from server comes before client cancellation of the first gump
             // first and second gump can have same ids

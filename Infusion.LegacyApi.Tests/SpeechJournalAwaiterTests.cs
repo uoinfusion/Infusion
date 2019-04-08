@@ -71,7 +71,7 @@ namespace Infusion.LegacyApi.Tests
                 awaiter.WaitAny();
             });
 
-            initializedEvent.WaitOne(100);
+            initializedEvent.WaitOneFast();
             awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321, (Color)0));
             task.Wait();
 
@@ -95,11 +95,11 @@ namespace Infusion.LegacyApi.Tests
                 awaiter.WaitAny();
             });
 
-            initializedEvent.WaitOne(100);
+            initializedEvent.WaitOneFast();
             awaiter.ReceiveJournalEntry(new JournalEntry(0, "TestName", "somethingsomething word2 somethingsomething", new ObjectId(1234),
                 (ModelId) 4321, (Color)0));
 
-            task.Wait(100);
+            task.AssertWaitFastSuccess();
 
             firstConditionExecuted.Should().BeFalse();
             secondConditionExecuted.Should().BeTrue();
@@ -120,9 +120,9 @@ namespace Infusion.LegacyApi.Tests
                 awaiter.WaitAny();
             });
 
-            initializedEvent.WaitOne(100);
+            initializedEvent.WaitOneFast();
             awaiter.ReceiveJournalEntry(new JournalEntry(0, "test", "test word", new ObjectId(1234), (ModelId) 4321, (Color)0));
-            task.Wait(100);
+            task.AssertWaitFastSuccess();
 
             executed.Should().Be(true);
         }
@@ -143,9 +143,9 @@ namespace Infusion.LegacyApi.Tests
                 action.ShouldThrow<OperationCanceledException>();
             });
 
-            initializedEvent.WaitOne(100);
+            initializedEvent.WaitOneFast();
             cancellationTokenSource.Cancel();
-            task.Wait(1000).Should().BeTrue();
+            task.AssertWaitSlowSuccess();
         }
 
         [TestMethod]

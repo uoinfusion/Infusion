@@ -21,10 +21,10 @@ namespace Infusion.LegacyApi.Tests
             {
                 var testProxy = new InfusionTestProxy();
                 var task = Task.Run(() => testProxy.Api.WaitForTarget(TimeSpan.MaxValue));
-                testProxy.Api.WaitForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.Api.WaitForTargetStartedEvent.AssertWaitOneSuccess();
                 testProxy.ServerPacketHandler.HandlePacket(TargetCursorPackets.TargetCursor);
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
             });
         }
 
@@ -41,7 +41,7 @@ namespace Infusion.LegacyApi.Tests
                 bool waitResult = false;
                 var task = Task.Run(() => waitResult = testProxy.Api.WaitForTarget(TimeSpan.MaxValue));
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
                 waitResult.Should().BeTrue();
             });
         }
@@ -60,7 +60,7 @@ namespace Infusion.LegacyApi.Tests
                 var task = Task.Run(() =>
                     waitResult = testProxy.Api.WaitForTarget(TimeSpan.MaxValue, "some", "failure", "messages"));
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
                 waitResult.Should().BeTrue();
             });
         }
@@ -92,7 +92,7 @@ namespace Infusion.LegacyApi.Tests
                 bool waitResult = true;
                 var task = Task.Run(
                     () => waitResult = testProxy.Api.WaitForTarget(TimeSpan.MaxValue, "failure message"));
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
 
                 waitResult.Should().BeFalse();
             });
@@ -106,10 +106,10 @@ namespace Infusion.LegacyApi.Tests
             testProxy.Api.WaitTargetObject(0x40001234);
 
             var task = Task.Run(() => testProxy.Api.WaitForTarget(TimeSpan.MaxValue));
-            testProxy.Api.WaitForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.WaitForTargetStartedEvent.AssertWaitOneSuccess();
             testProxy.ServerPacketHandler.HandlePacket(TargetCursorPackets.TargetCursor);
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
 
         }
 
@@ -125,14 +125,14 @@ namespace Infusion.LegacyApi.Tests
                 result.Value.Location.Should().Be(new Location3D(0x09EC, 0x0CF9, 0));
             });
 
-            testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
             testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
             {
                 0x6C, 0x01, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0xEC, 0x0C, 0xF9, 0x00,
                 0x00, 0x00, 0x00,
             }));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -144,14 +144,14 @@ namespace Infusion.LegacyApi.Tests
 
                 var task = Task.Run(() => { testProxy.Api.AskForLocation().Should().BeNull(); });
 
-                testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
                 testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
                 {
                     0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00
                 }));
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
             });
         }
 
@@ -168,7 +168,7 @@ namespace Infusion.LegacyApi.Tests
 
             var task = Task.Run(() => { testProxy.Api.AskForLocation().Value.Location.Should().Be(new Location3D(0x09EC, 0x0CF9, 0)); });
 
-            testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
 
             testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
             {
@@ -176,7 +176,7 @@ namespace Infusion.LegacyApi.Tests
                 0x00, 0x00, 0x00,
             }));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -188,14 +188,14 @@ namespace Infusion.LegacyApi.Tests
 
                 var task = Task.Run(() => { testProxy.Api.AskForItem().Should().BeNull(); });
 
-                testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
                 testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
                 {
                     0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00
                 }));
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
             });
         }
 
@@ -208,14 +208,14 @@ namespace Infusion.LegacyApi.Tests
 
                 var task = Task.Run(() => { testProxy.Api.AskForMobile().Should().BeNull(); });
 
-                testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+                testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
                 testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
                 {
                     0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00
                 }));
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
             });
         }
 
@@ -232,14 +232,14 @@ namespace Infusion.LegacyApi.Tests
 
             var task = Task.Run(() => { testProxy.Api.AskForMobile().Should().BeNull(); });
 
-            testProxy.Api.AskForTargetStartedEvent.WaitOne(100).Should().BeTrue();
+            testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
             testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
             {
                 0x6C, 0x01, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00,
             }));
 
-            task.Wait(100).Should().BeTrue();
+            task.AssertWaitFastSuccess();
         }
 
         [TestMethod]
@@ -270,7 +270,7 @@ namespace Infusion.LegacyApi.Tests
                     0x00, 0x00, 0x00
                 }));
 
-                task.Wait(100).Should().BeTrue();
+                task.AssertWaitFastSuccess();
 
                 testProxy.PacketsSentToServer.Count(x => x.Id == 0x6C).Should().Be(2);
             });

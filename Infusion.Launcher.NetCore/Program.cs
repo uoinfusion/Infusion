@@ -1,13 +1,14 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 using Infusion.Commands;
 using Infusion.EngineScripts;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Proxy;
+using Microsoft.Extensions.CommandLineUtils;
 
 namespace Infusion.Launcher.NetCore
 {
@@ -19,49 +20,78 @@ namespace Infusion.Launcher.NetCore
         public static CSharpScriptEngine CSharpScriptEngine { get; private set; }
         private static readonly IConsole scriptOutput = Console;
         static readonly CommandHandler commandHandler = new CommandHandler(Diagnostic);
+        private static string ScriptFileName { get; set; }
 
         static void Main(string[] args)
         {
+            var app = new CommandLineApplication();
             Program.Initialize(commandHandler);
-            Program.Start(new ProxyStartConfig()
+            if (app != null)
             {
-                ServerAddress = "127.0.0.1",
-                ServerEndPoint = new IPEndPoint(IPAddress.Parse("40.86.213.160"), 2593),
-                LocalProxyPort = 60000,
-                ProtocolVersion = new Version(3, 0, 0),
+                app.Name = "Infusion Laucher NetCore";
+            }
 
+            app.HelpOption("-?|-h|--help");
+
+            var serverAdress = app.Option("-l|--login",
+                    "Ultima online login server you what to play.",
+                    CommandOptionType.SingleValue);
+
+            var protocolVersion = app.Option("-p|--protocol",
+                    "Ultima online server protocol",
+                    CommandOptionType.SingleValue);
+
+            var scriptPath = app.Option("-s|--script",
+                    "Full path to your startup script",
+                    CommandOptionType.SingleValue);
+
+            app.OnExecute(() =>
+            {
+                if (serverAdress.HasValue() && protocolVersion.HasValue())
+                {
+                    string[] loginServer = serverAdress.Value().Split(",");
+                    Program.Start(new ProxyStartConfig()
+                    {
+                        ServerAddress = "127.0.0.1",
+                        ServerEndPoint = new IPEndPoint(IPAddress.Parse(loginServer[0]), int.Parse(loginServer[1])),
+                        LocalProxyPort = 60000,
+                        ProtocolVersion = new Version(protocolVersion.Value()),
+
+                    });
+
+                    UO.CommandHandler.RegisterCommand(new Command("reload", () => Reload(), false, true,
+                        "Reloads an initial script file."));
+
+                    CSharpScriptEngine = new CSharpScriptEngine(Console);
+                    ScriptEngine = new ScriptEngine(CSharpScriptEngine, new InjectionScriptEngine(UO.Injection, Console));
+                   
+                }
+                else
+                {
+                    app.ShowHint();
+                }
+                if (scriptPath.HasValue())
+                {
+                    Load(scriptPath.Value());
+                }
+                return 0;
             });
 
-            UO.CommandHandler.RegisterCommand(new Command("reload",() => Reload(), false, true,
-                "Reloads an initial script file."));
-
-            CSharpScriptEngine = new CSharpScriptEngine(Console);
-            ScriptEngine = new ScriptEngine(CSharpScriptEngine, new InjectionScriptEngine(UO.Injection, Console));
-
-            ScriptEngine.Reset();
-            ScriptEngine.ExecuteScript("../scripts/startup.csx", new CancellationTokenSource());
-
+            app.Execute(args);
             System.Console.ReadLine();
         }
 
-        public async static void Launch()
+        private static void Load(string scriptFileName)
         {
-             await Proxy();
-        }
+            string name = Path.GetFileName(scriptFileName);
+            var scriptPath = Path.GetDirectoryName(scriptFileName);
 
-        internal static Task Proxy()
-        {
-            return Task.Run(() =>
-            {
-                var proxyTask = Program.Start(new ProxyStartConfig()
-                {
-                    ServerAddress = "127.0.0.1",
-                    ServerEndPoint = new IPEndPoint(IPAddress.Parse("40.86.213.160"), 2593),
-                    LocalProxyPort = 60000,
-                    ProtocolVersion = new Version(3, 0, 0),
+            ScriptFileName = Path.Combine(scriptPath, name);
 
-                });
-            });
+            ScriptFileName = scriptFileName;
+            ScriptEngine.ScriptRootPath = scriptPath;
+
+            Reload();
         }
 
         private async static void Reload()
@@ -72,7 +102,7 @@ namespace Infusion.Launcher.NetCore
             ScriptEngine.Reset();
             using (var tokenSource = new CancellationTokenSource())
             {
-                await ScriptEngine.ExecuteScript("../startup.csx", tokenSource);
+                await ScriptEngine.ExecuteScript(ScriptFileName, tokenSource);
             }
         }
     }

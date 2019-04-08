@@ -46,7 +46,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand("testName", () => ev.Set());
 
             commandHandler.Invoke("testName");
-            ev.WaitOne(1000).Should().BeTrue();
+            ev.AssertWaitOneSuccess();
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace Infusion.Tests.Commands
             });
 
             commandHandler.Invoke("testName", "parameter1 parameter2");
-            ev.WaitOne(1000).Should().BeTrue();
+            ev.AssertWaitOneSuccess();
             actualParameters.Should().Be("parameter1 parameter2");
         }
 
@@ -73,7 +73,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand("testName", () => ev.Set());
 
             commandHandler.InvokeSyntax(",testName");
-            ev.WaitOne(1000).Should().BeTrue();
+            ev.AssertWaitOneSuccess();
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace Infusion.Tests.Commands
             });
 
             commandHandler.InvokeSyntax(",testName parameter1 parameter2");
-            ev.WaitOne(1000).Should().BeTrue();
+            ev.AssertWaitOneSuccess();
             actualParameters.Should().Be("parameter1 parameter2");
         }
 
@@ -123,7 +123,7 @@ namespace Infusion.Tests.Commands
             });
 
             commandHandler.InvokeSyntax(",testName");
-            finished.WaitOne(TimeSpan.FromMilliseconds(100));
+            finished.AssertWaitOneSuccess();
 
             executed.Should().BeTrue();
         }
@@ -238,8 +238,8 @@ namespace Infusion.Tests.Commands
                 counterDone.Reset();
                 Task.Run(() => commandHandler.Invoke("cmd"));
 
-                counterDone.WaitOne(TimeSpan.FromMilliseconds(100));
-                commandHandler.Terminate("cmd", TimeSpan.FromMilliseconds(100));
+                counterDone.AssertWaitOneSuccess();
+                commandHandler.Terminate("cmd", AssertionExtensions.FastTimeout);
 
                 commandHandler.RunningCommands.Should().BeEmpty();
                 executionCount.Should().Be(oldExecutionCount + 1);
@@ -542,7 +542,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand(command);
             commandHandler.Invoke("cmd1");
 
-            commandStartedEvent.WaitOne(100).Should().BeTrue();
+            commandStartedEvent.AssertWaitOneSuccess();
             commandHandler.Terminate("cmd1");
 
             var result = commandEndReached;
@@ -737,7 +737,7 @@ namespace Infusion.Tests.Commands
             public void WaitForInitialization()
             {
                 trace.AppendLine("WaitForInitialiation: OnEntry");
-                initializeEvent.WaitOne(TimeSpan.FromSeconds(1));
+                initializeEvent.AssertWaitOneSuccess();
                 trace.AppendLine("WaitForInitialiation: OnExit");
             }
 
@@ -761,7 +761,7 @@ namespace Infusion.Tests.Commands
                 additionalAction?.Invoke();
                 additionalActionFinished.Set();
 
-                finishEvent.WaitOne(TimeSpan.FromSeconds(1));
+                finishEvent.WaitOneSlow();
 
                 trace.AppendLine("CommandAction: OnExit");
             }
@@ -779,7 +779,7 @@ namespace Infusion.Tests.Commands
 
             public void WaitForAdditionalAction()
             {
-                additionalActionFinished.WaitOne(TimeSpan.FromSeconds(1));
+                additionalActionFinished.AssertWaitOneSuccess();
             }
         }
     }

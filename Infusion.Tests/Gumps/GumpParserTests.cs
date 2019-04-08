@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using System.Text.RegularExpressions;
 using FluentAssertions;
 using Infusion.Gumps;
 using Infusion.Packets;
@@ -347,7 +348,7 @@ namespace Infusion.Tests.Gumps
             parser.Parse(gump);
             string description = processor.GetDescription();
 
-            description.Should().Be(@"GumpPic: x = 13, y = 13, gumpId = 100
+            AssertNewLineInsensitive(description, @"GumpPic: x = 13, y = 13, gumpId = 100
 Text: x = 164, y = 13, hue = 955, Majitel:
 Text: x = 164, y = 35, hue = 955, Jooky
 Text: x = 164, y = 57, hue = 955, Tvuj status:
@@ -363,6 +364,14 @@ Button: x = 13, y = 196, isTrigger, pageId = 0, triggerId = 6
 Text: x = 50, y = 215, hue = 955, Otevrit banku
 Button: x = 13, y = 215, isTrigger, pageId = 0, triggerId = 9
 ");
+        }
+
+        private void AssertNewLineInsensitive(string actual, string expected)
+        {
+            actual = Regex.Replace(actual, @"\r\n?|\n", Environment.NewLine);
+            expected = Regex.Replace(expected, @"\r\n?|\n", Environment.NewLine);
+
+            actual.Should().Be(expected);
         }
     }
 }

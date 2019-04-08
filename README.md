@@ -1,5 +1,6 @@
 # Infusion
 
+[![Build status](https://ci.appveyor.com/api/projects/status/jm3n5ix4avbbv0up?svg=true)](https://ci.appveyor.com/project/JakubLinhart/infusion)
 [![Join the chat at Discord](https://img.shields.io/discord/522669579466440704.svg)](https://discord.gg/RYx8jzs)
 
 Infusion is an Ultima Online assistant similar to Injection. Infusion focuses on powerful and easy scripting features.

@@ -4,13 +4,16 @@ image: Visual Studio 2019 Preview
 configuration: Release
 platform: Any CPU
 clone_folder: c:\projects\infusion
+
 init:
-- git config --global core.autocrlf false
+- cmd: >-
+    git config --global core.autocrlf false
+
 before_build:
 - cmd: >-
     git submodule update --init --recursive
     nuget restore
-    
+
 build:
   project: Infusion.sln
   verbosity: minimal

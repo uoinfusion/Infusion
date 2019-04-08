@@ -17,12 +17,12 @@ test_script:
 - cmd: >-
     vstest.console /logger:Appveyor "c:\projects\infusion\Infusion.Desktop.Tests\bin\Release\net47\Infusion.Desktop.Tests.dll"
 
-    dotnet test "c:\projects\infusion\Infusion.Tests\Infusion.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+    dotnet test "c:\projects\infusion\Infusion.Tests\Infusion.Tests.csproj" -v=normal --configuration Release --no-build /property:Platform=AnyCPU
 
-    dotnet test "c:\projects\infusion\Infusion.Proxy.Tests\Infusion.Proxy.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+    dotnet test "c:\projects\infusion\Infusion.Proxy.Tests\Infusion.Proxy.Tests.csproj" -v=normal --configuration Release --no-build /property:Platform=AnyCPU
 
-    dotnet test "c:\projects\infusion\InjectionScript\src\InjectionScript.Tests\InjectionScript.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+    dotnet test "c:\projects\infusion\InjectionScript\src\InjectionScript.Tests\InjectionScript.Tests.csproj" -v=normal --configuration Release --no-build /property:Platform=AnyCPU
 
-    dotnet test "c:\projects\infusion\Infusion.Desktop.Tests\Infusion.Desktop.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+    dotnet test "c:\projects\infusion\Infusion.Desktop.Tests\Infusion.Desktop.Tests.csproj" -v=normal --configuration Release --no-build /property:Platform=AnyCPU
 
-    dotnet test "c:\projects\infusion\Infusion.LegacyApi.Tests\Infusion.LegacyApi.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+    dotnet test "c:\projects\infusion\Infusion.LegacyApi.Tests\Infusion.LegacyApi.Tests.csproj" -v=normal --configuration Release --no-build /property:Platform=AnyCPU

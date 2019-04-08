@@ -13,3 +13,16 @@ install:
     nuget restore
 build_script:
 - cmd: msbuild "c:\projects\infusion\Infusion.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:OtherDefineConstants=SLOW_MACHINE
+test_script:
+- cmd: >-
+    vstest.console /logger:Appveyor "c:\projects\infusion\Infusion.Desktop.Tests\bin\Release\net47\Infusion.Desktop.Tests.dll"
+
+    dotnet test "c:\projects\infusion\Infusion.Tests\Infusion.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+
+    dotnet test "c:\projects\infusion\Infusion.Proxy.Tests\Infusion.Proxy.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+
+    dotnet test "c:\projects\infusion\InjectionScript\src\InjectionScript.Tests\InjectionScript.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+
+    dotnet test "c:\projects\infusion\Infusion.Desktop.Tests\Infusion.Desktop.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU
+
+    dotnet test "c:\projects\infusion\Infusion.LegacyApi.Tests\Infusion.LegacyApi.Tests.csproj" --configuration Release --no-build /property:Platform=AnyCPU

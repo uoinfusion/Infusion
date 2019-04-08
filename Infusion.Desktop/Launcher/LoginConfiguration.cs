@@ -29,7 +29,7 @@ namespace Infusion.Desktop.Launcher
             if (string.IsNullOrEmpty(fileContent))
                 return $";Inserted by Infusion{Environment.NewLine}LoginServer={loginServer}";
 
-            var inputLines = fileContent.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            var inputLines = fileContent.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None);
             var outputLines = new List<string>(inputLines.Length + 2);
 
             bool containsInfusion = false;

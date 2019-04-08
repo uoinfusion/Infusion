@@ -31,6 +31,17 @@ LoginServer=new.server.com,33333");
         }
 
         [TestMethod]
+        public void Can_work_with_unix_eol()
+        {
+            var input = ";Inserted by Infusion\nLoginServer=server.com,2593";
+            var output = new LoginConfiguration(".").SetServerAddress(input, "new.server.com,33333");
+
+            AssertNewLineInsensitive(output, @";Inserted by Infusion
+LoginServer=new.server.com,33333");
+
+        }
+
+        [TestMethod]
         public void Can_replace_existing_infusion_LoginServer_When_file_with_any_comments()
         {
             var input = @"; Some existing comment

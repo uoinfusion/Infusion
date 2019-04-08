@@ -1,16 +1,15 @@
-version: 1.0.65-apha-{build}  
+version: 1.0.65-apha-{build}
 skip_tags: true
 image: Visual Studio 2019 Preview
 configuration: Release
 platform: Any CPU
 clone_folder: c:\projects\infusion
 init:
-- git config --global core.autocrlf true
-before_build:
+- cmd: git config --global core.autocrlf true
+install:
 - cmd: >-
     git submodule update --init --recursive
 
     nuget restore
-build:
-  project: Infusion.sln
-  verbosity: minimal
+build_script:
+- cmd: msbuild "c:\projects\infusion\Infusion.sln" /verbosity:minimal /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll" /p:OtherDefineConstants=SLOW_MACHINE

@@ -3,25 +3,36 @@
     <Target Name="Build" DependsOnTargets="Clean">
         <MSBuild Projects="..\Infusion.sln" Properties="Configuration=Release;Platform=Any CPU" />
 
-        <ItemGroup>
-            <LauncherFile Include="..\Infusion.Launcher\bin\release\Infusion.exe" />
-            <BinFiles Include="..\Infusion.Desktop\bin\release\net47\**\*.*" /> 
-        </ItemGroup>
         <PropertyGroup>
             <MSTestPath>$(VS160COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
         </PropertyGroup>
 
-        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\profiles;.\release\scripts;.\testresults" />
+        <MakeDir Directories=".\testresults" />
 
         <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Tests\bin\release\Infusion.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Tests.log&quot;" />
         <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Proxy.Tests\bin\release\Infusion.Proxy.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Proxy.Tests.log&quot;" />
         <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Desktop.Tests\bin\release\Infusion.Desktop.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Desktop.Tests.log&quot;" />
 
+        <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
+
+        <CallTarget Targets="PreparePackage" />
+    </Target>
+
+    <Target Name="PreparePackage">
+        <ItemGroup>
+            <LauncherFile Include="..\Infusion.Launcher\bin\release\Infusion.exe" />
+            <BinFiles Include="..\Infusion.Desktop\bin\release\net47\**\*.*" /> 
+        </ItemGroup>
+        <PropertyGroup>
+            <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
+        </PropertyGroup>
+
+        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\profiles;.\release\scripts;.\testresults" />
+
         <Copy SourceFiles="@(LauncherFile)" DestinationFolder=".\release\" />
         <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
 
-        <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
         <Exec Command="git checkout-index -a -f --prefix $(MSBuildProjectDirectory)\" WorkingDirectory="..\ExampleScripts" />
 
         <ItemGroup>

@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using Avalonia;
+using Avalonia.Logging.Serilog;
 
 namespace Infusion.Desktop
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial class App : System.Windows.Application
     {
+        private Avalonia.Application avaloniaApplication;
+        private CancellationTokenSource applicationClosedTokenSource = new CancellationTokenSource();
+
         protected override void OnStartup(StartupEventArgs e)
         {
             if (e.Args.Length == 2)
@@ -26,7 +32,26 @@ namespace Infusion.Desktop
 
             CommandLine.Handler.Handle(e.Args);
 
+            Task.Run(() =>
+            {
+                avaloniaApplication = AppBuilder.Configure<AvaloniaApp>()
+                    .UsePlatformDetect()
+                    .LogToDebug()
+                    .SetupWithoutStarting()
+                    .Instance;
+
+                avaloniaApplication.ExitMode = ExitMode.OnExplicitExit;
+                avaloniaApplication.Run(applicationClosedTokenSource.Token);
+            });
+
             base.OnStartup(e);
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            applicationClosedTokenSource.Cancel();
+
+            base.OnExit(e);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly InjectionRuntime runtime;
         private readonly Legacy api;
         private readonly IConsole console;
+        private readonly IInjectionWindow injectionWindow;
         private readonly DebuggerBridge debuggerBridge;
 
         public IDebuggerServer Debugger { get; }
@@ -45,9 +46,10 @@ namespace Infusion.LegacyApi.Injection
 
         public InjectionApi InjectionApi => runtime.Api;
 
-        internal InjectionHost(Legacy api, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource, IClilocSource clilocSource)
+        internal InjectionHost(Legacy api, IInjectionWindow injectionWindow, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource, IClilocSource clilocSource)
         {
             this.api = api;
+            this.injectionWindow = injectionWindow;
             this.console = console;
 
             var bridge = new InjectionApiBridge(api, this, console, packetRegistry, clilocSource);
@@ -65,6 +67,8 @@ namespace Infusion.LegacyApi.Injection
 
             api.Config.Register("injection.Objects", () => injectionObjects);
         }
+
+        public void OpenGui() => injectionWindow.Open(api, InjectionApi);
 
         public void LoadScript(string fileName)
         {

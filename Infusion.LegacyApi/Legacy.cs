@@ -63,16 +63,17 @@ namespace Infusion.LegacyApi
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
-            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry, IConfigBagRepository configRepository)
+            UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
+            IConfigBagRepository configRepository, IInjectionWindow injectionWindow)
             : this(logConfig, commandHandler, ultimaServer, ultimaClient, console, packetRegistry,
-                  new RealTimeSource(), new MulClilocSource(), configRepository)
+                  new RealTimeSource(), new MulClilocSource(), configRepository, injectionWindow)
         {
 
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
-            ITimeSource timeSource, IClilocSource clilocSource, IConfigBagRepository configRepository)
+            ITimeSource timeSource, IClilocSource clilocSource, IConfigBagRepository configRepository, IInjectionWindow injectionWindow)
         {
             this.console = console;
 
@@ -125,7 +126,7 @@ namespace Infusion.LegacyApi
             Phantoms = new Phantoms(Client, Server, packetRegistry);
 
             Config = new ConfigBag(configRepository);
-            Injection = new InjectionHost(this, console, packetRegistry, timeSource, clilocSource);
+            Injection = new InjectionHost(this, injectionWindow, console, packetRegistry, timeSource, clilocSource);
 
             serverObservers = new ServerObservers(ultimaServer, ultimaClient);
             playerObservers.LoginConfirmed += () =>

@@ -4,6 +4,7 @@ using Infusion.Commands;
 using Infusion.Config;
 using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
+using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
 using Infusion.Packets;
 using InjectionScript.Runtime;
@@ -42,7 +43,7 @@ namespace Infusion.LegacyApi
 
             var console = new NullConsole();
             Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry,
-                timeSource, ClilocSource, new MemoryConfigBagRepository());
+                timeSource, ClilocSource, new MemoryConfigBagRepository(), new NullInjectionWindow());
             UO.Initialize(Api);
             ServerApi = new TestServerApi(PacketReceivedFromServer, Api);
         }

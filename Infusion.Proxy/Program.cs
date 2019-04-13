@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Infusion.Commands;
 using Infusion.Config;
 using Infusion.Diagnostic;
+using Infusion.Injection.Avalonia;
 using Infusion.IO;
 using Infusion.IO.Encryption.Login;
 using Infusion.LegacyApi;
@@ -114,7 +115,8 @@ namespace Infusion.Proxy
             serverPacketHandler.RegisterFilter(RedirectConnectToGameServer);
             clientPacketHandler.Subscribe(PacketDefinitions.ExtendedLoginSeed, HandleExtendedLoginSeed);
 
-            LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console, packetRegistry, ConfigRepository);
+            LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console,
+                packetRegistry, ConfigRepository, new InjectionWindowHandler());
             UO.Initialize(LegacyApi);
 
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,

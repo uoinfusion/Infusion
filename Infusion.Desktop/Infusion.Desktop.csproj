@@ -12,6 +12,11 @@
     <ApplicationIcon>infusion.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Page Remove="AvaloniaApp.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.8.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.8.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
@@ -123,5 +128,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="infusion.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="AvaloniaApp.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+    <Compile Update="AvaloniaApp.xaml.cs">
+      <DependentUpon>AvaloniaApp.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

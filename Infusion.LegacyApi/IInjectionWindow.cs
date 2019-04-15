@@ -7,11 +7,11 @@ namespace Infusion.LegacyApi.Injection
 {
     public interface IInjectionWindow
     {
-        void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi);
+        void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi, InjectionHost host);
     }
 
     internal sealed class NullInjectionWindow : IInjectionWindow
     {
-        public void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi) { /*do nothing*/ }
+        public void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi, InjectionHost host) { /*do nothing*/ }
     }
 }

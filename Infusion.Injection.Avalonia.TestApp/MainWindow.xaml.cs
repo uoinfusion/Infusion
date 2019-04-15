@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Infusion.Injection.Avalonia.Scripts;
 using System.Threading.Tasks;
 
 namespace Infusion.Injection.Avalonia.TestApp
@@ -29,7 +30,7 @@ namespace Infusion.Injection.Avalonia.TestApp
             this.FindControl<Button>("AddObjectButton").Click += (sender, e) => AddObject();
             this.FindControl<Button>("RemoveObjectButton").Click += (sender, e) => RemoveObject();
 
-            injectionWindowHandler.Open(objectServices);
+            injectionWindowHandler.Open(objectServices, new TestScriptServices());
         }
 
         public TextBox ObjectName => this.FindControl<TextBox>("ObjectName");

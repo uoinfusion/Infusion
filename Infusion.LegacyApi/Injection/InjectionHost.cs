@@ -68,7 +68,7 @@ namespace Infusion.LegacyApi.Injection
             api.Config.Register("injection.Objects", () => injectionObjects);
         }
 
-        public void OpenGui() => injectionWindow.Open(runtime, InjectionApi.UO, api);
+        public void OpenGui() => injectionWindow.Open(runtime, InjectionApi.UO, api, this);
 
         public void LoadScript(string fileName)
         {
@@ -93,7 +93,6 @@ namespace Infusion.LegacyApi.Injection
 
             if (!error)
                 RegisterCommands();
-
         }
 
         public void ExecSubrutine(string subrutineName) => ExecCommand(subrutineName);

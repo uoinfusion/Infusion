@@ -1,0 +1,26 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Infusion.Injection.Avalonia.Scripts.ScriptsControl">
+  <UserControl.Styles>
+    <Style Selector="Button">
+      <Setter Property="Margin" Value="5 5 5 0" />
+      <Setter Property="Padding" Value="20 5 20 5" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel>
+    <TextBlock Margin="5 5 5 0">List of running functions:</TextBlock>
+    <ListBox MemberSelector="Name" Items="{Binding RunningScripts}" SelectedItem="{Binding SelectedRunningScript}"
+             SelectionMode="Single" Height="200" Margin="5 5 5 0" />
+    <Button Command="{Binding TerminateCommand}">Terminate</Button>
+    <Button Command="{Binding LoadCommand}">Load</Button>
+    <TextBlock Margin="5 5 0 0">Status:</TextBlock>
+    <Grid Margin="5 5 10 5" ColumnDefinitions="auto,*">
+      <Button Grid.Column="0" Command="{Binding RunCommand}">Run</Button>
+      <DropDown Grid.Column="1" Items="{Binding AvailableScripts}" MemberSelector="Name" SelectedItem="{Binding SelectedAvailableScript}"
+                Margin="5 5 0 0" />
+    </Grid>
+  </StackPanel>
+</UserControl>

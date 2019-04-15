@@ -1,0 +1,40 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Infusion.Injection.Avalonia.InjectionObjects.ObjectsControl">
+  <UserControl.Styles>
+    <Style Selector="Button">
+      <Setter Property="Margin" Value="5 5 0 0" />
+      <Setter Property="Padding" Value="20 5 20 5" />
+    </Style>
+  </UserControl.Styles>
+  <StackPanel>
+    <ListBox Items="{Binding Path=Objects}" SelectedItem="{Binding Path=SelectedObject}" SelectionMode="Single"
+             Height="200" Margin="10">
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <TextBlock Text="{Binding Name}" />
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <StackPanel Orientation="Horizontal" Margin="5">
+      <Button Command="{Binding UseCommand}">Use</Button>
+      <Button Command="{Binding WaitTargetCommand}">Wait Target</Button>
+      <Button Command="{Binding TargetCommand}">Target</Button>
+      <Button Command="{Binding ClickCommand}">Click</Button>
+    </StackPanel>
+    <Grid ColumnDefinitions="Auto,*" RowDefinitions="*,*"  Margin="10">
+      <TextBlock Grid.Column="0" Grid.Row="0" Margin="0 0 10 10">Name:</TextBlock>
+      <TextBox Grid.Column="1" Grid.Row="0" Margin="0 0 10 10" Text="{Binding SelectedObjectName}" IsEnabled="{Binding CanActOnItem}" />
+      <TextBlock Grid.Column="0" Grid.Row="1" Margin="0 0 10 10">Serial:</TextBlock>
+      <TextBox Grid.Column="1" Grid.Row="1" Margin="0 0 10 10" Text="{Binding SelectedObjectValue}" IsEnabled="{Binding CanActOnItem}" />
+    </Grid>
+    <StackPanel Orientation="Horizontal" Margin="5">
+      <Button Command="{Binding AddObjectCommand}">Add</Button>
+      <Button Command="{Binding AddObjectFromTargetCommand}">From Target</Button>
+      <Button Command="{Binding RemoveObjectCommand}">Delete</Button>
+    </StackPanel>
+  </StackPanel>
+</UserControl>

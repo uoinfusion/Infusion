@@ -68,7 +68,7 @@ namespace Infusion.LegacyApi.Injection
             api.Config.Register("injection.Objects", () => injectionObjects);
         }
 
-        public void OpenGui() => injectionWindow.Open(api, InjectionApi);
+        public void OpenGui() => injectionWindow.Open(runtime, InjectionApi.UO, api);
 
         public void LoadScript(string fileName)
         {

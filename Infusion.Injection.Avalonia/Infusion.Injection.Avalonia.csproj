@@ -6,10 +6,14 @@
 
   <ItemGroup>
     <None Remove="InjectionWindow.xaml" />
+    <None Remove="ObjectsControl.xaml" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="InjectionWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InjectionObjects\ObjectsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>
@@ -17,10 +21,17 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.8.0" />
     <PackageReference Include="Avalonia.Desktop" Version="0.8.0" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="InjectionObjects\ObjectsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
   </ItemGroup>
 
 </Project>

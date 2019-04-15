@@ -36,6 +36,7 @@ namespace Infusion.Desktop
             {
                 avaloniaApplication = AppBuilder.Configure<AvaloniaApp>()
                     .UsePlatformDetect()
+                    .UseReactiveUI()
                     .LogToDebug()
                     .SetupWithoutStarting()
                     .Instance;

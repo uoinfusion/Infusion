@@ -62,6 +62,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.EngineScripts", "I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Injection.Avalonia", "Infusion.Injection.Avalonia\Infusion.Injection.Avalonia.csproj", "{CB063EE7-E421-4502-B075-D1D4BED7CBA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Injection.Avalonia.TestApp", "Infusion.Injection.Avalonia.TestApp\Infusion.Injection.Avalonia.TestApp.csproj", "{CDD759B4-934F-4109-95A0-E05437DFBC9A}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		RoslynPad\src\RoslynPad.Editor.Shared\RoslynPad.Editor.Shared.projitems*{7fb0604b-44cd-4db1-99c5-e89ea6c20aec}*SharedItemsImports = 13
@@ -363,6 +365,18 @@ Global
 		{CB063EE7-E421-4502-B075-D1D4BED7CBA4}.Release|x64.Build.0 = Release|Any CPU
 		{CB063EE7-E421-4502-B075-D1D4BED7CBA4}.Release|x86.ActiveCfg = Release|Any CPU
 		{CB063EE7-E421-4502-B075-D1D4BED7CBA4}.Release|x86.Build.0 = Release|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Debug|x64.Build.0 = Debug|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Debug|x86.Build.0 = Debug|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x64.ActiveCfg = Release|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x64.Build.0 = Release|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x86.ActiveCfg = Release|Any CPU
+		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

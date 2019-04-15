@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using System;
 using Infusion.LegacyApi;
 using InjectionScript.Runtime;
+using Infusion.Injection.Avalonia.InjectionObjects;
 
 namespace Infusion.Injection.Avalonia
 {
@@ -13,7 +14,10 @@ namespace Infusion.Injection.Avalonia
         private static InjectionWindow injectionWindow;
         private static object injectionWindowLock = new object();
 
-        public static void Open(Legacy infusionApi, InjectionApi injectionApi)
+        public static void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi)
+            => Open(new InjectionObjectServices(runtime.Objects, injectionApi, infusionApi));
+
+        public static void Open(IInjectionObjectServices objectServices)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -25,18 +29,17 @@ namespace Infusion.Injection.Avalonia
                         injectionWindow.Show();
                     }
 
-                    injectionWindow.injectionApi = injectionApi;
-                    injectionWindow.infusionApi = infusionApi;
+                    injectionWindow.Objects.SetServices(objectServices);
                 }
             });
         }
 
-        private Legacy infusionApi;
-        private InjectionApi injectionApi;
+        public ObjectsControl Objects => this.FindControl<ObjectsControl>("Objects");
 
         public InjectionWindow()
         {
             this.InitializeComponent();
+
 #if DEBUG
             this.AttachDevTools();
 #endif

@@ -27,11 +27,16 @@ namespace Infusion.Injection.Avalonia.Scripts
 
         public ScriptsViewModel(Func<Task<string[]>> openFile)
         {
-            TerminateCommand = ReactiveCommand.Create(Terminate);
-            RunCommand = ReactiveCommand.Create(Run);
+            var canActOnRunningScript = this.WhenAnyValue(x => x.CanActOnRunningScript);
+            var canActOnAvailableScript = this.WhenAnyValue(x => x.CanActOnAvailableScript);
+
+            TerminateCommand = ReactiveCommand.Create(Terminate, canActOnRunningScript);
+            RunCommand = ReactiveCommand.Create(Run, canActOnAvailableScript);
             LoadCommand = ReactiveCommand.CreateFromTask(Load);
             this.openFile = openFile;
         }
+
+        private bool CanActOnRunningScript => SelectedRunningScript != null;
 
         private ObservableCollection<ScriptItem> runningScripts;
         public ObservableCollection<ScriptItem> RunningScripts
@@ -40,8 +45,11 @@ namespace Infusion.Injection.Avalonia.Scripts
             private set
             {
                 RaiseAndSetIfChanged(ref runningScripts, value);
+                RaisePropertyChanged(nameof(CanActOnRunningScript));
             }
         }
+
+        private bool CanActOnAvailableScript => SelectedAvailableScript != null;
 
         private ObservableCollection<ScriptItem> availableScripts;
         public ObservableCollection<ScriptItem> AvailableScripts
@@ -50,6 +58,7 @@ namespace Infusion.Injection.Avalonia.Scripts
             private set
             {
                 RaiseAndSetIfChanged(ref availableScripts, value);
+                RaisePropertyChanged(nameof(CanActOnAvailableScript));
             }
         }
 
@@ -62,6 +71,7 @@ namespace Infusion.Injection.Avalonia.Scripts
             set
             {
                 RaiseAndSetIfChanged(ref selectedRunningScript, value);
+                RaisePropertyChanged(nameof(CanActOnRunningScript));
             }
         }
 
@@ -76,15 +86,22 @@ namespace Infusion.Injection.Avalonia.Scripts
             set
             {
                 RaiseAndSetIfChanged(ref selectedAvailableScript, value);
+                RaisePropertyChanged(nameof(CanActOnAvailableScript));
             }
         }
+
+        private ObservableCollection<ScriptItem> GetObservableCommands(IEnumerable<string> commands)
+            => new ObservableCollection<ScriptItem>(commands.Select(x => new ScriptItem(x)));
 
         public void SetServices(IScriptServices scriptServices)
         {
             this.scriptServices = scriptServices;
 
-            RunningScripts = new ObservableCollection<ScriptItem>(scriptServices.RunningScripts.Select(x => new ScriptItem(x)));
-            AvailableScripts = new ObservableCollection<ScriptItem>(scriptServices.AvailableScripts.Select(x => new ScriptItem(x)));
+            RunningScripts = GetObservableCommands(scriptServices.RunningScripts);
+            AvailableScripts = GetObservableCommands(scriptServices.AvailableScripts);
+
+            this.scriptServices.RunningScriptsChanged += 
+                () => RunningScripts = GetObservableCommands(scriptServices.RunningScripts);
         }
 
         public ReactiveCommand<Unit, Unit> TerminateCommand { get; }

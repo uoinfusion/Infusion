@@ -9,6 +9,7 @@ namespace Infusion.Injection.Avalonia.TestApp
     public class MainWindow : Window
     {
         private TestInjectionObjectServices objectServices;
+        private TestScriptServices scriptServices;
 
         public MainWindow()
         {
@@ -30,7 +31,13 @@ namespace Infusion.Injection.Avalonia.TestApp
             this.FindControl<Button>("AddObjectButton").Click += (sender, e) => AddObject();
             this.FindControl<Button>("RemoveObjectButton").Click += (sender, e) => RemoveObject();
 
-            injectionWindowHandler.Open(objectServices, new TestScriptServices());
+            scriptServices = new TestScriptServices();
+            this.FindControl<Button>("AddRunning").Click += (sender, e) => AddRunning();
+            this.FindControl<Button>("AddAvailable").Click += (sender, e) => AddAvailable();
+            this.FindControl<Button>("RemoveRunning").Click += (sender, e) => RemoveRunning();
+            this.FindControl<Button>("RemoveAvailable").Click += (sender, e) => RemoveAvailable();
+
+            injectionWindowHandler.Open(objectServices, scriptServices);
         }
 
         public TextBox ObjectName => this.FindControl<TextBox>("ObjectName");
@@ -38,5 +45,10 @@ namespace Infusion.Injection.Avalonia.TestApp
 
         public void AddObject() => Task.Run(() => objectServices.Set(ObjectName.Text, int.Parse(ObjectId.Text)));
         public void RemoveObject() => Task.Run(() => objectServices.Remove(ObjectName.Text));
+
+        public void AddRunning() => Task.Run(() => scriptServices.AddRunning(this.FindControl<TextBox>("ScriptName").Text));
+        public void AddAvailable() => Task.Run(() => scriptServices.AddAvailable(this.FindControl<TextBox>("ScriptName").Text));
+        public void RemoveRunning() => Task.Run(() => scriptServices.RemoveRunning(this.FindControl<TextBox>("ScriptName").Text));
+        public void RemoveAvailable() => Task.Run(() => scriptServices.RemoveAvailable(this.FindControl<TextBox>("ScriptName").Text));
     }
 }

@@ -7,15 +7,41 @@ namespace Infusion.Injection.Avalonia.TestApp
 {
     public class TestScriptServices : IScriptServices
     {
-        public IEnumerable<string> RunningScripts { get; } = new[] { "Test", "Qwer" };
-        public IEnumerable<string> AvailableScripts { get; } = new[] { "Test", "Qwer", "not_running", "and", "something", "else" };
+        private List<string> runningScripts = new List<string>() { "Test", "Qwer" };
+        public IEnumerable<string> RunningScripts => runningScripts;
 
-        public event Action<string> ScriptStarted;
-        public event Action<string> ScriptTerminated;
+        private List<string> availableScripts = new List<string>() { "Test", "Qwer", "not_running", "and", "something", "else" };
+        public IEnumerable<string> AvailableScripts => availableScripts;
+
+        public event Action RunningScriptsChanged;
+        public event Action AvailableScriptsChanged;
 
         public void Load(string scriptFileName) { }
         public void Run(string name) { }
         public void Terminate(string name) { }
-    }
 
+        internal void AddRunning(string text)
+        {
+            runningScripts.Add(text);
+            AvailableScriptsChanged?.Invoke();
+        }
+
+        internal void AddAvailable(string text)
+        {
+            availableScripts.Add(text);
+            RunningScriptsChanged?.Invoke();
+        }
+
+        internal void RemoveRunning(string text)
+        {
+            runningScripts.Remove(text);
+            RunningScriptsChanged?.Invoke();
+        }
+
+        internal void RemoveAvailable(string text)
+        {
+            availableScripts.Remove(text);
+            AvailableScriptsChanged?.Invoke();
+        }
+    }
 }

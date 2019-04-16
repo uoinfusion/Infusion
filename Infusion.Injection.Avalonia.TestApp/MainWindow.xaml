@@ -14,5 +14,13 @@
       <Button Name="AddObjectButton">Add</Button>
       <Button Name="RemoveObjectButton">Remove</Button>
     </StackPanel>
+    <StackPanel Orientation="Horizontal">
+      <TextBlock>Script name:</TextBlock>
+      <TextBox Name="ScriptName" Width="100" />
+      <Button Name="AddRunning">Add running</Button>
+      <Button Name="AddAvailable">Add available</Button>
+      <Button Name="RemoveRunning">Remove running</Button>
+      <Button Name="RemoveAvailable">Remove available</Button>
+    </StackPanel>
   </StackPanel>
 </Window>

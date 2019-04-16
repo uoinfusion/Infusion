@@ -8,8 +8,8 @@ namespace Infusion.Injection.Avalonia.Scripts
         IEnumerable<string> AvailableScripts { get; }
         IEnumerable<string> RunningScripts { get; }
 
-        event Action<string> ScriptStarted;
-        event Action<string> ScriptTerminated;
+        event Action AvailableScriptsChanged;
+        event Action RunningScriptsChanged;
 
         void Run(string name);
         void Terminate(string name);

@@ -7,11 +7,14 @@ using InjectionScript.Debugging;
 using InjectionScript.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Infusion.LegacyApi.Injection
 {
     public sealed class InjectionHost
     {
+        private const string injectionCommandPrefix = "inj-";
+
         private readonly InjectionRuntime runtime;
         private readonly Legacy api;
         private readonly IConsole console;
@@ -46,6 +49,19 @@ namespace Infusion.LegacyApi.Injection
 
         public InjectionApi InjectionApi => runtime.Api;
 
+        public bool IsInjectionCommandName(string name) 
+            => name.IndexOf(injectionCommandPrefix, StringComparison.Ordinal) == 0;
+        private string ConvertInfusionCommandNameToInjection(string name) 
+            => name.Substring(injectionCommandPrefix.Length);
+
+        public IEnumerable<string> RunningCommands
+            => api.CommandHandler.RunningCommands
+                .Where(x => IsInjectionCommandName(x.Name))
+                .Select(x => ConvertInfusionCommandNameToInjection(x.Name));
+
+        public event Action RunningCommandsChanged;
+        public event Action ScriptLoaded;
+
         internal InjectionHost(Legacy api, IInjectionWindow injectionWindow, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource, IClilocSource clilocSource)
         {
             this.api = api;
@@ -66,6 +82,15 @@ namespace Infusion.LegacyApi.Injection
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
             api.Config.Register("injection.Objects", () => injectionObjects);
+
+            api.CommandHandler.RunningCommandAdded += (sender, e) => NotifyRunningCommandsChange(e.CommandName);
+            api.CommandHandler.RunningCommandRemoved+= (sender, e) => NotifyRunningCommandsChange(e.CommandName);
+        }
+
+        public void NotifyRunningCommandsChange(string name)
+        {
+            if (IsInjectionCommandName(name))
+                RunningCommandsChanged?.Invoke();
         }
 
         public void OpenGui() => injectionWindow.Open(runtime, InjectionApi.UO, api, this);
@@ -93,6 +118,9 @@ namespace Infusion.LegacyApi.Injection
 
             if (!error)
                 RegisterCommands();
+
+            injectionWindow.Open(runtime, InjectionApi.UO, api, this);
+            ScriptLoaded?.Invoke();
         }
 
         public void ExecSubrutine(string subrutineName) => ExecCommand(subrutineName);
@@ -146,7 +174,7 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
-        private string GetCommandName(SubrutineDefinition subrutine) => "inj-" + subrutine.Name;
+        private string GetCommandName(SubrutineDefinition subrutine) => injectionCommandPrefix + subrutine.Name;
 
         public void CallSubrutine(string subrutineName)
         {

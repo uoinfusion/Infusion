@@ -1,7 +1,9 @@
-﻿using Infusion.LegacyApi.Injection;
+﻿using Infusion.Commands;
+using Infusion.LegacyApi.Injection;
 using InjectionScript.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Infusion.Injection.Avalonia.Scripts
@@ -11,20 +13,29 @@ namespace Infusion.Injection.Avalonia.Scripts
         private readonly InjectionRuntime injectionRuntime;
         private readonly InjectionHost injectionHost;
 
+        public event Action AvailableScriptsChanged
+        {
+            add => injectionHost.ScriptLoaded += value;
+            remove => injectionHost.ScriptLoaded -= value;
+        }
+
+        public event Action RunningScriptsChanged
+        {
+            add => injectionHost.RunningCommandsChanged += value;
+            remove => injectionHost.RunningCommandsChanged -= value;
+        }
+
         public ScriptServices(InjectionRuntime injectionRuntime, InjectionHost injectionHost)
         {
             this.injectionRuntime = injectionRuntime;
             this.injectionHost = injectionHost;
         }
 
-        public IEnumerable<string> RunningScripts { get; } = new[] { "Test", "Qwer" };
-        public IEnumerable<string> AvailableScripts { get; } = new[] { "Test", "Qwer", "not_running", "and", "something", "else" };
-
-        public event Action<string> ScriptStarted;
-        public event Action<string> ScriptTerminated;
+        public IEnumerable<string> RunningScripts => injectionHost.RunningCommands;
+        public IEnumerable<string> AvailableScripts => injectionRuntime.Metadata.Subrutines.Select(x => x.Name);
 
         public void Load(string scriptFileName) => injectionRuntime.Load(scriptFileName);
-        public void Run(string name) => injectionRuntime.Exec(name);
+        public void Run(string name) => injectionHost.ExecSubrutine(name);
         public void Terminate(string name) => injectionRuntime.Api.UO.Terminate(name);
     }
 }

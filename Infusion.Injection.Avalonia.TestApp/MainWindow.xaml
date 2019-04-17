@@ -6,6 +6,9 @@
         x:Class="Infusion.Injection.Avalonia.TestApp.MainWindow"
         Title="Infusion.Injection.Avalonia.TestApp">
   <StackPanel>
+    <StackPanel>
+      <Button Name="OpenInjectionWindow">Open</Button>
+    </StackPanel>
     <StackPanel Orientation="Horizontal">
       <TextBlock>Object name:</TextBlock>
       <TextBox Name="ObjectName" Width="100" />

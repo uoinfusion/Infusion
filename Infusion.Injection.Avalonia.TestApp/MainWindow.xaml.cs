@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Infusion.Config;
 using Infusion.Injection.Avalonia.Scripts;
 using System.Threading.Tasks;
 
@@ -22,7 +23,10 @@ namespace Infusion.Injection.Avalonia.TestApp
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            var injectionWindowHandler = new InjectionWindowHandler();
+            injectionWindowHandler = new InjectionWindowHandler();
+
+            configBag = new ConfigBag(new MemoryConfigBagRepository());
+            this.FindControl<Button>("OpenInjectionWindow").Click += (sender, e) => OpenWindow();
 
             objectServices = new TestInjectionObjectServices();
             objectServices.Set("Initial Object", 0x0000DEAD);
@@ -37,11 +41,15 @@ namespace Infusion.Injection.Avalonia.TestApp
             this.FindControl<Button>("RemoveRunning").Click += (sender, e) => RemoveRunning();
             this.FindControl<Button>("RemoveAvailable").Click += (sender, e) => RemoveAvailable();
 
-            injectionWindowHandler.Open(objectServices, scriptServices);
+            OpenWindow();
         }
 
+        private void OpenWindow() => injectionWindowHandler.Open(objectServices, scriptServices, new InjectionWindowConfiguration(configBag));
         public TextBox ObjectName => this.FindControl<TextBox>("ObjectName");
         public TextBox ObjectId => this.FindControl<TextBox>("ObjectId");
+
+        public InjectionWindowHandler injectionWindowHandler { get; private set; }
+        public ConfigBag configBag { get; private set; }
 
         public void AddObject() => Task.Run(() => objectServices.Set(ObjectName.Text, int.Parse(ObjectId.Text)));
         public void RemoveObject() => Task.Run(() => objectServices.Remove(ObjectName.Text));

@@ -50,6 +50,13 @@ namespace Infusion.Desktop
 
         protected override void OnExit(ExitEventArgs e)
         {
+            foreach (var window in avaloniaApplication.Windows)
+            {
+                window.Close();
+            }
+
+            avaloniaApplication.MainWindow?.Close();
+
             applicationClosedTokenSource.Cancel();
 
             base.OnExit(e);

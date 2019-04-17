@@ -44,7 +44,7 @@ namespace Infusion.Injection.Avalonia.TestApp
             OpenWindow();
         }
 
-        private void OpenWindow() => injectionWindowHandler.Open(objectServices, scriptServices, new InjectionWindowConfiguration(configBag));
+        private void OpenWindow() => injectionWindowHandler.Open(objectServices, scriptServices, new InjectionConfiguration(configBag));
         public TextBox ObjectName => this.FindControl<TextBox>("ObjectName");
         public TextBox ObjectId => this.FindControl<TextBox>("ObjectId");
 

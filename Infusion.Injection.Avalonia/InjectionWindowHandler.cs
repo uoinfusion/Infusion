@@ -13,7 +13,7 @@ namespace Infusion.Injection.Avalonia
     {
         public void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi, InjectionHost host)
             => InjectionWindow.Open(runtime, injectionApi, infusionApi, host);
-        public void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, InjectionWindowConfiguration configuration)
+        public void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, InjectionConfiguration configuration)
             => InjectionWindow.Open(objectServices, scriptServices, configuration);
     }
 }

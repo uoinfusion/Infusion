@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:injobj="clr-namespace:Infusion.Injection.Avalonia.InjectionObjects;assembly=Infusion.Injection.Avalonia"
         xmlns:injscr="clr-namespace:Infusion.Injection.Avalonia.Scripts;assembly=Infusion.Injection.Avalonia"
+        xmlns:injmain="clr-namespace:Infusion.Injection.Avalonia.Main;assembly=Infusion.Injection.Avalonia"
         mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="450"
         Width="350" Height="450"
         CanResize="False"
@@ -12,7 +13,7 @@
         Title="Infusion - Injection">
   <TabControl>
     <TabItem Name="MainTab" Header="Main">
-      <TextBlock Name="Console" />
+      <injmain:MainControl Name="Main" />
     </TabItem>
     <TabItem Name="ScriptsTab" Header="Script">
       <injscr:ScriptsControl Name="Scripts" />

@@ -8,6 +8,8 @@ using InjectionScript.Runtime;
 using Infusion.Injection.Avalonia.InjectionObjects;
 using Infusion.Injection.Avalonia.Scripts;
 using Infusion.LegacyApi.Injection;
+using Infusion.Injection.Avalonia.Main;
+using ReactiveUI;
 
 namespace Infusion.Injection.Avalonia
 {
@@ -15,12 +17,12 @@ namespace Infusion.Injection.Avalonia
     {
         private static InjectionWindow injectionWindow;
         private static object injectionWindowLock = new object();
-        private readonly InjectionWindowConfiguration configuration;
+        private readonly InjectionConfiguration configuration;
 
         public static void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi, InjectionHost host)
-            => Open(new InjectionObjectServices(runtime.Objects, injectionApi, infusionApi), new ScriptServices(runtime, host), new InjectionWindowConfiguration(infusionApi.Config));
+            => Open(new InjectionObjectServices(runtime.Objects, injectionApi, infusionApi), new ScriptServices(runtime, host), new InjectionConfiguration(infusionApi.Config));
 
-        public static void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, InjectionWindowConfiguration configuration)
+        public static void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, InjectionConfiguration configuration)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -40,8 +42,9 @@ namespace Infusion.Injection.Avalonia
 
         public ObjectsControl Objects => this.FindControl<ObjectsControl>("Objects");
         public ScriptsControl Scripts => this.FindControl<ScriptsControl>("Scripts");
+        public MainControl Main => this.FindControl<MainControl>("Main");
 
-        public InjectionWindow(InjectionWindowConfiguration configuration)
+        public InjectionWindow(InjectionConfiguration configuration)
         { 
             this.configuration = configuration;
 
@@ -51,20 +54,23 @@ namespace Infusion.Injection.Avalonia
             this.AttachDevTools();
 #endif
 
-            this.Position = new PixelPoint(configuration.WindowX, configuration.WindowY);
+            this.Position = new PixelPoint(configuration.Window.X, configuration.Window.Y);
+            this.Topmost = configuration.Window.AlwaysOnTop;
+
             this.PositionChanged += (sender, e) =>
             {
-                this.configuration.WindowX = e.Point.X;
-                this.configuration.WindowY = e.Point.Y;
+                this.configuration.Window.X = e.Point.X;
+                this.configuration.Window.Y = e.Point.Y;
             };
-        }
 
-        private void InjectionWindow_PositionChanged(object sender, PixelPointEventArgs e) => throw new NotImplementedException();
+            Main.ViewModel = new MainViewModel(configuration);
+            Main.ViewModel.WhenAnyValue(x => x.AlwaysOnTop).Subscribe(alwaysOnTop => this.Topmost = alwaysOnTop);
+        }
 
         protected override bool HandleClosing()
         {
-            this.configuration.WindowX = Position.X;
-            this.configuration.WindowY = Position.Y;
+            this.configuration.Window.X = Position.X;
+            this.configuration.Window.Y = Position.Y;
 
             this.configuration.Save();
             return base.HandleClosing();

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <None Remove="InjectionWindow.xaml" />
+    <None Remove="Main\MainControl.xaml" />
     <None Remove="ObjectsControl.xaml" />
     <None Remove="Scripts\ScriptsControl.xaml" />
   </ItemGroup>
@@ -15,6 +16,9 @@
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="InjectionObjects\ObjectsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main\MainControl.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Scripts\ScriptsControl.xaml">

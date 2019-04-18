@@ -144,7 +144,7 @@ public static class Items
 
     public static bool DropFromBackPack(ItemSpec itemSpec, Location3D location, int amount)
     {
-        var potentialItems = UO.Items.Matching(itemSpec).InBackPack().ToArray();
+        var potentialItems = UO.Items.Matching(itemSpec).InBackPack(true).ToArray();
         
         int i = 0;
         int remainingAmount = amount;

@@ -137,6 +137,7 @@ public static class Specs
     public static readonly ItemSpec Wheat = 0x0C5A;
     public static readonly ItemSpec Bandage = 0x0E21;
     public static readonly ItemSpec BloodyBandage = 0x0E20;
+    public static readonly ItemSpec AnyBandage = new[] { Bandage, BloodyBandage };
 
     public static readonly ItemSpec FoldedCloth = 0x175D;
     public static readonly ItemSpec FoldedTowel = 0x0A6C;

@@ -17,7 +17,9 @@ namespace Infusion.Desktop.Profiles
             this.console = console;
         }
 
-        public T Get<T>(string name)
+        public T Get<T>(string name) => Get(name, default(T));
+
+        public T Get<T>(string name, T defaultValue)
         {
             var serializer = new JsonSerializer();
             serializer.Converters.Add(new ObjectIdConverter());
@@ -48,7 +50,7 @@ namespace Infusion.Desktop.Profiles
                 }
             }
 
-            return default(T);
+            return defaultValue;
         }
 
         public void Update(string name, object value) => profile.Options[name] = value;

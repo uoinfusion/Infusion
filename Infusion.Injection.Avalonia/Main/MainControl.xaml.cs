@@ -6,19 +6,14 @@ namespace Infusion.Injection.Avalonia.Main
 {
     public class MainControl : UserControl
     {
-        private MainViewModel viewModel;
-        public MainViewModel ViewModel
-        {
-            get => viewModel; set
-            {
-                viewModel = value;
-                DataContext = value;
-            }
-        }
+        public MainViewModel ViewModel { get; }
 
         public MainControl()
         {
             this.InitializeComponent();
+
+            ViewModel = new MainViewModel();
+            DataContext = ViewModel;
         }
 
         private void InitializeComponent()

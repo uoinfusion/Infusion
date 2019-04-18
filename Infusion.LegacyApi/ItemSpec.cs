@@ -18,6 +18,12 @@ namespace Infusion.LegacyApi
 
         internal ItemSpec(params ItemSpec[] childSpecs)
         {
+            for (int i = 0; i < childSpecs.Length; i++)
+            {
+                if (childSpecs[i] == null)
+                    throw new ArgumentException($"Subspec at index {0} is null.");
+            }
+
             Specificity = SpecSpecificity.CompositeSpecificity;
             this.childSpecs = childSpecs;
         }

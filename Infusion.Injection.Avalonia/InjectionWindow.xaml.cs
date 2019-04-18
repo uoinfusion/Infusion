@@ -20,9 +20,10 @@ namespace Infusion.Injection.Avalonia
         private readonly InjectionConfiguration configuration;
 
         public static void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi, InjectionHost host)
-            => Open(new InjectionObjectServices(runtime.Objects, injectionApi, infusionApi), new ScriptServices(runtime, host), new InjectionConfiguration(infusionApi.Config));
+            => Open(new InjectionObjectServices(runtime.Objects, injectionApi, infusionApi), new ScriptServices(runtime, host), new MainServices(infusionApi, host),
+                new InjectionConfiguration(infusionApi.Config, host.InjectionOptions));
 
-        public static void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, InjectionConfiguration configuration)
+        public static void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, IMainServices mainServices, InjectionConfiguration configuration)
         {
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -31,11 +32,13 @@ namespace Infusion.Injection.Avalonia
                     if (injectionWindow == null)
                     {
                         injectionWindow = new InjectionWindow(configuration);
-                        injectionWindow.Show();
                     }
 
                     injectionWindow.Objects.SetServices(objectServices);
                     injectionWindow.Scripts.SetServices(scriptServices);
+                    injectionWindow.Main.ViewModel.SetServices(injectionWindow.configuration, mainServices);
+
+                    injectionWindow.Show();
                 }
             });
         }
@@ -63,7 +66,6 @@ namespace Infusion.Injection.Avalonia
                 this.configuration.Window.Y = e.Point.Y;
             };
 
-            Main.ViewModel = new MainViewModel(configuration);
             Main.ViewModel.WhenAnyValue(x => x.AlwaysOnTop).Subscribe(alwaysOnTop => this.Topmost = alwaysOnTop);
         }
 

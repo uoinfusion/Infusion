@@ -1,4 +1,5 @@
 ﻿using Infusion.Injection.Avalonia.InjectionObjects;
+using Infusion.Injection.Avalonia.Main;
 using Infusion.Injection.Avalonia.Scripts;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Injection;
@@ -13,7 +14,7 @@ namespace Infusion.Injection.Avalonia
     {
         public void Open(InjectionRuntime runtime, InjectionApiUO injectionApi, Legacy infusionApi, InjectionHost host)
             => InjectionWindow.Open(runtime, injectionApi, infusionApi, host);
-        public void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, InjectionConfiguration configuration)
-            => InjectionWindow.Open(objectServices, scriptServices, configuration);
+        public void Open(IInjectionObjectServices objectServices, IScriptServices scriptServices, IMainServices mainServices, InjectionConfiguration configuration)
+            => InjectionWindow.Open(objectServices, scriptServices, mainServices, configuration);
     }
 }

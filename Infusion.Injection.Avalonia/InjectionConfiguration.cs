@@ -1,4 +1,5 @@
 ﻿using Infusion.Config;
+using InjectionScript.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,27 +10,23 @@ namespace Infusion.Injection.Avalonia
     {
         public int X { get; set; }
         public int Y { get; set; }
-        public bool AutoOpen { get; set; }
         public bool AlwaysOnTop { get; set; }
-    }
-
-    public class InjectionOptionsConfiguration
-    {
-        public bool Light { get; set; }
     }
 
     public class InjectionConfiguration
     {
         private readonly ConfigBag configBag;
         public InjectionWindowConfiguration Window { get; set; } = new InjectionWindowConfiguration();
-        public InjectionOptionsConfiguration Options { get; set; } = new InjectionOptionsConfiguration();
+        public InjectionOptions Options { get; set; }
 
-        public InjectionConfiguration(ConfigBag configBag)
+        public bool AutoOpen { get; set; }
+
+        public InjectionConfiguration(ConfigBag configBag, InjectionOptions options)
         {
             this.configBag = configBag;
+            this.Options = options;
 
             configBag.Register("injection.window", () => Window);
-            configBag.Register("injection.options", () => Options);
         }
 
         public void Save() => configBag.Save();

@@ -47,6 +47,17 @@ namespace Infusion.LegacyApi.Injection
             }
         }
 
+        public InjectionOptions InjectionOptions
+        {
+            get => runtime.Options;
+            set
+            {
+                value.CopyTo(runtime.Options);
+            }
+        }
+
+        public bool AutoOpenGui { get; set; }
+
         public InjectionApi InjectionApi => runtime.Api;
 
         public bool IsInjectionCommandName(string name) 
@@ -81,7 +92,9 @@ namespace Infusion.LegacyApi.Injection
 
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
-            api.Config.Register("injection.Objects", () => injectionObjects);
+            api.Config.Register("injection.objects", () => injectionObjects);
+            api.Config.Register("injection.options", () => InjectionOptions);
+            api.Config.Register("injection.autoOpen", () => AutoOpenGui, () => true);
 
             api.CommandHandler.RunningCommandAdded += (sender, e) => NotifyRunningCommandsChange(e.CommandName);
             api.CommandHandler.RunningCommandRemoved+= (sender, e) => NotifyRunningCommandsChange(e.CommandName);
@@ -119,8 +132,20 @@ namespace Infusion.LegacyApi.Injection
             if (!error)
                 RegisterCommands();
 
-            injectionWindow.Open(runtime, InjectionApi.UO, api, this);
+            ActivateInjectionOptions();
+
             ScriptLoaded?.Invoke();
+        }
+
+        private void ActivateInjectionOptions()
+        {
+            if (AutoOpenGui)
+                OpenGui();
+
+            if (InjectionOptions.Light)
+                api.ClientFilters.Light.Enable();
+            else
+                api.ClientFilters.Light.Disable();
         }
 
         public void ExecSubrutine(string subrutineName) => ExecCommand(subrutineName);

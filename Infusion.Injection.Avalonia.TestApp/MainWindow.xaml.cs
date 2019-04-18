@@ -3,14 +3,17 @@ using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Infusion.Config;
 using Infusion.Injection.Avalonia.Scripts;
+using InjectionScript.Runtime;
 using System.Threading.Tasks;
 
 namespace Infusion.Injection.Avalonia.TestApp
 {
     public class MainWindow : Window
     {
-        private TestInjectionObjectServices objectServices;
-        private TestScriptServices scriptServices;
+        private readonly InjectionConfiguration injectionConfiguration;
+        private readonly TestInjectionObjectServices objectServices;
+        private readonly TestScriptServices scriptServices;
+        private readonly TestMainServices mainServices;
 
         public MainWindow()
         {
@@ -18,11 +21,9 @@ namespace Infusion.Injection.Avalonia.TestApp
 #if DEBUG
             this.AttachDevTools();
 #endif
-        }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
+            mainServices = new TestMainServices();
+            injectionConfiguration = new InjectionConfiguration(configBag, new InjectionOptions());
             injectionWindowHandler = new InjectionWindowHandler();
 
             configBag = new ConfigBag(new MemoryConfigBagRepository());
@@ -44,7 +45,12 @@ namespace Infusion.Injection.Avalonia.TestApp
             OpenWindow();
         }
 
-        private void OpenWindow() => injectionWindowHandler.Open(objectServices, scriptServices, new InjectionConfiguration(configBag));
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
+        }
+
+        private void OpenWindow() => injectionWindowHandler.Open(objectServices, scriptServices, mainServices, injectionConfiguration);
         public TextBox ObjectName => this.FindControl<TextBox>("ObjectName");
         public TextBox ObjectId => this.FindControl<TextBox>("ObjectId");
 

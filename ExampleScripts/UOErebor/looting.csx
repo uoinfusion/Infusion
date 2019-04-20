@@ -41,7 +41,7 @@ public static class Looting
     public static ItemSpec DungeonLoot { get; set; } = new[]
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
-        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa, Specs.VanocniBanka
+        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa, Specs.VanocniBanka, Specs.VelikonocniVejce
     };
     
     public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };

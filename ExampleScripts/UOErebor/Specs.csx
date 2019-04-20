@@ -34,6 +34,7 @@ public static class Specs
     public static readonly ItemSpec MoneyDeposit = new[] { Pokladnicka, CashiersCheck, Mesec };
     
     public static readonly ItemSpec VanocniBanka = 0x186F;
+    public static readonly ItemSpec VelikonocniVejce = 0x1726;
 
     public static readonly ItemSpec Hatchet = new[] { 0x0F44, 0x0F43 };
     public static readonly ItemSpec CopperExecutionersAxe = new[] { 0x0F45, 0x0F46 };

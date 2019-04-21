@@ -21,7 +21,8 @@ public static class AlchemyMenu
     
     public static readonly CraftProduct RefreshLesser = new CraftProduct(Specs.RefreshLesserPotion, new[] { new CraftResource(Specs.BlackPearl, 1), new CraftResource(Specs.SpidersSilk, 1), new CraftResource(Specs.EmptyBottle, 1)}, "Refresh", "Lesser Refresh");
     public static readonly CraftProduct Refresh = new CraftProduct(Specs.RefreshPotion, new[] { new CraftResource(Specs.BlackPearl, 2), new CraftResource(Specs.SpidersSilk, 2), new CraftResource(Specs.EmptyBottle, 1)}, "Refresh", "Refresh");
-    
+    public static readonly CraftProduct RefreshGreater = new CraftProduct(Specs.RefreshGreaterPotion, new[] { new CraftResource(Specs.BlackPearl, 3), new CraftResource(Specs.SpidersSilk, 3), new CraftResource(Specs.EmptyBottle, 1)}, "Refresh", "Greater Refresh");
+
     public static readonly CraftProduct StrengthLesser = new CraftProduct(Specs.StrengthLesserPotion, new[] { new CraftResource(Specs.FertileDirt, 2), new CraftResource(Specs.Mandrake, 1), new CraftResource(Specs.WyrmsHeart, 1), new CraftResource(Specs.EmptyBottle, 1)}, "Strength", "Lesser Strength");
     public static readonly CraftProduct Strength = new CraftProduct(Specs.StrengthPotion, new[] { new CraftResource(Specs.FertileDirt, 3), new CraftResource(Specs.Mandrake, 2), new CraftResource(Specs.WyrmsHeart, 2), new CraftResource(Specs.EmptyBottle, 1)}, "Strength", "Strength");
     public static readonly CraftProduct StrengthGreater = new CraftProduct(Specs.StrengthGreaterPotion, new[] { new CraftResource(Specs.FertileDirt, 4), new CraftResource(Specs.Mandrake, 3), new CraftResource(Specs.WyrmsHeart, 3), new CraftResource(Specs.EmptyBottle, 1)}, "Strength", "Greater Strength");
@@ -62,6 +63,7 @@ UO.RegisterCommand("alchemy-heal", () => Alchemy.Produce(AlchemyMenu.Heal));
 
 UO.RegisterCommand("alchemy-refreshlesser", () => Alchemy.Produce(AlchemyMenu.RefreshLesser));
 UO.RegisterCommand("alchemy-refresh", () => Alchemy.Produce(AlchemyMenu.Refresh));
+UO.RegisterCommand("alchemy-refreshgreater", () => Alchemy.Produce(AlchemyMenu.RefreshGreater));
 
 UO.RegisterCommand("alchemy-strengthlesser", () => Alchemy.Produce(AlchemyMenu.StrengthLesser));
 UO.RegisterCommand("alchemy-strength", () => Alchemy.Produce(AlchemyMenu.Strength));

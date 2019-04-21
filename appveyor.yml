@@ -1,4 +1,4 @@
-version: 1.0.65-apha-{build}
+version: 1.0.66-apha-{build}
 skip_tags: true
 image: Visual Studio 2019 Preview
 configuration: Release

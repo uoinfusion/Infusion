@@ -43,7 +43,7 @@ namespace Infusion.LegacyApi
 
             var console = new NullConsole();
             Api = new Legacy(new LogConfiguration(), new CommandHandler(console), Server, Client, console, packetRegistry,
-                timeSource, ClilocSource, new MemoryConfigBagRepository(), new NullInjectionWindow());
+                timeSource, ClilocSource, new MemoryConfigBagRepository(), new NullInjectionWindow(), new NullSoundPlayer());
             UO.Initialize(Api);
             ServerApi = new TestServerApi(PacketReceivedFromServer, Api);
         }

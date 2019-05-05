@@ -86,12 +86,14 @@ namespace Infusion.Proxy
         }
 
         public static Legacy LegacyApi { get; private set; }
+        public static ISoundPlayer SoundPlayer { get; set; }
         private static PacketDefinitionRegistry packetRegistry;
         private static ProxyStartConfig proxyStartConfig;
 
-        public static void Initialize(CommandHandler commandHandler)
+        public static void Initialize(CommandHandler commandHandler, ISoundPlayer soundPlayer)
         {
             Program.commandHandler = commandHandler;
+            SoundPlayer = soundPlayer;
         }
 
         private static void PrintProxyLatency()
@@ -116,7 +118,7 @@ namespace Infusion.Proxy
             clientPacketHandler.Subscribe(PacketDefinitions.ExtendedLoginSeed, HandleExtendedLoginSeed);
 
             LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console,
-                packetRegistry, ConfigRepository, new InjectionWindowHandler());
+                packetRegistry, ConfigRepository, new InjectionWindowHandler(), SoundPlayer);
             UO.Initialize(LegacyApi);
 
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,

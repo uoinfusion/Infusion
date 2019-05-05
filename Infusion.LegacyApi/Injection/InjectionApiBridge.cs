@@ -29,7 +29,7 @@ namespace Infusion.LegacyApi.Injection
         private readonly Menus menus;
 
         public InjectionApiBridge(Legacy infusionApi, InjectionHost injectionHost, IConsole console,
-            PacketDefinitionRegistry packetRegistry, IClilocSource clilocSource)
+            PacketDefinitionRegistry packetRegistry, IClilocSource clilocSource, ISoundPlayer soundPlayer)
         {
             this.infusionApi = infusionApi;
             this.injectionHost = injectionHost;
@@ -42,7 +42,7 @@ namespace Infusion.LegacyApi.Injection
             this.targeting = new Targeting(infusionApi, injectionHost, infusionApi.Client, infusionApi.Targeting);
             this.grabbing = new Grabbing(infusionApi, injectionHost);
             this.morphing = new Morphing(infusionApi, packetRegistry);
-            this.wavPlayer = new WavPlayer(console);
+            this.wavPlayer = new WavPlayer(console, soundPlayer);
             this.gumps = new GumpSubrutines(infusionApi, infusionApi.GumpObservers, console);
             this.objectNameReceiver = new ObjectNameReceiver(infusionApi);
             this.walker = new Walker(infusionApi);

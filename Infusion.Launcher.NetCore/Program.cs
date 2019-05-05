@@ -25,7 +25,7 @@ namespace Infusion.Launcher.NetCore
         static void Main(string[] args)
         {
             var app = new CommandLineApplication();
-            Program.Initialize(commandHandler);
+            Program.Initialize(commandHandler, new NullSoundPlayer());
             if (app != null)
             {
                 app.Name = "Infusion Laucher NetCore";

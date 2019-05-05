@@ -73,7 +73,7 @@ namespace Infusion.Desktop
             Program.Console = infusionConsole;
             var commandHandler = new CommandHandler(Program.Console);
 
-            Program.Initialize(commandHandler);
+            Program.Initialize(commandHandler, new SoundPlayer());
 
             CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
             ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));

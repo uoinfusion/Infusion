@@ -73,13 +73,14 @@ namespace Infusion.LegacyApi.Injection
         public event Action RunningCommandsChanged;
         public event Action ScriptLoaded;
 
-        internal InjectionHost(Legacy api, IInjectionWindow injectionWindow, IConsole console, PacketDefinitionRegistry packetRegistry, ITimeSource timeSource, IClilocSource clilocSource)
+        internal InjectionHost(Legacy api, IInjectionWindow injectionWindow, IConsole console, PacketDefinitionRegistry packetRegistry,
+            ITimeSource timeSource, IClilocSource clilocSource, ISoundPlayer soundPlayer)
         {
             this.api = api;
             this.injectionWindow = injectionWindow;
             this.console = console;
 
-            var bridge = new InjectionApiBridge(api, this, console, packetRegistry, clilocSource);
+            var bridge = new InjectionApiBridge(api, this, console, packetRegistry, clilocSource, soundPlayer);
             var debuggerServer = new DebuggerServer(() => api.CancellationToken);
             debuggerServer.DebuggerBreakHit += (sender, e) => debuggerBridge.HandleBreakHit(e);
             runtime = new InjectionRuntime(bridge, debuggerServer, timeSource, () => api.CancellationToken.Value);

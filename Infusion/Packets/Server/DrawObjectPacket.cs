@@ -9,7 +9,6 @@ namespace Infusion.Packets.Server
         private Packet rawPacket;
         private ModelId type;
         private Location3D location;
-        private Color color;
 
         public ObjectId Id { get; private set; }
         public ModelId Type { get => type;

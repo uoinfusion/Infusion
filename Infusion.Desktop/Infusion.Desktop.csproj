@@ -11,6 +11,9 @@
   <PropertyGroup>
     <ApplicationIcon>infusion.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Page Remove="AvaloniaApp.xaml" />
   </ItemGroup>

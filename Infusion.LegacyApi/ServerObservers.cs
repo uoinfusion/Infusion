@@ -12,16 +12,36 @@ namespace Infusion.LegacyApi
     internal sealed class ServerObservers
     {
         private ServerListItem[] servers = Array.Empty<ServerListItem>();
+        private readonly PacketDefinitionRegistry packetRegistry;
+        private readonly UltimaServer server;
 
         public ServerListItem SelectedServer { get; private set; }
         public string SelectedCharacterName { get; private set; }
 
-        public ServerObservers(IServerPacketSubject server, IClientPacketSubject client)
+        public ServerObservers(UltimaServer server, IClientPacketSubject client, PacketDefinitionRegistry packetRegistry)
         {
             server.Subscribe(PacketDefinitions.ServerListing, HandleServerListing);
             server.Subscribe(PacketDefinitions.GameServerList, HandleGameServerList);
+            server.RegisterFilter(HandleRunUOProtocolExtension);
             client.Subscribe(PacketDefinitions.SelectServerRequest, HandleSelectServerRequest);
             client.Subscribe(PacketDefinitions.LoginCharacter, HandleSelectLoginCharacterRequest);
+            this.packetRegistry = packetRegistry;
+            this.server = server;
+        }
+
+        private Packet? HandleRunUOProtocolExtension(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.RunUOProtocolExtension.Id)
+            {
+                var packet = packetRegistry.Materialize<RunUOProtocolExtensionPacket>(rawPacket);
+                if (packet.Type == 0xFE)
+                {
+                    server.AnswerRazorNegitiation(0xFF);
+                    return null;
+                }
+            }
+
+            return rawPacket;
         }
 
         private void HandleSelectLoginCharacterRequest(LoginCharacterRequest packet)

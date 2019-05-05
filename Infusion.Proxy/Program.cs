@@ -43,7 +43,7 @@ namespace Infusion.Proxy
         private static readonly object serverStreamLock = new object();
         public static ILogger Diagnostic = NullLogger.Instance;
 
-        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(1000);
+        private static readonly RingBufferLogger packetRingBufferLogger = new RingBufferLogger(10000);
 
         private static IPEndPoint serverEndpoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593);
 

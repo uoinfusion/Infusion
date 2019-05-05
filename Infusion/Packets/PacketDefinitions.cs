@@ -756,8 +756,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition KrClientSeed = new PacketDefinition(0xEF,
             new StaticPacketLength(0x15), "KrClientSeed");
 
-        public static readonly PacketDefinition KrriosClientSpecial = new PacketDefinition(0xF0,
-            new VariablePacketLength(), "KrriosClientSpecial");
+        public static readonly PacketDefinition<RunUOProtocolExtensionPacket> RunUOProtocolExtension = new PacketDefinition<RunUOProtocolExtensionPacket>(0xF0,
+            new VariablePacketLength(), "RunUOProtocolExtension", () => new RunUOProtocolExtensionPacket());
 
         public static readonly PacketDefinition TimeSynchronizationRequest = new PacketDefinition(0xF1,
             new VariablePacketLength(), "TimeSynchronizationRequest");

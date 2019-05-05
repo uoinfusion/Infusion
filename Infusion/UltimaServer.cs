@@ -60,6 +60,12 @@ namespace Infusion
             Send(packet.RawPacket);
         }
 
+        internal void AnswerRazorNegitiation(byte responseCode)
+        {
+            var response = new RazorNegotiateResponse(responseCode);
+            Send(response.RawPacket);
+        }
+
         public void DoubleClick(ObjectId itemId)
         {
             var packet = new DoubleClickRequest(itemId);

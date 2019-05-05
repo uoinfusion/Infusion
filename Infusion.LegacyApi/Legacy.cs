@@ -128,7 +128,7 @@ namespace Infusion.LegacyApi
             Config = new ConfigBag(configRepository);
             Injection = new InjectionHost(this, injectionWindow, console, packetRegistry, timeSource, clilocSource);
 
-            serverObservers = new ServerObservers(ultimaServer, ultimaClient);
+            serverObservers = new ServerObservers(ultimaServer, ultimaClient, packetRegistry);
             playerObservers.LoginConfirmed += () =>
             {
                 IsLoginConfirmed = true;

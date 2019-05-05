@@ -124,6 +124,8 @@ namespace Infusion
                 packetHandler.Publish<ServerListingPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.GameServerList.Id)
                 packetHandler.Publish<GameServerListPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.RunUOProtocolExtension.Id)
+                packetHandler.Publish<RunUOProtocolExtensionPacket>(rawPacket);
 
             return rawPacket;
         }

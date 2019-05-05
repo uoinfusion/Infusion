@@ -279,7 +279,7 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.BookHeaderNew);
             registry.Register(PacketDefinitions.MegaCliloc);
             registry.Register(PacketDefinitions.GenericAosCommands);
-            registry.Register(PacketDefinitions.KrriosClientSpecial);
+            registry.Register(PacketDefinitions.RunUOProtocolExtension);
             registry.Register(PacketDefinitions.EditTileData);
             registry.Register(PacketDefinitions.SendElevation);
             registry.Register(PacketDefinitions.AllNamesPacket);

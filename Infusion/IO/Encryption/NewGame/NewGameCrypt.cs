@@ -4,7 +4,7 @@ namespace Infusion.IO.Encryption.NewGame
 {
     internal sealed class NewGameCrypt
     {
-        private static readonly byte[] sm_bData =
+        private byte[] sm_bData =
         {
             0x05, 0x92, 0x66, 0x23, 0x67, 0x14, 0xE3,
             0x62, 0xDC, 0x60, 0x8C, 0xD6, 0xFE, 0x7C, 0x25, 0x69
@@ -63,14 +63,11 @@ namespace Infusion.IO.Encryption.NewGame
 
             m_pos = 0;
             dwIndex = 0;
-        }
 
-        public void InitializeMD5()
-        {
             using (System.Security.Cryptography.MD5 md5 = new System.Security.Cryptography.MD5CryptoServiceProvider())
             {
                 var hash = md5.ComputeHash(m_subData3, 0, m_subData3.Length);
-                hash.CopyTo(sm_bData,0);
+                hash.CopyTo(sm_bData, 0);
             }
         }
 

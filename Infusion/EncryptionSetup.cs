@@ -7,7 +7,10 @@ namespace Infusion
         [Description("Autodetect")]
         Autodetect,
 
-        [Description("Unencrypted Client -> Encrypted Server")]
+        [Description("Add encryption to client")]
         EncryptedServer,
+
+        [Description("Remove encryption from client")]
+        EncryptedClient,
     }
 }

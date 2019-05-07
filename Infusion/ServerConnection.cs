@@ -14,6 +14,7 @@ namespace Infusion
         private readonly IDiagnosticPullStream diagnosticPullStream;
         private readonly IDiagnosticPushStream diagnosticPushStream;
         private readonly PacketDefinitionRegistry packetRegistry;
+        private readonly EncryptionSetup encryptionSetup;
         private readonly PullStreamToStreamAdapter preLoginStream;
 
         private HuffmanStream huffmanStream;
@@ -25,37 +26,38 @@ namespace Infusion
 
         public ServerConnection()
             : this(ServerConnectionStatus.PreLogin, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance,
-                  PacketDefinitionRegistryFactory.CreateClassicClient())
+                  PacketDefinitionRegistryFactory.CreateClassicClient(), EncryptionSetup.Autodetect)
         {
         }
 
         public ServerConnection(ServerConnectionStatus status)
             : this(status, NullDiagnosticPullStream.Instance, NullDiagnosticPushStream.Instance,
-                  PacketDefinitionRegistryFactory.CreateClassicClient())
+                  PacketDefinitionRegistryFactory.CreateClassicClient(), EncryptionSetup.Autodetect)
         {
         }
 
         public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
             IDiagnosticPushStream diagnosticPushStream)
-            : this(status, diagnosticPullStream, diagnosticPushStream, PacketDefinitionRegistryFactory.CreateClassicClient())
+            : this(status, diagnosticPullStream, diagnosticPushStream, PacketDefinitionRegistryFactory.CreateClassicClient(), EncryptionSetup.Autodetect)
         {
         }
 
         public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
             IDiagnosticPushStream diagnosticPushStream, byte[] newGameKey, uint loginSeed, LoginEncryptionKey loginKey)
-            : this(status, diagnosticPullStream, diagnosticPushStream, PacketDefinitionRegistryFactory.CreateClassicClient())
+            : this(status, diagnosticPullStream, diagnosticPushStream, PacketDefinitionRegistryFactory.CreateClassicClient(), EncryptionSetup.Autodetect)
         {
             InitNewGameEncryption(newGameKey);
             this.loginStream = new LoginPushStream(loginSeed, loginKey);
         }
 
         public ServerConnection(ServerConnectionStatus status, IDiagnosticPullStream diagnosticPullStream,
-            IDiagnosticPushStream diagnosticPushStream, PacketDefinitionRegistry packetRegistry)
+            IDiagnosticPushStream diagnosticPushStream, PacketDefinitionRegistry packetRegistry, EncryptionSetup encryptionSetup)
         {
             this.Status = status;
             this.diagnosticPullStream = diagnosticPullStream;
             this.diagnosticPushStream = diagnosticPushStream;
             this.packetRegistry = packetRegistry;
+            this.encryptionSetup = encryptionSetup;
             this.loginStream = new LoginPushStream();
 
             this.receiveNewGameStream = new ServerNewGamePullStream();
@@ -156,15 +158,21 @@ namespace Infusion
 
         internal void InitNewGameEncryption(byte[] key)
         {
-            receiveNewGameStream = new ServerNewGamePullStream(key);
-            sendNewGameStream = new ServerNewGamePushStream(key);
+            if (encryptionSetup != EncryptionSetup.EncryptedClient)
+            {
+                receiveNewGameStream = new ServerNewGamePullStream(key);
+                sendNewGameStream = new ServerNewGamePushStream(key);
 
-            huffmanStream = new HuffmanStream(new PullStreamToStreamAdapter(receiveNewGameStream));
+                huffmanStream = new HuffmanStream(new PullStreamToStreamAdapter(receiveNewGameStream));
+            }
         }
 
         internal void InitLoginEncryption(uint seed, LoginEncryptionKey key)
         {
-            loginStream = new LoginPushStream(seed, key);
+            if (encryptionSetup != EncryptionSetup.EncryptedClient)
+            {
+                loginStream = new LoginPushStream(seed, key);
+            }
         }
     }
 }

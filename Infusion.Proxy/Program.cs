@@ -180,7 +180,7 @@ namespace Infusion.Proxy
             serverDiagnosticPullStream = new ConsoleDiagnosticPullStream(packetLogger, "server -> proxy", packetRegistry);
 
             serverConnection = new ServerConnection(ServerConnectionStatus.Initial, serverDiagnosticPullStream,
-                serverDiagnosticPushStream, packetRegistry);
+                serverDiagnosticPushStream, packetRegistry, proxyStartConfig.Encryption);
             serverConnection.PacketReceived += ServerConnectionOnPacketReceived;
 
             clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,

@@ -122,6 +122,7 @@ namespace Infusion
             switch (encryption)
             {
                 case EncryptionSetup.Autodetect:
+                case EncryptionSetup.EncryptedClient:
                     if (result.Encryption != null)
                     {
                         requiresEncryption = true;

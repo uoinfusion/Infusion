@@ -8,7 +8,6 @@
         public ServerNewGamePullStream(byte[] cryptoKey)
         {
             var crypt = new NewGameCrypt(cryptoKey);
-            crypt.InitializeMD5();
             this.encrypt = crypt.Decrypt;
         }
     }

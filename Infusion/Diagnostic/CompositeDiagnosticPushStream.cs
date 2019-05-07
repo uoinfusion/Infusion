@@ -15,10 +15,6 @@ namespace Infusion.Diagnostic
 
         public void DumpPacket(Packet packet)
         {
-            foreach (var stream in diagnosticStreams)
-            {
-                stream.DumpPacket(packet);
-            }
         }
 
         public void Finish()
@@ -41,11 +37,19 @@ namespace Infusion.Diagnostic
         public void Write(byte[] buffer, int offset, int count)
         {
             BaseStream.Write(buffer, offset, count);
+            foreach (var stream in diagnosticStreams)
+            {
+                stream.Write(buffer, offset, count);
+            }
         }
 
         public void WriteByte(byte value)
         {
             BaseStream.WriteByte(value);
+            foreach (var stream in diagnosticStreams)
+            {
+                stream.WriteByte(value);
+            }
         }
 
         public void Flush()

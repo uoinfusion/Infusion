@@ -23,12 +23,10 @@ namespace Infusion.Diagnostic
 
         public void Write(byte[] buffer, int offset, int count)
         {
-            BaseStream.Write(buffer, offset, count);
         }
 
         public void WriteByte(byte value)
         {
-            BaseStream.WriteByte(value);
         }
 
         public void Flush()

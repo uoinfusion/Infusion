@@ -25,15 +25,12 @@ namespace Infusion.Diagnostic
         {
             formatter.Header();
 
-            BaseStream.Write(buffer, offset, count);
-
             for (var i = 0; i < count; i++)
                 formatter.AddByte(buffer[offset + i]);
         }
 
         public void WriteByte(byte value)
         {
-            BaseStream.WriteByte(value);
             formatter.AddByte(value);
         }
 

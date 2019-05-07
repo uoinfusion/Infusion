@@ -91,6 +91,7 @@ namespace Infusion.Diagnostic
 
             builder.Clear();
             needsNewLine = false;
+            requiresHeader = true;
 
             return result;
         }

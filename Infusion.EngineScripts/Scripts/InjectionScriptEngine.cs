@@ -23,7 +23,6 @@ namespace Infusion.EngineScripts
             this.injection = injection;
             this.scriptOutput = scriptOutput;
             this.fileWatcher.Changed += ScriptFileChanged;
-            scriptOutput.WriteLine(ConsoleLineType.Important, currentFileName);
             timer = new System.Timers.Timer(1000) { AutoReset = true };
             timer.Elapsed += (timerElapsedSender, timerElapsedArgs) =>
             {

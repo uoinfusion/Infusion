@@ -8,8 +8,23 @@ namespace Infusion.Injection.Avalonia
 {
     public class InjectionWindowConfiguration
     {
-        public int X { get; set; }
-        public int Y { get; set; }
+        private int x;
+        private int y;
+
+        public int X
+        {
+            get => x;
+            // x position of window should never be negative, but user can have already negative position in her/his profile
+            set => x = value >= 0 ? value : 0;
+        }
+
+        public int Y
+        {
+            get => y;
+            // y position of window should never be negative, but user can have already negative position in her/his profile
+            set => y = value >= 0 ? value : 0;
+        }
+
         public bool AlwaysOnTop { get; set; }
     }
 

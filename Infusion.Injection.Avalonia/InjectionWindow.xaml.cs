@@ -62,8 +62,13 @@ namespace Infusion.Injection.Avalonia
 
             this.PositionChanged += (sender, e) =>
             {
-                this.configuration.Window.X = e.Point.X;
-                this.configuration.Window.Y = e.Point.Y;
+                // When user minimizes Avalonia windows then PositionChanged event gets executed first even before changing WindowState property and
+                // position of the window is -32000, -32000.
+                if (this.Position.X >= 0 && this.Position.Y >= 0)
+                {
+                    this.configuration.Window.X = this.Position.X;
+                    this.configuration.Window.Y = this.Position.Y;
+                }
             };
 
             Main.ViewModel.WhenAnyValue(x => x.AlwaysOnTop).Subscribe(alwaysOnTop => this.Topmost = alwaysOnTop);

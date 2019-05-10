@@ -50,7 +50,8 @@ namespace Infusion.LegacyApi.Injection
             if (color >= 0)
                 foundItems = foundItems.OfColor((Color)color);
 
-            foundItems = foundItems.OfType((ModelId)type).ToArray();
+            if (type >= 0)
+                foundItems = foundItems.OfType((ModelId)type).ToArray();
 
             return foundItems;
         }

@@ -59,6 +59,21 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
+        public void Find_any_item_when_type_is_minus_1()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            injection.ServerApi.AddNewItemToBackpack(0xABC, 10, (Color)0x0100);
+            injection.ServerApi.AddNewItemToBackpack(0xDEF, 20, (Color)0x0200);
+            injection.ServerApi.AddNewItemToBackpack(0x123, 20, (Color)0x0200);
+
+            injection.InjectionHost.UO.FindType(-1);
+
+            injection.InjectionHost.UO.FindCount().Should().Be(3);
+
+        }
+
+        [TestMethod]
         public void Finds_any_color_when_color_is_minus_1()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));

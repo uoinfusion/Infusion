@@ -20,6 +20,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.8.0" />
     <PackageReference Include="Avalonia.Desktop" Version="0.8.0" />
+    <PackageReference Include="SkiaSharp" Version="1.68.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />

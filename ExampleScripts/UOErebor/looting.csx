@@ -322,11 +322,10 @@ public static class Looting
 
         foreach (var item in itemsOnGround)
         {
-            if (!Items.TryMoveItem(item, LootContainer))
-            {
-                UO.ClientPrint("Cannot pickup item, cancelling ground loot");
-                break;
-            }
+            UO.DragItem(item);
+            UO.Wait(10);
+            UO.DropItem(item, LootContainer);
+            UO.Wait(10);
         }
     }
 
@@ -384,11 +383,10 @@ public static class Looting
             if (isLootableFunc(itemToPickup))
             {
                 Trace.Log($"Looting {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
-                if (!Items.TryMoveItem(itemToPickup, LootContainer))
-                {
-                    UO.ClientPrint($"Cannot pickup an item {Specs.TranslateToName(itemToPickup)} ({itemToPickup.Amount})");
-                    return;
-                }
+                UO.DragItem(itemToPickup);
+                UO.Wait(10);
+                UO.DropItem(itemToPickup, LootContainer);
+                UO.Wait(10);
 
                 if (journal.Contains("Ne tak rychle!"))
                 {

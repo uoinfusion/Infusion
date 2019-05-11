@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Infusion.Packets;
 
 namespace Infusion.Gumps
@@ -196,7 +197,10 @@ namespace Infusion.Gumps
             }
 
             var parameterString = gump.Commands.Substring(startPosition, position - startPosition);
-            return int.Parse(parameterString, System.Globalization.NumberStyles.Integer);
+            if (!int.TryParse(parameterString, System.Globalization.NumberStyles.Integer, CultureInfo.InvariantCulture, out var result))
+                throw new GumpException($"Cannot parse int parameter at {startPosition} in {gump.Commands}");
+            else
+                return result;
         }
 
         private void SkipWhiteSpace()

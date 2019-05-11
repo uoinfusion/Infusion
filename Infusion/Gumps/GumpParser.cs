@@ -190,13 +190,13 @@ namespace Infusion.Gumps
 
             var startPosition = position;
 
-            while (char.IsDigit(gump.Commands[position]))
+            while (char.IsDigit(gump.Commands[position]) || gump.Commands[position] == '-')
             {
                 position++;
             }
 
             var parameterString = gump.Commands.Substring(startPosition, position - startPosition);
-            return int.Parse(parameterString);
+            return int.Parse(parameterString, System.Globalization.NumberStyles.Integer);
         }
 
         private void SkipWhiteSpace()

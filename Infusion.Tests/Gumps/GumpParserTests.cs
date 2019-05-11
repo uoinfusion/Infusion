@@ -205,6 +205,18 @@ namespace Infusion.Tests.Gumps
         }
 
         [TestMethod]
+        public void Can_parse_negative_int_parameter()
+        {
+            var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{ gumppic -16 285 10402 }", new string[] { });
+
+            parser.Parse(gump);
+            string description = processor.GetDescription();
+
+            description.Trim().Should().Be("GumpPic: x = -16, y = 285, gumpId = 10402");
+        }
+
+
+        [TestMethod]
         public void Can_parse_TilePicHue()
         {
             var gump = new Gump(new GumpTypeId(0), new GumpInstanceId(1), "{TilePicHue 14 45 6254 0}", new string[0]);

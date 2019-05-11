@@ -27,45 +27,45 @@ namespace Infusion.LegacyApi.Injection
         {
             var items = FindItems(type, color, containerId, -1, false);
 
-            return items.Sum(x => x.Amount);
+            return items.OfType<Item>().Sum(x => x.Amount);
         }
 
-        private IEnumerable<Item> FindItems(int type, int color, int container, int range, bool recursive)
+        private IEnumerable<GameObject> FindItems(int type, int color, int container, int range, bool recursive)
         {
-            IEnumerable<Item> foundItems = Array.Empty<Item>();
+            IEnumerable<GameObject> foundObjects = Array.Empty<GameObject>();
 
             if (container == 1)
             {
-                foundItems = UO.Items.Where(x => !ignoredIds.Contains(x.Id)).OnGround();
+                foundObjects = UO.GameObjects.Where(x => !ignoredIds.Contains(x.Id)).OnGround();
                 range = range >= 0 ? range : Distance;
                 if (range >= 0)
-                    foundItems = foundItems.MaxDistance((ushort)range);
-                foundItems = foundItems.OrderByDistance();
+                    foundObjects = foundObjects.MaxDistance((ushort)range);
+                foundObjects = foundObjects.OrderByDistance();
             }
             else if (container == -1)
-                foundItems = UO.Items.InBackPack(recursive);
+                foundObjects = UO.Items.InBackPack(recursive);
             else if (container > 1)
-                foundItems = UO.Items.InContainer((uint)container, recursive);
+                foundObjects = UO.Items.InContainer((uint)container, recursive);
 
             if (color >= 0)
-                foundItems = foundItems.OfColor((Color)color);
+                foundObjects = foundObjects.OfColor((Color)color);
 
             if (type >= 0)
-                foundItems = foundItems.OfType((ModelId)type).ToArray();
+                foundObjects = foundObjects.OfType((ModelId)type).ToArray();
 
-            return foundItems;
+            return foundObjects;
         }
 
 
         public int FindType(int type, int color, int container, int range, bool recursive)
         {
-            var foundItems = FindItems(type, color, container, range, recursive);
+            var foundObjects = FindItems(type, color, container, range, recursive);
 
-            if (foundItems.Any())
+            if (foundObjects.Any())
             {
-                count = foundItems.Count();
-                FindItem = (int)foundItems.First().Id.Value;
-                return (int)foundItems.First().Id.Value;
+                count = foundObjects.Count();
+                FindItem = (int)foundObjects.First().Id.Value;
+                return (int)foundObjects.First().Id.Value;
             }
             else
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Infusion.IO.Encryption.Login
 {
@@ -6,70 +7,6 @@ namespace Infusion.IO.Encryption.Login
     {
         private static readonly Version[] supportedVersions =
         {
-            new Version(7,0,74),
-            new Version(7,0,62),
-            new Version(7,0,61),
-            new Version(7,0,60),
-            new Version(7,0,59),
-            new Version(7,0,58),
-            new Version(7,0,57),
-            new Version(7,0,56),
-            new Version(7,0,55),
-            new Version(7,0,54),
-            new Version(7,0,53),
-            new Version(7,0,52),
-            new Version(7,0,51),
-            new Version(7,0,50),
-            new Version(7,0,49),
-            new Version(7,0,48),
-            new Version(7,0,47),
-            new Version(7,0,46),
-            new Version(7,0,45),
-            new Version(7,0,44),
-            new Version(7,0,43),
-            new Version(7,0,42),
-            new Version(7,0,41),
-            new Version(7,0,40),
-            new Version(7,0,39),
-            new Version(7,0,38),
-            new Version(7,0,37),
-            new Version(7,0,36),
-            new Version(7,0,35),
-            new Version(7,0,34),
-            new Version(7,0,33),
-            new Version(7,0,32),
-            new Version(7,0,31),
-            new Version(7,0,30),
-            new Version(7,0,29),
-            new Version(7,0,28),
-            new Version(7,0,27),
-            new Version(7,0,26),
-            new Version(7,0,25),
-            new Version(7,0,24),
-            new Version(7,0,23),
-            new Version(7,0,22),
-            new Version(7,0,21),
-            new Version(7,0,20),
-            new Version(7,0,19),
-            new Version(7,0,18),
-            new Version(7,0,17),
-            new Version(7,0,16),
-            new Version(7,0,15),
-            new Version(7,0,14),
-            new Version(7,0,13),
-            new Version(7,0,12),
-            new Version(7,0,11),
-            new Version(7,0,10),
-            new Version(7,0,9),
-            new Version(7,0,8),
-            new Version(7,0,7),
-            new Version(7,0,6),
-            new Version(7,0,5),
-            new Version(7,0,4),
-            new Version(7,0,3),
-            new Version(7,0,2),
-            new Version(7,0,1),
-            new Version(7,0,0),
             new Version(6,0,14),
             new Version(6,0,13),
             new Version(6,0,12),
@@ -131,25 +68,27 @@ namespace Infusion.IO.Encryption.Login
         private readonly byte[] rawBuffer = new byte[62];
         private readonly byte[] decryptedBuffer = new byte[62];
 
-        public LoginEncryptionDetectionResult Detect(uint seed, IPullStream inputStream)
+        public LoginEncryptionDetectionResult Detect(uint seed, IPullStream inputStream, Version defaultVersion)
         {
             var reader = new StreamPacketReader(new PullStreamToStreamAdapter(inputStream), rawBuffer);
             var length = 0;
+
             while (inputStream.DataAvailable && length < 62)
                 rawBuffer[length++] = reader.ReadByte();
 
             rawBuffer.CopyTo(decryptedBuffer, 0);
 
-            var i = -1;
+            var versionsToTest = GetVersionsToTest(defaultVersion).GetEnumerator();
+
             LoginEncryptionKey? currentKey = null;
             LoginCrypt loginCrypt = null;
             while (!IsGameServerPacket(decryptedBuffer))
             {
-                i++;
-                if (i >= supportedVersions.Length)
-                    throw new InvalidOperationException("Encryption not recognized.");
+                if (!versionsToTest.MoveNext())
+                    break;
+                var version = versionsToTest.Current;
 
-                currentKey = CalculateKey(supportedVersions[i]);
+                currentKey = CalculateKey(version);
                 loginCrypt = new LoginCrypt(seed, currentKey.Value);
                 loginCrypt.Decrypt(rawBuffer, decryptedBuffer, 62);
             }
@@ -158,6 +97,17 @@ namespace Infusion.IO.Encryption.Login
                 return new LoginEncryptionDetectionResult(decryptedBuffer, loginCrypt, currentKey.Value);
             else
                 return new LoginEncryptionDetectionResult(decryptedBuffer);
+        }
+
+        private IEnumerable<Version> GetVersionsToTest(Version defaultVersion)
+        {
+            if (defaultVersion != null)
+                yield return defaultVersion;
+
+            foreach (var version in supportedVersions)
+            {
+                yield return version;
+            }
         }
 
         private LoginEncryptionKey CalculateKey(Version version)

@@ -25,6 +25,8 @@ namespace Infusion
         private int receivedPosition = 0;
         private bool requiresEncryption = false;
 
+        private Version encryptionVersion;
+
         public event Action<byte[]> NewGameEncryptionStarted;
         public event Action<uint, LoginEncryptionKey> LoginEncryptionStarted;
 
@@ -117,7 +119,7 @@ namespace Infusion
             if (!inputStream.DataAvailable)
                 return;
 
-            var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream);
+            var result = loginEncryptionDetector.Detect(this.loginSeed, inputStream, encryptionVersion);
 
             switch (encryption)
             {
@@ -204,6 +206,11 @@ namespace Infusion
                 receivedPosition = 0;
 
                 this.loginSeed = BitConverter.ToUInt32(receivedSeed.Skip(1).Take(4).Reverse().ToArray(), 0);
+
+                var reader = new ArrayPacketReader(receivedSeed);
+                reader.Skip(5);
+                encryptionVersion = new Version(reader.ReadInt(), reader.ReadInt(), reader.ReadInt(), reader.ReadInt());
+
                 if (requiresEncryption)
                 {
                     receiveNewGameStream = new ClientNewGamePullStream(receivedSeed);

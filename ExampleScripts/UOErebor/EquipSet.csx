@@ -29,12 +29,6 @@ public class EquipSet
             
             if (item != null)
             {
-                if (item.Layer.HasValue)
-                {
-                    UO.Log($"{Specs.TranslateToName(item)} already dressed up");
-                    return;
-                }
-
                 UO.Log($"Dressing up {Specs.TranslateToName(item)}");
                 ContainerId = item.ContainerId;
             }
@@ -44,14 +38,12 @@ public class EquipSet
             UO.DragItem(Id);
             UO.Wear(Id, Layer);
         }
-                
+        
         public void Undress(ObjectId defaultContainerId, bool forceDefault = false)
         {
             var item = UO.Items[Id];
             if (item == null)
                 UO.ClientPrint($"Cannot find {Id}");
-            if (!item.Layer.HasValue)
-                return;
                 
             var targetContainerId = (forceDefault) ? defaultContainerId : ContainerId ?? defaultContainerId;
                         
@@ -73,9 +65,11 @@ public class EquipSet
         = new Dictionary<string, EquipSet>();
 
     public StoredEquipment[] Equips { get; set;}
-       
+        
     public void Dress()
     {
+        UO.ClientPrint("Dressing up set");
+    
         foreach (var equip in Equips)
         {
             equip.Dress();
@@ -112,13 +106,15 @@ public class EquipSet
     
     public void Undress(uint defaultContainerId, bool forceDefault)
     {
+        UO.ClientPrint("Undressing set");
+        
         foreach (var equip in Equips)
         {
             equip.Undress(defaultContainerId, forceDefault);
         }
     }
-    
-    public static void CreateSet(string name)
+
+    public static void CreateFromDressedSet(string name)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -135,6 +131,34 @@ public class EquipSet
                 equipment.Add(new StoredEquipment(item.Id, layer));
         }
         
+        EquipmentSets[name] = new EquipSet()
+        {
+            Equips = equipment.ToArray(),
+        };
+        
+        UO.ClientPrint($"Set '{name}' created.");
+    }
+    
+    public static void Create(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+        {
+            UO.ClientPrint("Specify equip set name.");
+            return;
+        }
+    
+        var equipment = new List<StoredEquipment>();
+        while (true)
+        {
+            UO.ClientPrint("Select equip item, or esc when done.", UO.Me);
+            var target = UO.AskForItem();
+            if (target == null)
+                break;
+            
+            equipment.Add(new StoredEquipment(target.Id, Layer.Unknown));
+            UO.ClientPrint($"{Specs.TranslateToName(target)} added to equip set {name}");
+        }
+
         EquipmentSets[name] = new EquipSet()
         {
             Equips = equipment.ToArray(),
@@ -167,39 +191,20 @@ public class EquipSet
         if (equipSet == null)
             return;
         
-        UndressEquipSetAll();
-
         var closedContainerIds = equipSet.Equips
             .Where(x => x.HasContainer && UO.Items[x.Id] == null)
             .Select(x => x.ContainerId.Value)
             .Distinct();
         
-        UO.ClientPrint($"Dressing up set {name}");
-        
         equipSet.Dress();
     }
-
-    public static void UndressEquipSetAll()
-    {
-        foreach (var set in EquipmentSets.Values)
-        {
-            set.Undress();
-        }
-    }
-
+    
     public static void UndressEquipSet(string name)
     {
-        if (string.IsNullOrEmpty(name))
-        {
-            UndressEquipSetAll();
-            return;
-        }
-        
         var equipSet = GetEquipSet(name);
         if (equipSet == null)
             return;
         
-        UO.ClientPrint($"Undressing set {name}");
         equipSet.Undress();
     }
     
@@ -208,8 +213,7 @@ public class EquipSet
         var equipSet = GetEquipSet(name);
         if (equipSet == null)
             return;
-
-        UO.ClientPrint($"Undressing set {name}");        
+        
         equipSet.UndressTo();
     }
     
@@ -240,7 +244,8 @@ public class EquipSet
 }
 
 UO.Config.Register(() => EquipSet.EquipmentSets);
-UO.RegisterCommand("equip-create", EquipSet.CreateSet);
+UO.RegisterCommand("equip-create-dressed", EquipSet.CreateFromDressedSet);
+UO.RegisterCommand("equip-create", EquipSet.Create);
 UO.RegisterCommand("equip-dress", EquipSet.DressEquipSet);
 UO.RegisterCommand("equip-undress", EquipSet.UndressEquipSet);
 UO.RegisterCommand("equip-undress-to", EquipSet.UndressEquipSetTo);

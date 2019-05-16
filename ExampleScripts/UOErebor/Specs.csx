@@ -674,6 +674,9 @@ public static class Specs
                 return spec.Key;
         }
 
+        if (!string.IsNullOrEmpty(item.Name))
+            return item.Name;
+
         return item.Type.ToString();
     }
 
@@ -684,6 +687,9 @@ public static class Specs
             if (spec.Value.Matches(mobile))
                 return spec.Key;
         }
+        
+        if (!string.IsNullOrEmpty(mobile.Name))
+            return mobile.Name;
 
         return mobile.Type.ToString();
     }
@@ -695,6 +701,9 @@ public static class Specs
             if (spec.Value.Matches(corpse))
                 return spec.Key;
         }
+        
+        if (!string.IsNullOrEmpty(corpse.Name))
+            return corpse.Name;
 
         return corpse.Type.ToString();
     }

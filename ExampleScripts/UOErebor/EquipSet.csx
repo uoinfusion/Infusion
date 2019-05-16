@@ -34,7 +34,7 @@ public class EquipSet
             }
             else
                 UO.Log($"Dressing up {Id}");
-
+                
             UO.DragItem(Id);
             UO.Wear(Id, Layer);
         }
@@ -68,6 +68,12 @@ public class EquipSet
         
     public void Dress()
     {
+        if (Equips.All(x => UO.Items[x.Id] == null))
+        {
+            UO.ClientPrint("Cannot see any item in the equip set.");
+            return;
+        }
+    
         UO.ClientPrint("Dressing up set");
     
         foreach (var equip in Equips)
@@ -79,6 +85,12 @@ public class EquipSet
     
     public void UndressTo()
     {
+        if (Equips.All(x => UO.Items[x.Id] == null))
+        {
+            UO.ClientPrint("Cannot see any item in the equip set.");
+            return;
+        }
+
         var containerId = Common.AskForContainer("Select container to store equipment")?.Id;
         
         if (!containerId.HasValue)
@@ -92,6 +104,12 @@ public class EquipSet
     
     public void Undress()
     {
+        if (Equips.All(x => UO.Items[x.Id] == null))
+        {
+            UO.ClientPrint("Cannot see any item in the equip set.");
+            return;
+        }
+
         var equipWithContainer = Equips.Where(x => x.HasContainer).FirstOrDefault();
         var defaultContainerId = equipWithContainer?.ContainerId;
         
@@ -190,12 +208,12 @@ public class EquipSet
         var equipSet = GetEquipSet(name);
         if (equipSet == null)
             return;
-        
+
         var closedContainerIds = equipSet.Equips
             .Where(x => x.HasContainer && UO.Items[x.Id] == null)
             .Select(x => x.ContainerId.Value)
             .Distinct();
-        
+            
         equipSet.Dress();
     }
     

@@ -189,8 +189,6 @@ namespace Infusion.LegacyApi.Injection
         public void SetJournalLine(int index) => journal.SetJournalLine(index, null);
         public void SetJournalLine(int index, string text) => journal.SetJournalLine(index, text);
 
-        public void Arm(string name) => equipmentSubrutines.Arm(name);
-        public void SetArm(string name) => equipmentSubrutines.SetArm(name);
         public void Unequip(int layer) => equipmentSubrutines.Unequip(layer);
         public void Equip(int layer, int id) => equipmentSubrutines.Equip(layer, id);
         public int ObjAtLayer(int layer) => equipmentSubrutines.ObjAtLayer(layer);

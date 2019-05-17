@@ -5,12 +5,43 @@ using Infusion.Packets;
 using InjectionScript;
 using InjectionScript.Debugging;
 using InjectionScript.Runtime;
+using InjectionScript.Runtime.State;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Infusion.LegacyApi.Injection
 {
+    internal class InjectionStateWrapper<T>
+    {
+        private readonly RuntimeDictionary<T> dictionary;
+
+        public InjectionStateWrapper(RuntimeDictionary<T> dictionary)
+        {
+            this.dictionary = dictionary;
+        }
+
+        public Dictionary<string, T> Get()
+        {
+            var result = new Dictionary<string, T>();
+            foreach (var pair in dictionary)
+            {
+                result.Add(pair.Key, pair.Value);
+            }
+
+            return result;
+        }
+
+        public void Set(Dictionary<string, T> value)
+        {
+            dictionary.Clear();
+            foreach (var pair in value)
+            {
+                dictionary.Set(pair.Key, pair.Value);
+            }
+        }
+    }
+
     public sealed class InjectionHost
     {
         private const string injectionCommandPrefix = "inj-";
@@ -24,28 +55,20 @@ namespace Infusion.LegacyApi.Injection
         public IDebuggerServer Debugger { get; }
         public ITracer Tracer { get; }
 
+        private InjectionStateWrapper<int> objectsWrapper;
         private Dictionary<string, int> injectionObjects
         {
-            get
-            {
-                var objects = new Dictionary<string, int>();
-                foreach (var pair in runtime.Objects)
-                {
-                    objects.Add(pair.Key, pair.Value);
-                }
-
-                return objects;
-            }
-
-            set
-            {
-                runtime.Objects.Clear();
-                foreach (var pair in value)
-                {
-                    runtime.Objects.Set(pair.Key, pair.Value);
-                }
-            }
+            get => objectsWrapper.Get();
+            set => objectsWrapper.Set(value);
         }
+
+        private InjectionStateWrapper<EquipSet> armSetsWrapper;
+        private Dictionary<string, EquipSet> injectionArmSets
+        {
+            get => armSetsWrapper.Get();
+            set => armSetsWrapper.Set(value);
+        }
+
 
         public InjectionOptions InjectionOptions
         {
@@ -93,7 +116,12 @@ namespace Infusion.LegacyApi.Injection
 
             api.CommandHandler.RegisterCommand(new Command("exec", ExecCommand, false, true, executionMode: CommandExecutionMode.AlwaysParallel));
 
+            objectsWrapper = new InjectionStateWrapper<int>(runtime.Objects);
             api.Config.Register("injection.objects", () => injectionObjects);
+
+            armSetsWrapper = new InjectionStateWrapper<EquipSet>(runtime.ArmSets);
+            api.Config.Register("injection.arms", () => injectionArmSets);
+
             api.Config.Register("injection.options", () => InjectionOptions);
             api.Config.Register("injection.autoOpen", () => AutoOpenGui, () => true);
 

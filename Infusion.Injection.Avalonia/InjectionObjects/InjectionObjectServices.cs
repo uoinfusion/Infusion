@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Objects = InjectionScript.Runtime.Objects;
+using Objects = InjectionScript.Runtime.State.Objects;
 
 namespace Infusion.Injection.Avalonia.InjectionObjects
 {

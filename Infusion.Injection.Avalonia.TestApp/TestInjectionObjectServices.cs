@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Infusion.Injection.Avalonia.InjectionObjects;
-using InjectionScript.Runtime;
+using InjectionScript.Runtime.State;
 
 namespace Infusion.Injection.Avalonia.TestApp
 {

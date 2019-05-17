@@ -87,6 +87,7 @@ namespace Infusion.LegacyApi.Injection
         }
 
         public bool AutoOpenGui { get; set; }
+        public int DressSpeed { get => runtime.State.DressSpeed; set => runtime.State.DressSpeed = value; }
 
         public InjectionApi InjectionApi => runtime.Api;
 
@@ -134,6 +135,7 @@ namespace Infusion.LegacyApi.Injection
 
             api.Config.Register("injection.options", () => InjectionOptions);
             api.Config.Register("injection.autoOpen", () => AutoOpenGui, () => true);
+            api.Config.Register("injection.dressSpeed", () => DressSpeed, () => 0);
 
             api.CommandHandler.RunningCommandAdded += (sender, e) => NotifyRunningCommandsChange(e.CommandName);
             api.CommandHandler.RunningCommandRemoved+= (sender, e) => NotifyRunningCommandsChange(e.CommandName);

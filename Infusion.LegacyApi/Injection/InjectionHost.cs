@@ -69,6 +69,13 @@ namespace Infusion.LegacyApi.Injection
             set => armSetsWrapper.Set(value);
         }
 
+        private InjectionStateWrapper<EquipSet> dressSetsWrapper;
+        private Dictionary<string, EquipSet> injectionDressSets
+        {
+            get => dressSetsWrapper.Get();
+            set => dressSetsWrapper.Set(value);
+        }
+
 
         public InjectionOptions InjectionOptions
         {
@@ -121,6 +128,9 @@ namespace Infusion.LegacyApi.Injection
 
             armSetsWrapper = new InjectionStateWrapper<EquipSet>(runtime.ArmSets);
             api.Config.Register("injection.arms", () => injectionArmSets);
+
+            dressSetsWrapper = new InjectionStateWrapper<EquipSet>(runtime.DressSets);
+            api.Config.Register("injection.dresses", () => injectionDressSets);
 
             api.Config.Register("injection.options", () => InjectionOptions);
             api.Config.Register("injection.autoOpen", () => AutoOpenGui, () => true);

@@ -196,17 +196,17 @@ namespace Infusion.Proxy
             diagnosticProvider.ServerConnection = serverConnection;
             bool serverLoopStarted = false;
 
-            lock (serverStreamLock)
-            {
-                ServerStream = ConnectToServer();
-            }
-
             try
             {
                 while (true)
                 {
                     var client = listener.AcceptTcpClient();
                     ClientStream = client.GetStream();
+
+                    lock (serverStreamLock)
+                    {
+                        ServerStream = ConnectToServer();
+                    }
 
                     if (!serverLoopStarted)
                     {

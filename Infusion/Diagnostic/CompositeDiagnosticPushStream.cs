@@ -15,6 +15,10 @@ namespace Infusion.Diagnostic
 
         public void DumpPacket(Packet packet)
         {
+            foreach (var stream in diagnosticStreams)
+            {
+                stream.DumpPacket(packet);
+            }
         }
 
         public void Finish()

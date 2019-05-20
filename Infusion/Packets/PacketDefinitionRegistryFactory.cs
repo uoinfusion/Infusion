@@ -284,7 +284,7 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.SendElevation);
             registry.Register(PacketDefinitions.AllNamesPacket);
             registry.Register(PacketDefinitions.UnknownF9);
-            registry.Register(PacketDefinitions.UnknownFA);
+            registry.Register(PacketDefinitions.UOStoreRequest);
             registry.Register(PacketDefinitions.UnknownFB);
             registry.Register(PacketDefinitions.CrossUOMessages);
             registry.Register(PacketDefinitions.UnknownFD);

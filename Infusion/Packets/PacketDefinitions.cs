@@ -794,8 +794,8 @@ namespace Infusion.Packets
 
         public static readonly PacketDefinition UnknownF9 = new PacketDefinition(0xF9,
             new VariablePacketLength(), "UnknownF9");
-        public static readonly PacketDefinition UnknownFA = new PacketDefinition(0xFA,
-            new VariablePacketLength(), "UnknownFA");
+        public static readonly PacketDefinition UOStoreRequest = new PacketDefinition(0xFA,
+            new StaticPacketLength(1), "UOStoreRequest");
         public static readonly PacketDefinition UnknownFB = new PacketDefinition(0xFB,
             new VariablePacketLength(), "UnknownFB");
 

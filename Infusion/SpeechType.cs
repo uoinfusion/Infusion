@@ -1,5 +1,8 @@
-﻿namespace Infusion
+﻿using System;
+
+namespace Infusion
 {
+    [Flags]
     public enum SpeechType : byte
     {
         Normal = 0x00,

@@ -46,7 +46,7 @@ namespace Infusion
             packetSender(rawPacket);
         }
 
-        public void Say(string message)
+        public void Say(string message, short[] keywords)
         {
             var packet = new SpeechRequest
             {
@@ -54,7 +54,8 @@ namespace Infusion
                 Text = message,
                 Font = 0x02b2,
                 Color = 0x0003,
-                Language = "ENU"
+                Language = "ENU",
+                Keywords = keywords
             };
 
             Send(packet.RawPacket);

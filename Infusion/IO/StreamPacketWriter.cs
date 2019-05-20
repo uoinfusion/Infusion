@@ -64,5 +64,11 @@ namespace Infusion.IO
                 WriteUShort(str[i]);
             }
         }
+
+        public void WriteNullTerminatedUnicodeString(string str)
+        {
+            WriteUnicodeString(str);
+            WriteUShort(0);
+        }
     }
 }

@@ -9,6 +9,7 @@ using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
 using Infusion.LegacyApi.Filters;
 using Infusion.LegacyApi.Injection;
+using Infusion.LegacyApi.Keywords;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Server;
@@ -22,6 +23,8 @@ namespace Infusion.LegacyApi
 
         private readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
+
+        private readonly KeywordParser keywordParser;
 
         private readonly GumpObservers gumpObservers;
         private readonly ItemsObservers itemsObserver;
@@ -66,14 +69,14 @@ namespace Infusion.LegacyApi
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
             IConfigBagRepository configRepository, IInjectionWindow injectionWindow, ISoundPlayer soundPlayer)
             : this(logConfig, commandHandler, ultimaServer, ultimaClient, console, packetRegistry,
-                  new RealTimeSource(), new MulClilocSource(), configRepository, injectionWindow, soundPlayer)
+                  new RealTimeSource(), new MulClilocSource(), new MulKeywordSource(), configRepository, injectionWindow, soundPlayer)
         {
 
         }
 
         internal Legacy(LogConfiguration logConfig, CommandHandler commandHandler,
             UltimaServer ultimaServer, UltimaClient ultimaClient, IConsole console, PacketDefinitionRegistry packetRegistry,
-            ITimeSource timeSource, IClilocSource clilocSource, IConfigBagRepository configRepository, IInjectionWindow injectionWindow,
+            ITimeSource timeSource, IClilocSource clilocSource, IKeywordSource keywordSource, IConfigBagRepository configRepository, IInjectionWindow injectionWindow,
             ISoundPlayer soundPlayer)
         {
             this.console = console;
@@ -128,6 +131,8 @@ namespace Infusion.LegacyApi
 
             Config = new ConfigBag(configRepository);
             Injection = new InjectionHost(this, injectionWindow, console, packetRegistry, timeSource, clilocSource, soundPlayer);
+
+            keywordParser = new KeywordParser(keywordSource);
 
             serverObservers = new ServerObservers(ultimaServer, ultimaClient, packetRegistry);
             playerObservers.LoginConfirmed += () =>
@@ -233,7 +238,8 @@ namespace Infusion.LegacyApi
             NotifyAction();
 
             this.console.Debug(message);
-            Server.Say(message);
+            var keywordIds = keywordParser.GetKeywordIds(message);
+            Server.Say(message, keywordIds);
         }
 
         public void NotifyAction()

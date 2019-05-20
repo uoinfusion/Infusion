@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Infusion.IO;
 
 namespace Infusion.Packets.Client
@@ -50,6 +51,8 @@ namespace Infusion.Packets.Client
 
         public string Language { get; set; }
 
+        public short[] Keywords { get; set; }
+
         public override Packet RawPacket
         {
             get
@@ -61,15 +64,55 @@ namespace Infusion.Packets.Client
 
                     var writer = new StreamPacketWriter(stream);
                     writer.WriteByte((byte)PacketDefinitions.SpeechRequest.Id);
-                    writer.WriteUShort((ushort)(14 + textLength * 2));
-                    writer.WriteByte((byte)Type);
+
+                    int keywordBytes = (int)Math.Ceiling((Keywords.Length + 1) * 1.5f);
+                    bool encoded = Keywords != null && Keywords.Length > 0;
+
+                    if (encoded)
+                    {
+                        writer.WriteUShort((ushort)(13 + textLength + keywordBytes));
+                        writer.WriteByte((byte)(Type | SpeechType.EncodedCommands));
+                    }
+                    else
+                    {
+                        writer.WriteUShort((ushort)(14 + textLength * 2));
+                        writer.WriteByte((byte)Type);
+                    }
+
                     writer.WriteUShort(Font);
                     writer.WriteUShort(Color);
                     writer.WriteNullTerminatedString(Language, 4);
-                    writer.WriteUnicodeString(text);
-                    writer.WriteByte(0x00);
-                    writer.WriteByte(0x00);
 
+                    if (encoded)
+                    {
+                        byte[] t = new byte[keywordBytes];
+                        t[0] = (byte)((Keywords.Length & 0x0FF0) >> 4);
+                        t[1] = (byte)((Keywords.Length & 0x000F) << 4);
+
+                        for (int i = 0; i < Keywords.Length; i++)
+                        {
+                            int index = (int)((i + 1) * 1.5f);
+
+                            if (i % 2 == 0)
+                            {
+                                t[index + 0] |= (byte)((Keywords[i] & 0x0F00) >> 8);
+                                t[index + 1] = (byte)(Keywords[i] & 0x00FF);
+                            }
+                            else
+                            {
+                                t[index] = (byte)((Keywords[i] & 0x0FF0) >> 4);
+                                t[index + 1] = (byte)((Keywords[i] & 0x000F) << 4);
+                            }
+                        }
+
+                        for (int i = 0; i < t.Length; i++)
+                            writer.WriteByte(t[i]);
+                        writer.WriteNullTerminatedString(text);
+                    }
+                    else
+                    {
+                        writer.WriteNullTerminatedUnicodeString(text);
+                    }
 
                     return new Packet(PacketDefinitions.SpeechRequest.Id, stream.ToArray());
                 }

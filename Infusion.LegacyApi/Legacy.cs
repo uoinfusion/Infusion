@@ -140,7 +140,11 @@ namespace Infusion.LegacyApi
                 IsLoginConfirmed = true;
                 LoginConfirmed?.Invoke();
             };
+
+            Chat = new Chat(ultimaServer);
         }
+
+        public Chat Chat { get; }
 
         public ConfigBag Config { get; }
 

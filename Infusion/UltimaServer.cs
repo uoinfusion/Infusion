@@ -195,5 +195,11 @@ namespace Infusion
             var packet = new ResponseToDialogBoxRequest(dialogId, menuId, responseIndex, responseType, responseColor);
             Send(packet.RawPacket);
         }
+
+        public void SendChatMessage(string message)
+        {
+            var packet = new SendChatMessageRequest(message, "ENU");
+            Send(packet.RawPacket);
+        }
     }
 }

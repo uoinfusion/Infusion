@@ -324,5 +324,6 @@ namespace Infusion.LegacyApi
         public static void ClearTargetObject() => Current.ClearTargetObject();
 
         public static ConfigBag Config => Current.Config;
+        public static Chat Chat => Current.Chat;
     }
 }

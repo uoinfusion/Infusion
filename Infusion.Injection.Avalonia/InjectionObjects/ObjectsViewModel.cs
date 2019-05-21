@@ -139,8 +139,11 @@ namespace Infusion.Injection.Avalonia.InjectionObjects
         private async Task AddObjectFromTarget()
         {
             var targetId = await objectServices.AskForTarget();
-            objectServices.Set(selectedObject.Name, targetId);
-            SelectedObjectValue = targetId.ToString("X8");
+            if (targetId != 0)
+            {
+                objectServices.Set(selectedObject.Name, targetId);
+                SelectedObjectValue = targetId.ToString("X8");
+            }
         }
 
         public ReactiveCommand<Unit, Unit> UseCommand { get; }

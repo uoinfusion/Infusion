@@ -34,6 +34,7 @@ namespace Infusion.Desktop
 
             Task.Run(() =>
             {
+                Thread.CurrentThread.Name = "Avalonia";
                 avaloniaApplication = AppBuilder.Configure<AvaloniaApp>()
                     .UsePlatformDetect()
                     .UseReactiveUI()

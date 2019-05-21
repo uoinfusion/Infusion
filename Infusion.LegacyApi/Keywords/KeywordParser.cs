@@ -31,7 +31,7 @@ namespace Infusion.LegacyApi.Keywords
             return list.Select(x => x.ID).ToArray();
         }
 
-        public bool IsMatch(string input, in SpeechEntry entry)
+        public bool IsMatch(string input, SpeechEntry entry)
         {
             string[] split = entry.Keywords;
 

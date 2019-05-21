@@ -34,7 +34,7 @@ namespace Infusion.Injection.Avalonia.Scripts
         public IEnumerable<string> RunningScripts => injectionHost.RunningCommands;
         public IEnumerable<string> AvailableScripts => injectionRuntime.Metadata.Subrutines.Select(x => x.Name);
 
-        public void Load(string scriptFileName) => injectionRuntime.Load(scriptFileName);
+        public void Load(string scriptFileName) => injectionHost.LoadScript(scriptFileName);
         public void Run(string name) => injectionHost.ExecSubrutine(name);
         public void Terminate(string name) => injectionRuntime.Api.UO.Terminate(name);
     }

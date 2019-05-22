@@ -15,7 +15,7 @@ namespace Infusion.LegacyApi.Keywords
             this.keywordSource = keywordSource;
         }
 
-        public short[] GetKeywordIds(string text)
+        public ushort[] GetKeywordIds(string text)
         {
             text = text.ToLower();
             var list = new List<SpeechEntry>();
@@ -28,7 +28,7 @@ namespace Infusion.LegacyApi.Keywords
 
             list.Sort();
 
-            return list.Select(x => x.ID).ToArray();
+            return list.Select(x => (ushort)x.ID).ToArray();
         }
 
         public bool IsMatch(string input, SpeechEntry entry)

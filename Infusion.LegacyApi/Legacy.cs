@@ -24,8 +24,6 @@ namespace Infusion.LegacyApi
         private readonly ThreadLocal<CancellationToken?> cancellationToken =
             new ThreadLocal<CancellationToken?>(() => null);
 
-        private readonly KeywordParser keywordParser;
-
         private readonly GumpObservers gumpObservers;
         private readonly ItemsObservers itemsObserver;
         private readonly JournalObservers journalObservers;
@@ -132,8 +130,6 @@ namespace Infusion.LegacyApi
             Config = new ConfigBag(configRepository);
             Injection = new InjectionHost(this, injectionWindow, console, packetRegistry, timeSource, clilocSource, soundPlayer);
 
-            keywordParser = new KeywordParser(keywordSource);
-
             serverObservers = new ServerObservers(ultimaServer, ultimaClient, packetRegistry);
             playerObservers.LoginConfirmed += () =>
             {
@@ -141,7 +137,7 @@ namespace Infusion.LegacyApi
                 LoginConfirmed?.Invoke();
             };
 
-            Chat = new Chat(ultimaServer);
+            Chat = new Chat(ultimaServer, NotifyAction, console, keywordSource);
         }
 
         public Chat Chat { get; }
@@ -237,14 +233,7 @@ namespace Infusion.LegacyApi
         public SpeechJournal CreateSpeechJournal() => new SpeechJournal(JournalSource, cancellation, () => DefaultTimeout, Trace.JournalTrace);
         public EventJournal CreateEventJournal() => new EventJournal(eventJournalSource, cancellation, () => DefaultTimeout);
 
-        public void Say(string message)
-        {
-            NotifyAction();
-
-            this.console.Debug(message);
-            var keywordIds = keywordParser.GetKeywordIds(message);
-            Server.Say(message, keywordIds);
-        }
+        public void Say(string message) => Chat.Say(message);
 
         public void NotifyAction()
         {

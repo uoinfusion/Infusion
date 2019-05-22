@@ -51,7 +51,7 @@ namespace Infusion.Packets.Client
 
         public string Language { get; set; }
 
-        public short[] Keywords { get; set; }
+        public ushort[] Keywords { get; set; }
 
         public override Packet RawPacket
         {
@@ -79,8 +79,8 @@ namespace Infusion.Packets.Client
                         writer.WriteByte((byte)Type);
                     }
 
-                    writer.WriteUShort(Font);
                     writer.WriteUShort(Color);
+                    writer.WriteUShort(Font);
                     writer.WriteNullTerminatedString(Language, 4);
 
                     if (encoded)

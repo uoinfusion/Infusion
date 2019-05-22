@@ -46,15 +46,15 @@ namespace Infusion
             packetSender(rawPacket);
         }
 
-        public void Say(string message, short[] keywords)
+        public void Say(string message, ushort[] keywords, SpeechType type, Color color, ushort font, string language)
         {
             var packet = new SpeechRequest
             {
-                Type = SpeechType.Normal,
+                Type = type,
                 Text = message,
-                Font = 0x02b2,
-                Color = 0x0003,
-                Language = "ENU",
+                Font = font,
+                Color = color,
+                Language = language,
                 Keywords = keywords
             };
 

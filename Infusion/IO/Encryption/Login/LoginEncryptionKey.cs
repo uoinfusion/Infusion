@@ -8,9 +8,19 @@ namespace Infusion.IO.Encryption.Login
         public uint Key2 { get; }
         public uint Key3 { get; }
 
-        public LoginEncryptionKey(uint key2, uint key3)
-            : this(key2 - 1, key2, key3)
+        public static LoginEncryptionKey Calculate(Version version)
+            => Calculate((uint)version.Major, (uint)version.Minor, (uint)version.Build);
+
+        private static LoginEncryptionKey Calculate(uint a, uint b, uint c)
         {
+            uint temp = ((a << 9 | b) << 10 | c) ^ ((c * c) << 5);
+            var key2 = (temp << 4) ^ (b * b) ^ (b * 0x0B000000) ^ (c * 0x380000) ^ 0x2C13A5FD;
+            temp = (((a << 9 | c) << 10 | b) * 8) ^ (c * c * 0x0c00);
+            var key3 = temp ^ (b * b) ^ (b * 0x6800000) ^ (c * 0x1c0000) ^ 0x0A31D527F;
+
+            var key1 = key2 - 1;
+
+            return new LoginEncryptionKey(key1, key2, key3);
         }
 
         public LoginEncryptionKey(uint key1, uint key2, uint key3)

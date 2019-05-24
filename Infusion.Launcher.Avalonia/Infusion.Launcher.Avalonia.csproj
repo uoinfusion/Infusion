@@ -1,0 +1,85 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+    <AvaloniaResource Include="**\*.xaml">
+      <SubType>Designer</SubType>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Remove="ClassicOptionsControl.xaml" />
+    <AvaloniaResource Remove="CrossOptionsControl.xaml" />
+    <AvaloniaResource Remove="OrionOptionsControl.xaml" />
+    <AvaloniaResource Remove="ProfileControl.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="ClassicOptionsControl.xaml" />
+    <None Remove="CrossOptionsControl.xaml" />
+    <None Remove="OrionOptionsControl.xaml" />
+    <None Remove="ProfileControl.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.8.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.8.0" />
+    <PackageReference Include="Microsoft.Extensions.CommandLineUtils" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Profile\ProfileControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Profile\Orion\OrionOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Profile\Cross\CrossOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Profile\Classic\ClassicOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Infusion.Avalonia.Common\Infusion.Avalonia.Common.csproj" />
+    <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>System</HintPath>
+    </Reference>
+    <Reference Include="System.Data">
+      <HintPath>System.Data</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <HintPath>System.Drawing</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
+      <HintPath>System.Xml</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Profile\Classic\ClassicOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Profile\Cross\CrossOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Profile\Orion\OrionOptionsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+    <None Update="Profile\ProfileControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </None>
+  </ItemGroup>
+</Project>

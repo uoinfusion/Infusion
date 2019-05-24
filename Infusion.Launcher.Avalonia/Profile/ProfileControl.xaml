@@ -1,0 +1,66 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:Infusion.Launcher.Avalonia.Profile;assembly=Infusion.Launcher.Avalonia"
+             xmlns:cross="clr-namespace:Infusion.Launcher.Avalonia.Profile.Cross;assembly=Infusion.Launcher.Avalonia"
+             xmlns:classic="clr-namespace:Infusion.Launcher.Avalonia.Profile.Classic;assembly=Infusion.Launcher.Avalonia"
+             xmlns:orion="clr-namespace:Infusion.Launcher.Avalonia.Profile.Orion;assembly=Infusion.Launcher.Avalonia"
+             xmlns:common="clr-namespace:Infusion.Avalonia.Common;assembly=Infusion.Avalonia.Common"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Infusion.Launcher.Avalonia.Profile.ProfileControl">
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="90" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <TextBlock Grid.Column="0" Grid.Row="0" Margin="0 10 0 0">Profile name:</TextBlock>
+      <TextBox Grid.Column="1" Grid.Row="0" Margin="0 5 0 5" Text="{Binding Name}" />
+
+      <TextBlock Grid.Column="0" Grid.Row="1" Margin="0 10 0 0">Client type:</TextBlock>
+      <ComboBox Grid.Column="1" Grid.Row="1" Margin="0 10 0 0" Padding="5 2 5 0"
+                Items="{x:Static local:UltimaClientTypes.Items}"
+                SelectedItem="{Binding ClientType, Converter={x:Static local:UltimaClientTypes.Converter}}" />
+
+      <TextBlock Grid.Column="0" Grid.Row="2" Margin="0 8 0 0">Server address:</TextBlock>
+      <TextBox Grid.Column="1" Grid.Row="2" Margin="0 5 0 0" Text="{Binding ServerAddress}" />
+      <TextBlock Grid.Column="0" Grid.Row="3" Margin="0 8 0 8">User name:</TextBlock>
+      <TextBox Grid.Column="1" Grid.Row="3" Margin="0 5 0 0" Text="{Binding UserName}" />
+      <TextBlock Grid.Column="0" Grid.Row="4" Margin="0 8 0 8">Password:</TextBlock>
+      <TextBox Grid.Column="1" Grid.Row="4" Margin="0 5 0 0" PasswordChar="{Binding PasswordChar}" Text="{Binding Password}" />
+
+      <TextBlock Grid.Column="0" Grid.Row="5" Margin="0 8 0 8">Show password:</TextBlock>
+      <CheckBox Grid.Column="1" Grid.Row="5" Margin="0 5 0 0" IsChecked="{Binding ShowPassword}" />
+
+      <TextBlock Grid.Column="0" Grid.Row="6" Margin="0 8 0 8">Initial Script:</TextBlock>
+      <common:FileControl Grid.Column="1" Grid.Row="6" Margin="0 5 0 0"
+                         Filter="{x:Static common:FileDialogFilters.Scripts}" DataContext="{Binding InitialScript}" />
+      <TextBlock Grid.Column="0" Grid.Row="7" Margin="0 8 0 8">Protocol:</TextBlock>
+      <ComboBox Grid.Column="1" Grid.Row="7"  Margin="0 5 0 0" MemberSelector="Label"
+                Items="{x:Static local:ProfileViewModel.ProtocolVersions}"
+                SelectedItem="{Binding SelectedProtocolVersion}" />
+    </Grid>
+
+    <Grid Grid.Row="1" Margin="0 5 0 0">
+      <cross:CrossOptionsControl DataContext="{Binding CrossOptions}" IsVisible="{Binding $parent.DataContext.CrossOptionsVisible}" />
+      <orion:OrionOptionsControl DataContext="{Binding OrionOptions}" IsVisible="{Binding $parent.DataContext.OrionOptionsVisible}" />
+      <classic:ClassicOptionsControl DataContext="{Binding ClassicOptions}" IsVisible="{Binding $parent.DataContext.ClassicOptionsVisible}" />
+    </Grid>
+  </Grid>
+</UserControl>

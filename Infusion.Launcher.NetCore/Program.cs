@@ -3,11 +3,11 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using Infusion.Commands;
-using Infusion.EngineScripts;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Proxy;
+using Infusion.Proxy.Scripts;
 using Microsoft.Extensions.CommandLineUtils;
 
 namespace Infusion.Launcher.NetCore
@@ -25,7 +25,7 @@ namespace Infusion.Launcher.NetCore
         static void Main(string[] args)
         {
             var app = new CommandLineApplication();
-            Program.Initialize(commandHandler, new NullSoundPlayer());
+            InfusionProxy.Initialize(commandHandler, new NullSoundPlayer());
             if (app != null)
             {
                 app.Name = "Infusion Laucher NetCore";
@@ -50,7 +50,7 @@ namespace Infusion.Launcher.NetCore
                 if (serverAdress.HasValue() && protocolVersion.HasValue())
                 {
                     string[] loginServer = serverAdress.Value().Split(",");
-                    Program.Start(new ProxyStartConfig()
+                    InfusionProxy.Start(new ProxyStartConfig()
                     {
                         ServerAddress = "127.0.0.1",
                         ServerEndPoint = new IPEndPoint(IPAddress.Parse(loginServer[0]), int.Parse(loginServer[1])),

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infusion.Desktop\Infusion.Desktop.csproj" />
+    <ProjectReference Include="..\Infusion.Console.Wpf\Infusion.Console.Wpf.csproj" />
     <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
     <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj" />
     <ProjectReference Include="..\Infusion\Infusion.csproj" />

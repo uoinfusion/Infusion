@@ -10,6 +10,6 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("Infusion.LegacyApi.Tests")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi.Benchmarks")]
-[assembly: InternalsVisibleTo("Infusion.Desktop")]
+[assembly: InternalsVisibleTo("Infusion.Console.Wpf")]
 [assembly: InternalsVisibleTo("Infusion.Injection.Avalonia")]
 [assembly: InternalsVisibleTo("Infusion.Proxy")]

@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InjectionScript", "Injectio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Launcher.NetCore", "Infusion.Launcher.NetCore\Infusion.Launcher.NetCore.csproj", "{EB3AFC2D-2EEC-4F6B-9F42-D869F855B1BD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Desktop", "Infusion.Desktop\Infusion.Desktop.csproj", "{CEB9DE65-59E5-4186-A11E-E797F86B97B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Console.Wpf", "Infusion.Console.Wpf\Infusion.Console.Wpf.csproj", "{CEB9DE65-59E5-4186-A11E-E797F86B97B1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoslynPad.Common", "RoslynPad\src\RoslynPad.Common\RoslynPad.Common.csproj", "{4C408C43-C59F-4BA4-B043-01CE099FDDD3}"
 EndProject
@@ -56,13 +56,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.LegacyApi.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.LegacyApi.Benchmarks", "Infusion.LegacyApi.Benchmarks\Infusion.LegacyApi.Benchmarks.csproj", "{FD8EE9E0-B281-4D9E-B75B-02BE67EB1F66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Launcher", "Infusion.Launcher\Infusion.Launcher.csproj", "{AA7C0911-5245-4B62-A72C-C854708A5FAB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.EngineScripts", "Infusion.EngineScripts\Infusion.EngineScripts.csproj", "{B1465226-3882-4D3A-9007-24377FAABAC4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.StartShortcut.Win", "Infusion.StartShortcut.Win\Infusion.StartShortcut.Win.csproj", "{AA7C0911-5245-4B62-A72C-C854708A5FAB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Injection.Avalonia", "Infusion.Injection.Avalonia\Infusion.Injection.Avalonia.csproj", "{CB063EE7-E421-4502-B075-D1D4BED7CBA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Injection.Avalonia.TestApp", "Infusion.Injection.Avalonia.TestApp\Infusion.Injection.Avalonia.TestApp.csproj", "{CDD759B4-934F-4109-95A0-E05437DFBC9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Injection.Avalonia.TestApp", "Infusion.Injection.Avalonia.TestApp\Infusion.Injection.Avalonia.TestApp.csproj", "{CDD759B4-934F-4109-95A0-E05437DFBC9A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Launcher.Avalonia", "Infusion.Launcher.Avalonia\Infusion.Launcher.Avalonia.csproj", "{775361D7-0545-4FEC-BDF0-604031FA94CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Avalonia.Common", "Infusion.Avalonia.Common\Infusion.Avalonia.Common.csproj", "{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -341,18 +343,6 @@ Global
 		{AA7C0911-5245-4B62-A72C-C854708A5FAB}.Release|x64.Build.0 = Release|Any CPU
 		{AA7C0911-5245-4B62-A72C-C854708A5FAB}.Release|x86.ActiveCfg = Release|Any CPU
 		{AA7C0911-5245-4B62-A72C-C854708A5FAB}.Release|x86.Build.0 = Release|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Debug|x64.Build.0 = Debug|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Debug|x86.Build.0 = Debug|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Release|x64.ActiveCfg = Release|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Release|x64.Build.0 = Release|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Release|x86.ActiveCfg = Release|Any CPU
-		{B1465226-3882-4D3A-9007-24377FAABAC4}.Release|x86.Build.0 = Release|Any CPU
 		{CB063EE7-E421-4502-B075-D1D4BED7CBA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CB063EE7-E421-4502-B075-D1D4BED7CBA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CB063EE7-E421-4502-B075-D1D4BED7CBA4}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -377,6 +367,30 @@ Global
 		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x64.Build.0 = Release|Any CPU
 		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x86.ActiveCfg = Release|Any CPU
 		{CDD759B4-934F-4109-95A0-E05437DFBC9A}.Release|x86.Build.0 = Release|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Debug|x64.Build.0 = Debug|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Debug|x86.Build.0 = Debug|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Release|x64.ActiveCfg = Release|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Release|x64.Build.0 = Release|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Release|x86.ActiveCfg = Release|Any CPU
+		{775361D7-0545-4FEC-BDF0-604031FA94CB}.Release|x86.Build.0 = Release|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Debug|x64.Build.0 = Debug|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Debug|x86.Build.0 = Debug|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Release|x64.ActiveCfg = Release|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Release|x64.Build.0 = Release|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Release|x86.ActiveCfg = Release|Any CPU
+		{16B6BDFD-263A-4B5E-AA6B-CBF0C227717B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

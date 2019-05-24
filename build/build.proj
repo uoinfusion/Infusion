@@ -21,8 +21,8 @@
 
     <Target Name="PreparePackage">
         <ItemGroup>
-            <LauncherFile Include="..\Infusion.Launcher\bin\release\Infusion.exe" />
-            <BinFiles Include="..\Infusion.Desktop\bin\release\net47\**\*.*" /> 
+            <LauncherFile Include="..\Infusion.StartShortcut.Win\bin\release\net47\Infusion.exe" />
+            <BinFiles Include="..\Infusion.Console.Wpf\bin\release\net47\**\*.*" /> 
         </ItemGroup>
         <PropertyGroup>
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>

@@ -245,4 +245,5 @@ ModelManifest.xml
 .fake/
 /ExampleScripts/UOErebor/Infusion.Scripts.UOErebor.Extensions.dll
 *.DS_Store
-/Infusion.Desktop/Properties/launchSettings.json
+/Infusion.Console.Wpf/Properties/launchSettings.json
+/Infusion.Injection.Avalonia/Properties

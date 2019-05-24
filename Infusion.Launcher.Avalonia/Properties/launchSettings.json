@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Infusion.Launcher.Avalonia": {
+      "commandName": "Project",
+      "commandLineArgs": "--rootPath c:\\Users\\jakub\\sources\\ultima\\Infusion\\"
+    }
+  }
+}

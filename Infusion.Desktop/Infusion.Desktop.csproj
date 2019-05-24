@@ -7,6 +7,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ExtrasEnableWpfProjectSetup>true</ExtrasEnableWpfProjectSetup>
+    <RuntimeIdentifiers>win;win7-x86</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>infusion.ico</ApplicationIcon>

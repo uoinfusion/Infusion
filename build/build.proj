@@ -10,9 +10,9 @@
 
         <MakeDir Directories=".\testresults" />
 
-        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Tests\bin\release\Infusion.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Tests.log&quot;" />
-        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Proxy.Tests\bin\release\Infusion.Proxy.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Proxy.Tests.log&quot;" />
-        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Desktop.Tests\bin\release\Infusion.Desktop.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Desktop.Tests.log&quot;" />
+        <Exec Command="dotnet test ..\Infusion.Tests" />
+        <Exec Command="dotnet test ..\Infusion.LegacyApi.Tests" />
+        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Desktop.Tests\bin\release\net47\Infusion.Desktop.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Desktop.Tests.log&quot;" />
 
         <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
 

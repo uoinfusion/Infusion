@@ -170,6 +170,8 @@ public static class Specs
     public static readonly ItemSpec MithrilOre = new ItemSpec(0x19B7, (Color)0x098B);
     public static readonly ItemSpec MithrilIngot = new ItemSpec(0x1BF2, (Color)0x098B);
     
+    public static readonly ItemSpec Uhli = new ItemSpec(0x0F2F, (Color)0x0388);
+    
     public static readonly ItemSpec Mramor = new ItemSpec(0x1363, (Color)0x0481);
 
     // Logs

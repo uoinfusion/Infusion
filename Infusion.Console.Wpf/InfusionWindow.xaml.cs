@@ -39,6 +39,7 @@ namespace Infusion.Desktop
             InitializeInfusion();
 
             infusionConsole.Important($"Infusion {VersionHelpers.ProductVersion}");
+            if (Path.IsPathRooted(PathUtilities.RootPath))
             infusionConsole.Info($"Infusion root path {PathUtilities.RootPath}");
 
             notifyIcon = new NotifyIcon();
@@ -128,7 +129,7 @@ namespace Infusion.Desktop
             UO.CommandHandler.RegisterCommand(new Command("console-show-nodebug", () => Dispatcher.Invoke(() => _console.ShowNoDebug()), false, true));
 
             var configRepository = new ProfileConfigRepository(profile, this.infusionConsole);
-            var launcherOptions = configRepository.Get<LauncherOptions>("launcher.avalonia");
+            var launcherOptions = configRepository.Get<LauncherOptions>("launcher");
             if (!string.IsNullOrEmpty(launcherOptions.InitialScriptFileName))
                 Load(launcherOptions.InitialScriptFileName);
 
@@ -258,13 +259,37 @@ namespace Infusion.Desktop
         private class Launcher : ILauncher
         {
             private readonly InfusionWindow window;
-
+            
             public Launcher(InfusionWindow window)
             {
                 this.window = window;
             }
 
-            public void Launch(LaunchProfile profile) => window.Initialize(profile);
+            public void Launch(LaunchProfile profile)
+            {
+                window.Dispatcher.BeginInvoke((Action)(async () =>
+                {
+                    try
+                    {
+                        var repository = new ProfileConfigRepository(profile, null);
+                        var options = repository.Get<LauncherOptions>("launcher");
+                        await Infusion.Proxy.Launcher.Launcher.Launch(options);
+                        window.Initialize(profile);
+                    }
+                    catch (AggregateException ex)
+                    {
+                        //HandleException(ex, originalTitle);
+                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        //HandleException(ex, originalTitle);
+                        return;
+                    }
+
+                    window.Initialize(profile);
+                }));
+            }
         }
     }
 }

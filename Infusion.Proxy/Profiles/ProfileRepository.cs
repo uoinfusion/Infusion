@@ -106,8 +106,8 @@ namespace Infusion.Desktop.Profiles
             var profile = jprofile.ToObject<LaunchProfile>();
             if (jprofile.TryGetValue("LauncherOptions", out var jLauncherOptions))
             {
-                if (!profile.Options.ContainsKey("launcher.avalonia"))
-                    profile.Options["launcher.avalonia"] = jLauncherOptions;
+                if (!profile.Options.ContainsKey("launcher"))
+                    profile.Options["launcher"] = jLauncherOptions;
             }
 
             if (jprofile.TryGetValue("ConsoleOptions", out var jConsoleOptions))

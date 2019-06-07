@@ -146,8 +146,8 @@ namespace Infusion.Desktop
 
         private void HandleLoginConfirmed()
         {
-            //var logPath = PathUtilities.GetAbsolutePath($"logs\\{Program.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{Program.LegacyApi.SelectedCharacterName}\\");
-            //Program.LogConfig.SetDefaultLogPath(logPath);
+            //var logPath = PathUtilities.GetAbsolutePath($"logs\\{InfusionProxy.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{InfusionProxy.LegacyApi.SelectedCharacterName}\\");
+            //InfusionProxy.LogConfig.SetDefaultLogPath(logPath);
         }
 
         public void Edit()
@@ -227,16 +227,7 @@ namespace Infusion.Desktop
                 launcherWindow.Activate();
                 launcherWindow.Focus();
                 launcherWindow.Topmost = false;
-                //var launcherWindow = new Infusion.Launcher
             });
-            //Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action) (() =>
-            //{
-            //    _console.Initialize();
-
-            //    var launcherWindow = new LauncherWindow(Initialize, infusionConsole);
-            //    launcherWindow.Show();
-            //    launcherWindow.Activate();
-            //}));
         }
 
         private void HandleClosing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -265,30 +256,25 @@ namespace Infusion.Desktop
                 this.window = window;
             }
 
-            public void Launch(LaunchProfile profile)
+            public async Task Launch(LaunchProfile profile)
             {
-                window.Dispatcher.BeginInvoke((Action)(async () =>
+                try
                 {
-                    try
-                    {
-                        var repository = new ProfileConfigRepository(profile, null);
-                        var options = repository.Get<LauncherOptions>("launcher");
-                        await Infusion.Proxy.Launcher.Launcher.Launch(options);
-                        window.Initialize(profile);
-                    }
-                    catch (AggregateException ex)
-                    {
-                        //HandleException(ex, originalTitle);
-                        return;
-                    }
-                    catch (Exception ex)
-                    {
-                        //HandleException(ex, originalTitle);
-                        return;
-                    }
-
-                    window.Initialize(profile);
-                }));
+                    var repository = new ProfileConfigRepository(profile, null);
+                    var options = repository.Get<LauncherOptions>("launcher");
+                    await Infusion.Proxy.Launcher.Launcher.Launch(options);
+                    await window.Dispatcher.BeginInvoke((Action)(() => window.Initialize(profile)));
+                }
+                catch (AggregateException ex)
+                {
+                    //HandleException(ex, originalTitle);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    //HandleException(ex, originalTitle);
+                    return;
+                }                
             }
         }
     }

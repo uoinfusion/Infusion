@@ -36,16 +36,22 @@ namespace Infusion.Launcher.Avalonia.Profile
         public ReactiveCommand<Unit, Unit> NewProfileCommand { get; private set; }
         public ReactiveCommand<Unit, Unit> DuplicateProfileCommand { get; private set; }
 
+        public event Action Launched;
+
         public ProfilesViewModel(ILauncher launcher)
         {
-            LaunchCommand = ReactiveCommand.Create(Launch);
+            LaunchCommand = ReactiveCommand.CreateFromTask(Launch);
             NewProfileCommand = ReactiveCommand.Create(NewProfile);
             DuplicateProfileCommand = ReactiveCommand.Create(DuplicateProfile);
             DeleteProfileCommand = ReactiveCommand.Create(DeleteProfile);
             this.launcher = launcher;
         }
 
-        public void Launch() => launcher.Launch(SelectedProfile.Profile);
+        public async Task Launch()
+        {
+            await launcher.Launch(SelectedProfile.Profile);
+            Launched?.Invoke();
+        }
 
         public void NewProfile()
         {

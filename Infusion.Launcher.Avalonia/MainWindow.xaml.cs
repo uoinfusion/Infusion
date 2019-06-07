@@ -17,6 +17,7 @@ namespace Infusion.Launcher.Avalonia
 #endif
 
             viewModel = new ProfilesViewModel(launcher);
+            viewModel.Launched += () => Close();
             DataContext = viewModel;
             viewModel.Load();
         }

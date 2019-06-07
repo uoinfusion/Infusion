@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Infusion.Launcher.Avalonia
 {
     public interface ILauncher
     {
-        void Launch(LaunchProfile profile);
+        Task Launch(LaunchProfile profile);
     }
 }

@@ -39,25 +39,27 @@ namespace Infusion.Desktop
                     .UsePlatformDetect()
                     .UseReactiveUI()
                     .LogToDebug()
+                    .SetExitMode(ExitMode.OnExplicitExit)
+                    .AfterSetup(AvaloniaAppInitialized)
                     .SetupWithoutStarting()
                     .Instance;
 
-                avaloniaApplication.ExitMode = ExitMode.OnExplicitExit;
                 avaloniaApplication.Run(applicationClosedTokenSource.Token);
             });
+            WaitForAvaloniaApp();
 
             base.OnStartup(e);
         }
 
+        private ManualResetEvent avaloniaAppInitializedEvent = new ManualResetEvent(false);
+        private void AvaloniaAppInitialized(AppBuilder avaloniaAppBuilder) 
+            => avaloniaAppInitializedEvent.Set();
+
+        public void WaitForAvaloniaApp() 
+            => avaloniaAppInitializedEvent.WaitOne();
+
         protected override void OnExit(ExitEventArgs e)
         {
-            foreach (var window in avaloniaApplication.Windows)
-            {
-                window.Close();
-            }
-
-            avaloniaApplication.MainWindow?.Close();
-
             applicationClosedTokenSource.Cancel();
 
             base.OnExit(e);

@@ -9,12 +9,10 @@ namespace Infusion.Desktop.Profiles
     public sealed class ProfileConfigRepository : IConfigBagRepository
     {
         private readonly LaunchProfile profile;
-        private readonly IConsole console;
 
-        public ProfileConfigRepository(LaunchProfile profile, IConsole console)
+        public ProfileConfigRepository(LaunchProfile profile)
         {
             this.profile = profile;
-            this.console = console;
         }
 
         public T Get<T>(string name) => Get(name, default(T));
@@ -36,14 +34,7 @@ namespace Infusion.Desktop.Profiles
 
                 if (value is IConvertible)
                 {
-                    try
-                    {
-                        return (T)Convert.ChangeType(value, typeof(T));
-                    }
-                    catch (Exception ex)
-                    {
-                        console.Error(ex.ToString());
-                    }
+                    return (T)Convert.ChangeType(value, typeof(T));
                 }
                 else
                 {

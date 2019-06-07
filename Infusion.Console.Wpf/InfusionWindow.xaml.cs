@@ -112,6 +112,8 @@ namespace Infusion.Desktop
             this.profile = profile;
             Title = $"{profile.Name}";
 
+            InfusionProxy.ConfigRepository = profile;
+
             UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), false, true,
                 "Reloads an initial script file."));
             UO.CommandHandler.RegisterCommand(new Command("edit",
@@ -128,8 +130,7 @@ namespace Infusion.Desktop
             UO.CommandHandler.RegisterCommand(new Command("console-show-all", () => Dispatcher.Invoke(() => _console.ShowAll()), false, true));
             UO.CommandHandler.RegisterCommand(new Command("console-show-nodebug", () => Dispatcher.Invoke(() => _console.ShowNoDebug()), false, true));
 
-            var configRepository = new ProfileConfigRepository(profile, this.infusionConsole);
-            var launcherOptions = configRepository.Get<LauncherOptions>("launcher");
+            var launcherOptions = profile.GetLauncherOptions();
             if (!string.IsNullOrEmpty(launcherOptions.InitialScriptFileName))
                 Load(launcherOptions.InitialScriptFileName);
 
@@ -146,8 +147,8 @@ namespace Infusion.Desktop
 
         private void HandleLoginConfirmed()
         {
-            //var logPath = PathUtilities.GetAbsolutePath($"logs\\{InfusionProxy.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{InfusionProxy.LegacyApi.SelectedCharacterName}\\");
-            //InfusionProxy.LogConfig.SetDefaultLogPath(logPath);
+            var logPath = PathUtilities.GetAbsolutePath($"logs\\{InfusionProxy.LegacyApi.ServerName}\\{profile.GetLauncherOptions().UserName}\\{InfusionProxy.LegacyApi.SelectedCharacterName}\\");
+            InfusionProxy.LogConfig.SetDefaultLogPath(logPath);
         }
 
         public void Edit()
@@ -260,8 +261,7 @@ namespace Infusion.Desktop
             {
                 try
                 {
-                    var repository = new ProfileConfigRepository(profile, null);
-                    var options = repository.Get<LauncherOptions>("launcher");
+                    var options = profile.GetLauncherOptions();
                     await Infusion.Proxy.Launcher.Launcher.Launch(options);
                     await window.Dispatcher.BeginInvoke((Action)(() => window.Initialize(profile)));
                 }

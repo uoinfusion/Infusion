@@ -10,13 +10,14 @@ namespace Infusion.Config
     {
         private readonly Dictionary<string, object> storage = new Dictionary<string, object>();
 
-        public T Get<T>(string name) => Get(name, default(T));
-        public T Get<T>(string name, T defaultValue)
+        public T Get<T>(string name, T defaultValue) => Get(name, () => defaultValue);
+        public T Get<T>(string name) => Get(name, () => default(T));
+        public T Get<T>(string name, Func<T> defaultValue)
         {
             if (storage.TryGetValue(name, out object value))
                 return (T)value;
 
-            return defaultValue;
+            return defaultValue();
         }
 
         public void Update(string name, object value) => storage[name] = value;

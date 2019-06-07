@@ -102,8 +102,7 @@ namespace Infusion.Launcher.Avalonia.Profile
 
         private ProfileViewModel CreateViewModel(LaunchProfile profile)
         {
-            var optionsRepository = new ProfileConfigRepository(profile, new NullConsole());
-            var launcherOptions = optionsRepository.Get("launcher", () => new LauncherOptions());
+            var launcherOptions = profile.GetLauncherOptions(() => new LauncherOptions());
 
             return new ProfileViewModel(profile, launcherOptions);
         }

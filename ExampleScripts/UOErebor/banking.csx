@@ -10,7 +10,7 @@ using Infusion.Commands;
 
 public static class Banking
 {
-    private static Dictionary<Area, string> commandByArea = new Dictionary<Area, string>();
+    private static Dictionary<Area, Action> commandByArea = new Dictionary<Area, Action>();
 
     public static void OpenBank()
     {
@@ -56,12 +56,15 @@ public static class Banking
         Common.WaitForContainer();        
     }
     
-    public static bool OpenBankViaHouseMenu(string houseMenuEquip = null)
+    public static bool OpenBankViaHouseMenu(string equipCommand)
+        => OpenBankViaHouseMenu(() => UO.Say(equipCommand));
+
+    public static bool OpenBankViaHouseMenu(Action command = null)
     {
-        if (houseMenuEquip == null)
-            houseMenuEquip = GetHouseMenuCommand();
+        if (command == null)
+            command = GetHouseMenuCommand();
     
-        if (string.IsNullOrEmpty(houseMenuEquip))
+        if (command == null)
         {
             var menu = UO.Items.Matching(Specs.HouseMenu).OrderByDistance().FirstOrDefault();
 
@@ -71,7 +74,9 @@ public static class Banking
                 return false;
         }
         else
-            UO.Say(houseMenuEquip);
+        {
+            command();        
+        }
         
         UO.WaitForGump();
         UO.SelectGumpButton("Otevrit banku", GumpLabelPosition.Before);
@@ -82,10 +87,15 @@ public static class Banking
     
     public static void SetHouseMenuCommand(Area area, string command)
     {
+        SetHouseMenuCommand(area, () => UO.Say(command));
+    }
+    
+    public static void SetHouseMenuCommand(Area area, Action command)
+    {
         commandByArea[area] = command;
     }
     
-    public static string GetHouseMenuCommand()
+    public static Action GetHouseMenuCommand()
     {
         foreach (var pair in commandByArea)
         {

@@ -36,7 +36,7 @@ namespace Infusion.LegacyApi.Injection
 
             if (container == 1)
             {
-                foundObjects = UO.GameObjects.Where(x => !ignoredIds.Contains(x.Id)).OnGround();
+                foundObjects = UO.GameObjects.OnGround();
                 range = range >= 0 ? range : Distance;
                 if (range >= 0)
                     foundObjects = foundObjects.MaxDistance((ushort)range);
@@ -52,6 +52,8 @@ namespace Infusion.LegacyApi.Injection
 
             if (type >= 0)
                 foundObjects = foundObjects.OfType((ModelId)type).ToArray();
+
+            foundObjects = foundObjects.Where(x => !ignoredIds.Contains(x.Id));
 
             return foundObjects;
         }

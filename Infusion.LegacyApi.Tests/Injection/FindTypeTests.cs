@@ -359,7 +359,7 @@ namespace Infusion.LegacyApi.Tests.Injection
         }
 
         [TestMethod]
-        public void Ignores_ignored_items()
+        public void Ignores_ignored_items_on_ground()
         {
             injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
 
@@ -373,6 +373,21 @@ namespace Infusion.LegacyApi.Tests.Injection
             injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1), new InjectionValue("ground"));
 
             injection.InjectionHost.UO.FindCount().Should().Be(1);
+        }
+
+        [TestMethod]
+        public void Ignores_ignored_items_in_backpack()
+        {
+            injection.ServerApi.PlayerEntersWorld(new Location2D(1000, 1000));
+
+            var itemId1 = injection.ServerApi.AddNewItemToBackpack(0xeed);
+            var itemId2 = injection.ServerApi.AddNewItemToBackpack(0xeed);
+
+            injection.InjectionHost.UO.Ignore(NumberConversions.Int2Hex(itemId1));
+
+            injection.InjectionHost.UO.FindType(new InjectionValue(0xEED), new InjectionValue(-1));
+
+            injection.InjectionHost.UO.FindCount().Should().Be(1, because: "there are two items, but one item is ignored");
         }
 
         [TestMethod]

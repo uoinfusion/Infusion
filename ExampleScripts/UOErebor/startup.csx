@@ -9,7 +9,8 @@ public static class Startup
     public static bool isReady;
     public static bool waitingStarted;
     public static object waitingLock = new object();
-    public static List<string> startupCommandNames = new List<string>();
+    private static List<string> startupCommandNames = new List<string>();
+    private static List<Action> startupActions = new List<Action>();
     
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
 
@@ -24,6 +25,20 @@ public static class Startup
         {
             Trace.Log($"Adding command '{commandName}' to queue");
             startupCommandNames.Add(commandName);
+            
+            StartWaiting();
+        }
+    }
+    
+    public static void RunInGame(Action action)
+    {
+        if (isReady)
+        {
+            action.Invoke();
+        }
+        else
+        {
+            startupActions.Add(action);
             
             StartWaiting();
         }
@@ -69,6 +84,11 @@ public static class Startup
     private static void Launch()
     {
         isReady = true;
+    
+        foreach (var action in startupActions)
+        {
+            action.Invoke();
+        }
     
         foreach (var commandName in startupCommandNames)
         {

@@ -652,16 +652,16 @@ namespace Infusion.LegacyApi
             gumpObservers.CloseGump();
         }
 
-        public void Wear(ObjectId id, Layer layer, TimeSpan? timeout = null)
+        public void Wear(ObjectId id, Layer layer)
         {
             NotifyAction();
 
             Server.Wear(id, layer, Me.PlayerId);
         }
 
-        public void Wear(Item item, Layer layer, TimeSpan? timeout = null)
+        public void Wear(Item item, Layer layer)
         {
-            Wear(item.Id, layer, timeout);
+            Wear(item.Id, layer);
         }
 
         public void CastSpell(Spell spell)

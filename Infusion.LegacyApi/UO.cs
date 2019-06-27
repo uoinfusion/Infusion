@@ -243,11 +243,23 @@ namespace Infusion.LegacyApi
         public static void CloseGump()
             => Current.CloseGump();
 
-        public static void Wear(ObjectId id, Layer layer, TimeSpan? timeout = null)
-            => Current.Wear(id, layer, timeout);
+        public static void Wear(ObjectId id, Layer layer)
+            => Current.Wear(id, layer);
 
-        public static void Wear(Item item, Layer layer, TimeSpan? timeout = null)
-            => Current.Wear(item, layer, timeout);
+        public static void Wear(Item item, Layer layer)
+            => Current.Wear(item, layer);
+
+        public static void Wear(ObjectId id, Layer layer, TimeSpan? timeout)
+        {
+            Current.Console.Info("Warning: UO.Wear ignores third argument (timeout), please remove it from the call.");
+            Current.Wear(id, layer);
+        }
+
+        public static void Wear(Item item, Layer layer, TimeSpan? timeout)
+        {
+            Current.Console.Info("Warning: UO.Wear ignores third argument (timeout), please remove it from the call.");
+            Current.Wear(item, layer);
+        }
 
         public static void CastSpell(Spell spell)
             => Current.CastSpell(spell);

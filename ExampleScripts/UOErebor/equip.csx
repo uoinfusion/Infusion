@@ -45,7 +45,10 @@ public static class Equip
             }
             
             if (item.Layer != equipment.Layer)
-                Items.Wear(item, equipment.Layer, timeout);
+            {
+                UO.DragItem(item);
+                UO.Wear(item, equipment.Layer);
+            }
         }
     }
     

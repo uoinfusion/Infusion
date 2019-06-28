@@ -124,6 +124,7 @@ public static class Looting
 
         if (previousEquipmentSet != null)
         {
+            UO.Wait(50);
             Equip.Set(previousEquipmentSet);
         }
 
@@ -432,7 +433,8 @@ public static class Looting
             
             journal
                 .When("Rozrezal jsi mrtvolu.", () => result = true)
-                .When("Jsi paralyzovan", "You are frozen and can not move.", "you can't reach anything in your state.", () => 
+                .When("Rozrezala jsi mrtvolu.", () => result = true)
+                .When("Jsi paralyzovan", "Jsi paralyzovana", "You are frozen and can not move.", "you can't reach anything in your state.", () => 
                 {
                     result = false;
                     throw new InvalidOperationException("I'm paralyzed, cannot loot.");

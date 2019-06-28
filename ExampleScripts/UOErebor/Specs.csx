@@ -86,7 +86,7 @@ public static class Specs
     };
 
     // Tools
-    public static readonly ItemSpec Knives = new[] { VikingSword, Dagger, Katana };
+    public static readonly ItemSpec Knives = new[] { VikingSword, Dagger, Katana, Scimitar, Kryss };
     public static readonly ItemSpec PickAxe = new[] { 0x0E85, 0x0E86 };
     public static readonly ItemSpec FishingPole = 0x0DBF;
     public static readonly ItemSpec Scissors = 0x0F9E;

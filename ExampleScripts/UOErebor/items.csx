@@ -177,7 +177,7 @@ public static class Items
 
     public static bool DropFromBackPack(ItemSpec itemSpec, Location3D location, bool all = false)
     {
-        var potentialItems = UO.Items.Matching(itemSpec).InBackPack();
+        var potentialItems = UO.Items.Matching(itemSpec).InBackPack(true);
         
         if (!potentialItems.Any())
         {

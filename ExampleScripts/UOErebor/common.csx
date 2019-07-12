@@ -195,6 +195,7 @@ public interface IMobileLookup : IEnumerable<Mobile>
 }
 
 UO.RegisterCommand("wait", Common.WaitCommand);
+UO.RegisterCommand("resync", () => UO.Say(".resync"));
 UO.RegisterCommand("opencontainer", Common.OpenContainerCommand);
 UO.RegisterCommand("invis-item-all", Common.InvisAllItems);
 UO.RegisterCommand("invis-item", Common.InvisItem);

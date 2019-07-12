@@ -171,6 +171,7 @@ public static class Specs
     public static readonly ItemSpec MithrilIngot = new ItemSpec(0x1BF2, (Color)0x098B);
     
     public static readonly ItemSpec Uhli = new ItemSpec(0x0F2F, (Color)0x0388);
+    public static readonly ItemSpec KamenOhne = new ItemSpec(0x0F2F, (Color)0x098E);
     
     public static readonly ItemSpec Mramor = new ItemSpec(0x1363, (Color)0x0481);
 
@@ -484,7 +485,11 @@ public static class Specs
     public static readonly ItemSpec DoorWood3 = new[] { 0x06e5, 0x06d8, 0x06da, 0x06dc, 0x06de, 0x06e0, 0x06e2, 0x06e4 };
     public static readonly ItemSpec ClosedDoor = new[] { DoorSecretStone1, DoorSecretStone2, DoorSecretStone3, DoorSecretWood1, DoorSecretWood2, DoorSecretStone4, DoorMetal, DoorMetalBar, DoorRattan, DoorWood, DoorWood4, DoorMetal2, DoorWood2, DoorWood3 };
 
-    public static readonly ItemSpec Packa = 0x1091;
+    public static readonly ItemSpec Paka = new[] { 0x108C, 0x1093, 0x1094, 0x1095, 0x108D, 0x108E, 0x108C };
+    public static readonly ItemSpec Packa = new[] { 0x108F, 0x1090, 0x1091, 0x1092 };
+    public static readonly ItemSpec PodivnaLouce = 0x0A05;
+    public static readonly ItemSpec Switches = new[] { Paka, Packa, PodivnaLouce };
+    
     public static readonly ItemSpec SpiderWeb = new[] { 0x0EE3, 0x0EE4, 0x0EE5, 0x0EE6 };
 
     public static readonly ItemSpec OpenDoor = new[]

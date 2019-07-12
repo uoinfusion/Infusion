@@ -2,6 +2,7 @@
 #load "TwoStateAbility.csx"
 #load "chargers.csx"
 #load "summons.csx"
+#load "triggers.csx"
 
 using System;
 using System.Linq;

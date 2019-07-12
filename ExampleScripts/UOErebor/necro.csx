@@ -32,6 +32,7 @@
 #load "uoam.csx"
 #load "warehouse.csx"
 #load "EquipSet.csx"
+#load "triggers.csx"
 
 using System;
 

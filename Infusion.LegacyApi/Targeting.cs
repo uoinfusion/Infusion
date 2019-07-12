@@ -199,11 +199,15 @@ namespace Infusion.LegacyApi
                 lastTargetInfo = null;
                 targetInfoRequested = true;
                 AskForTarget();
+                AskForTargetStartedEvent.Set();
 
-                while (!receivedTargetInfoEvent.WaitOne(10))
+                int waitResult;
+                var waitHandles = new WaitHandle[] { this.targetFromServerReceivedEvent, receivedTargetInfoEvent };
+                do
                 {
                     cancellation?.Check();
-                }
+                    waitResult = WaitHandle.WaitAny(waitHandles, 10);
+                } while (waitResult == WaitHandle.WaitTimeout);
 
                 return lastTargetInfo;
             }

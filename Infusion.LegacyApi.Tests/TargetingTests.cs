@@ -180,6 +180,70 @@ namespace Infusion.LegacyApi.Tests
         }
 
         [TestMethod]
+        public void Cancels_Info_When_server_requests_target()
+        {
+            ConcurrencyTester.Run(() =>
+            {
+                var testProxy = new InfusionTestProxy();
+
+                var task = Task.Run(() => { testProxy.Api.Info().HasValue.Should().BeFalse(); });
+
+                testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
+                testProxy.PacketReceivedFromServer(new Packet(0x6C, new byte[]
+                {
+                    0x6C, 0x01, 0x00, 0x00, 0x00, 0x25, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00
+                }));
+
+                task.AssertWaitFastSuccess();
+            });
+        }
+
+        [TestMethod]
+        public void Info_returns_info_about_location_selected_on_client()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            var task = Task.Run(() =>
+            {
+                var result = testProxy.Api.Info();
+                result.HasValue.Should().BeTrue();
+                result.Value.Location.Should().Be(new Location3D(0x09EC, 0x0CF9, 0));
+            });
+
+            testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x01, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x09, 0xEC, 0x0C, 0xF9, 0x00,
+                0x00, 0x00, 0x00,
+            }));
+
+            task.AssertWaitFastSuccess();
+        }
+
+        [TestMethod]
+        public void Info_returns_info_about_mobile_selected_on_client()
+        {
+            var testProxy = new InfusionTestProxy();
+
+            var task = Task.Run(() =>
+            {
+                var result = testProxy.Api.Info();
+                result.HasValue.Should().BeTrue();
+                result.Value.Id.Should().Be((ObjectId)0x00045B2A);
+            });
+
+            testProxy.Api.AskForTargetStartedEvent.AssertWaitOneSuccess();
+            testProxy.PacketReceivedFromClient(new Packet(0x6C, new byte[]
+            {
+                0x6C, 0x00, 0xDE, 0xAD, 0xBE, 0xEF, 0x00, 0x00, 0x04, 0x5B, 0x2A, 0x06, 0x05, 0x04, 0xC6, 0xFF,
+                0x00, 0x01, 0x90,
+            }));
+
+            task.AssertWaitFastSuccess();
+        }
+
+        [TestMethod]
         public void Cancels_AfkForItem_When_server_requests_target()
         {
             ConcurrencyTester.Run(() =>

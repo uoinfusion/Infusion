@@ -35,13 +35,14 @@ public static class Looting
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
         Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa,
-        Specs.Food, Specs.VanocniBanka
+        Specs.Food, Specs.VanocniBanka, Specs.KamenOhne
     };
     
     public static ItemSpec DungeonLoot { get; set; } = new[]
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
-        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa, Specs.VanocniBanka, Specs.VelikonocniVejce
+        Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa, Specs.VanocniBanka, Specs.VelikonocniVejce,
+        Specs.KamenOhne
     };
     
     public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };

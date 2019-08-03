@@ -8,6 +8,8 @@ using System.Text;
 
 public static class Equip
 {
+    public static ItemSpec NonusableEquip = new[] {Specs.GnarledStaff, Specs.BlackStaff};
+
     public static EquipmentSet GetHand()
     {
         List<Equipment> hands = new List<Equipment>();
@@ -46,8 +48,17 @@ public static class Equip
             
             if (item.Layer != equipment.Layer)
             {
-                UO.DragItem(item);
-                UO.Wear(item, equipment.Layer);
+                // doubleclick is faster and safer, but cannot be used for staffs,
+                // doubleclick stores all mana into the staff - so it has to be avoided
+                if (NonusableEquip.Matches(item))
+                {
+                    UO.DragItem(item);
+                    UO.Wear(item, equipment.Layer);
+                }
+                else
+                {
+                    UO.Use(item);
+                }                    
             }
         }
     }

@@ -48,6 +48,8 @@ public static class Specs
     public static readonly ItemSpec WarHammer = new[] { 0x1438, 0x1439 };
     public static readonly ItemSpec Scimitar = new[] { 0x13B6, 0x13B5 };
     public static readonly ItemSpec Kryss = new[] { 0x1400, 0x1401 };
+    public static readonly ItemSpec GnarledStaff = 0x13F8;
+    public static readonly ItemSpec BlackStaff= 0x0DF0;
 
     public static readonly ItemSpec Crossbow = new[] { 0x0F4F, 0x0F50 };
 
@@ -487,8 +489,8 @@ public static class Specs
 
     public static readonly ItemSpec Paka = new[] { 0x108C, 0x1093, 0x1094, 0x1095, 0x108D, 0x108E, 0x108C };
     public static readonly ItemSpec Packa = new[] { 0x108F, 0x1090, 0x1091, 0x1092 };
-    public static readonly ItemSpec PodivnaLouce = 0x0A05;
-    public static readonly ItemSpec Switches = new[] { Paka, Packa, PodivnaLouce };
+    public static readonly ItemSpec Louce = new[] { 0x0A05, 0x0A0A };
+    public static readonly ItemSpec Switches = new[] { Paka, Packa, Louce };
     
     public static readonly ItemSpec SpiderWeb = new[] { 0x0EE3, 0x0EE4, 0x0EE5, 0x0EE6 };
 

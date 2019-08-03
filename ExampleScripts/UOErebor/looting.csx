@@ -85,6 +85,7 @@ public static class Looting
     }
     
     private static EquipmentSet previousEquipmentSet;
+    private static DateTime lastPrevoiusEquipmentSet = DateTime.MinValue;
     
     public static void RipAndLoot(Corpse corpse)
     {
@@ -144,18 +145,26 @@ public static class Looting
         if (corpse != null)
         {
             var handEquipmentSet = Equip.GetHand();
+            bool needsKnife;
             if (handEquipmentSet.Any())
             {
-                if (previousEquipmentSet != null)
-                    Trace.Log($"Previous equipment: {previousEquipmentSet.ToString() ?? "null"}");
-                else
-                    Trace.Log("No previous equipment");
-                    
-                Trace.Log($"Current equipment: {handEquipmentSet}");            
-                previousEquipmentSet = handEquipmentSet;
+                Trace.Log($"{DateTime.UtcNow} - {lastPrevoiusEquipmentSet} = {DateTime.UtcNow - lastPrevoiusEquipmentSet}");
+                if (DateTime.UtcNow - lastPrevoiusEquipmentSet > TimeSpan.FromSeconds(5))
+                {
+                    if (previousEquipmentSet != null)
+                        Trace.Log($"Previous equipment: {previousEquipmentSet.ToString() ?? "null"}");
+                    else
+                        Trace.Log("No previous equipment");
+                        
+                    Trace.Log($"Current equipment: {handEquipmentSet}");            
+                    previousEquipmentSet = handEquipmentSet;
+                    lastPrevoiusEquipmentSet = DateTime.UtcNow;
+                }
             }
             else
-                UO.Log("Cannot find equipment item.");
+            {
+                UO.Log("Cannot find equipment item or knife already in hand.");
+            }
 
             bool humanCorpseLooting = Specs.Player.Matches(corpse.CorpseType);
 

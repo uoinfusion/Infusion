@@ -13,7 +13,7 @@ namespace Infusion.Desktop.Launcher
             var ultimaExecutablePath = options.Orion.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
             {
-                Program.Console.Error($"File {ultimaExecutablePath} doesn't exist.");
+                InfusionProxy.Console.Error($"File {ultimaExecutablePath} doesn't exist.");
 
                 return;
             }
@@ -30,16 +30,16 @@ namespace Infusion.Desktop.Launcher
 
             string argumentsInfo = insensitiveArguments + $" -account:{account},<password censored>";
 
-            Program.Console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
+            InfusionProxy.Console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)
             {
-                Program.Console.Error($"Cannot start {ultimaExecutablePath}.");
+                InfusionProxy.Console.Error($"Cannot start {ultimaExecutablePath}.");
                 return;
             }
 
-            Program.SetClientWindowHandle(ultimaClientProcess);
+            InfusionProxy.SetClientWindowHandle(ultimaClientProcess);
 
         }
     }

@@ -131,7 +131,7 @@ namespace Infusion.Desktop.Console
             if (UO.CommandHandler.IsInvocationSyntax(command))
             {
                 if (command != ",cls")
-                    Program.Console.Debug(command);
+                    InfusionProxy.Console.Debug(command);
                 Task.Run(() =>
                 {
                     UO.CommandHandler.InvokeSyntax(command);
@@ -233,7 +233,7 @@ namespace Infusion.Desktop.Console
                 foreach (var name in autocompletion.PotentialCommandNames)
                     result.AppendLine(name);
 
-                Program.Console.Info(result.ToString());
+                InfusionProxy.Console.Info(result.ToString());
             }
         }
 

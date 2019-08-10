@@ -21,7 +21,7 @@ namespace Infusion.Desktop.Launcher
 
                 CheckMulFiles(options);
 
-                var proxyTask = Program.Start(new ProxyStartConfig()
+                var proxyTask = InfusionProxy.Start(new ProxyStartConfig()
                 {
                     ServerAddress = options.ServerEndpoint,
                     ServerEndPoint = serverEndPoint,
@@ -53,24 +53,24 @@ namespace Infusion.Desktop.Launcher
             bool requiresExplicitUltimaPath = false;
             if (string.IsNullOrEmpty(Files.RootDir))
             {
-                Program.Console.Info("Cannot find Ultima Online installation.");
+                InfusionProxy.Console.Info("Cannot find Ultima Online installation.");
                 requiresExplicitUltimaPath = true;
             }
 
             if (!string.IsNullOrEmpty(Files.RootDir) && !Directory.Exists(Files.RootDir))
             {
-                Program.Console.Info($"Ultima Online installation path {Files.RootDir} doesn't exsist.");
+                InfusionProxy.Console.Info($"Ultima Online installation path {Files.RootDir} doesn't exsist.");
                 requiresExplicitUltimaPath = true;
             }
 
             if (requiresExplicitUltimaPath)
             {
                 var clientDirectory = Path.GetDirectoryName(options.ClientExePath);
-                Program.Console.Info($"Client path is {options.ClientExePath}. Assuming Ultima Online files are in {clientDirectory}.");
+                InfusionProxy.Console.Info($"Client path is {options.ClientExePath}. Assuming Ultima Online files are in {clientDirectory}.");
                 Files.SetMulPath(clientDirectory);
             }
 
-            Program.Console.Debug($"Loading mul files from {Files.RootDir}.");
+            InfusionProxy.Console.Debug($"Loading mul files from {Files.RootDir}.");
         }
 
         private static ushort GetProxyPort()

@@ -59,21 +59,21 @@ namespace Infusion.Desktop
 
         private void HandleFileLoggingException(Exception ex)
         {
-            infusionConsole.Error($"Error while writing logs to disk. Please, check that Infusion can write to {Program.LogConfig.LogPath}.");
+            infusionConsole.Error($"Error while writing logs to disk. Please, check that Infusion can write to {InfusionProxy.LogConfig.LogPath}.");
             infusionConsole.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
             infusionConsole.Debug(ex.ToString());
         }
 
         private void InitializeInfusion()
         {
-            fileConsole = new FileConsole(Program.LogConfig, new CircuitBreaker(HandleFileLoggingException));
+            fileConsole = new FileConsole(InfusionProxy.LogConfig, new CircuitBreaker(HandleFileLoggingException));
             var wpfConsole = _console.CreateWpfConsole();
             infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
 
-            Program.Console = infusionConsole;
-            var commandHandler = new CommandHandler(Program.Console);
+            InfusionProxy.Console = infusionConsole;
+            var commandHandler = new CommandHandler(InfusionProxy.Console);
 
-            Program.Initialize(commandHandler, new SoundPlayer());
+            InfusionProxy.Initialize(commandHandler, new SoundPlayer());
 
             CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
             ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));
@@ -136,13 +136,13 @@ namespace Infusion.Desktop
                 this.Height = profile.ConsoleOptions.Height;
             }
 
-            Program.LegacyApi.LoginConfirmed += HandleLoginConfirmed;
+            InfusionProxy.LegacyApi.LoginConfirmed += HandleLoginConfirmed;
         }
 
         private void HandleLoginConfirmed()
         {
-            var logPath = PathUtilities.GetAbsolutePath($"logs\\{Program.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{Program.LegacyApi.SelectedCharacterName}\\");
-            Program.LogConfig.SetDefaultLogPath(logPath);
+            var logPath = PathUtilities.GetAbsolutePath($"logs\\{InfusionProxy.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{InfusionProxy.LegacyApi.SelectedCharacterName}\\");
+            InfusionProxy.LogConfig.SetDefaultLogPath(logPath);
         }
 
         public void Edit()
@@ -181,7 +181,7 @@ namespace Infusion.Desktop
                 return;
             }
 
-            Program.LegacyApi.Config.Save();
+            InfusionProxy.LegacyApi.Config.Save();
             ProfileRepository.SaveProfile(profile);
             ProfileRepository.FixOptions(profile);
 
@@ -236,7 +236,7 @@ namespace Infusion.Desktop
             profile.ConsoleOptions.Width = Width;
             profile.ConsoleOptions.Height = Height;
 
-            Program.LegacyApi.Config.Save();
+            InfusionProxy.LegacyApi.Config.Save();
             ProfileRepository.SaveProfile(profile);
         }
     }

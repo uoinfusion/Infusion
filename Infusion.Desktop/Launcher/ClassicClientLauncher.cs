@@ -38,8 +38,10 @@ namespace Infusion.Desktop.Launcher
 
             InfusionProxy.Console.Info($"Staring {ultimaExecutablePath} from {workingDirectory}");
 
-            var info = new ProcessStartInfo(ultimaExecutablePath);
-            info.WorkingDirectory = workingDirectory;
+            var info = new ProcessStartInfo(ultimaExecutablePath)
+            {
+                WorkingDirectory = workingDirectory
+            };
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)

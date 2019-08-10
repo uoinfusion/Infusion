@@ -59,8 +59,7 @@ namespace Infusion.Desktop.Launcher
             InfusionProxy.ConfigRepository = new ProfileConfigRepository(launcherViewModel.SelectedProfile, console);
 
             var launcherOptions = launcherViewModel.SelectedProfile.LauncherOptions;
-            string validationMessage;
-            if (!launcherOptions.Validate(out validationMessage))
+            if (!launcherOptions.Validate(out var validationMessage))
             {
                 ShowError(validationMessage);
                 return;
@@ -95,8 +94,7 @@ namespace Infusion.Desktop.Launcher
             Title = title;
 
             string message;
-            var aggregateException = exception as AggregateException;
-            if (aggregateException != null)
+            if (exception is AggregateException aggregateException)
             {
                 message =
                     aggregateException.InnerExceptions.Select(x => x.ToString())
@@ -134,10 +132,13 @@ namespace Infusion.Desktop.Launcher
 
         private string SelectPath(string initialPath, string filter)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Multiselect = false;
-            openFileDialog.Filter = filter;
-            openFileDialog.FileName = initialPath;
+            var openFileDialog = new OpenFileDialog
+            {
+                Multiselect = false,
+                Filter = filter,
+                FileName = initialPath
+            };
+
             if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 return openFileDialog.FileName;

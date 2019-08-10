@@ -30,7 +30,7 @@ namespace Infusion.Tests
             var connection = new ServerConnection();
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.Receive(inputData);
+            connection.Process(inputData);
 
             expectedPackets.AreEqual(receivedPackets);
         }
@@ -45,7 +45,7 @@ namespace Infusion.Tests
 
             var diagnosticStream = new TextDiagnosticPullStream(packetRegistry);
             var connection = CreateEncryptedConnection(ServerConnectionStatus.Game, diagnosticStream);
-            connection.Receive(inputData);
+            connection.Process(inputData);
 
             var output = diagnosticStream.Flush();
 
@@ -65,7 +65,7 @@ namespace Infusion.Tests
             var connection = CreateEncryptedConnection(ServerConnectionStatus.Game);
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.Receive(inputData);
+            connection.Process(inputData);
 
             expectedPackets.AreEqual(receivedPackets);
         }
@@ -102,7 +102,7 @@ namespace Infusion.Tests
             var inputData = new MemoryBatchedStream(new List<byte[]> { FakePackets.ConnectToGameServer });
             var connection = new ServerConnection(ServerConnectionStatus.PreLogin);
 
-            connection.Receive(inputData);
+            connection.Process(inputData);
 
             connection.Status.Should().Be(ServerConnectionStatus.PreGame);
         }
@@ -170,7 +170,7 @@ namespace Infusion.Tests
             var connection = CreateEncryptedConnection(ServerConnectionStatus.Game);
             var receivedPackets = new List<Packet>();
             connection.PacketReceived += (sender, packet) => receivedPackets.Add(packet);
-            connection.Receive(inputData);
+            connection.Process(inputData);
 
             expectedPackets.AreEqual(receivedPackets);
         }

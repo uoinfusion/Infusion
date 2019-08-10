@@ -352,7 +352,7 @@ namespace Infusion.Proxy
                     {
                         try
                         {
-                            serverConnection.Receive(new NetworkStreamToPullStreamAdapter(ServerStream));
+                            serverConnection.Process(new NetworkStreamToPullStreamAdapter(ServerStream));
                         }
                         catch (EndOfStreamException ex)
                         {

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Infusion.EngineScripts\Infusion.EngineScripts.csproj" />
+    <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
+    <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj" />
+    <ProjectReference Include="..\Infusion\Infusion.csproj" />
+  </ItemGroup>
+
+</Project>

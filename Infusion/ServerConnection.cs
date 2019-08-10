@@ -70,33 +70,42 @@ namespace Infusion
         public event EventHandler<Packet> PacketReceived;
         private readonly byte[] receiveBuffer = new byte[65535];
 
-        public void Receive(IPullStream inputStream)
+        public Packet Receive(IPullStream inputStream)
+            => Receive(GetReceiveStream(inputStream));
+
+        public Packet Receive(Stream processingStream)
+        {
+            var packetReader = new StreamPacketReader(processingStream, receiveBuffer);
+            int packetId = packetReader.ReadByte();
+            if ((packetId < 0) || (packetId > 255))
+                throw new EndOfStreamException();
+
+            diagnosticPullStream.StartPacket();
+            var packetDefinition = packetRegistry.Find(packetId);
+            var packetSize = packetDefinition.GetSize(packetReader);
+            packetReader.ReadBytes(packetSize - packetReader.Position);
+            var payload = new byte[packetSize];
+            Array.Copy(receiveBuffer, 0, payload, 0, packetSize);
+
+            var packet = new Packet(packetId, payload);
+
+            if (packetId == PacketDefinitions.ConnectToGameServer.Id)
+            {
+                Status = ServerConnectionStatus.PreGame;
+            }
+
+            diagnosticPullStream.FinishPacket(packet);
+
+            return packet;
+        }
+
+        public void Process(IPullStream inputStream)
         {
             var processingStream = GetReceiveStream(inputStream);
 
             while (inputStream.DataAvailable)
             {
-                var packetReader = new StreamPacketReader(processingStream, receiveBuffer);
-                int packetId = packetReader.ReadByte();
-                if ((packetId < 0) || (packetId > 255))
-                    throw new EndOfStreamException();
-
-                diagnosticPullStream.StartPacket();
-                var packetDefinition = packetRegistry.Find(packetId);
-                var packetSize = packetDefinition.GetSize(packetReader);
-                packetReader.ReadBytes(packetSize - packetReader.Position);
-                var payload = new byte[packetSize];
-                Array.Copy(receiveBuffer, 0, payload, 0, packetSize);
-
-                var packet = new Packet(packetId, payload);
-
-                if (packetId == PacketDefinitions.ConnectToGameServer.Id)
-                {
-                    Status = ServerConnectionStatus.PreGame;
-                }
-
-                diagnosticPullStream.FinishPacket(packet);
-
+                var packet = Receive(processingStream);
                 OnPacketReceived(packet);
             }
         }

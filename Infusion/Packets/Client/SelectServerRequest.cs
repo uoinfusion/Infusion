@@ -14,6 +14,22 @@ namespace Infusion.Packets.Client
         public override Packet RawPacket => rawPacket;
         public ushort ChosenServerId { get; set; }
 
+        public SelectServerRequest()
+        {
+        }
+
+        public Packet Serialize()
+        {
+            var payload = new byte[3];
+
+            var writer = new ArrayPacketWriter(payload);
+            writer.WriteByte((byte)PacketDefinitions.SelectServerRequest.Id);
+            writer.WriteUShort(ChosenServerId);
+            rawPacket = new Packet(PacketDefinitions.SelectServerRequest.Id, payload);
+
+            return rawPacket;
+        }
+
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;

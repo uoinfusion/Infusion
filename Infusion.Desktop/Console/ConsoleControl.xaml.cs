@@ -21,6 +21,8 @@ namespace Infusion.Desktop.Console
 {
     public partial class ConsoleControl : UserControl
     {
+        private IConsole console;
+
         private readonly CommandAutocompleter completer;
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
@@ -102,8 +104,10 @@ namespace Infusion.Desktop.Console
             }
         }
 
-        public void Initialize()
+        public void Initialize(IConsole console)
         {
+            this.console = console;
+
             _inputBlock.Focus();
         }
 
@@ -131,7 +135,7 @@ namespace Infusion.Desktop.Console
             if (UO.CommandHandler.IsInvocationSyntax(command))
             {
                 if (command != ",cls")
-                    InfusionProxy.Console.Debug(command);
+                    console.Debug(command);
                 Task.Run(() =>
                 {
                     UO.CommandHandler.InvokeSyntax(command);
@@ -233,7 +237,7 @@ namespace Infusion.Desktop.Console
                 foreach (var name in autocompletion.PotentialCommandNames)
                     result.AppendLine(name);
 
-                InfusionProxy.Console.Info(result.ToString());
+                console.Info(result.ToString());
             }
         }
 

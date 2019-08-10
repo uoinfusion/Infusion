@@ -1,4 +1,5 @@
-﻿using Infusion.Proxy;
+﻿using Infusion.LegacyApi.Console;
+using Infusion.Proxy;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -8,12 +9,12 @@ namespace Infusion.Desktop.Launcher
 {
     public static class OrionLauncher
     {
-        public static void Launch(LauncherOptions options, ushort proxyPort)
+        public static void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
             var ultimaExecutablePath = options.Orion.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
             {
-                InfusionProxy.Console.Error($"File {ultimaExecutablePath} doesn't exist.");
+                console.Error($"File {ultimaExecutablePath} doesn't exist.");
 
                 return;
             }
@@ -30,16 +31,16 @@ namespace Infusion.Desktop.Launcher
 
             string argumentsInfo = insensitiveArguments + $" -account:{account},<password censored>";
 
-            InfusionProxy.Console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
+            console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)
             {
-                InfusionProxy.Console.Error($"Cannot start {ultimaExecutablePath}.");
+                console.Error($"Cannot start {ultimaExecutablePath}.");
                 return;
             }
 
-            InfusionProxy.SetClientWindowHandle(ultimaClientProcess);
+            proxy.SetClientWindowHandle(ultimaClientProcess);
 
         }
     }

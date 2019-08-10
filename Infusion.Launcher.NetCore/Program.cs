@@ -24,8 +24,9 @@ namespace Infusion.Launcher.NetCore
 
         static void Main(string[] args)
         {
+            var proxy = new InfusionProxy();
             var app = new CommandLineApplication();
-            InfusionProxy.Initialize(commandHandler, new NullSoundPlayer());
+            proxy.Initialize(commandHandler, new NullSoundPlayer());
             if (app != null)
             {
                 app.Name = "Infusion Laucher NetCore";
@@ -50,7 +51,7 @@ namespace Infusion.Launcher.NetCore
                 if (serverAdress.HasValue() && protocolVersion.HasValue())
                 {
                     string[] loginServer = serverAdress.Value().Split(",");
-                    InfusionProxy.Start(new ProxyStartConfig()
+                    proxy.Start(new ProxyStartConfig()
                     {
                         ServerAddress = "127.0.0.1",
                         ServerEndPoint = new IPEndPoint(IPAddress.Parse(loginServer[0]), int.Parse(loginServer[1])),

@@ -23,6 +23,7 @@ namespace Infusion.Desktop
     {
         private FileConsole fileConsole;
         private InfusionConsole infusionConsole;
+        private InfusionProxy proxy;
 
         private NotifyIcon notifyIcon;
         private string scriptFileName;
@@ -59,21 +60,22 @@ namespace Infusion.Desktop
 
         private void HandleFileLoggingException(Exception ex)
         {
-            infusionConsole.Error($"Error while writing logs to disk. Please, check that Infusion can write to {InfusionProxy.LogConfig.LogPath}.");
+            infusionConsole.Error($"Error while writing logs to disk. Please, check that Infusion can write to {proxy.LogConfig.LogPath}.");
             infusionConsole.Important("You can change the log path by setting UO.Configuration.LogPath property or disable packet logging by setting UO.Configuration.LogToFileEnabled = false in your initial script.");
             infusionConsole.Debug(ex.ToString());
         }
 
         private void InitializeInfusion()
         {
-            fileConsole = new FileConsole(InfusionProxy.LogConfig, new CircuitBreaker(HandleFileLoggingException));
+            proxy = new InfusionProxy();
+            fileConsole = new FileConsole(proxy.LogConfig, new CircuitBreaker(HandleFileLoggingException));
             var wpfConsole = _console.CreateWpfConsole();
             infusionConsole = new InfusionConsole(fileConsole, wpfConsole);
 
-            InfusionProxy.Console = infusionConsole;
-            var commandHandler = new CommandHandler(InfusionProxy.Console);
+            proxy.Console = infusionConsole;
+            var commandHandler = new CommandHandler(proxy.Console);
 
-            InfusionProxy.Initialize(commandHandler, new SoundPlayer());
+            proxy.Initialize(commandHandler, new SoundPlayer());
 
             CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
             ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));
@@ -136,13 +138,13 @@ namespace Infusion.Desktop
                 this.Height = profile.ConsoleOptions.Height;
             }
 
-            InfusionProxy.LegacyApi.LoginConfirmed += HandleLoginConfirmed;
+            proxy.LegacyApi.LoginConfirmed += HandleLoginConfirmed;
         }
 
         private void HandleLoginConfirmed()
         {
-            var logPath = PathUtilities.GetAbsolutePath($"logs\\{InfusionProxy.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{InfusionProxy.LegacyApi.SelectedCharacterName}\\");
-            InfusionProxy.LogConfig.SetDefaultLogPath(logPath);
+            var logPath = PathUtilities.GetAbsolutePath($"logs\\{proxy.LegacyApi.ServerName}\\{profile.LauncherOptions.UserName}\\{proxy.LegacyApi.SelectedCharacterName}\\");
+            proxy.LogConfig.SetDefaultLogPath(logPath);
         }
 
         public void Edit()
@@ -181,7 +183,7 @@ namespace Infusion.Desktop
                 return;
             }
 
-            InfusionProxy.LegacyApi.Config.Save();
+            proxy.LegacyApi.Config.Save();
             ProfileRepository.SaveProfile(profile);
             ProfileRepository.FixOptions(profile);
 
@@ -215,9 +217,9 @@ namespace Infusion.Desktop
         {
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action) (() =>
             {
-                _console.Initialize();
+                _console.Initialize(infusionConsole);
 
-                var launcherWindow = new LauncherWindow(Initialize, infusionConsole);
+                var launcherWindow = new LauncherWindow(Initialize, infusionConsole, proxy);
                 launcherWindow.Show();
                 launcherWindow.Activate();
             }));
@@ -236,7 +238,7 @@ namespace Infusion.Desktop
             profile.ConsoleOptions.Width = Width;
             profile.ConsoleOptions.Height = Height;
 
-            InfusionProxy.LegacyApi.Config.Save();
+            proxy.LegacyApi.Config.Save();
             ProfileRepository.SaveProfile(profile);
         }
     }

@@ -21,15 +21,17 @@ namespace Infusion.Desktop.Launcher
         private readonly Action<LaunchProfile> launchCallback;
         private readonly LauncherViewModel launcherViewModel;
         private readonly IConsole console;
+        private readonly InfusionProxy proxy;
 
         private void ShowError(string errorMessage)
         {
             console.Error(errorMessage);
         }
 
-        internal LauncherWindow(Action<LaunchProfile> launchCallback, IConsole console)
+        internal LauncherWindow(Action<LaunchProfile> launchCallback, IConsole console, InfusionProxy proxy)
         {
             this.console = console;
+            this.proxy = proxy;
             this.launchCallback = launchCallback;
             InitializeComponent();
             launcherViewModel = new LauncherViewModel(pwd => passwordBox.Password = pwd);
@@ -56,7 +58,7 @@ namespace Infusion.Desktop.Launcher
             ProfileRepository.SelectedProfile = launcherViewModel.SelectedProfile;
             ProfileRepository.SaveSelectedProfileId(launcherViewModel.SelectedProfile.Id);
 
-            InfusionProxy.ConfigRepository = new ProfileConfigRepository(launcherViewModel.SelectedProfile, console);
+            proxy.ConfigRepository = new ProfileConfigRepository(launcherViewModel.SelectedProfile, console);
 
             var launcherOptions = launcherViewModel.SelectedProfile.LauncherOptions;
             if (!launcherOptions.Validate(out var validationMessage))
@@ -68,9 +70,11 @@ namespace Infusion.Desktop.Launcher
             IsEnabled = false;
             string originalTitle = Title;
 
+            var launcher = new Launcher(console);
+
             try
             {
-                await Launcher.Launch(launcherOptions);
+                await launcher.Launch(launcherOptions, proxy);
             }
             catch (AggregateException ex)
             {

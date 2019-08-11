@@ -44,6 +44,7 @@ namespace Infusion.Headless
                 ShardName = "Erebor",
                 AccountName = "diblik",
                 Password = "password",
+                CharacterName = "Diblik"
             });
 
             CSharpScriptEngine = new CSharpScriptEngine(Console);

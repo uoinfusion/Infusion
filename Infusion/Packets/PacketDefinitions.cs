@@ -542,8 +542,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<GameServerListPacket> GameServerList = new PacketDefinition<GameServerListPacket>(0xA8,
             new VariablePacketLength(), "GameServerList", () => new GameServerListPacket());
 
-        public static readonly PacketDefinition CharactersStartingLocations = new PacketDefinition(0xA9,
-            new VariablePacketLength(), "CharactersStartingLocations");
+        public static readonly PacketDefinition<CharactersStartingLocationsPacket> CharactersStartingLocations = new PacketDefinition<CharactersStartingLocationsPacket>(0xA9,
+            new VariablePacketLength(), "CharactersStartingLocations", () => new CharactersStartingLocationsPacket());
 
         public static readonly PacketDefinition<AllowRefuseAttackPacket> AllowRefuseAttack = new PacketDefinition<AllowRefuseAttackPacket>(0xAA,
             new StaticPacketLength(5), "AllowRefuseAttack", () => new AllowRefuseAttackPacket());

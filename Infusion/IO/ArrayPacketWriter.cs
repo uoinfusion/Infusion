@@ -45,6 +45,12 @@ namespace Infusion.IO
             array[Position++] = (byte) (value & 0xFF);
         }
 
+        public void FillBytes(byte value, int count)
+        {
+            for (int i = 0; i < count; i++)
+                WriteByte(value);
+        }
+
         public void WriteId(ObjectId value) => WriteUInt(value.Value);
 
         public void WriteUInt(uint value)

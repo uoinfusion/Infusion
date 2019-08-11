@@ -4,6 +4,7 @@ using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Packets;
+using Infusion.Packets.Both;
 using Infusion.Packets.Client;
 using Infusion.Packets.Server;
 using System;
@@ -34,6 +35,9 @@ namespace Infusion.Proxy
         private readonly UltimaClient ultimaClient;
         private Socket serverSocket;
         private IPEndPoint serverEndpoint;
+        private CancellationTokenSource disconnectTokenSource;
+        private Task serverLoopTask;
+        private Task pingLoopTask;
 
         public NetworkStream ServerStream { get; set; }
 
@@ -62,12 +66,28 @@ namespace Infusion.Proxy
             ultimaClient = new UltimaClient(clientPacketHandler, SendClientPacket);
 
             serverPacketHandler.Subscribe(PacketDefinitions.GameServerList, HandleGameServerList);
-            serverPacketHandler.Subscribe(PacketDefinitions.ConnectToGameServer, HandleConnectToGameServer);
+            serverPacketHandler.Subscribe(PacketDefinitions.CharactersStartingLocations, HandleCharactersStartingLocationsPacket);
+        }
+
+        private void HandleCharactersStartingLocationsPacket(CharactersStartingLocationsPacket packet)
+        {
+            var character = packet.Characters.Select((x, i) => new { x.Name, Index = i })
+                .FirstOrDefault(x => x.Name.Equals(startConfig.CharacterName, StringComparison.OrdinalIgnoreCase));
+            if (character == null)
+                throw new InvalidOperationException($"Character {startConfig.CharacterName} not found.");
+
+            var loginCharacterRequest = packetRegistry.Instantiate<LoginCharacterRequest>();
+            loginCharacterRequest.ClientIp = new byte[] { 0x01, 0x89, 0xA8, 0xC0 };
+            loginCharacterRequest.CharacterName = startConfig.CharacterName;
+            loginCharacterRequest.Flags = (ClientFlags)7;
+            loginCharacterRequest.SlotChosen = (uint)character.Index;
+
+            SendToServer(loginCharacterRequest.Serialize());
         }
 
         private void HandleGameServerList(GameServerListPacket packet)
         {
-            var server = packet.Servers.FirstOrDefault(x => x.Name.Equals(startConfig.ShardName));
+            var server = packet.Servers.FirstOrDefault(x => x.Name.Equals(startConfig.ShardName, StringComparison.OrdinalIgnoreCase));
             if (server == null)
                 throw new InvalidOperationException($"Cannot find shard {startConfig.ShardName}.");
 
@@ -126,10 +146,17 @@ namespace Infusion.Proxy
                 ServerStream = ConnectToServer();
             }
 
-            Task.Run(() => ServerLoop());
+            disconnectTokenSource = new CancellationTokenSource();
+            serverLoopTask = Task.Run(() => ServerLoop(), disconnectTokenSource.Token);
+            pingLoopTask = Task.Run(() => PingLoop(), disconnectTokenSource.Token);
 
             SendPreLoginSeed();
             SendFirstLogin();
+        }
+
+        public void Disconnect()
+        {
+
         }
 
         private void SendPreLoginSeed()
@@ -145,6 +172,16 @@ namespace Infusion.Proxy
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70,
                 0x61, 0x73, 0x73, 0x77, 0x6F, 0x72, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x99 }));
+        }
+
+        private void PingLoop()
+        {
+            while (true)
+            {
+                Task.Delay(55000, disconnectTokenSource.Token).Wait();
+                disconnectTokenSource.Token.ThrowIfCancellationRequested();
+                SendToServer(new PingPacket().Serialize());
+            }
         }
 
         private void ServerLoop()
@@ -179,6 +216,7 @@ namespace Infusion.Proxy
                             // just swallow this exception, wait for the next batch
                         }
                     }
+                    disconnectTokenSource.Token.ThrowIfCancellationRequested();
                     Thread.Sleep(1);
                 }
             }

@@ -24,7 +24,6 @@
     <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Infusion.Injection.Avalonia\Infusion.Injection.Avalonia.csproj" />
     <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
     <ProjectReference Include="..\Infusion\Infusion.csproj" />
   </ItemGroup>

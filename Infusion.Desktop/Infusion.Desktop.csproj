@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Infusion.EngineScripts\Infusion.EngineScripts.csproj" />
+    <ProjectReference Include="..\Infusion.Injection.Avalonia\Infusion.Injection.Avalonia.csproj" />
     <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
     <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common.UI\RoslynPad.Common.UI.csproj" />
     <ProjectReference Include="..\RoslynPad\src\RoslynPad.Common\RoslynPad.Common.csproj" />

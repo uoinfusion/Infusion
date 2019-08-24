@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 using Infusion.Commands;
 using Infusion.Config;
 using Infusion.Diagnostic;
-using Infusion.Injection.Avalonia;
 using Infusion.IO;
 using Infusion.IO.Encryption.Login;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
+using Infusion.LegacyApi.Injection;
 using Infusion.Logging;
 using Infusion.Packets;
 using Infusion.Packets.Client;
@@ -87,13 +87,16 @@ namespace Infusion.Proxy
 
         public Legacy LegacyApi { get; private set; }
         public ISoundPlayer SoundPlayer { get; set; }
+
+        private IInjectionWindow injectionWindow;
         private PacketDefinitionRegistry packetRegistry;
         private ProxyStartConfig proxyStartConfig;
 
-        public void Initialize(CommandHandler commandHandler, ISoundPlayer soundPlayer)
+        public void Initialize(CommandHandler commandHandler, ISoundPlayer soundPlayer, IInjectionWindow injectionWindow)
         {
             this.commandHandler = commandHandler;
             SoundPlayer = soundPlayer;
+            this.injectionWindow = injectionWindow;
         }
 
         private void PrintProxyLatency()
@@ -118,7 +121,7 @@ namespace Infusion.Proxy
             clientPacketHandler.Subscribe(PacketDefinitions.ExtendedLoginSeed, HandleExtendedLoginSeed);
 
             LegacyApi = new Legacy(LogConfig, commandHandler, new UltimaServer(serverPacketHandler, SendToServer, packetRegistry), new UltimaClient(clientPacketHandler, SendToClient), Console,
-                packetRegistry, ConfigRepository, new InjectionWindowHandler(), SoundPlayer);
+                packetRegistry, ConfigRepository, injectionWindow, SoundPlayer);
             UO.Initialize(LegacyApi);
 
             commandHandler.RegisterCommand(new Command("dump", DumpPacketLog, false, true,

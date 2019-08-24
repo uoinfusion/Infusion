@@ -26,7 +26,7 @@ namespace Infusion.Launcher.NetCore
         {
             var proxy = new InfusionProxy();
             var app = new CommandLineApplication();
-            proxy.Initialize(commandHandler, new NullSoundPlayer());
+            proxy.Initialize(commandHandler, new NullSoundPlayer(), new LegacyApi.Injection.NullInjectionWindow());
             if (app != null)
             {
                 app.Name = "Infusion Laucher NetCore";

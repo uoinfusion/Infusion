@@ -10,7 +10,7 @@ using System.Net;
 
 namespace Infusion.Headless
 {
-    class Program
+    public class Program
     {
         internal static IConsole Console { get; set; } = new TextConsole();
         internal static ScriptEngine ScriptEngine { get; private set; }
@@ -20,10 +20,10 @@ namespace Infusion.Headless
         static readonly CommandHandler commandHandler = new CommandHandler(Diagnostic);
         private static string ScriptFileName { get; set; }
 
-        static void Main(string[] args)
+        public static void Main()
         {
             var proxy = new InfusionProxy();
-            proxy.Initialize(commandHandler, new NullSoundPlayer());
+            proxy.Initialize(commandHandler, new NullSoundPlayer(), new LegacyApi.Injection.NullInjectionWindow());
 
             proxy.Start(new ProxyStartConfig()
             {

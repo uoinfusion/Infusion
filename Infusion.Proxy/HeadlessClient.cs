@@ -156,7 +156,9 @@ namespace Infusion.Proxy
 
         public void Disconnect()
         {
-
+            disconnectTokenSource.Cancel();
+            if (!Task.WaitAll(new Task[] { pingLoopTask, serverLoopTask }, 5000))
+                console.Error("Disconnect timeout.");
         }
 
         private void SendPreLoginSeed()
@@ -176,11 +178,19 @@ namespace Infusion.Proxy
 
         private void PingLoop()
         {
-            while (true)
+            try
             {
-                Task.Delay(55000, disconnectTokenSource.Token).Wait();
-                disconnectTokenSource.Token.ThrowIfCancellationRequested();
-                SendToServer(new PingPacket().Serialize());
+                while (true)
+                {
+                    Task.Delay(55000, disconnectTokenSource.Token).Wait();
+                    if (disconnectTokenSource.IsCancellationRequested)
+                        break;
+                    SendToServer(new PingPacket().Serialize());
+                }
+            }
+            catch (AggregateException ex) when (ex.InnerExceptions.All(x => x is TaskCanceledException))
+            {
+                // just ignore it
             }
         }
 
@@ -216,13 +226,13 @@ namespace Infusion.Proxy
                             // just swallow this exception, wait for the next batch
                         }
                     }
-                    disconnectTokenSource.Token.ThrowIfCancellationRequested();
+                    if (disconnectTokenSource.Token.IsCancellationRequested)
+                        return;
                     Thread.Sleep(1);
                 }
             }
             catch (Exception ex)
             {
-                console.Error("Disconnected from server. Please, restart Infusion.");
                 console.Debug(serverDiagnosticPullStream.Flush());
                 console.Debug(ex.ToString());
                 throw;

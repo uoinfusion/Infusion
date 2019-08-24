@@ -75,7 +75,8 @@ namespace Infusion.Desktop
             proxy.Console = infusionConsole;
             var commandHandler = new CommandHandler(proxy.Console);
 
-            proxy.Initialize(commandHandler, new SoundPlayer());
+            proxy.Initialize(commandHandler, new SoundPlayer(),
+                new Infusion.Injection.Avalonia.InjectionWindowHandler());
 
             CSharpScriptEngine = new Lazy<CSharpScriptEngine>(() => new CSharpScriptEngine(infusionConsole));
             ScriptEngine = new Lazy<ScriptEngine>(() => new ScriptEngine(CSharpScriptEngine.Value, new InjectionScriptEngine(UO.Injection, infusionConsole)));

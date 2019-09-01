@@ -26,7 +26,7 @@ namespace Infusion.Tests.Gumps
             };
 
             GumpMenuSelectionRequest resultPacket = null;
-            var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
+            var gump = new Gump(new GumpTypeId(0x96000495), new GumpInstanceId(0x40000DA7), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
                 GumpLabelPosition.Before);
@@ -50,7 +50,7 @@ namespace Infusion.Tests.Gumps
             };
 
             GumpMenuSelectionRequest resultPacket = null;
-            var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495),
+            var gump = new Gump(new GumpTypeId(0x96000495), new GumpInstanceId(0x40000DA7),
                 "{Text 50 215 955 0}{Text 50 215 955 1}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label", "test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
@@ -77,7 +77,7 @@ namespace Infusion.Tests.Gumps
             };
 
             GumpMenuSelectionRequest resultPacket = null;
-            var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495),
+            var gump = new Gump(new GumpTypeId(0x96000495), new GumpInstanceId(0x40000DA7),
                 "{Text 50 215 955 0}{CheckBox 13 57 9904 9903 0 100}{Text 50 215 955 1}{CheckBox 13 57 9904 9903 0 103}",
                 new[] { "test label", "test label2" });
 
@@ -139,7 +139,7 @@ namespace Infusion.Tests.Gumps
             };
 
             GumpMenuSelectionRequest resultPacket = null;
-            var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495), "{Button 13 215 4005 4007 1 0 9}{Text 50 215 955 0}",
+            var gump = new Gump(new GumpTypeId(0x96000495), new GumpInstanceId(0x40000DA7), "{Button 13 215 4005 4007 1 0 9}{Text 50 215 955 0}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).PushButton("test label",
                 GumpLabelPosition.After);
@@ -155,7 +155,7 @@ namespace Infusion.Tests.Gumps
             Action response = () => new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
                 GumpLabelPosition.Before);
 
-            response.ShouldThrow<GumpException>();
+            response.Should().Throw<GumpException>();
         }
 
         [TestMethod]
@@ -166,7 +166,7 @@ namespace Infusion.Tests.Gumps
             Action response = () => new GumpResponseBuilder(gump, packet => { }).PushButton("non existent label",
                 GumpLabelPosition.Before);
 
-            response.ShouldThrow<GumpException>();
+            response.Should().Throw<GumpException>();
         }
 
         [TestMethod]
@@ -184,7 +184,7 @@ namespace Infusion.Tests.Gumps
             };
 
             GumpMenuSelectionRequest resultPacket = null;
-            var gump = new Gump(new GumpTypeId(0x40000DA7), new GumpInstanceId(0x96000495), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
+            var gump = new Gump(new GumpTypeId(0x96000495), new GumpInstanceId(0x40000DA7), "{Text 50 215 955 0}{Button 13 215 4005 4007 1 0 9}",
                 new[] {"test label"});
             new GumpResponseBuilder(gump, packet => { resultPacket = packet; }).Cancel();
 

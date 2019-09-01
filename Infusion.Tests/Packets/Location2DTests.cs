@@ -23,21 +23,21 @@ namespace Infusion.Tests.Packets
         [TestMethod]
         public void Cannot_instantiate_location_with_coordinates_out_of_ushort_range()
         {
-            ((Action)(() => new Location2D(-1, 0))).ShouldThrow<ArgumentOutOfRangeException>();
-            ((Action)(() => new Location2D(0, -1))).ShouldThrow<ArgumentOutOfRangeException>();
-            ((Action)(() => new Location2D(ushort.MaxValue + 1, 0))).ShouldThrow<ArgumentOutOfRangeException>();
-            ((Action)(() => new Location2D(ushort.MinValue - 1, 0))).ShouldThrow<ArgumentOutOfRangeException>();
-            ((Action)(() => new Location2D(0, ushort.MaxValue + 1))).ShouldThrow<ArgumentOutOfRangeException>();
-            ((Action)(() => new Location2D(0, ushort.MinValue - 1))).ShouldThrow<ArgumentOutOfRangeException>();
+            ((Action)(() => new Location2D(-1, 0))).Should().Throw<ArgumentOutOfRangeException>();
+            ((Action)(() => new Location2D(0, -1))).Should().Throw<ArgumentOutOfRangeException>();
+            ((Action)(() => new Location2D(ushort.MaxValue + 1, 0))).Should().Throw<ArgumentOutOfRangeException>();
+            ((Action)(() => new Location2D(ushort.MinValue - 1, 0))).Should().Throw<ArgumentOutOfRangeException>();
+            ((Action)(() => new Location2D(0, ushort.MaxValue + 1))).Should().Throw<ArgumentOutOfRangeException>();
+            ((Action)(() => new Location2D(0, ushort.MinValue - 1))).Should().Throw<ArgumentOutOfRangeException>();
         }
 
         [TestMethod]
         public void Can_instantiate_location_wit_coordinates_in_ushort_range()
         {
-            ((Action)(() => new Location2D(ushort.MinValue, 10))).ShouldNotThrow();
-            ((Action)(() => new Location2D(ushort.MaxValue, 10))).ShouldNotThrow();
-            ((Action)(() => new Location2D(10, ushort.MinValue))).ShouldNotThrow();
-            ((Action)(() => new Location2D(10, ushort.MaxValue))).ShouldNotThrow();
+            ((Action)(() => new Location2D(ushort.MinValue, 10))).Should().NotThrow();
+            ((Action)(() => new Location2D(ushort.MaxValue, 10))).Should().NotThrow();
+            ((Action)(() => new Location2D(10, ushort.MinValue))).Should().NotThrow();
+            ((Action)(() => new Location2D(10, ushort.MaxValue))).Should().NotThrow();
         }
     }
 }

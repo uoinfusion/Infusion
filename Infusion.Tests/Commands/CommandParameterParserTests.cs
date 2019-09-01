@@ -33,7 +33,7 @@ namespace Infusion.Tests.Commands
             var parameterParser = new CommandParameterParser("1asd54");
 
             Action action = () => parameterParser.ParseInt();
-            action.ShouldThrow<CommandInvocationException>();
+            action.Should().Throw<CommandInvocationException>();
         }
 
         [TestMethod]
@@ -43,7 +43,7 @@ namespace Infusion.Tests.Commands
 
             parameterParser.ParseInt();
             Action action = () => parameterParser.ParseInt();
-            action.ShouldThrow<CommandInvocationException>();
+            action.Should().Throw<CommandInvocationException>();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                             .WaitAny();
                     };
 
-                    action.ShouldThrow<OperationCanceledException>();
+                    action.Should().Throw<OperationCanceledException>();
                 });
 
                 initializedEvent.AssertWaitOneSuccess();
@@ -70,7 +70,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                             .Incomming();
                     };
 
-                    testedAction.ShouldThrow<OperationCanceledException>();
+                    testedAction.Should().Throw<OperationCanceledException>();
                 });
 
                 journal.AwaitingStarted.AssertWaitOneSuccess();

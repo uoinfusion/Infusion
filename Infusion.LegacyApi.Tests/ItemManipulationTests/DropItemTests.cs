@@ -22,7 +22,7 @@ namespace Infusion.LegacyApi.Tests.ItemManipulationTests
             testProxy.Api.DropItem(0x4007AFA8, 0x40073D99, new Location2D(0x8E, 0x41));
 
             testProxy.PacketsSentToServer.Should().HaveCount(1);
-            testProxy.PacketsSentToServer.Single().Payload.ShouldBeEquivalentTo(expectedPayload);
+            testProxy.PacketsSentToServer.Single().Payload.Should().BeEquivalentTo(expectedPayload);
         }
     }
 }

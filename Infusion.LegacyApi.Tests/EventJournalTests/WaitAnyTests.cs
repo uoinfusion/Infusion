@@ -233,7 +233,7 @@ namespace Infusion.LegacyApi.Tests.EventJournalTests
                     .WaitAny(TimeSpan.FromMilliseconds(10));
             };
 
-            actionThrowingTimeoutException.ShouldThrow<TimeoutException>();
+            actionThrowingTimeoutException.Should().Throw<TimeoutException>();
         }
 
         [TestMethod]

@@ -140,7 +140,7 @@ namespace Infusion.LegacyApi.Tests
                     initializedEvent.Set();
                     awaiter.WaitAny();
                 };
-                action.ShouldThrow<OperationCanceledException>();
+                action.Should().Throw<OperationCanceledException>();
             });
 
             initializedEvent.WaitOneFast();
@@ -168,7 +168,7 @@ namespace Infusion.LegacyApi.Tests
             source.AddMessage("name1", "message1", 0x12345, 0x1234, (Color)0);
 
             ((Action) (() => awaiter.WaitAny(TimeSpan.FromMilliseconds(10))))
-                .ShouldThrow<TimeoutException>();
+                .Should().Throw<TimeoutException>();
         }
     }
 }

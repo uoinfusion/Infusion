@@ -17,7 +17,7 @@ namespace Infusion.Cli
                 c.ParsingCulture = CultureInfo.InvariantCulture;
             });
 
-            var result = parser.ParseArguments<CommandSenderOptions, HeadlessOptions>(args)
+            var result = parser.ParseArguments<CommandSenderOptions, HeadlessOptions, LaunchOptions>(args)
                 .WithParsed<CommandSenderOptions>(options =>
                 {
                     CommandPipeSender.Send(options.PipeName, options.Command);
@@ -30,6 +30,11 @@ namespace Infusion.Cli
                     var infusion = new HeadlessInfusion(options);
                     infusion.StartClient();
                     infusion.ListenPipeCommands();
+                })
+                .WithParsed<LaunchOptions>(options =>
+                {
+                    var command = new LaunchCommand(options.ServerAddress, options.ProtocolVersion, options.ScriptFileName);
+                    command.Execute();
                 });
 
             result.WithNotParsed(errors =>

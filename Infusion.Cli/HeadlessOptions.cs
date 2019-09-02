@@ -36,7 +36,7 @@ namespace Infusion.Cli
         [Option("char", Required = true, HelpText = "Ultima Online character name.")]
         public string CharacterName { get; set; }
 
-        [Option("script", Required = true, HelpText = "Initial script full name with path.")]
+        [Option("script", Required = true, HelpText = "Initial script file name.")]
         public string ScriptFileName { get; set; }
     }
 }

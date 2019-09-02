@@ -14,4 +14,4 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Infusion.Desktop")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi")]
 [assembly: InternalsVisibleTo("Infusion.LegacyApi.Tests")]
-[assembly: InternalsVisibleTo("Infusion.Launcher.NetCore")]
+[assembly: InternalsVisibleTo("Infusion.Cli")]

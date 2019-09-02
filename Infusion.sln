@@ -64,7 +64,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Injection.Avalonia
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Injection.Avalonia.TestApp", "Infusion.Injection.Avalonia.TestApp\Infusion.Injection.Avalonia.TestApp.csproj", "{CDD759B4-934F-4109-95A0-E05437DFBC9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Headless", "Infusion.Headless\Infusion.Headless.csproj", "{F66937A3-A6A6-4D9F-A55B-FE70EC0936ED}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infusion.Headless", "Infusion.Cli\Infusion.Cli.csproj", "{F66937A3-A6A6-4D9F-A55B-FE70EC0936ED}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

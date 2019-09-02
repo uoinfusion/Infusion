@@ -1,9 +1,9 @@
 ﻿using CommandLine;
 
-namespace Infusion.Headless
+namespace Infusion.Cli
 {
     [Verb("sendcmd", HelpText = "Sends a command to a Infusion Proxy instance.")]
-    public class CommandSenderOptions
+    internal sealed class CommandSenderOptions
     {
         [Option("pipe", HelpText = "Pipe name to connect to Infusion proxy.", Default = "infusionPipe")]
         public string PipeName { get; set; }

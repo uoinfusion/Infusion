@@ -2,9 +2,9 @@
 using System.IO;
 using System.Text;
 
-namespace Infusion.Headless
+namespace Infusion.Cli
 {
-    public class StreamString
+    internal sealed class StreamString
     {
         private Stream ioStream;
         private UnicodeEncoding streamEncoding;

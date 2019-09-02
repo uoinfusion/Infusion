@@ -3,7 +3,7 @@ using CommandLine.Text;
 using System;
 using System.Globalization;
 
-namespace Infusion.Headless
+namespace Infusion.Cli
 {
     public class Program
     {

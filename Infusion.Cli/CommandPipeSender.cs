@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infusion.Headless
+namespace Infusion.Cli
 {
-    public static class CommandPipeSender
+    internal static class CommandPipeSender
     {
         public static void Send(string pipeName, string command)
         {

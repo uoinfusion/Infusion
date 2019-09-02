@@ -11,9 +11,9 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Infusion.Headless
+namespace Infusion.Cli
 {
-    public class HeadlessInfusion
+    internal sealed class HeadlessInfusion
     {
         private readonly IConsole console = new TextConsole();
         private readonly CommandHandler commandHandler;

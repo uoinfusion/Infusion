@@ -1,10 +1,10 @@
 ﻿using CommandLine;
 using System;
 
-namespace Infusion.Headless
+namespace Infusion.Cli
 {
     [Verb("hl", HelpText = "Starts a headless Infusion client.")]
-    public class HeadlessOptions
+    internal sealed class HeadlessOptions
     {
         [Option("pipe", Default = "infusionPipe", HelpText = "Pipe name to listen for commands.")]
         public string PipeName { get; set; }

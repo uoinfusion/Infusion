@@ -246,3 +246,4 @@ ModelManifest.xml
 /ExampleScripts/UOErebor/Infusion.Scripts.UOErebor.Extensions.dll
 *.DS_Store
 /Infusion.Desktop/Properties/launchSettings.json
+/Infusion.Cli/Properties/launchSettings.json

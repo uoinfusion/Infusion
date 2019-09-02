@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Infusion.Desktop.Launcher;
+using Infusion.Proxy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

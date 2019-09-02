@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using Infusion.Proxy;
 using System;
 using System.Collections.Generic;
 using System.IO;

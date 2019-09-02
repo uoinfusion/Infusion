@@ -1,59 +1,51 @@
-﻿using Infusion.Commands;
-using Infusion.EngineScripts;
-using Infusion.IO.Encryption.Login;
-using Infusion.LegacyApi;
-using Infusion.LegacyApi.Console;
-using Infusion.Logging;
-using Infusion.Proxy;
+﻿using CommandLine;
+using CommandLine.Text;
 using System;
-using System.Net;
+using System.Globalization;
 
 namespace Infusion.Headless
 {
     public class Program
     {
-        internal static IConsole Console { get; set; } = new TextConsole();
-        internal static ScriptEngine ScriptEngine { get; private set; }
-        public static ILogger Diagnostic;
-        public static CSharpScriptEngine CSharpScriptEngine { get; private set; }
-        private static readonly IConsole scriptOutput = Console;
-        static readonly CommandHandler commandHandler = new CommandHandler(Diagnostic);
-        private static string ScriptFileName { get; set; }
-
-        public static void Main()
+        public static void Main(string[] args)
         {
-            var proxy = new InfusionProxy();
-            proxy.Initialize(commandHandler, new NullSoundPlayer(), new LegacyApi.Injection.NullInjectionWindow());
-
-            proxy.Start(new ProxyStartConfig()
+            var parser = new Parser(c =>
             {
-                ServerAddress = "127.0.0.1,2593",
-                ServerEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), 2593),
-                LocalProxyPort = 60000,
-                ProtocolVersion = new Version("3.0.0"),
-                Encryption = EncryptionSetup.EncryptedServer,
-                LoginEncryptionKey = LoginEncryptionKey.FromVersion(new Version(3, 0, 6)),
+                c.AutoHelp = true;
+                c.AutoVersion = true;
+                c.IgnoreUnknownArguments = false;
+                c.ParsingCulture = CultureInfo.InvariantCulture;
             });
 
-            var headlessClient = new HeadlessClient(Console, new HeadlessStartConfig()
+            var result = parser.ParseArguments<CommandSenderOptions, HeadlessOptions>(args)
+                .WithParsed<CommandSenderOptions>(options =>
+                {
+                    CommandPipeSender.Send(options.PipeName, options.Command);
+                })
+                .WithParsed<HeadlessOptions>(options =>
+                {
+                    Console.WriteLine("Press ctrl + c to exit headless Infusion client.");
+                    Console.WriteLine();
+
+                    var infusion = new HeadlessInfusion(options);
+                    infusion.StartClient();
+                    infusion.ListenPipeCommands();
+                });
+
+            result.WithNotParsed(errors =>
             {
-                Encryption = EncryptionSetup.Autodetect,
-                ProtocolVersion = new Version("3.0.0"),
-                ServerAddress = "127.0.0.1,60000",
-                ServerEndPoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), 60000),
-                ShardName = "Erebor",
-                AccountName = "diblik",
-                Password = "password",
-                CharacterName = "Diblik"
+                var helpText = HelpText.AutoBuild(result,
+                    h =>
+                    {
+                        h.AdditionalNewLineAfterOption = false;
+                        return HelpText.DefaultParsingErrorsHandler(result, h);
+                    },
+                    e => e);
+
+                Console.WriteLine(helpText);
             });
 
-            CSharpScriptEngine = new CSharpScriptEngine(Console);
-            ScriptEngine = new ScriptEngine(CSharpScriptEngine, new InjectionScriptEngine(UO.Injection, Console));
-
-            headlessClient.Connect();
-            proxy.DumpPacketLog();
-
-            System.Console.ReadLine();
+            return;
         }
     }
 }

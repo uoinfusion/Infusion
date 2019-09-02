@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infusion.Desktop
+namespace Infusion.Proxy
 {
-    internal static class PathUtilities
+    public static class PathUtilities
     {
         private static string explicitRootPath;
         private static Lazy<string> binPath = new Lazy<string>(GetBinPath);
@@ -18,8 +18,13 @@ namespace Infusion.Desktop
         public static string RootPath
             => explicitRootPath ?? binPath.Value;
 
-        public static string GetAbsolutePath(string subpath)
-            => Path.Combine(RootPath, subpath);
+        public static string GetAbsolutePath(string path)
+        {
+            if (Path.IsPathRooted(path))
+                return path;
+
+            return Path.Combine(RootPath, path);
+        }
 
         public static void SetRootPath(string rootPath)
             => explicitRootPath = rootPath;

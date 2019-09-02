@@ -34,7 +34,6 @@ namespace Infusion.Cli
             this.scriptFileName = scriptFileName;
 
             diagnostic = console;
-            scriptOutput = console;
             commandHandler = new CommandHandler(diagnostic);
         }
 

@@ -4,7 +4,7 @@ using System;
 namespace Infusion.Cli
 {
     [Verb("hl", HelpText = "Starts a headless Infusion client.")]
-    internal sealed class HeadlessOptions
+    internal sealed class LaunchHeadlessOptions
     {
         [Option("pipe", Default = "infusionPipe", HelpText = "Pipe name to listen for commands.")]
         public string PipeName { get; set; }

@@ -3,7 +3,7 @@
 namespace Infusion.Cli
 {
     [Verb("sendcmd", HelpText = "Sends a command to a Infusion Proxy instance.")]
-    internal sealed class CommandSenderOptions
+    internal sealed class SendCommandOptions
     {
         [Option("pipe", HelpText = "Pipe name to connect to Infusion proxy.", Default = "infusionPipe")]
         public string PipeName { get; set; }

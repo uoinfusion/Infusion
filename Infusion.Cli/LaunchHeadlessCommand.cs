@@ -13,7 +13,7 @@ using System.Threading;
 
 namespace Infusion.Cli
 {
-    internal sealed class HeadlessInfusion
+    internal sealed class LaunchHeadlessCommand
     {
         private readonly IConsole console = new TextConsole();
         private readonly CommandHandler commandHandler;
@@ -33,7 +33,7 @@ namespace Infusion.Cli
 
         private readonly string pipeName;
 
-        public HeadlessInfusion(HeadlessOptions options)
+        public LaunchHeadlessCommand(LaunchHeadlessOptions options)
         {
             commandHandler = new CommandHandler(console);
 

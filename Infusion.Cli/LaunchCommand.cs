@@ -21,7 +21,6 @@ namespace Infusion.Cli
         private ScriptEngine scriptEngine;
         private ILogger diagnostic;
         private CSharpScriptEngine csharpScriptEngine;
-        private readonly IConsole scriptOutput;
         private readonly CommandHandler commandHandler;
         private string scriptFileName;
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Infusion.Cli
 {
-    internal static class CommandPipeSender
+    internal static class SendCommand
     {
         public static void Send(string pipeName, string command)
         {

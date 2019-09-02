@@ -17,17 +17,17 @@ namespace Infusion.Cli
                 c.ParsingCulture = CultureInfo.InvariantCulture;
             });
 
-            var result = parser.ParseArguments<CommandSenderOptions, HeadlessOptions, LaunchOptions>(args)
-                .WithParsed<CommandSenderOptions>(options =>
+            var result = parser.ParseArguments<SendCommandOptions, LaunchHeadlessOptions, LaunchOptions>(args)
+                .WithParsed<SendCommandOptions>(options =>
                 {
-                    CommandPipeSender.Send(options.PipeName, options.Command);
+                    SendCommand.Send(options.PipeName, options.Command);
                 })
-                .WithParsed<HeadlessOptions>(options =>
+                .WithParsed<LaunchHeadlessOptions>(options =>
                 {
                     Console.WriteLine("Press ctrl + c to exit headless Infusion client.");
                     Console.WriteLine();
 
-                    var infusion = new HeadlessInfusion(options);
+                    var infusion = new LaunchHeadlessCommand(options);
                     infusion.StartClient();
                     infusion.ListenPipeCommands();
                 })

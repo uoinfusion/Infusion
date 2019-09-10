@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Infusion.IO;
 using Infusion.Packets;
 
@@ -29,13 +30,20 @@ namespace Infusion.Parsers
             var reader = new StreamPacketReader(new PullStreamToStreamAdapter(inputStream), buffer);
 
             int packetId = reader.ReadByte();
-            int packetLength = GetPacketLength(reader, packetId);
-            reader.ReadBytes(packetLength - reader.Position);
+            try
+            {
+                int packetLength = GetPacketLength(reader, packetId);
+                reader.ReadBytes(packetLength - reader.Position);
 
-            var payload = new byte[packetLength];
-            Array.Copy(buffer, 0, payload, 0, packetLength);
+                var payload = new byte[packetLength];
+                Array.Copy(buffer, 0, payload, 0, packetLength);
 
-            return new Packet(packetId, payload);
+                return new Packet(packetId, payload);
+            }
+            catch (Exception ex)
+            {
+                throw new EndOfStreamException($"EndOfStreamException occured when reading packet {packetId:X2}", ex);
+            }
         }
 
         public Packet ParsePacket(byte[] buffer)

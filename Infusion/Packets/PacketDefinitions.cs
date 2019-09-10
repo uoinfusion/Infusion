@@ -797,7 +797,7 @@ namespace Infusion.Packets
         public static readonly PacketDefinition UOStoreRequest = new PacketDefinition(0xFA,
             new StaticPacketLength(1), "UOStoreRequest");
         public static readonly PacketDefinition UnknownFB = new PacketDefinition(0xFB,
-            new VariablePacketLength(), "UnknownFB");
+            new StaticPacketLength(2), "UnknownFB");
 
         public static readonly PacketDefinition CrossUOMessages = new PacketDefinition(0xFC,
             new VariablePacketLength(), "UnknownFC");

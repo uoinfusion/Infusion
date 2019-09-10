@@ -60,7 +60,7 @@ namespace Infusion
             sendNewGameStream = new ClientNewGamePushStream();
         }
 
-        public UltimaClientConnectionStatus Status { get; private set; }
+        public UltimaClientConnectionStatus Status { get; internal set; }
 
         public event EventHandler<Packet> PacketReceived;
 

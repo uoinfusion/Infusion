@@ -5,11 +5,26 @@ using System.Text;
 
 namespace Infusion.Packets.Client
 {
-    public class GameServerLoginRequest
+    public class GameServerLoginRequest : MaterializedPacket
     {
         public byte[] Key { get; set; }
         public string AccountName { get; set; }
         public string Password { get; set; }
+
+        private Packet rawPacket;
+
+        public override Packet RawPacket => rawPacket;
+
+        public override void Deserialize(Packet rawPacket)
+        {
+            this.rawPacket = rawPacket;
+
+            var reader = new ArrayPacketReader(rawPacket.Payload);
+            reader.Skip(1);
+            reader.Read(Key, 0, 4);
+            AccountName = reader.ReadString(30);
+            Password = reader.ReadString(30);
+        }
 
         public Packet Serialize()
         {
@@ -21,7 +36,8 @@ namespace Infusion.Packets.Client
             writer.WriteString(30, AccountName);
             writer.WriteString(30, Password);
 
-            return new Packet(PacketDefinitions.GameServerLoginRequest.Id, payload);
+            rawPacket = new Packet(PacketDefinitions.GameServerLoginRequest.Id, payload);
+            return rawPacket;
         }
     }
 }

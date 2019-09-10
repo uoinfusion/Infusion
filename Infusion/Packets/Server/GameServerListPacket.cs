@@ -16,6 +16,31 @@ namespace Infusion.Packets.Server
 
         public override Packet RawPacket => rawPacket;
 
+        public Packet Serialize()
+        {
+            int size = 3 + 3 + Servers.Length * 40;
+            var payload = new byte[size];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.GameServerList.Id);
+            writer.WriteUShort((ushort)size);
+
+            writer.WriteByte(SystemInfoFlag);
+            writer.WriteUShort((ushort)Servers.Length);
+
+            foreach (var server in Servers)
+            {
+                writer.WriteUShort(server.Id);
+                writer.WriteString(32, server.Name);
+                writer.WriteByte(server.FullPercent);
+                writer.WriteByte(server.TimeZone);
+                writer.WriteUInt(server.IP);
+            }
+
+            rawPacket = new Packet(PacketDefinitions.GameServerList.Id, payload);
+            return rawPacket;
+        }
+
         public override void Deserialize(Packet rawPacket)
         {
             this.rawPacket = rawPacket;

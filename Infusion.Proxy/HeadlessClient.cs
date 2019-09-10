@@ -21,25 +21,39 @@ namespace Infusion.Proxy
 {
     public class HeadlessClient
     {
+        private class ReloginInfo
+        {
+            public byte ServerListSystemFlag { get; set; }
+        }
+
         private readonly IConsole console;
         private readonly HeadlessStartConfig startConfig;
         private readonly IDiagnosticPushStream serverDiagnosticPushStream;
+        private readonly InfusionDiagnosticPushStreamProvider diagnosticProvider;
         private readonly ConsoleDiagnosticPullStream serverDiagnosticPullStream;
         private readonly RingBufferLogger packetLogger = new RingBufferLogger(10000);
         private readonly PacketDefinitionRegistry packetRegistry;
-        private readonly ServerConnection serverConnection;
         private readonly ServerPacketHandler serverPacketHandler;
         private readonly UltimaServer ultimaServer;
-        private readonly object serverStreamLock = new object();
         private readonly ClientPacketHandler clientPacketHandler;
         private readonly UltimaClient ultimaClient;
-        private Socket serverSocket;
         private IPEndPoint serverEndpoint;
         private CancellationTokenSource disconnectTokenSource;
-        private Task serverLoopTask;
+
+        private readonly ReloginInfo reloginInfo = new ReloginInfo();
+
         private Task pingLoopTask;
 
-        public NetworkStream ServerStream { get; set; }
+        private Socket serverSocket;
+        private readonly ServerConnection serverConnection;
+        private Task serverLoopTask;
+        private NetworkStream serverStream;
+        private readonly object serverStreamLock = new object();
+
+        private UltimaClientConnection clientConnection;
+        private Task clientLoopTask;
+        private NetworkStream clientStream;
+        private readonly object clientLock = new object();
 
         public LogConfiguration LogConfig { get; } = new LogConfiguration();
 
@@ -48,7 +62,7 @@ namespace Infusion.Proxy
             this.console = console;
             this.startConfig = startConfig;
             packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(startConfig.ProtocolVersion);
-            var diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, console);
+            diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, console);
             serverDiagnosticPushStream =
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "headless -> server", packetRegistry),
                     new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ClientToServer, diagnosticProvider.GetStream));
@@ -63,10 +77,32 @@ namespace Infusion.Proxy
             clientPacketHandler = new ClientPacketHandler(packetRegistry);
             serverEndpoint = startConfig.ServerEndPoint;
 
-            ultimaClient = new UltimaClient(clientPacketHandler, SendClientPacket);
+            ultimaClient = new UltimaClient(clientPacketHandler, SendToClient);
 
             serverPacketHandler.Subscribe(PacketDefinitions.GameServerList, HandleGameServerList);
             serverPacketHandler.Subscribe(PacketDefinitions.CharactersStartingLocations, HandleCharactersStartingLocationsPacket);
+
+            clientPacketHandler.Subscribe(PacketDefinitions.LoginRequest, HandleLoginRequest);
+        }
+
+        private void HandleLoginRequest(LoginRequest packet)
+        {
+            if (packet.Account.Equals(startConfig.AccountName) && packet.Password.Equals(this.startConfig.Password))
+            {
+                var serverListPacket = new GameServerListPacket();
+                serverListPacket.Servers = new[]
+                {
+                    new ServerListItem(0, startConfig.ShardName, 0, 0, 0x7F000001)
+                };
+                serverListPacket.SystemInfoFlag = reloginInfo.ServerListSystemFlag;
+
+                clientConnection.Status = UltimaClientConnectionStatus.ServerLogin;
+                SendToClient(serverListPacket.Serialize());
+            }
+            else
+            {
+                // TODO: report wrong password
+            }
         }
 
         private void HandleCharactersStartingLocationsPacket(CharactersStartingLocationsPacket packet)
@@ -91,6 +127,8 @@ namespace Infusion.Proxy
             if (server == null)
                 throw new InvalidOperationException($"Cannot find shard {startConfig.ShardName}.");
 
+            reloginInfo.ServerListSystemFlag = packet.SystemInfoFlag;
+
             var selectServerRequest = packetRegistry.Instantiate<SelectServerRequest>();
             selectServerRequest.ChosenServerId = server.Id;
             SendToServer(selectServerRequest.Serialize());
@@ -103,7 +141,7 @@ namespace Infusion.Proxy
                 DisconnectFromServer();
                 Thread.Sleep(1000);
                 serverEndpoint = new IPEndPoint(new IPAddress(packet.GameServerIp), packet.GameServerPort);
-                ServerStream = ConnectToServer();
+                serverStream = ConnectToServer();
             }
 
             SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, packet.GameServerIp));
@@ -115,10 +153,6 @@ namespace Infusion.Proxy
                 Password = startConfig.Password
             };
             SendToServer(loginRequest.Serialize());
-        }
-
-        private void SendClientPacket(Packet packet)
-        {
         }
 
         private void ServerConnectionOnPacketReceived(object sender, Packet rawPacket)
@@ -143,11 +177,12 @@ namespace Infusion.Proxy
         {
             lock (serverStreamLock)
             {
-                ServerStream = ConnectToServer();
+                serverStream = ConnectToServer();
             }
 
             disconnectTokenSource = new CancellationTokenSource();
             serverLoopTask = Task.Run(() => ServerLoop(), disconnectTokenSource.Token);
+            clientLoopTask = Task.Run(() => ClientLoop(), disconnectTokenSource.Token);
             pingLoopTask = Task.Run(() => PingLoop(), disconnectTokenSource.Token);
 
             SendPreLoginSeed();
@@ -194,6 +229,87 @@ namespace Infusion.Proxy
             }
         }
 
+        private void SendToClient(Packet rawPacket)
+        {
+            if (clientStream == null)
+                return;
+
+            var filteredPacket = serverPacketHandler.FilterOutput(rawPacket);
+            if (filteredPacket.HasValue)
+            {
+                lock (clientLock)
+                {
+                    using (var memoryStream = new MemoryStream(1024))
+                    {
+                        clientConnection.Send(filteredPacket.Value, memoryStream);
+                        var buffer = memoryStream.GetBuffer();
+
+#if DUMP_RAW
+                        Console.Info("proxy -> client");
+                        Console.Info(buffer.Take((int)memoryStream.Length).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+#endif
+
+                        clientStream.Write(buffer, 0, (int)memoryStream.Length);
+                    }
+                }
+            }
+        }
+
+        private void ClientLoop()
+        {
+            var listener = new TcpListener(new IPEndPoint(IPAddress.Any, 30000));
+            listener.Start();
+            while (true)
+            {
+                lock (clientLock)
+                {
+                    var client = listener.AcceptTcpClient();
+                    clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
+                        new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy", packetRegistry),
+                        new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client", packetRegistry),
+                            new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry,
+                            EncryptionSetup.Autodetect, null);
+                    clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
+
+                    clientStream = client.GetStream();
+                }
+
+                int receivedLength;
+                var receiveBuffer = new byte[65535];
+
+                while ((receivedLength = clientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
+                {
+#if DUMP_RAW
+                        Console.Info("client -> proxy");
+                        Console.Info(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+#endif
+
+                    var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
+                    clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
+
+                    if (disconnectTokenSource.Token.IsCancellationRequested)
+                        break;
+                }
+            }
+        }
+
+        private void ClientConnectionOnPacketReceived(object sender, Packet rawPacket)
+        {
+            Packet? handledPacket = null;
+
+            try
+            {
+                handledPacket = clientPacketHandler.HandlePacket(rawPacket);
+            }
+            catch (Exception ex)
+            {
+                console.Error(ex.ToString());
+            }
+
+            if (handledPacket != null)
+                SendToServer(handledPacket.Value);
+        }
+
         private void ServerLoop()
         {
             try
@@ -204,15 +320,15 @@ namespace Infusion.Proxy
                 {
                     lock (serverStreamLock)
                     {
-                        if (ServerStream == null)
-                            ServerStream = ConnectToServer();
+                        if (serverStream == null)
+                            serverStream = ConnectToServer();
                     }
 
-                    while (ServerStream.DataAvailable)
+                    while (serverStream.DataAvailable)
                     {
                         try
                         {
-                            var packet = serverConnection.Receive(new NetworkStreamToPullStreamAdapter(ServerStream));
+                            var packet = serverConnection.Receive(new NetworkStreamToPullStreamAdapter(serverStream));
                             if (packet.Id == PacketDefinitions.ConnectToGameServer.Id)
                             {
                                 HandleConnectToGameServer(packetRegistry.Materialize<ConnectToGameServerPacket>(packet));
@@ -241,7 +357,6 @@ namespace Infusion.Proxy
 
         private NetworkStream ConnectToServer()
         {
-            // localhost:
             serverSocket = new Socket(serverEndpoint.Address.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             serverSocket.Connect(serverEndpoint);
 
@@ -250,15 +365,10 @@ namespace Infusion.Proxy
 
         private void DisconnectFromServer()
         {
-            ServerStream.Dispose();
-            ServerStream = null;
+            serverStream.Dispose();
+            serverStream = null;
             serverSocket.Dispose();
             serverSocket = null;
-        }
-
-        public void SendToClient(Packet rawPacket)
-        {
-            serverPacketHandler.FilterOutput(rawPacket);
         }
 
         public void SendToServer(Packet rawPacket)
@@ -281,7 +391,7 @@ namespace Infusion.Proxy
                         console.Info(buffer.Take((int)memoryStream.Length).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
 #endif
 
-                        ServerStream.Write(buffer, 0, (int)memoryStream.Length);
+                        serverStream.Write(buffer, 0, (int)memoryStream.Length);
                     }
                 }
             }

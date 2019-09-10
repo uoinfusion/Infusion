@@ -415,9 +415,9 @@ namespace Infusion.Packets
         public static readonly PacketDefinition GodViewData = new PacketDefinition(0x7F,
             new VariablePacketLength(), "GodViewData");
 
-        public static readonly PacketDefinition LoginRequest = new PacketDefinition(0x80,
-            new StaticPacketLength(0x3e), "LoginRequest");
-
+        public static readonly PacketDefinition<LoginRequest> LoginRequest = new PacketDefinition<LoginRequest>(0x80,
+            new StaticPacketLength(0x3e), "LoginRequest", () => new LoginRequest());
+            
         public static readonly PacketDefinition ChangeCharacter = new PacketDefinition(0x81,
             new VariablePacketLength(), "ChangeCharacter");
 
@@ -466,8 +466,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition<MapMessagePacket> MapMessage = new PacketDefinition<MapMessagePacket>(0x90,
             new StaticPacketLength(0x13), "MapMessage", () => new MapMessagePacket());
 
-        public static readonly PacketDefinition GameServerLoginRequest = new PacketDefinition(0x91,
-            new StaticPacketLength(0x41), "GameServerLoginRequest");
+        public static readonly PacketDefinition<GameServerLoginRequest> GameServerLoginRequest = new PacketDefinition<GameServerLoginRequest>(0x91,
+            new StaticPacketLength(0x41), "GameServerLoginRequest", () => new GameServerLoginRequest());
 
         public static readonly PacketDefinition UpdateMultiData = new PacketDefinition(0x92,
             new VariablePacketLength(), "UpdateMultiData");

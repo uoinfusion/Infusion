@@ -21,6 +21,7 @@ namespace Infusion.Packets.Client
 
             var reader = new ArrayPacketReader(rawPacket.Payload);
             reader.Skip(1);
+            Key = new byte[4];
             reader.Read(Key, 0, 4);
             AccountName = reader.ReadString(30);
             Password = reader.ReadString(30);

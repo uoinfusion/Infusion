@@ -240,6 +240,7 @@ namespace Infusion
             switch (Status)
             {
                 case UltimaClientConnectionStatus.Initial:
+                case UltimaClientConnectionStatus.AfterInitialSeed:
                 case UltimaClientConnectionStatus.ServerLogin:
                 case UltimaClientConnectionStatus.PreGameLogin:
                     diagnosticPushStream.BaseStream = new StreamToPushStreamAdapter(outputStream);

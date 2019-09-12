@@ -71,6 +71,8 @@ namespace Infusion
                 packetHandler.Publish<LoginCharacterRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.LoginRequest.Id)
                 packetHandler.Publish<LoginRequest>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.GameServerLoginRequest.Id)
+                packetHandler.Publish<GameServerLoginRequest>(rawPacket);
 
             return rawPacket;
         }

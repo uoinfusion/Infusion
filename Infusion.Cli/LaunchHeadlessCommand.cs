@@ -73,7 +73,7 @@ namespace Infusion.Cli
             var csharpScriptEngine = new CSharpScriptEngine(console);
             var scriptEngine = new ScriptEngine(csharpScriptEngine, new InjectionScriptEngine(UO.Injection, console));
 
-            var headlessClient = new HeadlessClient(console, new HeadlessStartConfig()
+            var headlessClient = new HeadlessClient(infusionProxy.LegacyApi, console, new HeadlessStartConfig()
             {
                 Encryption = EncryptionSetup.Autodetect,
                 ProtocolVersion = protocolVersion,

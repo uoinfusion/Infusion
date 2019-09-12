@@ -208,7 +208,8 @@ namespace Infusion.Proxy
 
                     lock (serverStreamLock)
                     {
-                        ServerStream = ConnectToServer();
+                        if (ServerStream == null)
+                            ServerStream = ConnectToServer();
                     }
 
                     if (!serverLoopStarted)

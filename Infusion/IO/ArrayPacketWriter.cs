@@ -27,6 +27,8 @@ namespace Infusion.IO
             array[Position++] = (byte) (value & 0xFF);
         }
 
+        internal void WriteObjectId(ObjectId playerId) => WriteUInt(playerId.Value);
+
         public void WriteByte(byte value)
         {
             array[Position++] = value;
@@ -35,6 +37,13 @@ namespace Infusion.IO
         public void WriteSByte(sbyte value)
         {
             array[Position++] = (byte)value;
+        }
+
+        internal void WriteDirection(Direction direction, MovementType movementType)
+        {
+            byte encoded = (movementType == MovementType.Run) ? (byte)0x80 : (byte)0;
+            encoded |= (byte)direction;
+            WriteByte(encoded);
         }
 
         public void WriteInt(int value)

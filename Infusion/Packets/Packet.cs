@@ -17,6 +17,12 @@ namespace Infusion.Packets
             Id = id;
         }
 
+        public Packet(byte[] payload)
+        {
+            Payload = payload;
+            Id = payload[0];
+        }
+
         public Packet Clone()
         {
             var clonedPayload = new Byte[Length];

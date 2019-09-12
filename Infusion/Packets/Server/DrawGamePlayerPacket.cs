@@ -20,7 +20,7 @@ namespace Infusion.Packets.Server
             Serialize();
         }
 
-        public void Serialize()
+        public Packet Serialize()
         {
             var payload = new byte[19];
             var writer = new ArrayPacketWriter(payload);
@@ -38,6 +38,7 @@ namespace Infusion.Packets.Server
             writer.WriteSByte((sbyte)Location.Z);
 
             rawPacket = new Packet(PacketDefinitions.DrawGamePlayer.Id, payload);
+            return rawPacket;
         }
 
         public byte Flags { get; set; }

@@ -1,4 +1,5 @@
-﻿using Infusion.IO;
+﻿using System;
+using Infusion.IO;
 
 namespace Infusion.Packets.Server
 {
@@ -7,6 +8,8 @@ namespace Infusion.Packets.Server
         private byte[] payload;
 
         public byte[] GameServerIp { get; set; }
+
+        public byte[] Seed { get; set; }
 
         public ushort GameServerPort { get; set; }
 
@@ -34,7 +37,22 @@ namespace Infusion.Packets.Server
             GameServerIp = new byte[4];
             reader.Read(GameServerIp, 0, 4);
             GameServerPort = reader.ReadUShort();
+            Seed = new byte[4];
+            reader.Read(Seed, 0, 4);
             payload = rawPacket.Payload;
+        }
+
+        public Packet Serialize()
+        {
+            var payload = new byte[0x0B];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte((byte)PacketDefinitions.ConnectToGameServer.Id);
+            writer.Write(GameServerIp, 0, 4);
+            writer.WriteUShort(GameServerPort);
+            writer.Write(Seed, 0, 4);
+
+            return new Packet(PacketDefinitions.ConnectToGameServer.Id, payload);
         }
     }
 }

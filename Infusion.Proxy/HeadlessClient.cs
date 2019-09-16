@@ -136,7 +136,7 @@ namespace Infusion.Proxy
             }
         }
 
-            private void HandleSelectServerRequest(SelectServerRequest packet)
+        private void HandleSelectServerRequest(SelectServerRequest packet)
         {
             if (packet.ChosenServerId == 0)
             {
@@ -304,14 +304,14 @@ namespace Infusion.Proxy
 
         private void SendToClient(Packet rawPacket)
         {
-            if (clientStream == null)
-                return;
-
             var filteredPacket = serverPacketHandler.FilterOutput(rawPacket);
             if (filteredPacket.HasValue)
             {
                 lock (clientLock)
                 {
+                    if (clientStream == null)
+                        return;
+
                     using (var memoryStream = new MemoryStream(1024))
                     {
                         clientConnection.Send(filteredPacket.Value, memoryStream);
@@ -330,19 +330,55 @@ namespace Infusion.Proxy
 
         private void ClientLoop()
         {
-            clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
-                new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy", packetRegistry),
-                new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client", packetRegistry),
-                    new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry,
-                    EncryptionSetup.Autodetect, null);
-            clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
-
             var listener = new TcpListener(new IPEndPoint(IPAddress.Any, 30000));
             listener.Start();
 
             while (true)
             {
-                var client = listener.AcceptTcpClient();
+                try
+                {
+                    transmitClientPackets = false;
+                    clientConnection = new UltimaClientConnection(UltimaClientConnectionStatus.Initial,
+                        new ConsoleDiagnosticPullStream(packetLogger, "client -> proxy", packetRegistry),
+                        new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "proxy -> client", packetRegistry),
+                            new InfusionBinaryDiagnosticPushStream(DiagnosticStreamDirection.ServerToClient, diagnosticProvider.GetStream)), packetRegistry,
+                            EncryptionSetup.Autodetect, null);
+                    clientConnection.PacketReceived += ClientConnectionOnPacketReceived;
+
+                    console.Important("Listening for remote clients on port 30000");
+                    PreGameClientLoop(listener);
+
+                    console.Important("Remote client entered game");
+                    GameClientLoop(listener);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (SocketException sex) when (sex.NativeErrorCode == 0x00002746)
+                {
+                    console.Important("Remote client disconnected");
+                }
+                catch (IOException ioex) when (ioex.InnerException is SocketException sex && sex.NativeErrorCode == 0x00002746)
+                {
+                    console.Important("Remote client disconnected");
+                }
+                catch (Exception ex)
+                {
+                    console.Error(ex.ToString());
+                }
+            }
+        }
+
+        private void PreGameClientLoop(TcpListener listener) => ClientLoopCore(listener);
+        private void GameClientLoop(TcpListener listener) => ClientLoopCore(listener);
+
+        private void ClientLoopCore(TcpListener listener)
+        {
+            var client = listener.AcceptTcpClient();
+
+            try
+            {
                 lock (clientLock)
                 {
                     clientStream = client.GetStream();
@@ -354,20 +390,26 @@ namespace Infusion.Proxy
                 while ((receivedLength = clientStream.Read(receiveBuffer, 0, receiveBuffer.Length)) > 0)
                 {
 #if DUMP_RAW
-                        Console.Info("client -> proxy");
-                        Console.Info(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
+                Console.Info("client -> proxy");
+                Console.Info(receiveBuffer.Take(receivedLength).Select(x => x.ToString("X2")).Aggregate((l, r) => l + " " + r));
 #endif
 
                     var memoryStream = new MemoryStream(receiveBuffer, 0, receivedLength, false);
                     clientConnection.ReceiveBatch(new MemoryStreamToPullStreamAdapter(memoryStream), receivedLength);
 
-                    if (disconnectTokenSource.Token.IsCancellationRequested)
-                        return;
+                    disconnectTokenSource.Token.ThrowIfCancellationRequested();
 
                     Thread.Yield();
                 }
+            }
+            finally
+            {
                 client.Dispose();
-                clientStream.Dispose();
+                lock (clientLock)
+                {
+                    clientStream.Dispose();
+                    clientStream = null;
+                }
             }
         }
 

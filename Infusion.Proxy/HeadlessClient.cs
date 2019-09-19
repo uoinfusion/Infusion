@@ -127,6 +127,24 @@ namespace Infusion.Proxy
 
                     SendToClient(new Packet(new byte[] { 0xBF, 0x00, 0x0D, 0x00, 0x05, 0x00, 0x00, 0x02, 0x80, 0x01, 0xFF, 0xFF, 0xA7, }));
 
+                    foreach (var mobile in UO.Mobiles)
+                    {
+                        var drawPacket = new DrawObjectPacket();
+                        drawPacket.Color = mobile.Color.HasValue ? mobile.Color.Value : (Color)0;
+                        drawPacket.Direction = mobile.Orientation.HasValue ? mobile.Orientation.Value : Direction.North;
+                        drawPacket.Flags = mobile.Flags;
+                        drawPacket.Id = mobile.Id;
+                        drawPacket.Location = mobile.Location;
+                        drawPacket.MovementType = mobile.CurrentMovementType.HasValue ? mobile.CurrentMovementType.Value : MovementType.Walk;
+                        drawPacket.Notoriety = mobile.Notoriety.HasValue ? mobile.Notoriety.Value : Notoriety.Innocent;
+                        drawPacket.Type = mobile.Type;
+
+                        var items = UO.Items.InContainer(mobile.Id).Where(i => i.Layer.HasValue).ToArray();
+                        drawPacket.Items = items;
+
+                        SendToClient(drawPacket.Serialize());
+                    }
+
                     transmitClientPackets = true;
                 });
             }

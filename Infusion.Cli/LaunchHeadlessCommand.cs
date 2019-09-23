@@ -23,8 +23,8 @@ namespace Infusion.Cli
         private readonly string serverAddress;
         private readonly int serverPort;
         private readonly int proxyPort;
-        private readonly Version protocolVersion;
         private readonly Version clientVersion;
+        private readonly bool encrypt;
 
         private readonly string accountName;
         private readonly string accountPassword;
@@ -45,7 +45,7 @@ namespace Infusion.Cli
             serverAddress = options.ServerAddress;
             serverPort = options.ServerPort;
             proxyPort = options.ProxyPort;
-            protocolVersion = options.ProtocolVersion;
+            encrypt = options.Encrypt;
             clientVersion = options.ClientVersion;
             accountName = options.AccountName;
             accountPassword = options.AccountPassword;
@@ -65,8 +65,8 @@ namespace Infusion.Cli
                 ServerAddress = $"{serverAddress},{serverPort}",
                 ServerEndPoint = new IPEndPoint(resolvedServerAddress, serverPort),
                 LocalProxyPort = (ushort)proxyPort,
-                ProtocolVersion = protocolVersion,
-                Encryption = EncryptionSetup.EncryptedServer,
+                ProtocolVersion = clientVersion,
+                Encryption = encrypt ? EncryptionSetup.EncryptedServer : EncryptionSetup.Autodetect,
                 LoginEncryptionKey = LoginEncryptionKey.FromVersion(clientVersion),
             });
 
@@ -76,7 +76,7 @@ namespace Infusion.Cli
             var headlessClient = new HeadlessClient(infusionProxy.LegacyApi, console, new HeadlessStartConfig()
             {
                 Encryption = EncryptionSetup.Autodetect,
-                ProtocolVersion = protocolVersion,
+                ClientVersion = clientVersion,
                 ServerAddress = $"127.0.0.1,{proxyPort}",
                 ServerEndPoint = new IPEndPoint(new IPAddress(new byte[] { 127, 0, 0, 1 }), proxyPort),
                 ShardName = shardName,
@@ -87,7 +87,8 @@ namespace Infusion.Cli
 
             headlessClient.Connect();
 
-            _ = scriptEngine.ExecuteScript(PathUtilities.GetAbsolutePath(scriptFileName), new CancellationTokenSource());
+            if (!string.IsNullOrEmpty(scriptFileName))
+                _ = scriptEngine.ExecuteScript(PathUtilities.GetAbsolutePath(scriptFileName), new CancellationTokenSource());
         }
 
         public void ListenPipeCommands()

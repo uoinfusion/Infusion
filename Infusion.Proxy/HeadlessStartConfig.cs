@@ -6,8 +6,7 @@ namespace Infusion.Proxy
 {
     public class HeadlessStartConfig
     {
-        public Version ProtocolVersion { get; set; }
-        public Version EncryptionVersion { get; set; }
+        public Version ClientVersion { get; set; }
         public EncryptionSetup Encryption { get; set; }
         public string ServerAddress { get; set; }
         public IPEndPoint ServerEndPoint { get; set; }

@@ -27,5 +27,23 @@ namespace Infusion.Packets.Client
 
             ClientVersion = new Version(reader.ReadInt(), reader.ReadInt(), reader.ReadInt(), reader.ReadInt());
         }
+
+        public Packet Serialize()
+        {
+            var payload = new byte[21];
+            var writer = new ArrayPacketWriter(payload);
+
+            writer.WriteByte(0xEF);
+            writer.Write(Seed, 0, 4);
+            writer.WriteInt(ClientVersion.Major);
+            writer.WriteInt(ClientVersion.Minor);
+            writer.WriteInt(ClientVersion.Build);
+
+            int revision = ClientVersion.Revision > -1 ? ClientVersion.Revision : 0;
+            writer.WriteInt(revision);
+
+            rawPacket = new Packet(0xFE, payload);
+            return rawPacket;
+        }
     }
 }

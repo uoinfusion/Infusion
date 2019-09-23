@@ -18,10 +18,10 @@ namespace Infusion.Cli
         [Option("proxyPort", Default = 60000, HelpText = "Infusion proxy port number.")]
         public int ProxyPort { get; set; }
 
-        [Option("protocolVersion", Required = true, HelpText = "Communication protocol version.")]
-        public Version ProtocolVersion { get; set; }
+        [Option("encrypt", Default = false, HelpText = "Turns on client encryption.")]
+        public bool Encrypt { get; set; }
 
-        [Option("clientVersion", Required = true, HelpText = "Client version, determines encryption and client behavior.")]
+        [Option("clientVersion", Required = true, HelpText = "Client version, determines client behavior, protocol and encryption (if used).")]
         public Version ClientVersion { get; set; }
 
         [Option("account", Required = true, HelpText = "Ultima Online account name.")]
@@ -36,7 +36,7 @@ namespace Infusion.Cli
         [Option("char", Required = true, HelpText = "Ultima Online character name.")]
         public string CharacterName { get; set; }
 
-        [Option("script", Required = true, HelpText = "Initial script file name.")]
+        [Option("script", Required = false, HelpText = "Initial script file name.")]
         public string ScriptFileName { get; set; }
     }
 }

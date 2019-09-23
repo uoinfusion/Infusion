@@ -21,6 +21,8 @@ namespace Infusion.Proxy
 {
     public class HeadlessClient
     {
+        private readonly Version extendedSeedVersion = new Version(6, 0, 6, 0);
+
         private class ReloginInfo
         {
             public byte ServerListSystemFlag { get; set; }
@@ -65,7 +67,7 @@ namespace Infusion.Proxy
             this.legacyApi = legacyApi;
             this.console = console;
             this.startConfig = startConfig;
-            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(startConfig.ProtocolVersion);
+            packetRegistry = PacketDefinitionRegistryFactory.CreateClassicClient(startConfig.ClientVersion);
             diagnosticProvider = new InfusionDiagnosticPushStreamProvider(LogConfig, console);
             serverDiagnosticPushStream =
                 new CompositeDiagnosticPushStream(new ConsoleDiagnosticPushStream(packetLogger, "headless -> server", packetRegistry),
@@ -230,11 +232,23 @@ namespace Infusion.Proxy
                 serverStream = ConnectToServer();
             }
 
-            SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, packet.GameServerIp));
+            if (this.startConfig.ClientVersion >= extendedSeedVersion)
+            {
+                SendToServer(new ExtendedLoginSeed()
+                {
+                    Seed = packet.Seed,
+                    ClientVersion = this.startConfig.ClientVersion,
+                }.Serialize());
+            }
+            else
+            {
+                SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, packet.Seed));
+            }
+
 
             var loginRequest = new GameServerLoginRequest
             {
-                Key = packet.GameServerIp,
+                Key = packet.Seed,
                 AccountName = startConfig.AccountName,
                 Password = startConfig.Password
             };
@@ -289,17 +303,30 @@ namespace Infusion.Proxy
 
         private void SendPreLoginSeed()
         {
-            SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, new byte[] { 0x01, 0x89, 0xA8, 0xC0 }));
+            if (this.startConfig.ClientVersion >= extendedSeedVersion)
+            {
+                var extendedSeed = new ExtendedLoginSeed()
+                {
+                    ClientVersion = this.startConfig.ClientVersion,
+                    Seed = new byte[] { 0xBE, 0x39, 0xFE, 0xA9 }
+                };
+
+                SendToServer(extendedSeed.Serialize());
+            }
+            else
+            {
+                SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, new byte[] { 0x01, 0x89, 0xA8, 0xC0 }));
+            }
         }
 
         private void SendFirstLogin()
         {
-            SendToServer(new Packet(PacketDefinitions.LoginRequest.Id, new byte[]
+            var loginRequest = new LoginRequest()
             {
-                0x80, 0x69, 0x76, 0x61, 0x6E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70,
-                0x61, 0x73, 0x73, 0x77, 0x6F, 0x72, 0x64, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x99 }));
+                Account = startConfig.AccountName,
+                Password = startConfig.Password,
+            };
+            SendToServer(loginRequest.Serialize());
         }
 
         private void PingLoop()

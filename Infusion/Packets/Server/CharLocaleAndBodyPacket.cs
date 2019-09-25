@@ -35,11 +35,6 @@ namespace Infusion.Packets.Server
             writer.WriteByte(0);
             writer.WriteInt(-1);
 
-            //writer.WriteUShort(MapBoundary.MinX);
-            //writer.WriteUShort(MapBoundary.MinY);
-            //writer.WriteUShort(MapBoundary.MaxX);
-            //writer.WriteUShort(MapBoundary.MaxY);
-
             rawPacket = new Packet(PacketDefinitions.CharacterLocaleAndBody.Id, payload);
 
             return rawPacket;

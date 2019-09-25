@@ -51,12 +51,11 @@ namespace Infusion.Packets.Server
         public IEnumerable<Item> Items { get; set; }
         public byte Flags { get; set; }
 
-        private int GetLength(Item i) => i.Color.HasValue ? 9 : 7;
-
+        protected virtual int GetLength(Item i) => i.Color.HasValue ? 9 : 7;
 
         public Packet Serialize()
         {
-            var size = (ushort)(19 + Items.Select(i => GetLength(i)).Sum() + 4);
+            var size = (ushort)(23 + Items.Select(i => GetLength(i)).Sum());
             var payload = new byte[size];
             var writer = new ArrayPacketWriter(payload);
 
@@ -86,6 +85,15 @@ namespace Infusion.Packets.Server
             rawPacket = new Packet(payload);
 
             return rawPacket;
+        }
+
+        protected virtual void SerializeItem(Item item, ArrayPacketWriter writer)
+        {
+            writer.WriteObjectId(item.Id);
+            writer.WriteModelId(item.Color.HasValue ? (ModelId)(item.Type + 0x8000) : item.Type);
+            writer.WriteByte((byte)item.Layer);
+            if (item.Color.HasValue)
+                writer.WriteColor(item.Color.Value);
         }
 
         public override void Deserialize(Packet rawPacket)

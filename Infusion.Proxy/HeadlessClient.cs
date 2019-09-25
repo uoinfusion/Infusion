@@ -101,51 +101,10 @@ namespace Infusion.Proxy
 
                 Task.Run(() =>
                 {
-                    var loginConfirmPacket = new CharLocaleAndBodyPacket()
-                    {
-                        PlayerId = legacyApi.Me.PlayerId,
-                        BodyType = legacyApi.Me.BodyType,
-                        Direction = legacyApi.Me.Direction,
-                        MovementType = legacyApi.Me.MovementType,
-                        Location = legacyApi.Me.Location,
-                    };
-
-                    SendToClient(new Packet(new byte[] { 0xB9, 0x80, 0x1F }));
-
-                    SendToClient(loginConfirmPacket.Serialize());
-                    SendToClient(new Packet(new byte[] { 0xB9, 0x00, 0x03, }));
-
-                    SendToClient(new Packet(new byte[] { 0x55 }));
-
-                    var drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
-                        legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);
-                    SendToClient(drawPlayer.Serialize());
-
-                    foreach (var obj in UO.Items.OnGround())
-                    {
-                        var objectInfo = new ObjectInfoPacket(obj.Id, obj.Type, obj.Location, obj.Color, obj.Amount);
-                        SendToClient(objectInfo.RawPacket);
-                    }
-
-                    SendToClient(new Packet(new byte[] { 0xBF, 0x00, 0x0D, 0x00, 0x05, 0x00, 0x00, 0x02, 0x80, 0x01, 0xFF, 0xFF, 0xA7, }));
-
-                    foreach (var mobile in UO.Mobiles)
-                    {
-                        var drawPacket = new DrawObjectPacket();
-                        drawPacket.Color = mobile.Color.HasValue ? mobile.Color.Value : (Color)0;
-                        drawPacket.Direction = mobile.Orientation.HasValue ? mobile.Orientation.Value : Direction.North;
-                        drawPacket.Flags = mobile.Flags;
-                        drawPacket.Id = mobile.Id;
-                        drawPacket.Location = mobile.Location;
-                        drawPacket.MovementType = mobile.CurrentMovementType.HasValue ? mobile.CurrentMovementType.Value : MovementType.Walk;
-                        drawPacket.Notoriety = mobile.Notoriety.HasValue ? mobile.Notoriety.Value : Notoriety.Innocent;
-                        drawPacket.Type = mobile.Type;
-
-                        var items = UO.Items.InContainer(mobile.Id).Where(i => i.Layer.HasValue).ToArray();
-                        drawPacket.Items = items;
-
-                        SendToClient(drawPacket.Serialize());
-                    }
+                    if (this.startConfig.ClientVersion >= new Version(7, 0, 0, 0))
+                        EnterGameSA();
+                    else
+                        EnterGamePre7000();
 
                     transmitClientPackets = true;
                 });
@@ -153,6 +112,99 @@ namespace Infusion.Proxy
             else
             {
                 throw new NotImplementedException("account/password mismatch");
+            }
+        }
+
+        private void EnterGamePre7000()
+        {
+            var loginConfirmPacket = new CharLocaleAndBodyPacket()
+            {
+                PlayerId = legacyApi.Me.PlayerId,
+                BodyType = legacyApi.Me.BodyType,
+                Direction = legacyApi.Me.Direction,
+                MovementType = legacyApi.Me.MovementType,
+                Location = legacyApi.Me.Location,
+            };
+
+            SendToClient(new Packet(new byte[] { 0xB9, 0x80, 0x1F }));
+
+            SendToClient(loginConfirmPacket.Serialize());
+            SendToClient(new Packet(new byte[] { 0xB9, 0x00, 0x03, }));
+
+            SendToClient(new Packet(new byte[] { 0x55 }));
+
+            var drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
+                legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);
+            SendToClient(drawPlayer.Serialize());
+
+            foreach (var obj in UO.Items.OnGround())
+            {
+                var objectInfo = new ObjectInfoPacket(obj.Id, obj.Type, obj.Location, obj.Color, obj.Amount);
+                SendToClient(objectInfo.RawPacket);
+            }
+
+            SendToClient(new Packet(new byte[] { 0xBF, 0x00, 0x0D, 0x00, 0x05, 0x00, 0x00, 0x02, 0x80, 0x01, 0xFF, 0xFF, 0xA7, }));
+
+            foreach (var mobile in UO.Mobiles)
+            {
+                var drawPacket = new DrawObjectPacket();
+                drawPacket.Color = mobile.Color.HasValue ? mobile.Color.Value : (Color)0;
+                drawPacket.Direction = mobile.Orientation.HasValue ? mobile.Orientation.Value : Direction.North;
+                drawPacket.Flags = mobile.Flags;
+                drawPacket.Id = mobile.Id;
+                drawPacket.Location = mobile.Location;
+                drawPacket.MovementType = mobile.CurrentMovementType.HasValue ? mobile.CurrentMovementType.Value : MovementType.Walk;
+                drawPacket.Notoriety = mobile.Notoriety.HasValue ? mobile.Notoriety.Value : Notoriety.Innocent;
+                drawPacket.Type = mobile.Type;
+
+                var items = UO.Items.InContainer(mobile.Id).Where(i => i.Layer.HasValue).ToArray();
+                drawPacket.Items = items;
+
+                SendToClient(drawPacket.Serialize());
+            }
+        }
+
+        private void EnterGameSA()
+        {
+            //SendToClient(new Packet(new byte[] { 0xB9, 0x80, 0x1F }));
+
+            SendToClient(new CharLocaleAndBodyPacket()
+            {
+                PlayerId = legacyApi.Me.PlayerId,
+                BodyType = legacyApi.Me.BodyType,
+                Direction = legacyApi.Me.Direction,
+                MovementType = legacyApi.Me.MovementType,
+                Location = legacyApi.Me.Location,
+            }.Serialize());
+
+            SendToClient(new Packet(new byte[] { 0x55 }));
+
+            var drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
+                legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);
+            SendToClient(drawPlayer.Serialize());
+
+            foreach (var obj in UO.Items.OnGround())
+            {
+                var objectInfo = new ObjectInfoPacket(obj.Id, obj.Type, obj.Location, obj.Color, obj.Amount);
+                SendToClient(objectInfo.RawPacket);
+            }
+
+            foreach (var mobile in UO.Mobiles)
+            {
+                var drawPacket = new DrawObjectPacket7033();
+                drawPacket.Color = mobile.Color.HasValue ? mobile.Color.Value : (Color)0;
+                drawPacket.Direction = mobile.Orientation.HasValue ? mobile.Orientation.Value : Direction.North;
+                drawPacket.Flags = mobile.Flags;
+                drawPacket.Id = mobile.Id;
+                drawPacket.Location = mobile.Location;
+                drawPacket.MovementType = mobile.CurrentMovementType.HasValue ? mobile.CurrentMovementType.Value : MovementType.Walk;
+                drawPacket.Notoriety = mobile.Notoriety.HasValue ? mobile.Notoriety.Value : Notoriety.Innocent;
+                drawPacket.Type = mobile.Type;
+
+                var items = UO.Items.InContainer(mobile.Id).Where(i => i.Layer.HasValue).ToArray();
+                drawPacket.Items = items;
+
+                SendToClient(drawPacket.Serialize());
             }
         }
 
@@ -211,10 +263,8 @@ namespace Infusion.Proxy
         private void HandleGameServerList(GameServerListPacket packet)
         {
             var server = packet.Servers.FirstOrDefault(x => x.Name.Equals(startConfig.ShardName, StringComparison.OrdinalIgnoreCase));
-            if (server == null)
-                throw new InvalidOperationException($"Cannot find shard {startConfig.ShardName}.");
 
-            reloginInfo.SelectedServer = server;
+            reloginInfo.SelectedServer = server ?? throw new InvalidOperationException($"Cannot find shard {startConfig.ShardName}.");
             reloginInfo.ServerListSystemFlag = packet.SystemInfoFlag;
 
             var selectServerRequest = packetRegistry.Instantiate<SelectServerRequest>();
@@ -232,19 +282,7 @@ namespace Infusion.Proxy
                 serverStream = ConnectToServer();
             }
 
-            if (this.startConfig.ClientVersion >= extendedSeedVersion)
-            {
-                SendToServer(new ExtendedLoginSeed()
-                {
-                    Seed = packet.Seed,
-                    ClientVersion = this.startConfig.ClientVersion,
-                }.Serialize());
-            }
-            else
-            {
-                SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, packet.Seed));
-            }
-
+            SendToServer(new Packet(PacketDefinitions.LoginSeed.Id, packet.Seed));
 
             var loginRequest = new GameServerLoginRequest
             {

@@ -166,8 +166,6 @@ namespace Infusion.Proxy
 
         private void EnterGameSA()
         {
-            //SendToClient(new Packet(new byte[] { 0xB9, 0x80, 0x1F }));
-
             SendToClient(new CharLocaleAndBodyPacket()
             {
                 PlayerId = legacyApi.Me.PlayerId,
@@ -177,7 +175,7 @@ namespace Infusion.Proxy
                 Location = legacyApi.Me.Location,
             }.Serialize());
 
-            SendToClient(new Packet(new byte[] { 0x55 }));
+            SendToClient(new Packet(new byte[] { 0xBF, 0x00, 0x06, 0x00, 0x08, 0x01, }));
 
             var drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
                 legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);
@@ -206,6 +204,12 @@ namespace Infusion.Proxy
 
                 SendToClient(drawPacket.Serialize());
             }
+
+            drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
+                legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);
+            SendToClient(drawPlayer.Serialize());
+
+            SendToClient(new Packet(new byte[] { 0x55 }));
         }
 
         private void HandleSelectServerRequest(SelectServerRequest packet)

@@ -73,11 +73,7 @@ namespace Infusion.Packets.Server
 
             foreach (var item in Items)
             {
-                writer.WriteObjectId(item.Id);
-                writer.WriteModelId(item.Color.HasValue ? (ModelId)(item.Type + 0x8000) : item.Type);
-                writer.WriteByte((byte)item.Layer);
-                if (item.Color.HasValue)
-                    writer.WriteColor(item.Color.Value);
+                SerializeItem(item, writer);
             }
 
             writer.WriteUInt(0);

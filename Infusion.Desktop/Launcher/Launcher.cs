@@ -50,6 +50,9 @@ namespace Infusion.Desktop.Launcher
                     case UltimaClientType.CrossUO:
                         CrossUOLauncher.Launch(console, proxy, options, proxyPort);
                         break;
+                    case UltimaClientType.ClassicUO:
+                        ClassicUOLauncher.Launch(console, proxy, options, proxyPort);
+                        break;
                 }
 
                 InterProcessCommunication.StartReceiving();

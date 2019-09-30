@@ -167,6 +167,8 @@
                     <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectCrossPath" />
                 </Grid>
             </Grid>
+            <Launcher:ClassicUOControl Grid.Row="2" Margin="10 10 10 10" 
+                  Visibility="{Binding Path=ClassicUOOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" />
             <Grid Grid.Row="3" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="41*"/>

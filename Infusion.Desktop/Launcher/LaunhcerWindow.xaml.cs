@@ -125,36 +125,19 @@ namespace Infusion.Desktop.Launcher
         private void OnSelectOrionPath(object sender, RoutedEventArgs e)
         {
             launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath
-                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "Orion|OrionUO.exe|*.exe|*.exe");
+                = PathPickerHelper.SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "Orion|OrionUO.exe|*.exe|*.exe");
         }
 
         private void OnSelectCrossPath(object sender, RoutedEventArgs e)
         {
             launcherViewModel.SelectedProfile.LauncherOptions.Cross.ClientExePath
-                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "CrossUO|crossuo.exe|*.exe|*.exe");
-        }
-
-        private string SelectPath(string initialPath, string filter)
-        {
-            var openFileDialog = new OpenFileDialog
-            {
-                Multiselect = false,
-                Filter = filter,
-                FileName = initialPath
-            };
-
-            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                return openFileDialog.FileName;
-            }
-
-            return initialPath;
+                = PathPickerHelper.SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Orion.ClientExePath, "CrossUO|crossuo.exe|*.exe|*.exe");
         }
 
         private void OnSelectClassicPath(object sender, RoutedEventArgs e)
         {
             launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath
-                = SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath, "*.exe|*.exe");
+                = PathPickerHelper.SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath, "*.exe|*.exe");
 
         }
 

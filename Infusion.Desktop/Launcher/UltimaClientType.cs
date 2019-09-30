@@ -9,8 +9,10 @@ namespace Infusion.Desktop.Launcher
 {
     public enum UltimaClientType
     {
+        [Description("Official")]
         Classic,
         Orion,
-        CrossUO
+        CrossUO,
+        ClassicUO
     }
 }

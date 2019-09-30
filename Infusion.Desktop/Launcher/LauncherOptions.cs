@@ -39,6 +39,7 @@ namespace Infusion.Desktop.Launcher
         public OrionLauncherOptions Orion { get; set; } = new OrionLauncherOptions();
         public CrossUOLauncherOptions Cross { get; set; } = new CrossUOLauncherOptions();
         public ClassicClientLauncherOptions Classic { get; set; } = new ClassicClientLauncherOptions();
+        public ClassicUOLauncherOptions ClassicUO { get; set; } = new ClassicUOLauncherOptions();
 
         public string InitialScriptFileName
         {
@@ -85,6 +86,8 @@ namespace Infusion.Desktop.Launcher
                         return Orion.ClientExePath;
                     case UltimaClientType.CrossUO:
                         return Cross.ClientExePath;
+                    case UltimaClientType.ClassicUO:
+                        return ClassicUO.ClientExePath;
                     default:
                         throw new NotImplementedException();
                 }

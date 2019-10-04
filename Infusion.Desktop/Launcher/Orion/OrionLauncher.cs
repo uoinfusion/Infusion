@@ -55,8 +55,8 @@ namespace Infusion.Desktop.Launcher.Orion
                 return;
             }
 
+            ClientProcessWatcher.Watch(ultimaClientProcess);
             proxy.SetClientWindowHandle(ultimaClientProcess);
-
         }
     }
 }

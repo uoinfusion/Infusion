@@ -55,6 +55,7 @@ namespace Infusion.Desktop.Launcher.CrossUO
                 return;
             }
 
+            ClientProcessWatcher.Watch(ultimaClientProcess);
             proxy.SetClientWindowHandle(ultimaClientProcess);
         }
     }

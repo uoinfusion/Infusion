@@ -3,13 +3,28 @@ using Infusion.Proxy;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.Orion
 {
-    public static class OrionLauncher
+    public class OrionLauncher : ILauncher
     {
-        public static void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
+        public Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort)
+        {
+            return proxy.Start(new ProxyStartConfig()
+            {
+                ServerAddress = options.ServerEndpoint,
+                ServerEndPoint = serverEndPoint,
+                LocalProxyPort = proxyPort,
+                ProtocolVersion = options.ProtocolVersion,
+                Encryption = EncryptionSetup.Autodetect,
+                LoginEncryptionKey = null,
+            });
+        }
+
+        public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
             var ultimaExecutablePath = options.Orion.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
@@ -25,11 +40,11 @@ namespace Infusion.Desktop.Launcher
             var info = new ProcessStartInfo(ultimaExecutablePath);
             info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
 
-            string insensitiveArguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\"";
-            string sensitiveArguments = $" -account:{account},{password}";
+            var insensitiveArguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\"";
+            var sensitiveArguments = $" -account:{account},{password}";
             info.Arguments = insensitiveArguments + sensitiveArguments;
 
-            string argumentsInfo = insensitiveArguments + $" -account:{account},<password censored>";
+            var argumentsInfo = insensitiveArguments + $" -account:{account},<password censored>";
 
             console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 

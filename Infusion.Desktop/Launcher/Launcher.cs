@@ -5,6 +5,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using Infusion.Desktop.Launcher.ClassicUO;
+using Infusion.Desktop.Launcher.CrossUO;
+using Infusion.Desktop.Launcher.Official;
+using Infusion.Desktop.Launcher.Orion;
 using Infusion.LegacyApi.Console;
 using Infusion.Proxy;
 using Ultima;
@@ -24,39 +28,34 @@ namespace Infusion.Desktop.Launcher
         {
             return Task.Run(() =>
             {
+                var launcher = GetLauncher(options);
                 var serverEndPoint = options.ResolveServerEndpoint().Result;
                 ushort proxyPort = GetProxyPort();
 
                 CheckMulFiles(options);
 
-                var proxyTask = proxy.Start(new ProxyStartConfig()
-                {
-                    ServerAddress = options.ServerEndpoint,
-                    ServerEndPoint = serverEndPoint,
-                    LocalProxyPort = proxyPort,
-                    ProtocolVersion = options.ProtocolVersion,
-                    Encryption = options.Encryption,
-                    LoginEncryptionKey = options.Classic.EncryptionVersion?.Key
-                });
-
-                switch (options.ClientType)
-                {
-                    case UltimaClientType.Classic:
-                        ClassicClientLauncher.Launch(console, proxy, options, proxyPort);
-                        break;
-                    case UltimaClientType.Orion:
-                        OrionLauncher.Launch(console, proxy, options, proxyPort);
-                        break;
-                    case UltimaClientType.CrossUO:
-                        CrossUOLauncher.Launch(console, proxy, options, proxyPort);
-                        break;
-                    case UltimaClientType.ClassicUO:
-                        ClassicUOLauncher.Launch(console, proxy, options, proxyPort);
-                        break;
-                }
+                launcher.StartProxy(proxy, options, serverEndPoint, proxyPort);
+                launcher.Launch(console, proxy, options, proxyPort);
 
                 InterProcessCommunication.StartReceiving();
             });
+        }
+
+        private ILauncher GetLauncher(LauncherOptions options)
+        {
+            switch (options.ClientType)
+            {
+                case UltimaClientType.Classic:
+                    return new OfficialClientLauncher();
+                case UltimaClientType.ClassicUO:
+                    return new ClassicUOLauncher();
+                case UltimaClientType.CrossUO:
+                    return new CrossUOLauncher();
+                case UltimaClientType.Orion:
+                    return new OrionLauncher();
+                default:
+                    throw new NotImplementedException(options.ClientType.ToString());
+            }
         }
 
         private void CheckMulFiles(LauncherOptions options)

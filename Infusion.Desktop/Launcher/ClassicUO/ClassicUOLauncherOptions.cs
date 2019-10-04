@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Infusion.IO.Encryption.Login;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.ClassicUO
 {
     public class ClassicUOLauncherOptions : INotifyPropertyChanged
     {
@@ -39,6 +40,30 @@ namespace Infusion.Desktop.Launcher
             }
         }
 
+        public LoginEncryptionKey? GetEncryptionKey()
+        {
+            if (IsEncrypted && EncryptionVersion != null)
+                return LoginEncryptionKey.FromVersion(EncryptionVersion);
+            else
+                return null;
+        }
+
+        private bool IsEncrypted
+        {
+            get
+            {
+                switch (EncryptionSetup)
+                {
+                    case EncryptionSetup.EncryptedServer:
+                        return true;
+                    case EncryptionSetup.Autodetect:
+                        return false;
+                    default:
+                        throw new NotImplementedException(EncryptionSetup.ToString());
+                }
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -49,8 +74,14 @@ namespace Infusion.Desktop.Launcher
         {
             if (string.IsNullOrEmpty(ClientExePath))
             {
-                validationMessage = "Path to CrossUO client exe not set.";
+                validationMessage = "Path to ClassicUO client exe not set.";
 
+                return false;
+            }
+
+            if (IsEncrypted && EncryptionVersion == null)
+            {
+                validationMessage = "Please, set encryption version.";
                 return false;
             }
 

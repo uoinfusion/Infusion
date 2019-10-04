@@ -11,20 +11,33 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.Official
 {
-    public static class ClassicClientLauncher
+    public class OfficialClientLauncher : ILauncher
     {
-        public static void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
+        public Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort)
         {
-            string ultimaExecutablePath = options.Classic.ClientExePath;
+            return proxy.Start(new ProxyStartConfig()
+            {
+                ServerAddress = options.ServerEndpoint,
+                ServerEndPoint = serverEndPoint,
+                LocalProxyPort = proxyPort,
+                ProtocolVersion = options.ProtocolVersion,
+                Encryption = options.Classic.Encryption,
+                LoginEncryptionKey = options.Classic.EncryptionVersion?.Key
+            });
+        }
+
+        public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
+        {
+            var ultimaExecutablePath = options.Classic.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
             {
                 console.Error($"File {ultimaExecutablePath} doesn't exist.");
                 return;
             }
 
-            string workingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
+            var workingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
 
             var loginConfiguration = new LoginConfiguration(workingDirectory);
             console.Info($"Configuring server address: {loginConfiguration.ConfigFile}");

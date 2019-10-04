@@ -7,6 +7,9 @@
              xmlns:Desktop="clr-namespace:Infusion.Desktop"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Desktop:VersionToStringConverter x:Key="VersionConverter" />
+    </UserControl.Resources>
     <Grid DataContext="{Binding SelectedClassicUOViewModel}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="90"/>
@@ -28,7 +31,7 @@
             <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectPath" />
         </Grid>
         <TextBlock Grid.Column="0" Grid.Row="1">Encryption:</TextBlock>
-        <ComboBox Grid.Column="1" Grid.Row="1" Padding="5 2 5 0" IsEditable="False" IsEnabled="False"
+        <ComboBox Grid.Column="1" Grid.Row="1" Padding="5 2 5 0" IsEditable="False"
                           IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
                           ItemsSource="{Desktop:EnumToItemsSource {x:Type local:ClassicUOEncryptionType}}"
                           SelectedValue="{Binding Path=EncryptionType, Mode=TwoWay}"
@@ -40,6 +43,6 @@
         </TextBlock>
         <TextBox Grid.Column="1" Grid.Row="3" Padding="5 2 5 0"
                  Visibility="{Binding Path=EncryptionVersionRequired, Converter={StaticResource BooleanToVisibilityConverter}}"
-                 Text="{Binding Path=EncryptionVersion}" />
+                 Text="{Binding Path=EncryptionVersion, Converter={StaticResource VersionConverter}}" />
     </Grid>
 </UserControl>

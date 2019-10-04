@@ -142,4 +142,9 @@
       <DependentUpon>AvaloniaApp.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Launcher\CrossUO\" />
+    <Folder Include="Launcher\Orion\" />
+    <Folder Include="Launcher\Official\" />
+  </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.CrossUO
 {
-    public class OrionLauncherOptions : INotifyPropertyChanged
+    public class CrossUOLauncherOptions : INotifyPropertyChanged
     {
         private string clientExePath;
         public string ClientExePath
@@ -26,7 +26,7 @@ namespace Infusion.Desktop.Launcher
         {
             if (string.IsNullOrEmpty(ClientExePath))
             {
-                validationMessage = "Path to Orion client exe not set.";
+                validationMessage = "Path to CrossUO client exe not set.";
 
                 return false;
             }

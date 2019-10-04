@@ -3,13 +3,28 @@ using Infusion.Proxy;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.CrossUO
 {
-    public static class CrossUOLauncher
+    public class CrossUOLauncher : ILauncher
     {
-        public static void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
+        public Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort)
+        {
+            return proxy.Start(new ProxyStartConfig()
+            {
+                ServerAddress = options.ServerEndpoint,
+                ServerEndPoint = serverEndPoint,
+                LocalProxyPort = proxyPort,
+                ProtocolVersion = options.ProtocolVersion,
+                Encryption = EncryptionSetup.Autodetect,
+                LoginEncryptionKey = null,
+            });
+        }
+
+        public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
             var ultimaExecutablePath = options.Cross.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
@@ -25,11 +40,11 @@ namespace Infusion.Desktop.Launcher
             var info = new ProcessStartInfo(ultimaExecutablePath);
             info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
 
-            string insensitiveArguments = $"--host 127.0.0.1 --port {proxyPort} --login {account}";
-            string sensitiveArguments = $" --password {password}";
+            var insensitiveArguments = $"--host 127.0.0.1 --port {proxyPort} --login {account}";
+            var sensitiveArguments = $" --password {password}";
             info.Arguments = insensitiveArguments + sensitiveArguments;
 
-            string argumentsInfo = insensitiveArguments + " --password <censored>";
+            var argumentsInfo = insensitiveArguments + " --password <censored>";
 
             console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 

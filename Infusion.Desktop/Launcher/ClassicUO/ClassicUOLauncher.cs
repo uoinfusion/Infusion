@@ -3,13 +3,28 @@ using Infusion.Proxy;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.ClassicUO
 {
-    public static class ClassicUOLauncher
+    public class ClassicUOLauncher : ILauncher
     {
-        public static void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
+        public Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort)
+        {
+            return proxy.Start(new ProxyStartConfig()
+            {
+                ServerAddress = options.ServerEndpoint,
+                ServerEndPoint = serverEndPoint,
+                LocalProxyPort = proxyPort,
+                ProtocolVersion = options.ProtocolVersion,
+                Encryption = options.ClassicUO.EncryptionSetup,
+                LoginEncryptionKey = options.ClassicUO.GetEncryptionKey()
+            });
+        }
+
+        public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
             var ultimaExecutablePath = options.ClassicUO.ClientExePath;
             if (!File.Exists(ultimaExecutablePath))
@@ -24,11 +39,11 @@ namespace Infusion.Desktop.Launcher
             var info = new ProcessStartInfo(ultimaExecutablePath);
             info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
 
-            string insensitiveArguments = $"-ip 127.0.0.1 -port {proxyPort} -username {account}";
-            string sensitiveArguments = $" -password {password}";
+            var insensitiveArguments = $"-ip 127.0.0.1 -port {proxyPort} -username {account}";
+            var sensitiveArguments = $" -password {password}";
             info.Arguments = insensitiveArguments + sensitiveArguments;
 
-            string argumentsInfo = insensitiveArguments + " -password <censored>";
+            var argumentsInfo = insensitiveArguments + " -password <censored>";
 
             console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 

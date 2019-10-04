@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Ultima;
 
-namespace Infusion.Desktop.Launcher
+namespace Infusion.Desktop.Launcher.Official
 {
-    public sealed class ClassicClientLauncherOptions : INotifyPropertyChanged
+    public sealed class OfficialClientLauncherOptions : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)

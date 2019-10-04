@@ -1,4 +1,8 @@
-﻿using Infusion.Proxy;
+﻿using Infusion.Desktop.Launcher.ClassicUO;
+using Infusion.Desktop.Launcher.CrossUO;
+using Infusion.Desktop.Launcher.Official;
+using Infusion.Desktop.Launcher.Orion;
+using Infusion.Proxy;
 using System;
 using System.IO;
 using System.Linq;
@@ -19,26 +23,13 @@ namespace Infusion.Desktop.Launcher
         public string ServerEndpoint { get; set; }
         public UltimaClientType ClientType { get; set; } = UltimaClientType.Classic;
         public Version ProtocolVersion { get; set; } = new Version(3, 0, 0);
-        public EncryptionSetup Encryption
-        {
-            get
-            {
-                switch (ClientType)
-                {
-                    case UltimaClientType.Classic:
-                        return Classic.Encryption;
-                    default:
-                        return EncryptionSetup.Autodetect;
-                }
-            }
-        }
 
         public string UserName { get; set; }
         public string Password { get; set; }
 
         public OrionLauncherOptions Orion { get; set; } = new OrionLauncherOptions();
         public CrossUOLauncherOptions Cross { get; set; } = new CrossUOLauncherOptions();
-        public ClassicClientLauncherOptions Classic { get; set; } = new ClassicClientLauncherOptions();
+        public OfficialClientLauncherOptions Classic { get; set; } = new OfficialClientLauncherOptions();
         public ClassicUOLauncherOptions ClassicUO { get; set; } = new ClassicUOLauncherOptions();
 
         public string InitialScriptFileName

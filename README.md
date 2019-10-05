@@ -8,7 +8,7 @@ You can write scripts in C# using either built in code editor that has source co
 [REPL](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop) (Read Eval Print Loop) which
 makes getting started with script authoring much easier.
 
-Infusion supports all clients - write your scripts once and run them on classic client or on CrossUO/OrionUO. You don't need to rewrite them if you want switch your client.
+Infusion supports all clients - write your scripts once and run them on official client or on CrossUO/OrionUO/ClassicUO. You don't need to rewrite them if you want switch your client.
 
 If you are not familiar with programming you can start using example scripts which covers many repetitive task in the game. They are designed to be easy to use and they guide you through a configuration process. You don't need to change any code to start using them.
 

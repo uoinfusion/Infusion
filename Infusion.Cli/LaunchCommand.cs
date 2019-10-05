@@ -42,7 +42,7 @@ namespace Infusion.Cli
             var proxy = new InfusionProxy();
             proxy.Initialize(commandHandler, new NullSoundPlayer(), new LegacyApi.Injection.NullInjectionWindow());
 
-            string[] loginServer = serverAddress.Split(",");
+            string[] loginServer = serverAddress.Split(',');
 
             var resolvedServerAddress = Dns.GetHostEntry(loginServer[0])
                 .AddressList.First(a => a.AddressFamily == AddressFamily.InterNetwork);

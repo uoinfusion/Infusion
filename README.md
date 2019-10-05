@@ -41,7 +41,7 @@ Current C# API is in alpha release. It means that APIs are not stable yet and th
 
 ## Client support
 
-Infusion works well with classic clients and CrossUO/OrionUO. Infusion supports encryption and is able to connect to OSI servers. We plan to add a support for ClassicUO client.
+Infusion works with official clients and CrossUO/OrionUO/ClassicUO. Infusion supports encryption and is able to connect to OSI servers.
 
 Please, create an issue if you find any bug, missing feature or server/client combination that doesn't work
 for you.

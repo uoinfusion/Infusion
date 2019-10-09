@@ -26,19 +26,20 @@ namespace Infusion.Desktop.Launcher.Orion
 
         public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
-            var ultimaExecutablePath = options.Orion.ClientExePath;
-            if (!File.Exists(ultimaExecutablePath))
+            var ultimaExecutableInfo = new FileInfo(options.Orion.ClientExePath);
+            if (!ultimaExecutableInfo.Exists)
             {
-                console.Error($"File {ultimaExecutablePath} doesn't exist.");
+                console.Error($"File {ultimaExecutableInfo.FullName} doesn't exist.");
 
                 return;
             }
+            var ultimaExecutablePath = ultimaExecutableInfo.FullName;
 
             var account = BitConverter.ToString(System.Text.Encoding.UTF8.GetBytes(options.UserName)).Replace("-", "");
             var password = BitConverter.ToString(System.Text.Encoding.UTF8.GetBytes(options.Password)).Replace("-", "");
 
             var info = new ProcessStartInfo(ultimaExecutablePath);
-            info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
+            info.WorkingDirectory = ultimaExecutableInfo.DirectoryName;
 
             var insensitiveArguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\"";
             var sensitiveArguments = $" -account:{account},{password}";

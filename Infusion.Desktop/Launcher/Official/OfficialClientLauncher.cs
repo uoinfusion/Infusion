@@ -30,14 +30,14 @@ namespace Infusion.Desktop.Launcher.Official
 
         public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
-            var ultimaExecutablePath = options.Classic.ClientExePath;
-            if (!File.Exists(ultimaExecutablePath))
+            var ultimaExecutableInfo = new FileInfo(options.Classic.ClientExePath);
+            if (!ultimaExecutableInfo.Exists)
             {
-                console.Error($"File {ultimaExecutablePath} doesn't exist.");
+                console.Error($"File {ultimaExecutableInfo.FullName} doesn't exist.");
                 return;
             }
 
-            var workingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
+            var workingDirectory = ultimaExecutableInfo.DirectoryName;
 
             var loginConfiguration = new LoginConfiguration(workingDirectory);
             console.Info($"Configuring server address: {loginConfiguration.ConfigFile}");
@@ -50,9 +50,9 @@ namespace Infusion.Desktop.Launcher.Official
             if (!string.IsNullOrEmpty(options.Password))
                 ultimaConfiguration.SetPassword(options.EncryptPassword());
 
-            console.Info($"Staring {ultimaExecutablePath} from {workingDirectory}");
+            console.Info($"Staring {ultimaExecutableInfo.FullName} from {workingDirectory}");
 
-            var info = new ProcessStartInfo(ultimaExecutablePath)
+            var info = new ProcessStartInfo(ultimaExecutableInfo.FullName)
             {
                 WorkingDirectory = workingDirectory
             };
@@ -60,7 +60,7 @@ namespace Infusion.Desktop.Launcher.Official
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)
             {
-                console.Error($"Cannot start {ultimaExecutablePath}.");
+                console.Error($"Cannot start {ultimaExecutableInfo.FullName}.");
                 return;
             }
 

@@ -26,19 +26,18 @@ namespace Infusion.Desktop.Launcher.CrossUO
 
         public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
-            var ultimaExecutablePath = options.Cross.ClientExePath;
-            if (!File.Exists(ultimaExecutablePath))
+            var ultimaExecutableInfo = new FileInfo(options.Cross.ClientExePath);
+            if (!ultimaExecutableInfo.Exists)
             {
-                console.Error($"File {ultimaExecutablePath} doesn't exist.");
-
+                console.Error($"File {ultimaExecutableInfo.FullName} doesn't exist.");
                 return;
             }
 
             var account = options.UserName;
             var password = options.Password;
 
-            var info = new ProcessStartInfo(ultimaExecutablePath);
-            info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutablePath);
+            var info = new ProcessStartInfo(ultimaExecutableInfo.FullName);
+            info.WorkingDirectory = ultimaExecutableInfo.DirectoryName;
 
             var insensitiveArguments = $"--host 127.0.0.1 --port {proxyPort} --login {account}";
             var sensitiveArguments = $" --password {password}";
@@ -46,12 +45,12 @@ namespace Infusion.Desktop.Launcher.CrossUO
 
             var argumentsInfo = insensitiveArguments + " --password <censored>";
 
-            console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
+            console.Info($"Staring {ultimaExecutableInfo.FullName} {argumentsInfo}");
 
             var ultimaClientProcess = Process.Start(info);
             if (ultimaClientProcess == null)
             {
-                console.Error($"Cannot start {ultimaExecutablePath}.");
+                console.Error($"Cannot start {ultimaExecutableInfo.FullName}.");
                 return;
             }
 

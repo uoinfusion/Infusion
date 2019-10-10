@@ -3,24 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace Infusion.Desktop.Launcher.Orion
 {
-    public class OrionLauncherOptions : INotifyPropertyChanged
+    public class OrionLauncherOptions
     {
-        private string clientExePath;
-        public string ClientExePath
-        {
-            get => clientExePath;
-            set
-            {
-                clientExePath = value;
-                OnPropertyChanged();
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        public string ClientExePath { get; set; }
 
         internal bool Validate(out string validationMessage)
         {

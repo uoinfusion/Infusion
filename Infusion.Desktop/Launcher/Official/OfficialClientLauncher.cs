@@ -1,4 +1,5 @@
-﻿using Infusion.LegacyApi.Console;
+﻿using Infusion.IO.Encryption.Login;
+using Infusion.LegacyApi.Console;
 using Infusion.Proxy;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Infusion.Desktop.Launcher.Official
                 LocalProxyPort = proxyPort,
                 ProtocolVersion = options.ProtocolVersion,
                 Encryption = options.Official.Encryption,
-                LoginEncryptionKey = options.Official.EncryptionVersion?.Key
+                LoginEncryptionKey = LoginEncryptionKey.FromVersion(options.Official.EncryptionVersion)
             });
         }
 

@@ -11,14 +11,8 @@ using Ultima;
 
 namespace Infusion.Desktop.Launcher.Official
 {
-    public sealed class OfficialClientLauncherOptions : INotifyPropertyChanged
+    public sealed class OfficialClientLauncherOptions
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
 
         private string clientExePath;
         public string ClientExePath
@@ -39,30 +33,30 @@ namespace Infusion.Desktop.Launcher.Official
             set
             {
                 clientExePath = value;
-                OnPropertyChanged();
             }
         }
 
-        private EncryptionSetup encryption = EncryptionSetup.Autodetect;
-        public EncryptionSetup Encryption
-        {
-            get => encryption;
-            set
-            {
-                encryption = value;
-                OnPropertyChanged();
-            }
-        }
+        public EncryptionSetup Encryption { get; set; } = EncryptionSetup.Autodetect;
+        public Version EncryptionVersion { get; set; }
 
-        private EncryptionVersion encryptionVersion;
-        public EncryptionVersion EncryptionVersion
+        internal bool Validate(out string validationMessage)
         {
-            get => encryptionVersion;
-            set
+            if (string.IsNullOrEmpty(ClientExePath))
             {
-                encryptionVersion = value;
-                OnPropertyChanged();
+                validationMessage = "Path to ClassicUO client exe not set.";
+
+                return false;
             }
+
+            if (Encryption == EncryptionSetup.EncryptedServer && EncryptionVersion == null)
+            {
+                validationMessage = "Please, set encryption version.";
+                return false;
+            }
+
+            validationMessage = string.Empty;
+            return true;
+
         }
     }
 }

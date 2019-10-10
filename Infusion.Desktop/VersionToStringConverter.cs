@@ -21,7 +21,9 @@ namespace Infusion.Desktop
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is string str)
-                return Version.Parse(str);
+            {
+                return Version.TryParse(str, out var version) ? version : null;
+            }
             else
                 return null;
         }

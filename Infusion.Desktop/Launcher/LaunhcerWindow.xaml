@@ -3,10 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:Launcher="clr-namespace:Infusion.Desktop.Launcher"
+        xmlns:Official="clr-namespace:Infusion.Desktop.Launcher.Official"
+        xmlns:Cross="clr-namespace:Infusion.Desktop.Launcher.CrossUO"
+        xmlns:Orion="clr-namespace:Infusion.Desktop.Launcher.Orion"
         xmlns:Desktop="clr-namespace:Infusion.Desktop"
-        xmlns:Infusion="clr-namespace:Infusion;assembly=Infusion"
         mc:Ignorable="d"
         x:ClassModifier="internal"
         ResizeMode="NoResize"
@@ -15,6 +16,7 @@
         SizeToContent="WidthAndHeight"
         Title="Infusion launcher" Height="411.489" Width="425">
     <Window.Resources>
+        <Desktop:VersionToStringConverter x:Key="VersionConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value="0,0,0,5" />
@@ -87,88 +89,16 @@
                           ItemsSource="{Binding Path=ProtocolVersions}" DisplayMemberPath="Label"
                           SelectedItem="{Binding Path=SelectedProtocolVersion, Mode=TwoWay}" />
             </Grid>
-            
-            <Grid Grid.Row="2" Margin="10 10 10 10"
-                  Visibility="{Binding Path=ClassicClientOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
 
-                <TextBlock Grid.Column="0" Grid.Row="0">Client EXE:</TextBlock>
-                <Grid Grid.Column="1" Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Official.ClientExePath}" />
-                    <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectClassicPath" />
-                </Grid>
-                <TextBlock Grid.Column="0" Grid.Row="1">Encryption:</TextBlock>
-                <ComboBox Grid.Column="1" Grid.Row="1" Padding="5 2 5 0" IsEditable="False"
-                          IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
-                          ItemsSource="{Desktop:EnumToItemsSource {x:Type Infusion:EncryptionSetup}}"
-                          SelectedValue="{Binding Path=ClassicEncryption, Mode=TwoWay}"
-                          DisplayMemberPath="DisplayName"
-                          SelectedValuePath="Value" />
-                <TextBlock Grid.Column="0" Grid.Row="2"
-                           Visibility="{Binding Path=EncryptionVersionRequired, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    Encrypt. version:
-                </TextBlock>
-                <ComboBox Grid.Column="1" Grid.Row="3" Padding="5 2 5 0" IsEditable="False"
-                          IsTextSearchEnabled="False" IsSynchronizedWithCurrentItem="True"
-                          ItemsSource="{Binding Path=EncryptionVersions}"
-                          SelectedValue="{Binding Path=ClassicClientEncryptionVersion, Mode=TwoWay}"
-                          DisplayMemberPath="Name"
-                          Visibility="{Binding Path=EncryptionVersionRequired, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-            </Grid>
-            <Grid Grid.Row="2" Margin="10 10 10 0"
-                  Visibility="{Binding Path=OrionOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Column="0" Grid.Row="1">Client EXE:</TextBlock>
-                <Grid Grid.Column="1" Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Orion.ClientExePath}" />
-                    <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectOrionPath" />
-                </Grid>
-            </Grid>
-            <Grid Grid.Row="2" Margin="10 10 10 0"
-                  Visibility="{Binding Path=CrossOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Column="0" Grid.Row="1">Client EXE:</TextBlock>
-                <Grid Grid.Column="1" Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Cross.ClientExePath}" />
-                    <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectCrossPath" />
-                </Grid>
-            </Grid>
+            <Official:OfficialControl Grid.Row="2" Margin="10 10 10 10"
+                  Visibility="{Binding Path=OfficialClientOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" />
+            <Orion:OrionControl Grid.Row="2" Margin="10 10 10 0"
+                  Visibility="{Binding Path=OrionOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" />
+            <Cross:CrossControl Grid.Row="2" Margin="10 10 10 0"
+                  Visibility="{Binding Path=CrossOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" />
             <Launcher:ClassicUOControl Grid.Row="2" Margin="10 10 10 10" 
                   Visibility="{Binding Path=ClassicUOOptionsVisible, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}" />
+
             <Grid Grid.Row="3" Margin="0,0,0,15">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="41*"/>

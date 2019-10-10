@@ -5,40 +5,11 @@ using Infusion.IO.Encryption.Login;
 
 namespace Infusion.Desktop.Launcher.ClassicUO
 {
-    public class ClassicUOLauncherOptions : INotifyPropertyChanged
+    public class ClassicUOLauncherOptions
     {
-        private string clientExePath;
-        public string ClientExePath
-        {
-            get => clientExePath;
-            set
-            {
-                clientExePath = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private EncryptionSetup encryptionSetup;
-        public EncryptionSetup EncryptionSetup
-        {
-            get => encryptionSetup;
-            set
-            {
-                encryptionSetup = value;
-                OnPropertyChanged();
-            }
-        }
-
-        private Version encryptionVersion;
-        public Version EncryptionVersion
-        {
-            get => encryptionVersion;
-            set
-            {
-                encryptionVersion = value;
-                OnPropertyChanged();
-            }
-        }
+        public string ClientExePath { get; set; }
+        public EncryptionSetup EncryptionSetup { get; set; }
+        public Version EncryptionVersion { get; set; }
 
         public LoginEncryptionKey? GetEncryptionKey()
         {
@@ -62,12 +33,6 @@ namespace Infusion.Desktop.Launcher.ClassicUO
                         throw new NotImplementedException(EncryptionSetup.ToString());
                 }
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         internal bool Validate(out string validationMessage)

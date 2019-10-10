@@ -1,4 +1,7 @@
 ﻿using Infusion.Desktop.Launcher.ClassicUO;
+using Infusion.Desktop.Launcher.CrossUO;
+using Infusion.Desktop.Launcher.Official;
+using Infusion.Desktop.Launcher.Orion;
 using Infusion.Desktop.Profiles;
 using System;
 using System.Collections.Generic;
@@ -17,24 +20,35 @@ namespace Infusion.Desktop.Launcher
             new LaunchProfile {Name = "new profile"}
         };
         private readonly Action<string> passwordSetter;
-        private readonly Dictionary<string, ClassicUOViewModel> classicUOViewModels 
+        private readonly Dictionary<string, ClassicUOViewModel> classicUOViewModels
             = new Dictionary<string, ClassicUOViewModel>();
+        private readonly Dictionary<string, OfficialViewModel> officialViewModels
+            = new Dictionary<string, OfficialViewModel>();
+        private readonly Dictionary<string, CrossViewModel> crossViewModels
+            = new Dictionary<string, CrossViewModel>();
+        private readonly Dictionary<string, OrionViewModel> orionViewModels
+            = new Dictionary<string, OrionViewModel>();
 
         public ClassicUOViewModel SelectedClassicUOViewModel
+            => GetViewModel(classicUOViewModels, () => new ClassicUOViewModel(SelectedProfile.LauncherOptions.ClassicUO));
+        public OfficialViewModel SelectedOfficialViewModel
+            => GetViewModel(officialViewModels, () => new OfficialViewModel(SelectedProfile.LauncherOptions.Official));
+        public CrossViewModel SelectedCrossViewModel
+            => GetViewModel(crossViewModels, () => new CrossViewModel(SelectedProfile.LauncherOptions.Cross));
+        public OrionViewModel SelectedOrionViewModel
+            => GetViewModel(orionViewModels, () => new OrionViewModel(SelectedProfile.LauncherOptions.Orion));
+
+        private T GetViewModel<T>(Dictionary<string, T> models, Func<T> newViewModel)
         {
-            get
+            if (!models.TryGetValue(SelectedProfile.Id, out var model))
             {
-                if (classicUOViewModels.TryGetValue(SelectedProfile.Id, out var model))
-                {
-                    return model;
-                }
-                else
-                {
-                    var newModel = new ClassicUOViewModel(SelectedProfile.LauncherOptions.ClassicUO);
-                    classicUOViewModels.Add(SelectedProfile.Id, newModel);
-                    return newModel;
-                }
+                var newModel = newViewModel();
+                models.Add(SelectedProfile.Id, newModel);
+                return newModel;
             }
+            else
+                return model;
+
         }
 
         private bool showPassword;
@@ -59,8 +73,6 @@ namespace Infusion.Desktop.Launcher
             new ProtocolVersion() { Version = new Version(7, 0, 18, 0), Label = ">= 7.0.18.0" },
             new ProtocolVersion() { Version = new Version(7, 0, 33, 0), Label = ">= 7.0.33.0" },
         };
-
-        public EncryptionVersion[] EncryptionVersions => EncryptionVersion.Versions;
 
         public ObservableCollection<LaunchProfile> Profiles
         {
@@ -100,53 +112,18 @@ namespace Infusion.Desktop.Launcher
             set => SelectedProfile.Name = value;
         }
 
-        public EncryptionSetup ClassicEncryption
-        {
-            get => SelectedProfile.LauncherOptions.Official.Encryption;
-            set
-            {
-                SelectedProfile.LauncherOptions.Official.Encryption = value;
-                OnPropertyChanged();
-                OnPropertyChanged("ClassicClientEncryptionVersion");
-                OnPropertyChanged("EncryptionVersionRequired");
-            }
-        }
-
-        public EncryptionVersion ClassicClientEncryptionVersion
-        {
-            get => SelectedProfile.LauncherOptions.Official.EncryptionVersion;
-            set
-            {
-                SelectedProfile.LauncherOptions.Official.EncryptionVersion = value;
-                OnPropertyChanged();
-                OnPropertyChanged("EncryptionVersionRequired");
-            }
-        }
-
-        public bool EncryptionVersionRequired
-        {
-            get
-            {
-                if (SelectedClientType != UltimaClientType.Classic)
-                    return false;
-
-                return SelectedProfile.LauncherOptions.Official.Encryption == EncryptionSetup.EncryptedServer;
-            }
-        }
-
         public void NewProfile()
         {
             var profile = new LaunchProfile { Name = "new profile" };
             Profiles.Add(profile);
             SelectedProfile = profile;
 
-            // ReSharper disable once ExplicitCallerInfoArgument
             OnPropertyChanged("CanDeleteSelectedProfile");
         }
 
         public bool CanDeleteSelectedProfile => Profiles.Count > 1;
 
-        public bool ClassicClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
+        public bool OfficialClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
         public bool OrionOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Orion;
         public bool CrossOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.CrossUO;
         public bool ClassicUOOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.ClassicUO;
@@ -175,13 +152,11 @@ namespace Infusion.Desktop.Launcher
         private void OnSelectedClientTypeChanged()
         {
             OnPropertyChanged("SelectedClientType");
-            OnPropertyChanged("ClassicClientOptionsVisible");
+            OnPropertyChanged("OfficialClientOptionsVisible");
             OnPropertyChanged("OrionOptionsVisible");
             OnPropertyChanged("CrossOptionsVisible");
             OnPropertyChanged("ClassicUOOptionsVisible");
             OnPropertyChanged("SelectedProtocolVersion");
-            OnPropertyChanged("ClassicEncryption");
-            OnPropertyChanged("ClassicClientEncryptionVersion");
             OnPropertyChanged("EncryptionVersionRequired");
         }
 

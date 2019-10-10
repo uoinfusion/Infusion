@@ -4,6 +4,8 @@ namespace Infusion.IO.Encryption.Login
 {
     public struct LoginEncryptionKey : IEquatable<LoginEncryptionKey>
     {
+        public static readonly LoginEncryptionKey NullKey = new LoginEncryptionKey();
+
         public uint Key1 { get; }
         public uint Key2 { get; }
         public uint Key3 { get; }
@@ -47,8 +49,13 @@ namespace Infusion.IO.Encryption.Login
             return $"0x{Key1:X8}, 0x{Key2:X8}, 0x{Key3:X8}";
         }
 
-        public static LoginEncryptionKey FromVersion(Version version)
-            => CalculateKey(version);
+        public static LoginEncryptionKey? FromVersion(Version version)
+        {
+            if (version == null)
+                return NullKey;
+
+            return CalculateKey(version);
+        }
 
         private static LoginEncryptionKey CalculateKey(Version version)
             => CalculateKey((uint)version.Major, (uint)version.Minor, (uint)version.Build);

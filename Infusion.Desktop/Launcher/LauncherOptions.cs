@@ -132,6 +132,10 @@ namespace Infusion.Desktop.Launcher
                 return false;
             else if (ClientType == UltimaClientType.CrossUO && !Cross.Validate(out validationMessage))
                 return false;
+            else if (ClientType == UltimaClientType.Classic && !Official.Validate(out validationMessage))
+                return false;
+            else if (ClientType == UltimaClientType.ClassicUO && !ClassicUO.Validate(out validationMessage))
+                return false;
 
             validationMessage = string.Empty;
             return true;

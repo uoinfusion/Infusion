@@ -136,8 +136,8 @@ namespace Infusion.Desktop.Launcher
 
         private void OnSelectClassicPath(object sender, RoutedEventArgs e)
         {
-            launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath
-                = PathPickerHelper.SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Classic.ClientExePath, "*.exe|*.exe");
+            launcherViewModel.SelectedProfile.LauncherOptions.Official.ClientExePath
+                = PathPickerHelper.SelectPath(launcherViewModel.SelectedProfile.LauncherOptions.Official.ClientExePath, "*.exe|*.exe");
 
         }
 

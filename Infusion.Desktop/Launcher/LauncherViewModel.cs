@@ -102,10 +102,10 @@ namespace Infusion.Desktop.Launcher
 
         public EncryptionSetup ClassicEncryption
         {
-            get => SelectedProfile.LauncherOptions.Classic.Encryption;
+            get => SelectedProfile.LauncherOptions.Official.Encryption;
             set
             {
-                SelectedProfile.LauncherOptions.Classic.Encryption = value;
+                SelectedProfile.LauncherOptions.Official.Encryption = value;
                 OnPropertyChanged();
                 OnPropertyChanged("ClassicClientEncryptionVersion");
                 OnPropertyChanged("EncryptionVersionRequired");
@@ -114,10 +114,10 @@ namespace Infusion.Desktop.Launcher
 
         public EncryptionVersion ClassicClientEncryptionVersion
         {
-            get => SelectedProfile.LauncherOptions.Classic.EncryptionVersion;
+            get => SelectedProfile.LauncherOptions.Official.EncryptionVersion;
             set
             {
-                SelectedProfile.LauncherOptions.Classic.EncryptionVersion = value;
+                SelectedProfile.LauncherOptions.Official.EncryptionVersion = value;
                 OnPropertyChanged();
                 OnPropertyChanged("EncryptionVersionRequired");
             }
@@ -130,7 +130,7 @@ namespace Infusion.Desktop.Launcher
                 if (SelectedClientType != UltimaClientType.Classic)
                     return false;
 
-                return SelectedProfile.LauncherOptions.Classic.Encryption == EncryptionSetup.EncryptedServer;
+                return SelectedProfile.LauncherOptions.Official.Encryption == EncryptionSetup.EncryptedServer;
             }
         }
 

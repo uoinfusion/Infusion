@@ -106,7 +106,7 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Classic.ClientExePath}" />
+                    <TextBox Grid.Column="0" Text="{Binding Path=SelectedProfile.LauncherOptions.Official.ClientExePath}" />
                     <Button Margin="5 0 0 5" Padding="5 0 5 0" Grid.Column="1" Content="..." Click="OnSelectClassicPath" />
                 </Grid>
                 <TextBlock Grid.Column="0" Grid.Row="1">Encryption:</TextBlock>

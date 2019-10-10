@@ -23,14 +23,14 @@ namespace Infusion.Desktop.Launcher.Official
                 ServerEndPoint = serverEndPoint,
                 LocalProxyPort = proxyPort,
                 ProtocolVersion = options.ProtocolVersion,
-                Encryption = options.Classic.Encryption,
-                LoginEncryptionKey = options.Classic.EncryptionVersion?.Key
+                Encryption = options.Official.Encryption,
+                LoginEncryptionKey = options.Official.EncryptionVersion?.Key
             });
         }
 
         public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
         {
-            var ultimaExecutableInfo = new FileInfo(options.Classic.ClientExePath);
+            var ultimaExecutableInfo = new FileInfo(options.Official.ClientExePath);
             if (!ultimaExecutableInfo.Exists)
             {
                 console.Error($"File {ultimaExecutableInfo.FullName} doesn't exist.");

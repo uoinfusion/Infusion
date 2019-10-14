@@ -11,26 +11,25 @@ namespace Infusion.Desktop.Launcher.ClassicUO
 {
     public class ClassicUOLauncher : ILauncher
     {
-        public Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort)
+        public Task Launch(IConsole console, InfusionProxy proxy, LauncherOptions options)
         {
-            return proxy.Start(new ProxyStartConfig()
+            var proxyPort = options.GetDefaultProxyPort();
+
+            var task = proxy.Start(new ProxyStartConfig()
             {
                 ServerAddress = options.ServerEndpoint,
-                ServerEndPoint = serverEndPoint,
+                ServerEndPoint = options.ResolveServerEndpoint().Result,
                 LocalProxyPort = proxyPort,
                 ProtocolVersion = options.ProtocolVersion,
                 Encryption = options.ClassicUO.EncryptionSetup,
                 LoginEncryptionKey = options.ClassicUO.GetEncryptionKey()
             });
-        }
 
-        public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
-        {
             var ultimaExecutableInfo = new FileInfo(options.ClassicUO.ClientExePath);
             if (!ultimaExecutableInfo.Exists)
             {
                 console.Error($"File {ultimaExecutableInfo.FullName} doesn't exist.");
-                return;
+                return task;
             }
 
             var account = options.UserName;
@@ -48,14 +47,17 @@ namespace Infusion.Desktop.Launcher.ClassicUO
             console.Info($"Staring {ultimaExecutableInfo.FullName} {argumentsInfo}");
 
             var ultimaClientProcess = Process.Start(info);
-            if (ultimaClientProcess == null)
+            if (ultimaClientProcess != null)
+            {
+                ClientProcessWatcher.Watch(ultimaClientProcess);
+                proxy.SetClientWindowHandle(ultimaClientProcess);
+            }
+            else
             {
                 console.Error($"Cannot start {ultimaExecutableInfo.FullName}.");
-                return;
             }
 
-            ClientProcessWatcher.Watch(ultimaClientProcess);
-            proxy.SetClientWindowHandle(ultimaClientProcess);
+            return task;
         }
     }
 }

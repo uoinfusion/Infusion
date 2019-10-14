@@ -1,5 +1,6 @@
 ﻿using Infusion.Desktop.Launcher.ClassicUO;
 using Infusion.Desktop.Launcher.CrossUO;
+using Infusion.Desktop.Launcher.Generic;
 using Infusion.Desktop.Launcher.Official;
 using Infusion.Desktop.Launcher.Orion;
 using Infusion.Proxy;
@@ -31,6 +32,7 @@ namespace Infusion.Desktop.Launcher
         public CrossUOLauncherOptions Cross { get; set; } = new CrossUOLauncherOptions();
         public OfficialClientLauncherOptions Official { get; set; } = new OfficialClientLauncherOptions();
         public ClassicUOLauncherOptions ClassicUO { get; set; } = new ClassicUOLauncherOptions();
+        public GenericLauncherOptions Generic { get; set; } = new GenericLauncherOptions();
 
         public string InitialScriptFileName
         {
@@ -79,6 +81,8 @@ namespace Infusion.Desktop.Launcher
                         return Cross.ClientExePath;
                     case UltimaClientType.ClassicUO:
                         return ClassicUO.ClientExePath;
+                    case UltimaClientType.Generic:
+                        return Generic.DataPath;
                     default:
                         throw new NotImplementedException();
                 }
@@ -120,6 +124,16 @@ namespace Infusion.Desktop.Launcher
             return new IPEndPoint(address, port);
         }
 
+        public ushort GetDefaultProxyPort()
+        {
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+
+            return (ushort)port;
+        }
+
         public bool Validate(out string validationMessage)
         {
             if (string.IsNullOrEmpty(ServerEndpoint))
@@ -135,6 +149,8 @@ namespace Infusion.Desktop.Launcher
             else if (ClientType == UltimaClientType.Classic && !Official.Validate(out validationMessage))
                 return false;
             else if (ClientType == UltimaClientType.ClassicUO && !ClassicUO.Validate(out validationMessage))
+                return false;
+            else if (ClientType == UltimaClientType.Generic && !Generic.Validate(out validationMessage))
                 return false;
 
             validationMessage = string.Empty;

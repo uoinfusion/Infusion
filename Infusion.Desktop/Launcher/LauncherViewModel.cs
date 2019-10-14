@@ -1,5 +1,6 @@
 ﻿using Infusion.Desktop.Launcher.ClassicUO;
 using Infusion.Desktop.Launcher.CrossUO;
+using Infusion.Desktop.Launcher.Generic;
 using Infusion.Desktop.Launcher.Official;
 using Infusion.Desktop.Launcher.Orion;
 using Infusion.Desktop.Profiles;
@@ -28,6 +29,8 @@ namespace Infusion.Desktop.Launcher
             = new Dictionary<string, CrossViewModel>();
         private readonly Dictionary<string, OrionViewModel> orionViewModels
             = new Dictionary<string, OrionViewModel>();
+        private readonly Dictionary<string, GenericViewModel> genericViewModels
+            = new Dictionary<string, GenericViewModel>();
 
         public ClassicUOViewModel SelectedClassicUOViewModel
             => GetViewModel(classicUOViewModels, () => new ClassicUOViewModel(SelectedProfile.LauncherOptions.ClassicUO));
@@ -37,6 +40,16 @@ namespace Infusion.Desktop.Launcher
             => GetViewModel(crossViewModels, () => new CrossViewModel(SelectedProfile.LauncherOptions.Cross));
         public OrionViewModel SelectedOrionViewModel
             => GetViewModel(orionViewModels, () => new OrionViewModel(SelectedProfile.LauncherOptions.Orion));
+        public GenericViewModel SelectedGenericViewModel
+            => GetViewModel(genericViewModels, () => new GenericViewModel(SelectedProfile.LauncherOptions.Generic));
+
+        public bool OfficialClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
+        public bool OrionOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Orion;
+        public bool CrossOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.CrossUO;
+        public bool ClassicUOOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.ClassicUO;
+        public bool GenericOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Generic;
+
+        public bool CanDeleteSelectedProfile => Profiles.Count > 1;
 
         private T GetViewModel<T>(Dictionary<string, T> models, Func<T> newViewModel)
         {
@@ -102,7 +115,6 @@ namespace Infusion.Desktop.Launcher
                 OnPropertyChanged();
                 OnSelectedClientTypeChanged();
                 passwordSetter(selectedProfile.LauncherOptions.Password);
-                OnPropertyChanged("SelectedClassicUOViewModel");
             }
         }
 
@@ -120,13 +132,6 @@ namespace Infusion.Desktop.Launcher
 
             OnPropertyChanged("CanDeleteSelectedProfile");
         }
-
-        public bool CanDeleteSelectedProfile => Profiles.Count > 1;
-
-        public bool OfficialClientOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Classic;
-        public bool OrionOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.Orion;
-        public bool CrossOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.CrossUO;
-        public bool ClassicUOOptionsVisible => SelectedProfile.LauncherOptions.ClientType == UltimaClientType.ClassicUO;
 
         public ProtocolVersion SelectedProtocolVersion
         {
@@ -152,12 +157,24 @@ namespace Infusion.Desktop.Launcher
         private void OnSelectedClientTypeChanged()
         {
             OnPropertyChanged("SelectedClientType");
+            OnPropertyChanged("SupportsCredentials");
+
             OnPropertyChanged("OfficialClientOptionsVisible");
+            OnPropertyChanged("SelectedOfficialViewModel");
+
             OnPropertyChanged("OrionOptionsVisible");
+            OnPropertyChanged("SelectedOrionViewModel");
+
             OnPropertyChanged("CrossOptionsVisible");
+            OnPropertyChanged("SelectedCrossViewModel");
+
             OnPropertyChanged("ClassicUOOptionsVisible");
+            OnPropertyChanged("SelectedClassicUOViewModel");
+
+            OnPropertyChanged("GenericOptionsVisible");
+            OnPropertyChanged("SelectedGenericViewModel");
+
             OnPropertyChanged("SelectedProtocolVersion");
-            OnPropertyChanged("EncryptionVersionRequired");
         }
 
         public void DeleteSelectedProfile()
@@ -170,9 +187,10 @@ namespace Infusion.Desktop.Launcher
                 ProfileRepository.DeleteProfile(profileToRemove);
 
             }
-            // ReSharper disable once ExplicitCallerInfoArgument
             OnPropertyChanged("CanDeleteSelectedProfile");
         }
+
+        public bool SupportsCredentials => SelectedClientType != UltimaClientType.Generic;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

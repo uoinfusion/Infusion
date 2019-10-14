@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Infusion.Desktop.Launcher.ClassicUO;
 using Infusion.Desktop.Launcher.CrossUO;
+using Infusion.Desktop.Launcher.Generic;
 using Infusion.Desktop.Launcher.Official;
 using Infusion.Desktop.Launcher.Orion;
 using Infusion.LegacyApi.Console;
@@ -30,12 +31,11 @@ namespace Infusion.Desktop.Launcher
             {
                 var launcher = GetLauncher(options);
                 var serverEndPoint = options.ResolveServerEndpoint().Result;
-                ushort proxyPort = GetProxyPort();
+                ushort proxyPort = options.GetDefaultProxyPort();
 
                 CheckMulFiles(options);
 
-                launcher.StartProxy(proxy, options, serverEndPoint, proxyPort);
-                launcher.Launch(console, proxy, options, proxyPort);
+                launcher.Launch(console, proxy, options);
 
                 InterProcessCommunication.StartReceiving();
             });
@@ -53,6 +53,8 @@ namespace Infusion.Desktop.Launcher
                     return new CrossUOLauncher();
                 case UltimaClientType.Orion:
                     return new OrionLauncher();
+                case UltimaClientType.Generic:
+                    return new GenericLauncher();
                 default:
                     throw new NotImplementedException(options.ClientType.ToString());
             }
@@ -81,16 +83,6 @@ namespace Infusion.Desktop.Launcher
             }
 
             console.Debug($"Loading mul files from {Files.RootDir}.");
-        }
-
-        private ushort GetProxyPort()
-        {
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            listener.Start();
-            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
-            listener.Stop();
-
-            return (ushort)port;
         }
     }
 }

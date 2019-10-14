@@ -13,6 +13,7 @@ namespace Infusion.Desktop.Launcher
         Classic,
         Orion,
         CrossUO,
-        ClassicUO
+        ClassicUO,
+        Generic
     }
 }

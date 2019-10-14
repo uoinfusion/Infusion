@@ -65,6 +65,4 @@ namespace Infusion.Desktop.Launcher.Official
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
-
 }

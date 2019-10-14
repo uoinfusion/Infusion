@@ -11,7 +11,6 @@ namespace Infusion.Desktop.Launcher
 {
     internal interface ILauncher
     {
-        Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort);
-        void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort);
+        Task Launch(IConsole console, InfusionProxy proxy, LauncherOptions options);
     }
 }

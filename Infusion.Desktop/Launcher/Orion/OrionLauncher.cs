@@ -11,27 +11,25 @@ namespace Infusion.Desktop.Launcher.Orion
 {
     public class OrionLauncher : ILauncher
     {
-        public Task StartProxy(InfusionProxy proxy, LauncherOptions options, IPEndPoint serverEndPoint, ushort proxyPort)
+        public Task Launch(IConsole console, InfusionProxy proxy, LauncherOptions options)
         {
-            return proxy.Start(new ProxyStartConfig()
+            var proxyPort = options.GetDefaultProxyPort();
+            var proxyTask = proxy.Start(new ProxyStartConfig()
             {
                 ServerAddress = options.ServerEndpoint,
-                ServerEndPoint = serverEndPoint,
+                ServerEndPoint = options.ResolveServerEndpoint().Result,
                 LocalProxyPort = proxyPort,
                 ProtocolVersion = options.ProtocolVersion,
                 Encryption = EncryptionSetup.Autodetect,
                 LoginEncryptionKey = null,
             });
-        }
 
-        public void Launch(IConsole console, InfusionProxy proxy, LauncherOptions options, ushort proxyPort)
-        {
             var ultimaExecutableInfo = new FileInfo(options.Orion.ClientExePath);
             if (!ultimaExecutableInfo.Exists)
             {
                 console.Error($"File {ultimaExecutableInfo.FullName} doesn't exist.");
 
-                return;
+                return proxyTask;
             }
             var ultimaExecutablePath = ultimaExecutableInfo.FullName;
 
@@ -53,11 +51,13 @@ namespace Infusion.Desktop.Launcher.Orion
             if (ultimaClientProcess == null)
             {
                 console.Error($"Cannot start {ultimaExecutablePath}.");
-                return;
+                return proxyTask;
             }
 
             ClientProcessWatcher.Watch(ultimaClientProcess);
             proxy.SetClientWindowHandle(ultimaClientProcess);
+
+            return proxyTask;
         }
     }
 }

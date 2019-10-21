@@ -609,6 +609,7 @@ public static class Specs
        new MobileSpec(0x000E, (Color)0x054a)
     };   
     public static readonly MobileSpec ForrestElemental = new MobileSpec(0x0008);
+    public static readonly MobileSpec EarthElemental = new MobileSpec(0x000E, (Color)0x0709);
 
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
     

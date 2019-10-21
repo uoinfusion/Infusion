@@ -27,6 +27,7 @@ namespace Infusion.Proxy
         {
             public byte ServerListSystemFlag { get; set; }
             public ServerListItem SelectedServer { get; set; }
+            public byte MapId { get; set; }
         }
 
         private readonly Legacy legacyApi;
@@ -85,12 +86,25 @@ namespace Infusion.Proxy
 
             ultimaClient = new UltimaClient(clientPacketHandler, SendToClient);
 
+            serverPacketHandler.RegisterFilter(FilterServerPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.GameServerList, HandleGameServerList);
             serverPacketHandler.Subscribe(PacketDefinitions.CharactersStartingLocations, HandleCharactersStartingLocationsPacket);
 
             clientPacketHandler.Subscribe(PacketDefinitions.LoginRequest, HandleLoginRequest);
             clientPacketHandler.Subscribe(PacketDefinitions.GameServerLoginRequest, HandleGameServerLoginRequest);
             clientPacketHandler.Subscribe(PacketDefinitions.SelectServerRequest, HandleSelectServerRequest);
+        }
+
+        private Packet? FilterServerPacket(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.GeneralInformationPacket.Id && rawPacket.Payload[4] == 8)
+            {
+                var packet = new SetMapPacket();
+                packet.Deserialize(rawPacket);
+                reloginInfo.MapId = packet.MapId;
+            }
+
+            return rawPacket;
         }
 
         private void HandleGameServerLoginRequest(GameServerLoginRequest packet)
@@ -129,6 +143,7 @@ namespace Infusion.Proxy
             SendToClient(new Packet(new byte[] { 0xB9, 0x80, 0x1F }));
 
             SendToClient(loginConfirmPacket.Serialize());
+            SendToClient(new SetMapPacket(reloginInfo.MapId).RawPacket);
             SendToClient(new Packet(new byte[] { 0xB9, 0x00, 0x03, }));
 
             SendToClient(new Packet(new byte[] { 0x55 }));
@@ -175,7 +190,7 @@ namespace Infusion.Proxy
                 Location = legacyApi.Me.Location,
             }.Serialize());
 
-            SendToClient(new Packet(new byte[] { 0xBF, 0x00, 0x06, 0x00, 0x08, 0x01, }));
+            SendToClient(new SetMapPacket(reloginInfo.MapId).RawPacket);
 
             var drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
                 legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);

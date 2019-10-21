@@ -42,7 +42,7 @@ namespace Infusion.LegacyApi
         public Location3D Location
         {
             get => location;
-            set
+            internal set
             {
                 if (location != value)
                 {
@@ -53,6 +53,8 @@ namespace Infusion.LegacyApi
                 }
             }
         }
+
+        public byte MapId { get; internal set; }
 
         internal byte Flags { get; set; }
         internal Location3D PredictedLocation { get; set; }

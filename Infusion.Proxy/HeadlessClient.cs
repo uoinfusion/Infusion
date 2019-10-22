@@ -28,6 +28,7 @@ namespace Infusion.Proxy
             public byte ServerListSystemFlag { get; set; }
             public ServerListItem SelectedServer { get; set; }
             public byte MapId { get; set; }
+            public uint EnabledFeatureFlags { get; internal set; }
         }
 
         private readonly Legacy legacyApi;
@@ -89,10 +90,16 @@ namespace Infusion.Proxy
             serverPacketHandler.RegisterFilter(FilterServerPacket);
             serverPacketHandler.Subscribe(PacketDefinitions.GameServerList, HandleGameServerList);
             serverPacketHandler.Subscribe(PacketDefinitions.CharactersStartingLocations, HandleCharactersStartingLocationsPacket);
+            serverPacketHandler.Subscribe(PacketDefinitions.EnableLockedClientFeatures, HandleEnableLockedClientFeatures);
 
             clientPacketHandler.Subscribe(PacketDefinitions.LoginRequest, HandleLoginRequest);
             clientPacketHandler.Subscribe(PacketDefinitions.GameServerLoginRequest, HandleGameServerLoginRequest);
             clientPacketHandler.Subscribe(PacketDefinitions.SelectServerRequest, HandleSelectServerRequest);
+        }
+
+        private void HandleEnableLockedClientFeatures(EnableLockedClientFeaturesPacket packet)
+        {
+            reloginInfo.EnabledFeatureFlags = packet.Flags;
         }
 
         private Packet? FilterServerPacket(Packet rawPacket)
@@ -140,11 +147,12 @@ namespace Infusion.Proxy
                 Location = legacyApi.Me.Location,
             };
 
-            SendToClient(new Packet(new byte[] { 0xB9, 0x80, 0x1F }));
-
             SendToClient(loginConfirmPacket.Serialize());
             SendToClient(new SetMapPacket(reloginInfo.MapId).RawPacket);
-            SendToClient(new Packet(new byte[] { 0xB9, 0x00, 0x03, }));
+
+            var enableFeaturesPacket = packetRegistry.Instantiate<EnableLockedClientFeaturesPacket>(0xB9);
+            enableFeaturesPacket.Flags = reloginInfo.EnabledFeatureFlags;
+            SendToClient(enableFeaturesPacket.Serialize());
 
             SendToClient(new Packet(new byte[] { 0x55 }));
 
@@ -192,6 +200,10 @@ namespace Infusion.Proxy
 
             SendToClient(new SetMapPacket(reloginInfo.MapId).RawPacket);
 
+            var enableFeaturesPacket = packetRegistry.Instantiate<EnableLockedClientFeaturesPacket>(0xB9);
+            enableFeaturesPacket.Flags = reloginInfo.EnabledFeatureFlags;
+            SendToClient(enableFeaturesPacket.Serialize());
+
             var drawPlayer = new DrawGamePlayerPacket(legacyApi.Me.PlayerId, legacyApi.Me.BodyType, legacyApi.Me.Location,
                 legacyApi.Me.Direction, legacyApi.Me.MovementType, legacyApi.Me.Color);
             SendToClient(drawPlayer.Serialize());
@@ -204,7 +216,7 @@ namespace Infusion.Proxy
 
             foreach (var mobile in UO.Mobiles)
             {
-                var drawPacket = new DrawObjectPacket7033();
+                var drawPacket = packetRegistry.Instantiate<DrawObjectPacket>(0x78);
                 drawPacket.Color = mobile.Color.HasValue ? mobile.Color.Value : (Color)0;
                 drawPacket.Direction = mobile.Orientation.HasValue ? mobile.Orientation.Value : Direction.North;
                 drawPacket.Flags = mobile.Flags;

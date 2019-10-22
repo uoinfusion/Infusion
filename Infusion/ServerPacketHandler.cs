@@ -130,6 +130,8 @@ namespace Infusion
                 packetHandler.Publish<ConnectToGameServerPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.CharactersStartingLocations.Id)
                 packetHandler.Publish<CharactersStartingLocationsPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.EnableLockedClientFeatures.Id)
+                packetHandler.Publish<EnableLockedClientFeaturesPacket>(rawPacket);
 
             return rawPacket;
         }

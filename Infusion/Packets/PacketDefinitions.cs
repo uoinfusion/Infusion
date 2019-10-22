@@ -590,10 +590,10 @@ namespace Infusion.Packets
         public static readonly PacketDefinition RequestCharProfile = new PacketDefinition(0xB8,
             new VariablePacketLength(), "RequestCharProfile");
 
-        public static readonly PacketDefinition EnableLockedClientFeatures = new PacketDefinition(0xB9,
-            new StaticPacketLength(3), "EnableLockedClientFeatures");
-        public static readonly PacketDefinition EnableLockedClientFeaturesSince6_0_14_2 = new PacketDefinition(0xB9,
-            new StaticPacketLength(5), "EnableLockedClientFeatures");
+        public static readonly PacketDefinition<EnableLockedClientFeaturesPacket> EnableLockedClientFeatures 
+            = new PacketDefinition<EnableLockedClientFeaturesPacket>(0xB9, new StaticPacketLength(3), "EnableLockedClientFeatures", () => new EnableLockedClientFeaturesPacket());
+        public static readonly PacketDefinition<EnableLockedClientFeatures60142> EnableLockedClientFeaturesSince6_0_14_2
+            = new PacketDefinition<EnableLockedClientFeatures60142>(0xB9, new StaticPacketLength(5), "EnableLockedClientFeatures", () => new EnableLockedClientFeatures60142());
 
         public static readonly PacketDefinition<QuestArrowPacket> QuestArrow = new PacketDefinition<QuestArrowPacket>(0xBA,
             new StaticPacketLength(6), "QuestArrow", () => new QuestArrowPacket());

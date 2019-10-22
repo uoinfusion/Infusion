@@ -60,6 +60,12 @@ namespace Infusion.Packets
             return (T)definition.Materialize(rawPacket);
         }
 
+        public T Instantiate<T>(int packetId) where T : MaterializedPacket
+        {
+            var definition = Find(packetId);
+            return (T)definition.Instantiate();
+        }
+
         public T Instantiate<T>() where T : MaterializedPacket
         {
             var definition = Find<T>();

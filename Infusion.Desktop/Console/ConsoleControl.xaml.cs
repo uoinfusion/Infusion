@@ -23,7 +23,8 @@ namespace Infusion.Desktop.Console
     {
         private IConsole console;
 
-        private readonly CommandAutocompleter completer;
+        private CommandAutocompleter completer;
+        private CommandHandler commandHandler;
         private readonly ConsoleContent consoleContent = new ConsoleContent();
 
         private readonly CommandHistory history = new CommandHistory();
@@ -31,10 +32,7 @@ namespace Infusion.Desktop.Console
 
         public ConsoleControl()
         {
-            completer = new CommandAutocompleter(() => UO.CommandHandler.CommandNames);
-
             InitializeComponent();
-
             outputDocument = new FlowDocument();
             _outputViewer.Document = outputDocument;
             outputDocument.PagePadding = new Thickness(0);
@@ -51,6 +49,12 @@ namespace Infusion.Desktop.Console
 
             if (Application.Current.MainWindow != null)
                 Application.Current.MainWindow.Activated += (sender, args) => FocusInputLine();
+        }
+
+        public void Initialize(CommandHandler commandHandler)
+        {
+            this.commandHandler = commandHandler;
+            completer = new CommandAutocompleter(() => commandHandler.CommandNames);
         }
 
         internal void ShowToggle() => consoleContent.ShowToggle();
@@ -132,17 +136,22 @@ namespace Infusion.Desktop.Console
 
         private void OnCommandEntered(string command)
         {
-            if (UO.CommandHandler.IsInvocationSyntax(command))
+            if (commandHandler.IsInvocationSyntax(command))
             {
                 if (command != ",cls")
                     console.Debug(command);
                 Task.Run(() =>
                 {
-                    UO.CommandHandler.InvokeSyntax(command);
+                    commandHandler.InvokeSyntax(command);
                 });
             }
             else
-                UO.Say(command);
+            {
+                if (UO.IsLoginConfirmed)
+                    UO.Say(command);
+                else
+                    console.Error("Cannot say anything, character is not in game yet.");
+            }
         }
 
         private void FocusInputLine()

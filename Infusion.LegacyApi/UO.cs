@@ -23,7 +23,7 @@ namespace Infusion.LegacyApi
 
         public static IConsole Console => Current.Console;
 
-        public static bool IsLoginConfirmed => Current.IsLoginConfirmed;
+        public static bool IsLoginConfirmed => Current != null && Current.IsLoginConfirmed;
 
         public static TimeSpan DefaultTimeout
         {

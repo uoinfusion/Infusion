@@ -74,6 +74,7 @@ namespace Infusion.Desktop
 
             proxy.Console = infusionConsole;
             var commandHandler = new CommandHandler(proxy.Console);
+            _console.Initialize(commandHandler);
 
             proxy.Initialize(commandHandler, new SoundPlayer(),
                 new Infusion.Injection.Avalonia.InjectionWindowHandler());

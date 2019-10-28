@@ -10,9 +10,19 @@ namespace Infusion.Tests.Commands
         [TestMethod]
         public void Can_return_just_one_name_for_exact_match()
         {
-            var completer = new CommandAutocompleter(() => new[] {"info"});
+            var completer = new CommandAutocompleter(() => new[] { "info" });
 
             var result = completer.Autocomplete(",info");
+
+            result.PotentialCommandNames.Should().ContainSingle("info");
+        }
+
+        [TestMethod]
+        public void Can_return_just_one_name_for_exact_match_prefixed_with_whitespace()
+        {
+            var completer = new CommandAutocompleter(() => new[] { "info" });
+
+            var result = completer.Autocomplete("  ,info");
 
             result.PotentialCommandNames.Should().ContainSingle("info");
         }

@@ -7,6 +7,7 @@
             string name;
             var parameters = string.Empty;
 
+            commandInvocationSyntax = commandInvocationSyntax.Trim();
             var firstSpaceIndex = commandInvocationSyntax.IndexOf(' ');
             if (firstSpaceIndex < 0)
                 name = commandInvocationSyntax.Substring(1, commandInvocationSyntax.Length - 1);

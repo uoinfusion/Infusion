@@ -137,6 +137,20 @@ public static class Common
             UO.Client.DeleteItem(mobile.Id);
         }
     }
+    
+    public static void CollectNearest()
+    {
+        var collectable = UO.Items.OnGround()
+            .Matching(Specs.Collectables)
+            .MaxDistance(5)
+            .OrderByDistance()
+            .FirstOrDefault();
+            
+        if (collectable != null)
+            UO.Use(collectable);
+        else
+            UO.ClientPrint("No collectable found", UO.Me);
+    }
 }
 
 class MobileLookupLinqWrapper : IMobileLookup
@@ -199,3 +213,4 @@ UO.RegisterCommand("resync", () => UO.Say(".resync"));
 UO.RegisterCommand("opencontainer", Common.OpenContainerCommand);
 UO.RegisterCommand("invis-item-all", Common.InvisAllItems);
 UO.RegisterCommand("invis-item", Common.InvisItem);
+UO.RegisterCommand("collect", Common.CollectNearest);

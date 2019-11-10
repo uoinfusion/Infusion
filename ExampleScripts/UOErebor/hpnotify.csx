@@ -163,7 +163,7 @@ public class StandardPrinter : IPrintHitPointNotification
         else
             text = $"{deltaText}/{currentHealthText}";
         
-        UO.ClientPrint(text, "hpnotify", mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: false);        
+        UO.ClientPrint(text, mobile.Name ?? "hpnotify", mobile.Id, mobile.Type, SpeechType.Speech, textColor, log: true);
    }
 }
 

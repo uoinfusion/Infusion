@@ -40,7 +40,7 @@ public static class Potions
     public static readonly Potion ClevernessGreaterPotion = new Potion(Specs.ClevernessGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(600), ".potionclever", "cleverness", NormalDurationStages);
     public static readonly Potion CureLesserPotion = new Potion(Specs.CureLesserPotion, SlowCooldown, NoDuration, ".potioncure");
     public static readonly Potion CurePotion = new Potion(Specs.CurePotion, SlowCooldown, NoDuration, ".potioncure");
-    public static readonly Potion CureGreaterPotion = new Potion(Specs.CureGreaterPotion, SlowCooldown, NoDuration, ".potioncure");
+    public static readonly Potion CureGreaterPotion = new Potion(Specs.CureGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(400), ".potioncure", "cure", NormalDurationStages);
     public static readonly Potion NightsightPotion = new Potion(Specs.NightsighPoition, FastCooldown, TimeSpan.FromSeconds(1800), ".potionnightsight", "nightsight", NormalDurationStages);
     public static readonly Potion StregthGreaterPotion = new Potion(Specs.StrengthGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(600), ".potionstrength", "strength", NormalDurationStages);
     public static readonly Potion AgilityGreaterPotion = new Potion(Specs.AgilityGreaterPotion, SlowCooldown, TimeSpan.FromSeconds(600), ".potionagility", "agility", NormalDurationStages);

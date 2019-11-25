@@ -33,7 +33,7 @@ namespace Infusion.Cli
                 })
                 .WithParsed<LaunchOptions>(options =>
                 {
-                    var command = new LaunchCommand(options.ServerAddress, options.ProtocolVersion, options.ScriptFileName);
+                    var command = new LaunchCommand(options);
                     command.Execute();
                 });
 

@@ -1,5 +1,6 @@
 ﻿using Infusion.Commands;
 using Infusion.EngineScripts;
+using Infusion.IO.Encryption.Login;
 using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
@@ -17,24 +18,18 @@ namespace Infusion.Cli
 {
     internal sealed class LaunchCommand
     {
-        private IConsole console  = new TextConsole();
+        private readonly IConsole console  = new TextConsole();
         private ScriptEngine scriptEngine;
-        private ILogger diagnostic;
+        private readonly ILogger diagnostic;
         private CSharpScriptEngine csharpScriptEngine;
         private readonly CommandHandler commandHandler;
-        private string scriptFileName;
+        private readonly LaunchOptions options;
 
-        private readonly string serverAddress;
-        private readonly Version protocolVersion;
-
-        public LaunchCommand(string serverAddress, Version protocolVersion, string scriptFileName)
+        public LaunchCommand(LaunchOptions options)
         {
-            this.serverAddress = serverAddress;
-            this.protocolVersion = protocolVersion;
-            this.scriptFileName = scriptFileName;
-
             diagnostic = console;
             commandHandler = new CommandHandler(diagnostic);
+            this.options = options;
         }
 
         public void Execute()
@@ -42,18 +37,17 @@ namespace Infusion.Cli
             var proxy = new InfusionProxy();
             proxy.Initialize(commandHandler, new NullSoundPlayer(), new LegacyApi.Injection.NullInjectionWindow());
 
-            string[] loginServer = serverAddress.Split(',');
-
-            var resolvedServerAddress = Dns.GetHostEntry(loginServer[0])
+            var resolvedServerAddress = Dns.GetHostEntry(options.ServerAddress)
                 .AddressList.First(a => a.AddressFamily == AddressFamily.InterNetwork);
 
             proxy.Start(new ProxyStartConfig()
             {
-                ServerAddress = serverAddress,
-                ServerEndPoint = new IPEndPoint(resolvedServerAddress, int.Parse(loginServer[1])),
-                LocalProxyPort = 60000,
-                ProtocolVersion = protocolVersion,
-                Encryption = EncryptionSetup.Autodetect,
+                ServerAddress = options.ServerAddress,
+                ServerEndPoint = new IPEndPoint(resolvedServerAddress, options.Port),
+                LocalProxyPort = (ushort)options.LocalPort,
+                ProtocolVersion = options.ProtocolVersion,
+                LoginEncryptionKey = LoginEncryptionKey.FromVersion(options.ProtocolVersion),
+                Encryption = GetEncryptionSetup(options.Encryption),
             });
 
             UO.CommandHandler.RegisterCommand(new Command("reload", () => Reload(), false, true,
@@ -62,12 +56,29 @@ namespace Infusion.Cli
             csharpScriptEngine = new CSharpScriptEngine(console);
             scriptEngine = new ScriptEngine(csharpScriptEngine, new InjectionScriptEngine(UO.Injection, console));
 
-            if (!string.IsNullOrEmpty(scriptFileName))
+            console.Info($"\nConfigure your client to use 'localhost,{options.LocalPort}' as Ultima Online server address.");
+
+            if (!string.IsNullOrEmpty(options.ScriptFileName))
             {
-                Load(scriptFileName);
+                Load(options.ScriptFileName);
             }
 
-            System.Console.ReadLine();
+            Console.ReadLine();
+        }
+
+        private EncryptionSetup GetEncryptionSetup(ClientEncryption encryption)
+        {
+            switch (encryption)
+            {
+                case ClientEncryption.add:
+                    return EncryptionSetup.EncryptedServer;
+                case ClientEncryption.auto:
+                    return EncryptionSetup.Autodetect;
+                case ClientEncryption.remove:
+                    return EncryptionSetup.EncryptedClient;
+                default:
+                    throw new NotImplementedException($"Unknown ClientEncryption value '{encryption}'");
+            }
         }
 
         private void Load(string scriptFileName)
@@ -77,7 +88,7 @@ namespace Infusion.Cli
 
             scriptFileName = Path.Combine(scriptPath, name);
 
-            this.scriptFileName = scriptFileName;
+            options.ScriptFileName = scriptFileName;
             scriptEngine.ScriptRootPath = scriptPath;
 
             Reload();
@@ -91,7 +102,7 @@ namespace Infusion.Cli
             scriptEngine.Reset();
             using (var tokenSource = new CancellationTokenSource())
             {
-                await scriptEngine.ExecuteScript(scriptFileName, tokenSource);
+                await scriptEngine.ExecuteScript(options.ScriptFileName, tokenSource);
             }
         }
     }

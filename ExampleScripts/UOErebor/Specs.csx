@@ -148,6 +148,11 @@ public static class Specs
     public static readonly ItemSpec FoldedTowel = 0x0A6C;
 
     public static readonly ItemSpec BlankScroll = new ItemSpec(0x0E34, (Color)0x0000);
+    public static readonly ItemSpec BlankChestnutScroll = new ItemSpec(0x0E34, (Color)0x05E5);
+    public static readonly ItemSpec BlankOakScroll = new ItemSpec(0x0E34, (Color)0x05F2);
+    public static readonly ItemSpec BlankTeakScroll = new ItemSpec(0x0E34, (Color)0x01C4);
+    public static readonly ItemSpec BlankScrolls = new ItemSpec[] { BlankScroll, BlankChestnutScroll, BlankOakScroll, BlankTeakScroll };
+    
     public static readonly ItemSpec Paper = 0x14ED;
     public static readonly ItemSpec BlankMap = 0x14EB;
     public static readonly ItemSpec TajemnaMapa = 0x14EB;

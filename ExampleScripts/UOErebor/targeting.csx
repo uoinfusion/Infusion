@@ -40,7 +40,7 @@ public static class TargetingModes
     public static TargetingMode PvpFriend = () =>
         UO.Mobiles.MaxDistance(20)
                 .Matching(Specs.Player)
-                .Where(i => i.Id != UO.Me.PlayerId && !Targeting.Ignored.Contains(i. Id) 
+                .Where(i => i.Id != UO.Me.PlayerId && !Targeting.Ignored.Any(x => x.Id == i.Id && !Specs.Player.Matches(x)) 
                     && (Targeting.IgnoredSpec == null || !Targeting.IgnoredSpec.Matches(i)))
                 .OrderByDistance();
 }

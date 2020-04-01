@@ -214,6 +214,7 @@ public static class Specs
     public static readonly ItemSpec CureLesserPotion = new ItemSpec(0x0F0E, (Color)0x002D);
     public static readonly ItemSpec CurePotion = new ItemSpec(0x0F0E, (Color)0x002B);
     public static readonly ItemSpec CureGreaterPotion = new ItemSpec(0x0F0E, (Color)0x008E);
+    public static readonly ItemSpec CurePotions = new[] { CureLesserPotion, CurePotion, CureGreaterPotion };
     public static readonly ItemSpec HealLesserPotion = new ItemSpec(0x0F0E, (Color)0x0100);
     public static readonly ItemSpec HealPotion = new ItemSpec(0x0F0E, (Color)0x0099);
     public static readonly ItemSpec HealGreaterPotion = new ItemSpec(0x0F0E, (Color)0x0160);
@@ -221,9 +222,11 @@ public static class Specs
     public static readonly ItemSpec RefreshLesserPotion = new ItemSpec(0x0F0E, (Color)0x0029);
     public static readonly ItemSpec RefreshPotion = new ItemSpec(0x0F0E, (Color)0x0027);
     public static readonly ItemSpec RefreshGreaterPotion = new ItemSpec(0x0F0E, (Color)0x00ED);
+    public static readonly ItemSpec RefreshPotions = new[] { RefreshLesserPotion, RefreshPotion, RefreshGreaterPotion };
     public static readonly ItemSpec StrengthLesserPotion = new ItemSpec(0x0F0E, (Color)0x0835);
     public static readonly ItemSpec StrengthPotion = new ItemSpec(0x0F0E, (Color)0x0388);
     public static readonly ItemSpec StrengthGreaterPotion = new ItemSpec(0x0F0E, (Color)0x076B);
+    public static readonly ItemSpec StrengthPotions = new[] { StrengthLesserPotion, StrengthPotion, StrengthGreaterPotion };
     public static readonly ItemSpec InvisibilityPotion = new ItemSpec(0x0F0E, (Color)0x0447);
     public static readonly ItemSpec ClevernessLesserPotion = new ItemSpec(0x0F0E, (Color)0x06C2);
     public static readonly ItemSpec ClevernessPotion = new ItemSpec(0x0F0E, (Color)0x073E);

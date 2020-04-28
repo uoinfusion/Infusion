@@ -233,6 +233,19 @@ namespace Infusion.LegacyApi
             client.TargetLocation(lastCursorId, location, tileType, CursorType.Cancel);
         }
 
+        public void TargetTile(Location2D location)
+        {
+            var tiles = Ultima.Map.Felucca.Tiles.GetStaticTiles(location.X, location.Y);
+            var tile = tiles.FirstOrDefault();
+
+            Location3D location3d = new Location3D(location.X, location.Y, tile.Z);
+                        
+            server.TargetLocation(lastCursorId, location3d, tile.ID, CursorType.Harmful);
+            discardNextTargetLocationRequestIfEmpty = true;
+            client.TargetLocation(lastCursorId, location3d, tile.ID, CursorType.Cancel);
+            
+        }
+
         public void TargetTile(string tileInfo)
         {
             var errorMessage =

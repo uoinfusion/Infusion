@@ -444,6 +444,14 @@ namespace Infusion.LegacyApi
             Targeting.TargetTile(tileInfo);
         }
 
+        public void TargetTile(int x, int y)
+        {
+            CheckCancellation();
+
+            NotifyAction();
+            Targeting.TargetTile(new Location2D(x, y));
+        }
+
         public void Target(Location2D location)
         {
             CheckCancellation();

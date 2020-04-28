@@ -157,6 +157,9 @@ namespace Infusion.LegacyApi
 
         public static void TargetTile(string tileInfo)
             => Current.TargetTile(tileInfo);
+        
+        public static void TargetTile(int x, int y)
+            => Current.TargetTile(x, y);
 
         public static void Target(Location2D location)
             => Current.Target(location);

@@ -132,6 +132,8 @@ namespace Infusion
                 packetHandler.Publish<CharactersStartingLocationsPacket>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.EnableLockedClientFeatures.Id)
                 packetHandler.Publish<EnableLockedClientFeaturesPacket>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.BoatMoving.Id)
+                packetHandler.Publish<BoatMovingPacket>(rawPacket);
 
             return rawPacket;
         }

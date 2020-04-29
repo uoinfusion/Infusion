@@ -40,7 +40,7 @@ namespace Infusion.LegacyApi
             clientPacketSubject.RegisterOutputFilter(FilterSentClientPackets);
 
             server.RegisterFilter(FilterServerPackets);
-            
+
             server.Subscribe(PacketDefinitions.CharacterLocaleAndBody, HandleCharLocaleAndBodyPacket);
             server.Subscribe(PacketDefinitions.DrawGamePlayer, HandleDrawGamePlayerPacket);
             server.Subscribe(PacketDefinitions.CharMoveRejection, HandleCharMoveRejectionPacket);
@@ -52,8 +52,23 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
             server.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
+            server.Subscribe(PacketDefinitions.BoatMoving, HandleBoatMovingPacket);
 
             clientPacketSubject.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
+        }
+
+        private void HandleBoatMovingPacket(BoatMovingPacket packet)
+        {
+            foreach (var position in packet.PositionEntities)
+            {
+
+                if (position.Serial == player.PlayerId)
+                {
+                    player.Location = position.Location;
+
+                }
+            }
+
         }
 
         private Skill? lastSkill;
@@ -139,7 +154,7 @@ namespace Infusion.LegacyApi
                     if (currentSkillValue.Value < packet.Values[0].Value)
                     {
                         var delta = packet.Values[0].Percentage - currentSkillValue.Percentage;
-                        console.WriteLine(ConsoleLineType.SkillChanged, 
+                        console.WriteLine(ConsoleLineType.SkillChanged,
                             $"Skill {skill} increased by {delta:F1} %, currently it is {packet.Values[0].Percentage:F1} %");
                     }
                 }
@@ -301,7 +316,7 @@ namespace Infusion.LegacyApi
                 packet.Deserialize(rawPacket);
                 player.MapId = packet.MapId;
             }
-            
+
             if (rawPacket.Id != PacketDefinitions.CharacterMoveAck.Id)
             {
                 return rawPacket;

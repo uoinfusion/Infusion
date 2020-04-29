@@ -12,6 +12,7 @@ namespace Infusion
         public static readonly Direction Southwest = (Direction) 0x05;
         public static readonly Direction West = (Direction) 0x06;
         public static readonly Direction Northwest = (Direction) 0x07;
+        public static readonly Direction Mask = (Direction)0x07;
 
         private readonly byte value;
 

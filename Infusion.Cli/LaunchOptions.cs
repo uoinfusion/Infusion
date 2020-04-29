@@ -25,5 +25,8 @@ namespace Infusion.Cli
 
         [Option("encrypt", HelpText = "Client encryption. Valid values are 'add' (adds encryption to the client), 'remove' (removes encryption from client), 'auto' (uses client encryption as-is). Default value is 'auto'.")]
         public ClientEncryption Encryption { get; set; } = ClientEncryption.auto;
+
+        [Option("commandPrefix", HelpText = "Prefix for invoking commands from client")]
+        public string CommandPrefix { get; set; } = ",";
     }
 }

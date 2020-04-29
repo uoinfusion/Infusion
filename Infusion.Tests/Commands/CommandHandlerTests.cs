@@ -75,6 +75,17 @@ namespace Infusion.Tests.Commands
             commandHandler.InvokeSyntax(",testName");
             ev.AssertWaitOneSuccess();
         }
+        
+        [TestMethod]
+        public void Can_invoke_syntax_with_parameterless_command_with_custom_prefix()
+        {
+            var ev = new AutoResetEvent(false);
+            commandHandler.RegisterCommand("testName", () => ev.Set());
+            commandHandler.CommandPrefix = "[";
+
+            commandHandler.InvokeSyntax("[testName");
+            ev.AssertWaitOneSuccess();
+        }
 
         [TestMethod]
         public void Can_register_parametrized_command()

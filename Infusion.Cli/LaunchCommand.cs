@@ -5,6 +5,7 @@ using Infusion.LegacyApi;
 using Infusion.LegacyApi.Console;
 using Infusion.Logging;
 using Infusion.Proxy;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +36,12 @@ namespace Infusion.Cli
         public void Execute()
         {
             var proxy = new InfusionProxy();
+
+            if (options.CommandPrefix.Length > 0)
+                commandHandler.CommandPrefix = options.CommandPrefix;
+            else
+                console.Error("Command prefix must contain at least one character, using default prefix.");
+
             proxy.Initialize(commandHandler, new NullSoundPlayer(), new LegacyApi.Injection.NullInjectionWindow());
 
             var resolvedServerAddress = Dns.GetHostEntry(options.ServerAddress)

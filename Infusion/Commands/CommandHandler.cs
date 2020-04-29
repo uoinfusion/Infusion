@@ -27,6 +27,7 @@ namespace Infusion.Commands
         }
 
         public IEnumerable<string> CommandNames => commands.Keys;
+        public string CommandPrefix { get; set; } = ",";
 
         public Command[] RunningCommands
         {
@@ -167,7 +168,7 @@ namespace Infusion.Commands
             }
         }
 
-        public bool IsInvocationSyntax(string potentialInvocationSyntax) => potentialInvocationSyntax.StartsWith(",");
+        public bool IsInvocationSyntax(string potentialInvocationSyntax) => potentialInvocationSyntax.StartsWith(CommandPrefix);
 
         public void Unregister(string commandName)
         {
@@ -235,7 +236,7 @@ namespace Infusion.Commands
             help.AppendLine("Available commands:");
             foreach (var command in commands.Values.OrderBy(c => c.Name))
             {
-                help.Append(",");
+                help.Append(CommandPrefix);
                 help.Append(command.Name.PadRight(16));
                 if (!string.IsNullOrEmpty(command.Summary))
                 {

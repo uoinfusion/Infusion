@@ -54,8 +54,6 @@ namespace Infusion.LegacyApi
             }
         }
 
-        public byte MapId { get; internal set; }
-
         internal byte Flags { get; set; }
         internal Location3D PredictedLocation { get; set; }
         internal Direction PredictedDirection { get; set; }

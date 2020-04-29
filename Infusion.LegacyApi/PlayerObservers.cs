@@ -294,13 +294,6 @@ namespace Infusion.LegacyApi
         private Packet? FilterServerPackets(Packet rawPacket)
         {
             var discardCurrentPacket = false;
-
-            if (rawPacket.Id == PacketDefinitions.GeneralInformationPacket.Id && rawPacket.Payload[4] == 8)
-            {
-                var packet = new SetMapPacket();
-                packet.Deserialize(rawPacket);
-                player.MapId = packet.MapId;
-            }
             
             if (rawPacket.Id != PacketDefinitions.CharacterMoveAck.Id)
             {

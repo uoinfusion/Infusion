@@ -58,9 +58,9 @@ namespace Infusion
             }
         }
 
-        public int X { get; }
-        public int Y { get; }
-        public int Z { get; }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public int Z { get; set; }
 
         public Location3D WithZ(byte z) => new Location3D(X, Y, z);
 

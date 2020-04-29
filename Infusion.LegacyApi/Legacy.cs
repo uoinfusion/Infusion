@@ -4,6 +4,7 @@ using System.Threading;
 using Infusion.Commands;
 using Infusion.Config;
 using Infusion.Gumps;
+using Infusion.LegacyApi;
 using Infusion.LegacyApi.Cliloc;
 using Infusion.LegacyApi.Console;
 using Infusion.LegacyApi.Events;
@@ -104,6 +105,7 @@ namespace Infusion.LegacyApi
             weatherObserver = new WeatherObserver(ultimaServer, ultimaClient, this);
             soundObserver = new SoundObserver(ultimaServer, eventJournalSource, packetRegistry);
             mapObserver = new MapObserver(ultimaServer, eventJournalSource);
+            mapObserver.MapChanged += mapId => ChangeMap(mapId);
             shapeShifter = new ShapeshiftingFilter(ultimaServer, ultimaClient, packetRegistry);
             walkingObserver = new WalkingObserver(ultimaClient, ultimaClient, Me);
             var speechRequestObserver = new SpeechRequestObserver(ultimaClient, commandHandler, eventJournalSource, console, packetRegistry);
@@ -171,7 +173,7 @@ namespace Infusion.LegacyApi
 
         public CommandHandler CommandHandler { get; }
 
-        public UltimaMap Map { get; } = new UltimaMap();
+        public IWorldMap Map { get; private set; } = new UltimaMap(Ultima.Map.Felucca);
 
         internal GameObjectCollection GameObjects { get; }
         public ItemCollection Items { get; }
@@ -774,5 +776,23 @@ namespace Infusion.LegacyApi
         public void WaitTargetTile(int type, int x, int y, int z) => Targeting.AddNextTarget(type, x, y, z);
 
         public void ClearTargetObject() => Targeting.ClearNextTarget();
+
+        internal void ChangeMap(int mapId)
+        {
+            if (mapId == Ultima.Map.Felucca.FileIndex)
+                Map = new UltimaMap(Ultima.Map.Felucca);
+            else if (mapId == Ultima.Map.Ilshenar.FileIndex)
+                Map = new UltimaMap(Ultima.Map.Ilshenar);
+            else if (mapId == Ultima.Map.Malas.FileIndex)
+                Map = new UltimaMap(Ultima.Map.Malas);
+            else if (mapId == Ultima.Map.TerMur.FileIndex)
+                Map = new UltimaMap(Ultima.Map.TerMur);
+            else if (mapId == Ultima.Map.Tokuno.FileIndex)
+                Map = new UltimaMap(Ultima.Map.Tokuno);
+            else if (mapId == Ultima.Map.Trammel.FileIndex)
+                Map = new UltimaMap(Ultima.Map.Trammel);
+            else
+                throw new NotImplementedException($"Unknown map '{mapId}'.");
+        }
     }
 }

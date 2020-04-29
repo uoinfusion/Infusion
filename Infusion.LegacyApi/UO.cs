@@ -44,7 +44,7 @@ namespace Infusion.LegacyApi
 
         public static CommandHandler CommandHandler => Current.CommandHandler;
 
-        public static UltimaMap Map => Current.Map;
+        public static IWorldMap Map => Current.Map;
 
         internal static GameObjectCollection GameObjects => Current.GameObjects;
         public static ItemCollection Items => Current.Items;

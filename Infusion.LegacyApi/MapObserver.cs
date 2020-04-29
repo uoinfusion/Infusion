@@ -14,11 +14,26 @@ namespace Infusion.LegacyApi
     {
         private readonly IEventJournalSource eventJournalSource;
 
+        public event Action<int> MapChanged;
+
         public MapObserver(IServerPacketSubject serverPacketSubject, IEventJournalSource eventJournalSource)
         {
             this.eventJournalSource = eventJournalSource;
             serverPacketSubject.Subscribe(PacketDefinitions.QuestArrow, HandleQuestArrow);
             serverPacketSubject.Subscribe(PacketDefinitions.MapMessage, HandleMapMessage);
+            serverPacketSubject.RegisterFilter(FilterServerPackets);
+        }
+
+        private Packet? FilterServerPackets(Packet rawPacket)
+        {
+            if (rawPacket.Id == PacketDefinitions.GeneralInformationPacket.Id && rawPacket.Payload[4] == 8)
+            {
+                var packet = new SetMapPacket();
+                packet.Deserialize(rawPacket);
+                MapChanged?.Invoke(packet.MapId);
+            }
+
+            return rawPacket;
         }
 
         private void HandleMapMessage(MapMessagePacket packet)

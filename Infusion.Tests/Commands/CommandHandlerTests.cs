@@ -145,7 +145,7 @@ namespace Infusion.Tests.Commands
             commandHandler.RegisterCommand("testName", () => { });
             commandHandler.RegisterCommand("testName2", parameters => { });
 
-            commandHandler.CommandNames.Should().Contain("testName").And.Contain("testName2");
+            commandHandler.CommandNames.Should().Contain(",testName").And.Contain(",testName2");
         }
 
         [TestMethod]
@@ -163,7 +163,7 @@ namespace Infusion.Tests.Commands
 
             commandHandler.Unregister("testname2");
 
-            commandHandler.CommandNames.Should().BeEquivalentTo("testname1");
+            commandHandler.CommandNames.Should().BeEquivalentTo(",testname1");
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace Infusion.Tests.Commands
 
             commandHandler.Unregister("testname1");
 
-            commandHandler.CommandNames.Should().BeEquivalentTo("testname2");
+            commandHandler.CommandNames.Should().BeEquivalentTo(",testname2");
         }
 
         [TestMethod]
@@ -589,7 +589,7 @@ namespace Infusion.Tests.Commands
 
             commandHandler.BeginTerminate();
 
-            commandHandler.CommandNames.Should().Contain("cmd1", "Direct command without custom cancellation token cannot be terminated, to support special commands like ,terminate.");
+            commandHandler.CommandNames.Should().Contain(",cmd1", "Direct command without custom cancellation token cannot be terminated, to support special commands like ,terminate.");
 
             command.Finish();
         }

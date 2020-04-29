@@ -26,7 +26,7 @@ namespace Infusion.Commands
             invocator = new CommandInvocator(this, logger);
         }
 
-        public IEnumerable<string> CommandNames => commands.Keys;
+        public IEnumerable<string> CommandNames => commands.Keys.Select(k => CommandPrefix + k);
         public string CommandPrefix { get; set; } = ",";
 
         public Command[] RunningCommands

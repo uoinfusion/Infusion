@@ -19,6 +19,7 @@ namespace Infusion.Commands
 
         private readonly object runningCommandsLock = new object();
         private ImmutableDictionary<string, Command> commands = ImmutableDictionary<string, Command>.Empty;
+        private ImmutableHashSet<string> serverCommands = ImmutableHashSet.Create<string>();
 
         public CommandHandler(ILogger logger)
         {
@@ -26,7 +27,7 @@ namespace Infusion.Commands
             invocator = new CommandInvocator(this, logger);
         }
 
-        public IEnumerable<string> CommandNames => commands.Keys.Select(k => CommandPrefix + k);
+        public IEnumerable<string> CommandNames => commands.Keys.Select(k => CommandPrefix + k).Concat(serverCommands);
         public string CommandPrefix { get; set; } = ",";
 
         public Command[] RunningCommands
@@ -81,6 +82,16 @@ namespace Infusion.Commands
             }
 
             RunningCommandAdded?.Invoke(this, invocation);
+        }
+
+        public void RegisterServerCommand(string commandName)
+        {
+            serverCommands = serverCommands.Add(commandName);
+        }
+
+        public void RegisterServerCommands(params string[] commandNames)
+        {
+            serverCommands = ImmutableHashSet.CreateRange(commandNames.Concat(serverCommands));
         }
 
         public Command RegisterCommand(string name, Action commandAction)

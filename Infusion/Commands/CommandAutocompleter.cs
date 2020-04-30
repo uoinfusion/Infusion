@@ -31,7 +31,7 @@ namespace Infusion.Commands
 
             var exactMatch = commandNameSource().FirstOrDefault(x => x == syntax.PrefixAndName);
             if (!string.IsNullOrEmpty(exactMatch))
-                return new CommandAutocompletion(new[] {exactMatch}, syntax.Prefix + exactMatch + " ");
+                return new CommandAutocompletion(new[] {exactMatch}, exactMatch + " ");
 
             var startingWith = commandNameSource().Where(x => x.StartsWith(syntax.PrefixAndName)).OrderBy(x => x).ToArray();
             if (startingWith.Length == 1)

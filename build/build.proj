@@ -17,6 +17,7 @@
         <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
 
         <CallTarget Targets="PreparePackage" />
+        <CallTarget Targets="PublishCli" />
     </Target>
 
     <Target Name="PreparePackage">
@@ -28,10 +29,10 @@
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
         </PropertyGroup>
 
-        <MakeDir Directories=".\release;.\release\bin;.\release\logs;.\release\profiles;.\release\scripts;.\testresults" />
+        <MakeDir Directories=".\output\release;.\output\release\bin;.\output\release\logs;.\output\release\profiles;.\output\release\scripts;.\testresults" />
 
-        <Copy SourceFiles="@(LauncherFile)" DestinationFolder=".\release\" />
-        <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\release\bin" />
+        <Copy SourceFiles="@(LauncherFile)" DestinationFolder=".\output\release\" />
+        <Copy SourceFiles="@(BinFiles)" DestinationFolder=".\output\release\bin" />
 
         <Exec Command="git checkout-index -a -f --prefix $(MSBuildProjectDirectory)\" WorkingDirectory="..\ExampleScripts" />
 
@@ -40,13 +41,19 @@
             <UOEreborScriptExtensionBinaryFiles Include="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions\bin\Release\Infusion.Scripts.UOErebor.Extensions.dll" />
         </ItemGroup>
 
-        <Copy SourceFiles="@(ScriptFiles)" DestinationFolder=".\release\scripts\%(RecursiveDir)" />
-        <Copy SourceFiles="@(UOEreborScriptExtensionBinaryFiles)" DestinationFolder=".\release\scripts\UOErebor\%(RecursiveDir)" />
+        <Copy SourceFiles="@(ScriptFiles)" DestinationFolder=".\output\release\scripts\%(RecursiveDir)" />
+        <Copy SourceFiles="@(UOEreborScriptExtensionBinaryFiles)" DestinationFolder=".\output\release\scripts\UOErebor\%(RecursiveDir)" />
+    </Target>
+
+    <Target Name="PublishCli">
+        <Exec Command="paket.exe restore" WorkingDirectory="paket" />
+        <Exec Command="dotnet publish ..\Infusion.Cli\Infusion.Cli.csproj --framework net47 --configuration Release --output output\release-cli" />
+        <Exec Command="paket\packages\NuGet.CommandLine\tools\NuGet.exe pack ..\infusion.cli.tools.nuspec -OutputDirectory output" />
     </Target>
 
     <Target Name="Clean">
         <ItemGroup>
-          <DirsToClean Include=".\release;.\testresults;.\ExampleScripts" />
+          <DirsToClean Include=".\output;.\testresults;.\ExampleScripts" />
         </ItemGroup>
         <RemoveDir Directories="@(DirsToClean)" />
     </Target>

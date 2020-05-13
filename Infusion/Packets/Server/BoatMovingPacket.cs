@@ -6,7 +6,7 @@ namespace Infusion.Packets.Server
 {
     internal sealed class BoatMovingPacket : MaterializedPacket
     {
-        private PositionEntity[] PositionEntities { get; set; }
+        public PositionEntity[] PositionEntities { get; set; }
         public uint Serial { get; set; }
         public byte BoatSpeed { get; set; }
         public Direction MovingDirection { get; set; }

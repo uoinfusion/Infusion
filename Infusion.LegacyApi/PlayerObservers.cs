@@ -52,8 +52,23 @@ namespace Infusion.LegacyApi
             server.Subscribe(PacketDefinitions.DrawObject, HandleDrawObjectPacket);
             server.Subscribe(PacketDefinitions.AllowRefuseAttack, HandleAllowRefuseAttack);
             server.Subscribe(PacketDefinitions.UpdatePlayer, HandleUpdatePlayerPacket);
+            server.Subscribe(PacketDefinitions.BoatMoving, HandleBoatMovingPacket);
 
             clientPacketSubject.Subscribe(PacketDefinitions.RequestSkills, HandleRequestSkills);
+        }
+
+        private void HandleBoatMovingPacket(BoatMovingPacket packet)
+        {
+            foreach (var position in packet.PositionEntities)
+            {
+
+                if (position.Serial == player.PlayerId)
+                {
+                    player.Location = position.Location;
+
+                }
+            }
+
         }
 
         private Skill? lastSkill;

@@ -268,16 +268,16 @@ namespace Infusion.LegacyApi
         internal void ClientPrint(string message, Player player, Color color, bool logMessage = true)
             => ClientPrint(message, player.Name ?? "<player>", player.PlayerId, player.BodyType, SpeechType.Speech, color, logMessage);
 
-        internal void ClientPrint(string message, Mobile mobile, Color color, bool logMessage = true) 
+        internal void ClientPrint(string message, Mobile mobile, Color color, bool logMessage = true)
             => ClientPrint(message, mobile.Name ?? "<mobile>", mobile.Id, mobile.Type, SpeechType.Speech, color, logMessage);
 
-        internal void ClientPrint(string message, Item item, Color color, bool logMessage = true) 
+        internal void ClientPrint(string message, Item item, Color color, bool logMessage = true)
             => ClientPrint(message, item.Name ?? "<item>", item.Id, item.Type, SpeechType.Speech, color, logMessage);
 
         internal void ClientPrint(string message, Player player, bool logMessage = true)
             => ClientPrint(message, player.Name ?? "<player>", player, logMessage);
 
-        internal void ClientPrint(string message, Mobile mobile, bool logMessage = true) 
+        internal void ClientPrint(string message, Mobile mobile, bool logMessage = true)
             => ClientPrint(message, mobile.Name ?? "<mobile>", mobile, logMessage);
 
         internal void ClientPrint(string message, Item item, bool logMessage = true)
@@ -391,7 +391,7 @@ namespace Infusion.LegacyApi
 
         public void Wait(TimeSpan span)
         {
-            Wait((int) span.TotalMilliseconds);
+            Wait((int)span.TotalMilliseconds);
         }
 
         private void WaitToAvoidFastWalk(MovementType movementType)
@@ -442,6 +442,20 @@ namespace Infusion.LegacyApi
 
             NotifyAction();
             Targeting.TargetTile(tileInfo);
+        }
+
+        public void TargetTile(int x, int y)
+        {
+            CheckCancellation();
+
+            NotifyAction();
+
+            var tiles = Ultima.Map.Felucca.Tiles.GetStaticTiles(x, y);
+            var tile = tiles.FirstOrDefault();
+            
+            Location3D location3d = new Location3D(x, y, tile.Z);
+            
+            Targeting.TargetTile(location3d, tile.ID);
         }
 
         public void Target(Location2D location)
@@ -724,7 +738,7 @@ namespace Infusion.LegacyApi
 
         public void ClientPrint(string message, string name, Item onBehalfItem, bool log = true)
         {
-            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color) 0x0026, log);
+            ClientPrint(message, name, onBehalfItem.Id, onBehalfItem.Type, SpeechType.Speech, (Color)0x0026, log);
         }
 
         public DialogBox WaitForDialogBox(params string[] failMessages)
@@ -748,7 +762,7 @@ namespace Infusion.LegacyApi
 
                 return result;
             }
-            finally 
+            finally
             {
                 dialogBoxObervers.ShowDialogBox = true;
             }

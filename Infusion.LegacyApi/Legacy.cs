@@ -652,6 +652,12 @@ namespace Infusion.LegacyApi
             gumpObservers.CloseGump();
         }
 
+        public void SellItems(ObjectId vendor, SellListItem[] items)
+        {
+            NotifyAction();
+            Server.SellItems(vendor, items);
+        }
+
         public void Wear(ObjectId id, Layer layer)
         {
             NotifyAction();

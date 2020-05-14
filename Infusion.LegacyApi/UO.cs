@@ -243,6 +243,9 @@ namespace Infusion.LegacyApi
         public static void CloseGump()
             => Current.CloseGump();
 
+        public static void SellItems(ObjectId vendor, params SellListItem[] items)
+            => Current.SellItems(vendor, items);
+
         public static void Wear(ObjectId id, Layer layer)
             => Current.Wear(id, layer);
 

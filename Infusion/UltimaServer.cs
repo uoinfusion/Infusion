@@ -133,6 +133,12 @@ namespace Infusion
             Send(request.RawPacket);
         }
 
+        public void SellItems(ObjectId vendor, SellListItem[] items)
+        {
+            var request = new SellListReply(vendor, items);
+            Send(request.RawPacket);
+        }
+
         public void UseSkill(Skill skill)
         {
             var request = new SkillRequest(skill);

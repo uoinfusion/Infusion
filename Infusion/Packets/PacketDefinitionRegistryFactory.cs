@@ -242,7 +242,7 @@ namespace Infusion.Packets
             registry.Register(PacketDefinitions.MoveCharacter);
             registry.Register(PacketDefinitions.Unknown8F);
             registry.Register(PacketDefinitions.RequestHelp);
-            registry.Register(PacketDefinitions.SellListReply);
+            registry.Register(PacketDefinitions.SellRequest);
             registry.Register(PacketDefinitions.RequestTipNoticeWindow);
             registry.Register(PacketDefinitions.GumpTextEntryDialogReply);
             registry.Register(PacketDefinitions.GumpMenuSelection);

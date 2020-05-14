@@ -135,7 +135,7 @@ namespace Infusion
 
         public void SellItems(ObjectId vendor, SellListItem[] items)
         {
-            var request = new SellListReply(vendor, items);
+            var request = new SellRequest(vendor, items);
             Send(request.RawPacket);
         }
 

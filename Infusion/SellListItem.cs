@@ -6,13 +6,13 @@ namespace Infusion
 {
     public class SellListItem
     {
-        internal ObjectId Serial;
-        internal ushort Amount;
+        public ObjectId Serial;
+        public ushort Amount;
 
-        internal SellListItem(ObjectId s, ushort a)
+        public SellListItem(ObjectId serial, ushort amount)
         {
-            Serial = s;
-            Amount = a;
+            Serial = serial;
+            Amount = amount;
         }
     }
 }

@@ -73,8 +73,8 @@ namespace Infusion
                 packetHandler.Publish<LoginRequest>(rawPacket);
             else if (rawPacket.Id == PacketDefinitions.GameServerLoginRequest.Id)
                 packetHandler.Publish<GameServerLoginRequest>(rawPacket);
-            else if (rawPacket.Id == PacketDefinitions.SellListReply.Id)
-                packetHandler.Publish<SellListReply>(rawPacket);
+            else if (rawPacket.Id == PacketDefinitions.SellRequest.Id)
+                packetHandler.Publish<SellRequest>(rawPacket);
 
             return rawPacket;
         }

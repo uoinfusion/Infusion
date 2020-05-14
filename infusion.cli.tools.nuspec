@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <id>Infusion.Cli.Tools</id>
+    <version>1.0.73</version>
+    <authors>Jakub Linhart</authors>
+    <owners>Jakub Linhart</owners>
+    <projectUrl>https://github.com/uoinfusion/Infusion</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <description>Infusion command line tools.</description>
+    <tags>Infusion,UltimaOnline,UO</tags>
+  </metadata>
+  <files>
+	  <file src="build\output\release-cli\*.*" target="tools" />
+  </files>
+</package>

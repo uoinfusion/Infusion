@@ -18,7 +18,7 @@
                     commandInvocationSyntax.Length - firstSpaceIndex - 1);
             }
 
-            return new CommandSyntax(name, parameters);
+            return new CommandSyntax(name, parameters, commandInvocationSyntax.Substring(0, 1));
         }
     }
 }

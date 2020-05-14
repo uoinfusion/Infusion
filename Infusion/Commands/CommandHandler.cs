@@ -19,6 +19,7 @@ namespace Infusion.Commands
 
         private readonly object runningCommandsLock = new object();
         private ImmutableDictionary<string, Command> commands = ImmutableDictionary<string, Command>.Empty;
+        private ImmutableHashSet<string> serverCommands = ImmutableHashSet.Create<string>();
 
         public CommandHandler(ILogger logger)
         {
@@ -26,7 +27,8 @@ namespace Infusion.Commands
             invocator = new CommandInvocator(this, logger);
         }
 
-        public IEnumerable<string> CommandNames => commands.Keys;
+        public IEnumerable<string> CommandNames => commands.Keys.Select(k => CommandPrefix + k).Concat(serverCommands);
+        public string CommandPrefix { get; set; } = ",";
 
         public Command[] RunningCommands
         {
@@ -80,6 +82,16 @@ namespace Infusion.Commands
             }
 
             RunningCommandAdded?.Invoke(this, invocation);
+        }
+
+        public void RegisterServerCommand(string commandName)
+        {
+            serverCommands = serverCommands.Add(commandName);
+        }
+
+        public void RegisterServerCommands(params string[] commandNames)
+        {
+            serverCommands = ImmutableHashSet.CreateRange(commandNames.Concat(serverCommands));
         }
 
         public Command RegisterCommand(string name, Action commandAction)
@@ -167,7 +179,7 @@ namespace Infusion.Commands
             }
         }
 
-        public bool IsInvocationSyntax(string potentialInvocationSyntax) => potentialInvocationSyntax.StartsWith(",");
+        public bool IsInvocationSyntax(string potentialInvocationSyntax) => potentialInvocationSyntax.StartsWith(CommandPrefix);
 
         public void Unregister(string commandName)
         {
@@ -235,7 +247,7 @@ namespace Infusion.Commands
             help.AppendLine("Available commands:");
             foreach (var command in commands.Values.OrderBy(c => c.Name))
             {
-                help.Append(",");
+                help.Append(CommandPrefix);
                 help.Append(command.Name.PadRight(16));
                 if (!string.IsNullOrEmpty(command.Summary))
                 {

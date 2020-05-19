@@ -184,7 +184,15 @@ namespace Infusion.LegacyApi
 
         internal void UpdateSkills(IEnumerable<SkillValue> skillValues)
         {
-            Skills = Skills.SetItems(skillValues.Select(x => new KeyValuePair<Skill, SkillValue>(x.Skill, x)));
+            if (skillValues.Count() == 1)
+            {
+                Skills = Skills.SetItems(skillValues.Select(x => new KeyValuePair<Skill , SkillValue>(x.Skill +1, x)));
+            }
+            else
+            {
+                Skills = Skills.SetItems(skillValues.Select(x => new KeyValuePair<Skill, SkillValue>(x.Skill, x)));
+            }
+                
         }
 
         public ushort GetDistance(Location3D location)

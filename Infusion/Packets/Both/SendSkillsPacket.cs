@@ -38,7 +38,7 @@ namespace Infusion.Packets.Both
                         if (type == 0x02 || type == 0xDF)
                             cap = reader.ReadUShort();
 
-                        values.Add(new SkillValue((Skill)skillNumber +1, value, unmodifiedValue, cap, isLocked));
+                        values.Add(new SkillValue((Skill)skillNumber , value, unmodifiedValue, cap, isLocked));
                     }
                     break;
                 case 0xFF:

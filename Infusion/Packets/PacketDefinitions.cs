@@ -783,8 +783,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition NewMapMessage = new PacketDefinition(0xF5,
             new StaticPacketLength(0x15), "NewMapMessage");
 
-        public static readonly PacketDefinition BoatMoving = new PacketDefinition(0xF6,
-            new VariablePacketLength(), "BoatMoving");
+        public static readonly PacketDefinition<BoatMovingPacket> BoatMoving = new PacketDefinition<BoatMovingPacket>(0xF6,
+            new VariablePacketLength(), "BoatMoving", () => new BoatMovingPacket());
 
         public static readonly PacketDefinition UnknownF7 = new PacketDefinition(0xF7,
             new VariablePacketLength(), "UnknownF7");

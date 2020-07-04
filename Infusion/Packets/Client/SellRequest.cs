@@ -1,17 +1,15 @@
 ﻿using Infusion.IO;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Infusion.Packets.Client
 {
     internal sealed class SellRequest: MaterializedPacket
     {
         private Packet rawPacket;
+        
         public override Packet RawPacket => rawPacket;
+        
         public SellRequest()
         {
-
         }
 
         public SellRequest(ObjectId vendor, SellListItem[] list)
@@ -37,16 +35,11 @@ namespace Infusion.Packets.Client
                 writer.WriteUShort(item.Amount);
             }
 
-                        
             rawPacket = new Packet(PacketDefinitions.SellRequest.Id, payload);
-
         }
 
         public override void Deserialize(Packet rawPacket)
         {
-            
         }
     }
-
-    
 }

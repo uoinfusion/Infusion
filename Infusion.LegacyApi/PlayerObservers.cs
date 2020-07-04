@@ -68,7 +68,6 @@ namespace Infusion.LegacyApi
 
                 }
             }
-
         }
 
         private Skill? lastSkill;

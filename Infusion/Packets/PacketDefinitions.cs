@@ -510,8 +510,8 @@ namespace Infusion.Packets
         public static readonly PacketDefinition SellList = new PacketDefinition(0x9E,
             new VariablePacketLength(), "SellList");
 
-        public static readonly PacketDefinition SellListReply = new PacketDefinition(0x9F,
-            new VariablePacketLength(), "SellListReply");
+        public static readonly PacketDefinition SellRequest = new PacketDefinition<SellRequest>(0x9F,
+            new VariablePacketLength(), "SellRequest", () => new SellRequest());
 
         public static readonly PacketDefinition<SelectServerRequest> SelectServerRequest 
             = new PacketDefinition<SelectServerRequest>(0xA0, new StaticPacketLength(3), "SelectServerRequest", () => new Client.SelectServerRequest());

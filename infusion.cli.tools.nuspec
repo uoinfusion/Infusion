@@ -2,7 +2,7 @@
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>Infusion.Cli.Tools</id>
-    <version>1.0.73</version>
+    <version>1.0.74</version>
     <authors>Jakub Linhart</authors>
     <owners>Jakub Linhart</owners>
     <projectUrl>https://github.com/uoinfusion/Infusion</projectUrl>

@@ -68,8 +68,12 @@ namespace Infusion.Gumps
             var parser = new GumpParser(processor);
             parser.Parse(gump);
 
-            if (processor.SelectedControldId.HasValue)
-                textEntries.Add(new Tuple<ushort, string>((ushort)processor.SelectedControldId.Value.Value, value));
+            return processor.SelectedControldId.HasValue ? SetTextEntry(processor.SelectedControldId.Value, value) : this;
+        }
+
+        public GumpResponseBuilder SetTextEntry(GumpControlId id, string value)
+        {
+            textEntries.Add(new Tuple<ushort, string>((ushort)id.Value, value));
 
             return this;
         }

@@ -179,7 +179,6 @@ namespace Infusion.LegacyApi
         public static void Target(ObjectId id)
             => Current.Target(id);
 
-
         public static void Terminate(string parameters)
             => Current.Terminate(parameters);
 

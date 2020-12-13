@@ -13,13 +13,13 @@ namespace Infusion.Packets.Client
         }
 
         public GumpMenuSelectionRequest(GumpTypeId gumpTypeId, GumpInstanceId id, GumpControlId triggerId,
-            GumpControlId[] selectedCheckBoxeIds, Tuple<ushort, string>[] textEntries)
+            GumpControlId[] selectedCheckBoxIds, Tuple<ushort, string>[] textEntries)
         {
             GumpTypeId = gumpTypeId;
             Id = id;
             TriggerId = triggerId;
 
-            var packetLength = (ushort) (23 + selectedCheckBoxeIds.Length * 4 +
+            var packetLength = (ushort) (23 + selectedCheckBoxIds.Length * 4 +
                                          textEntries.Length * 4 +
                                          textEntries.Sum(textEntryValue => textEntryValue.Item2.Length * 2));
             var payload = new byte[packetLength];
@@ -30,8 +30,8 @@ namespace Infusion.Packets.Client
             writer.WriteUInt(id.Value);
             writer.WriteUInt(gumpTypeId.Value);
             writer.WriteUInt(triggerId.Value);
-            writer.WriteUInt((uint) selectedCheckBoxeIds.Length);
-            foreach (var checkBoxId in selectedCheckBoxeIds)
+            writer.WriteUInt((uint) selectedCheckBoxIds.Length);
+            foreach (var checkBoxId in selectedCheckBoxIds)
                 writer.WriteUInt(checkBoxId.Value);
             writer.WriteUInt((uint) textEntries.Length);
             foreach (var textEntry in textEntries)

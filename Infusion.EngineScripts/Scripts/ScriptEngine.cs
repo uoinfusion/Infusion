@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,8 +25,19 @@ namespace Infusion.EngineScripts
             }
         }
 
+        public Task ExecuteInitialScript(string scriptPath, CancellationTokenSource cancellationTokenSource)
+        {
+            var currentRoot = Path.GetDirectoryName(scriptPath);
+            Directory.SetCurrentDirectory(currentRoot);
+            ScriptRootPath = currentRoot;
+
+            return ExecuteScript(scriptPath, cancellationTokenSource);
+        }
+
         public async Task ExecuteScript(string scriptPath, CancellationTokenSource cancellationTokenSource)
         {
+            if (!File.Exists(scriptPath))
+                throw new FileNotFoundException($"Script file not found: {scriptPath}", scriptPath);
             await ForeachEngineAsync(engine => engine.ExecuteScript(scriptPath, cancellationTokenSource));
         }
 

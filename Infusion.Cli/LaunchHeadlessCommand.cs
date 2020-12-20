@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Infusion.Cli
 {
@@ -88,7 +89,21 @@ namespace Infusion.Cli
             headlessClient.Connect();
 
             if (!string.IsNullOrEmpty(scriptFileName))
-                _ = scriptEngine.ExecuteScript(PathUtilities.GetAbsolutePath(scriptFileName), new CancellationTokenSource());
+            {
+                _ = ExecuteInitialScript(PathUtilities.GetAbsolutePath(scriptFileName), scriptEngine, infusionProxy.LegacyApi.Console);
+            }
+        }
+
+        private async Task ExecuteInitialScript(string scriptFileName, ScriptEngine scriptEngine, IConsole console)
+        {
+            try
+            {
+                await scriptEngine.ExecuteInitialScript(PathUtilities.GetAbsolutePath(scriptFileName), new CancellationTokenSource());
+            }
+            catch (Exception ex)
+            {
+                console.Error(ex.ToString());
+            }
         }
 
         public void ListenPipeCommands()

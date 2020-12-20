@@ -4,7 +4,6 @@
     <OutputType>Exe</OutputType>
     <TargetFrameworks>net5.0;net47</TargetFrameworks>
     <AssemblyName>Infusion.Cli</AssemblyName>
-    <TrimMode>Link</TrimMode>
   </PropertyGroup>
 
   <ItemGroup>

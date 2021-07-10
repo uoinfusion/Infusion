@@ -184,6 +184,7 @@ public sealed class CraftProducer
     private readonly Dictionary<ItemSpec, Item> containersBySpec = new Dictionary<ItemSpec, Item>();
     public int BatchSize { get; set; } = 75;
     public Action StartCycle { get; set; } = () => { throw new NotImplementedException(); };
+    public Action Postproduce { get; set; }
     public Action OnStart { get; set; }
     public string[] AdditionalCycleEndPhrases { get; set; } = Array.Empty<string>();
 
@@ -249,9 +250,12 @@ public sealed class CraftProducer
 
         while (true)
         {
-            UO.ClientPrint("reloading");
+            Postproduce?.Invoke();
+            UO.ClientPrint($"unloading {UO.Items.Matching(product.Spec).Count()} {Specs.TranslateToName(product.Spec)}");
             Items.MoveItems(UO.Items.Matching(product.Spec).InContainer(UO.Me.BackPack),
                 productContainerItem);
+
+            UO.ClientPrint("reloading");
             Items.Reload(foodContainerItem, 5, Specs.Food);
 
             foreach (var resource in product.Resources)
@@ -327,7 +331,6 @@ public sealed class CraftProducer
                 throw;
             }
         }
-
     }
 }
 

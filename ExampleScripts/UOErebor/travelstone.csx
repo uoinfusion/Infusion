@@ -8,10 +8,18 @@ public static class TravelStone
     // doesn't support destinations on the second page yet
     public static void TravelTo(string destination)
     {
-        UO.Use(Specs.TravelStone);
-        UO.WaitForGump();
-        UO.LastGumpInfo();
-        UO.SelectGumpButton(destination, Infusion.Gumps.GumpLabelPosition.Before);
+        var travelStone = UO.Items.OnGround().MaxDistance(4).Matching(Specs.TravelStone).FirstOrDefault();
+        if (travelStone != null)
+        {
+            UO.Use(travelStone);
+            UO.WaitForGump();
+            UO.LastGumpInfo();
+            UO.SelectGumpButton(destination, Infusion.Gumps.GumpLabelPosition.Before);
+        }
+        else
+        {
+            UO.Console.Error("Cannot find travelstone.");
+        }
     }
     
     public static void TravelToCommand(string parameters)

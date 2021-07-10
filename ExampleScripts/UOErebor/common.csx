@@ -1,5 +1,6 @@
 #load "Specs.csx"
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,6 +78,18 @@ public static class Common
         UO.ClientPrint(prompt, onBehalf, color);
         
         return AskForContainer();
+    }
+    
+    public static void Countdown(TimeSpan waitTime, int count)
+    {
+        var total = TimeSpan.FromSeconds(waitTime.TotalSeconds * count);
+        for (int i = 0; i < count; i++)
+        {
+            var elapsed = TimeSpan.FromSeconds(waitTime.TotalSeconds * i);
+            var remaining = total - elapsed;
+            UO.Console.Important($"Wait time remaining {remaining}");
+            UO.Wait(waitTime);
+        }
     }
     
     private static Item AskForContainer()

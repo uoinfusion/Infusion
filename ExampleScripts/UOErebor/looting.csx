@@ -45,6 +45,10 @@ public static class Looting
         Specs.KamenOhne
     };
     
+    
+    public static bool CollectBodiesEnabled { get; set; } = false;
+    public static ObjectId? MesecNaSrnciOci { get; set; }
+    
     public static MobileSpec NotRippableCorpses { get; set; } = new[] { Specs.Mounts };
 
     public static ScriptTrace Trace { get; } = UO.Trace.Create();
@@ -179,6 +183,7 @@ public static class Looting
                 {
                     Rip(corpse);
                     Loot(corpse);
+                    CollectBody(corpse);
                 }
                 if (corpses.Length - 1 > 0)
                     HighlightLootableCorpses(corpses.Except(new[] { corpse }));
@@ -212,6 +217,55 @@ public static class Looting
         }        
 
         LootGround();
+    }
+    
+    public static void CollectBody()
+    {
+        var corpse = UO.Corpses.OrderByDistance().FirstOrDefault();
+        if (corpse != null)
+            CollectBody(corpse);
+        else
+            UO.Console.Important("No corpse found");
+    }
+    
+    private static void CollectBody(Corpse body)
+    {
+        if (!CollectBodiesEnabled)
+            return;
+    
+        if (Specs.Srnec.Matches(body))
+        {
+            if (!MesecNaSrnciOci.HasValue)
+            {
+                UO.Use(UO.Me.BackPack);
+                UO.Wait(1000);
+                var backpackItems = UO.Items.InBackPack();
+                foreach (var item in backpackItems)
+                {
+                    UO.Click(item);
+                }
+                UO.Wait(1000);
+                var mesec = UO.Items.InBackPack().Where(x => x.Name.Equals("Mesec na srnci oci")).FirstOrDefault();
+                if (mesec == null)
+                {
+                    UO.Console.Error("Cannot find 'Mesec na srnci oci'");
+                    CollectBodiesEnabled = false;
+                }
+                else
+                {
+                    MesecNaSrnciOci = mesec.Id;
+                }
+            }
+            
+            if (MesecNaSrnciOci.HasValue)
+            {
+                UO.ClearTargetObject();
+                UO.Use(MesecNaSrnciOci.Value);
+                UO.WaitForTarget();
+                UO.Target(body);
+                UO.Wait(1000);
+            }
+        }
     }
     
     private static IEnumerable<Item> GetLootableItems(Item corpse) =>
@@ -555,3 +609,4 @@ UO.RegisterCommand("loot-interesting", Looting.SetInterestingLoot);
 UO.RegisterCommand("loot-toggle", Looting.ToggleLoot);
 UO.RegisterCommand("loot-ignore-ripped", Looting.IgnoreRippedCorpseCommand);
 UO.RegisterCommand("loot-ignore-looted", Looting.IgnoreLootingCorpseCommand);
+UO.RegisterCommand("loot-collect-body", Looting.CollectBody);

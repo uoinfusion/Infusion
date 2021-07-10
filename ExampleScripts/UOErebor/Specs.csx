@@ -41,6 +41,7 @@ public static class Specs
 
     // Weapon
     public static readonly ItemSpec VikingSword = new[] { 0x13B9, 0x13BA };
+    public static readonly ItemSpec Longsword = new[] { 0x0F60, 0x0F61 };
     public static readonly ItemSpec Katana = new[] { 0x13FE, 0x13FF };
     public static readonly ItemSpec Dagger = new[] { 0x0F51, 0x0F52 };
     public static readonly ItemSpec WarMace = new[] { 0x1406, 0x1407 };
@@ -49,7 +50,7 @@ public static class Specs
     public static readonly ItemSpec Scimitar = new[] { 0x13B6, 0x13B5 };
     public static readonly ItemSpec Kryss = new[] { 0x1400, 0x1401 };
     public static readonly ItemSpec GnarledStaff = 0x13F8;
-    public static readonly ItemSpec BlackStaff= 0x0DF0;
+    public static readonly ItemSpec BlackStaff = 0x0DF0;
 
     public static readonly ItemSpec Crossbow = new[] { 0x0F4F, 0x0F50 };
 
@@ -88,7 +89,7 @@ public static class Specs
     };
 
     // Tools
-    public static readonly ItemSpec Knives = new[] { VikingSword, Dagger, Katana, Scimitar, Kryss };
+    public static readonly ItemSpec Knives = new[] { VikingSword, Longsword, Dagger, Katana, Scimitar, Kryss };
     public static readonly ItemSpec PickAxe = new[] { 0x0E85, 0x0E86 };
     public static readonly ItemSpec FishingPole = 0x0DBF;
     public static readonly ItemSpec Scissors = 0x0F9E;
@@ -98,7 +99,7 @@ public static class Specs
     public static readonly ItemSpec Forge = new[] { 0x0FB1, 0x198E };
     public static readonly ItemSpec CookingPlaces = new[] { Campfire, Forge, };
     public static readonly ItemSpec Loom = new[] {  0x1060, 0x1062, 0x01064 };
-    public static readonly ItemSpec SpinningWheel = new[] { 0x101C, 0x01019 };
+    public static readonly ItemSpec SpinningWheel = new[] { 0x10A4, 0x101C, 0x01019 };
     public static readonly ItemSpec TinkeringTools = 0x1EBC;
     public static readonly ItemSpec SmithsHammer = new[] { 0x13E3, 0x013E4 };
     public static readonly ItemSpec Saw = new[] { 0x1034, 0x1035 };
@@ -124,6 +125,7 @@ public static class Specs
     public static readonly ItemSpec Shaft = 0x1BD4;
     public static readonly ItemSpec SpruceShaft = new ItemSpec(0x1BD4, (Color)0x0000);
     public static readonly ItemSpec ChestnutShaft = new ItemSpec(0x1BD4, (Color)0x05E5);
+    public static readonly ItemSpec OakShaft = new ItemSpec(0x1BD4, (Color)0x05F2);
     public static readonly ItemSpec Wire = 0x1879;
     public static readonly ItemSpec Nails = 0x102E;
     public static readonly ItemSpec Lockpick = 0x14FB;
@@ -146,6 +148,27 @@ public static class Specs
 
     public static readonly ItemSpec FoldedCloth = 0x175D;
     public static readonly ItemSpec FoldedTowel = 0x0A6C;
+
+    public static readonly ItemSpec Cloak = 0x1515;
+    public static readonly ItemSpec Tunic = 0x1FA1;
+    public static readonly ItemSpec Shirt = 0x1517;
+    public static readonly ItemSpec FancyShirt = 0x1EFD;
+    public static readonly ItemSpec Surcoat = 0x1FFD;
+
+    public static readonly ItemSpec ShortPants = 0x152E;
+    public static readonly ItemSpec LongPants = 0x1539;
+    public static readonly ItemSpec Kilt = 0x1537;
+    public static readonly ItemSpec Skirt = 0x1516;
+
+    public static readonly ItemSpec FloppyHat = 0x1713;
+    public static readonly ItemSpec TallStrawHat = 0x1716;
+    public static readonly ItemSpec Cap = 0x1715;
+    public static readonly ItemSpec Bonnet = 0x1719;
+    public static readonly ItemSpec StrawHat = 0x1717;
+    public static readonly ItemSpec TricorneHat = 0x171B;
+    public static readonly ItemSpec WideBrimHat = 0x1714;
+    public static readonly ItemSpec Bandana = 0x153F;
+    public static readonly ItemSpec Skullcap = 0x1543;
 
     public static readonly ItemSpec BlankScroll = new ItemSpec(0x0E34, (Color)0x0000);
     public static readonly ItemSpec BlankChestnutScroll = new ItemSpec(0x0E34, (Color)0x05E5);
@@ -249,6 +272,7 @@ public static class Specs
     public static readonly ItemSpec PoisonLesser = new ItemSpec(0x0F0E, (Color)0x00b0);
     public static readonly ItemSpec Poison = new ItemSpec(0x0F0E, (Color)0x00b2);
     public static readonly ItemSpec PoisonGreater = new ItemSpec(0x0F0E, (Color)0x0179);
+    public static readonly ItemSpec PoisonPotion = new[] { PoisonLesser, Poison, PoisonGreater };
     public static readonly ItemSpec PoisonDeadly = new ItemSpec(0x0F0E, (Color)0x0593);
     public static readonly ItemSpec Shrink = new ItemSpec(0x0F0E, (Color)0x0995);
     public static readonly ItemSpec ElixirPoznani = new ItemSpec(0x0F0E, (Color)0x0088);

@@ -18,6 +18,27 @@ public static class TailoringMenu
     public static readonly CraftProduct BeltPouch = new CraftProduct(Specs.BeltPouch,
         new CraftResource(Specs.CutUpLeather, 4), "Kozene veci", "Bags", "belt pouch");
         
+    public static readonly CraftProduct BoneHelmet = new CraftProduct(Specs.BoneHelmet,
+        new[] { new CraftResource(Specs.CutUpLeather, 2), new CraftResource(Specs.Bone, 4) },
+        "Kozene veci", "Bone Armour", "bone helmet"
+    );
+    public static readonly CraftProduct BoneArmor = new CraftProduct(Specs.BoneArmor,
+        new[] { new CraftResource(Specs.CutUpLeather, 5), new CraftResource(Specs.Bone, 10) },
+        "Kozene veci", "Bone Armour", "bone armor"
+    );
+    public static readonly CraftProduct BoneArms = new CraftProduct(Specs.BoneArms,
+        new[] { new CraftResource(Specs.CutUpLeather, 1), new CraftResource(Specs.Bone, 2) },
+        "Kozene veci", "Bone Armour", "bone arms"
+    );
+    public static readonly CraftProduct BoneLeggings = new CraftProduct(Specs.BoneLeggings,
+        new[] { new CraftResource(Specs.CutUpLeather, 3), new CraftResource(Specs.Bone, 6) },
+        "Kozene veci", "Bone Armour", "bone leggings"
+    );
+    public static readonly CraftProduct BoneGloves = new CraftProduct(Specs.BoneLeggings,
+        new[] { new CraftResource(Specs.CutUpLeather, 2), new CraftResource(Specs.Bone, 3) },
+        "Kozene veci", "Bone Armour", "bone gloves"
+    );
+
     public static readonly CraftProduct Shirt = new CraftProduct(Specs.Shirt,
         new[] { new CraftResource(Specs.FoldedCloth, 8), new CraftResource(Specs.SpoolsOfThread, 3) },
         "Platene veci", "Shirts", "shirt"
@@ -25,6 +46,18 @@ public static class TailoringMenu
     public static readonly CraftProduct FancyShirt = new CraftProduct(Specs.FancyShirt,
         new[] { new CraftResource(Specs.FoldedCloth, 8), new CraftResource(Specs.SpoolsOfThread, 3) },
         "Platene veci", "Shirts", "fancy shirt"
+    );
+    public static readonly CraftProduct PlainDress = new CraftProduct(Specs.PlainDress,
+        new[] { new CraftResource(Specs.FoldedCloth, 10), new CraftResource(Specs.SpoolsOfThread, 4) },
+        "Platene veci", "Shirts", "plain dress"
+    );
+    public static readonly CraftProduct FancyDress = new CraftProduct(Specs.FancyDress,
+        new[] { new CraftResource(Specs.FoldedCloth, 12), new CraftResource(Specs.SpoolsOfThread, 4) },
+        "Platene veci", "Shirts", "fancy dress"
+    );
+    public static readonly CraftProduct JesterSuit = new CraftProduct(Specs.FancyDress,
+        new[] { new CraftResource(Specs.FoldedCloth, 16), new CraftResource(Specs.SpoolsOfThread, 6) },
+        "Platene veci", "Shirts", "jester suit"
     );
     public static readonly CraftProduct Cloak = new CraftProduct(Specs.Cloak,
         new[] { new CraftResource(Specs.FoldedCloth, 14), new CraftResource(Specs.SpoolsOfThread, 3) },
@@ -37,6 +70,10 @@ public static class TailoringMenu
     public static readonly CraftProduct Surcoat = new CraftProduct(Specs.Surcoat,
         new[] { new CraftResource(Specs.FoldedCloth, 12), new CraftResource(Specs.SpoolsOfThread, 3) },
         "Platene veci", "Shirts", "surcoat"
+    );
+    public static readonly CraftProduct Doublet = new CraftProduct(Specs.Doublet,
+        new[] { new CraftResource(Specs.FoldedCloth, 8), new CraftResource(Specs.SpoolsOfThread, 3) },
+        "Platene veci", "Shirts", "doublet"
     );
     
     public static readonly CraftProduct ShortPants = new CraftProduct(Specs.ShortPants,
@@ -93,8 +130,13 @@ public static class TailoringMenu
         "Platene veci", "Headwear", "cap"
     );
 
+    public static readonly CraftProduct BoltOfCloth = new CraftProduct(Specs.BoltOfCloth,
+        new[] { new CraftResource(Specs.FoldedCloth, 50) },
+        "Platene veci", "bolt of cloth"
+    );
+
     public static readonly ItemSpec AllSewingProducts = new[] {
-        Specs.Shirt, Specs.FancyShirt, Specs.Cloak, Specs.Tunic, Specs.Surcoat,
+        Specs.Shirt, Specs.FancyShirt, Specs.Cloak, Specs.Tunic, Specs.Surcoat, Specs.PlainDress, Specs.FancyDress, Specs.JesterSuit, Specs.Doublet,
         Specs.ShortPants, Specs.LongPants, Specs.Skirt, Specs.Kilt,
         Specs.Bandana, Specs.Skullcap, Specs.FloppyHat, Specs.WideBrimHat, Specs.TricorneHat, Specs.TallStrawHat, Specs.StrawHat, Specs.Bonnet, Specs.Cap
     };
@@ -240,6 +282,10 @@ UO.RegisterCommand("tailoring-shirts-fancyshirt", () => Tailoring.TrainSewing(Ta
 UO.RegisterCommand("tailoring-shirts-shirt", () => Tailoring.TrainSewing(TailoringMenu.Shirt, 25));
 UO.RegisterCommand("tailoring-shirts-surcoat", () => Tailoring.TrainSewing(TailoringMenu.Surcoat, 25));
 UO.RegisterCommand("tailoring-shirts-tunic", () => Tailoring.TrainSewing(TailoringMenu.Tunic, 25));
+UO.RegisterCommand("tailoring-shirts-plaindress", () => Tailoring.TrainSewing(TailoringMenu.PlainDress, 30));
+UO.RegisterCommand("tailoring-shirts-fancydress", () => Tailoring.TrainSewing(TailoringMenu.FancyDress, 30));
+UO.RegisterCommand("tailoring-shirts-jestersuit", () => Tailoring.TrainSewing(TailoringMenu.JesterSuit, 25));
+UO.RegisterCommand("tailoring-shirts-doublet", () => Tailoring.TrainSewing(TailoringMenu.Doublet, 30));
 
 UO.RegisterCommand("tailoring-pants-shortpants", () => Tailoring.TrainSewing(TailoringMenu.ShortPants, 30));
 UO.RegisterCommand("tailoring-pants-longpants", () => Tailoring.TrainSewing(TailoringMenu.LongPants, 30));
@@ -256,5 +302,13 @@ UO.RegisterCommand("tailoring-headwear-strawhat", () => Tailoring.TrainSewing(Ta
 UO.RegisterCommand("tailoring-headwear-bonnet", () => Tailoring.TrainSewing(TailoringMenu.Bonnet, 40));
 UO.RegisterCommand("tailoring-headwear-cap", () => Tailoring.TrainSewing(TailoringMenu.Cap, 75));
 
+UO.RegisterCommand("tailoring-bolt-of-cloth", () => Tailoring.TrainSewing(TailoringMenu.BoltOfCloth, 5));
+
 UO.RegisterCommand("tailoring-backpack", () => Tailoring.Produce(TailoringMenu.Backpack));
 UO.RegisterCommand("tailoring-bag", () => Tailoring.Produce(TailoringMenu.Bag));
+
+UO.RegisterCommand("tailoring-bone-armor", () => Tailoring.Produce(TailoringMenu.BoneArmor));
+UO.RegisterCommand("tailoring-bone-leggings", () => Tailoring.Produce(TailoringMenu.BoneLeggings));
+UO.RegisterCommand("tailoring-bone-arms", () => Tailoring.Produce(TailoringMenu.BoneArms));
+UO.RegisterCommand("tailoring-bone-gloves", () => Tailoring.Produce(TailoringMenu.BoneGloves));
+UO.RegisterCommand("tailoring-bone-helmet", () => Tailoring.Produce(TailoringMenu.BoneHelmet));

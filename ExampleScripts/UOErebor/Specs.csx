@@ -120,6 +120,10 @@ public static class Specs
 
     // Armor
     public static readonly ItemSpec BoneHelmet = 0x1451;
+    public static readonly ItemSpec BoneArmor = 0x144F;
+    public static readonly ItemSpec BoneArms = 0x144E;
+    public static readonly ItemSpec BoneLeggings = 0x1452;
+    public static readonly ItemSpec BoneGloves = 0x1450;
 
     // Resources
     public static readonly ItemSpec Shaft = 0x1BD4;
@@ -154,6 +158,12 @@ public static class Specs
     public static readonly ItemSpec Shirt = 0x1517;
     public static readonly ItemSpec FancyShirt = 0x1EFD;
     public static readonly ItemSpec Surcoat = 0x1FFD;
+    public static readonly ItemSpec PlainDress = 0x1F01;
+    public static readonly ItemSpec FancyDress = 0x1EFF;
+    public static readonly ItemSpec JesterSuit = 0x1F9F;
+    public static readonly ItemSpec Doublet = 0x1F7B;
+
+    public static readonly ItemSpec BoltOfCloth = 0x0F95;
 
     public static readonly ItemSpec ShortPants = 0x152E;
     public static readonly ItemSpec LongPants = 0x1539;

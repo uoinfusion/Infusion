@@ -137,7 +137,7 @@ namespace Infusion.LegacyApi
         {
             if (packet.Values.Length == 1)
             {
-                var skill = packet.Values[0].Skill != Skill.None ? packet.Values[0].Skill +1 : lastSkill  ?? Skill.None;
+                var skill = packet.Values[0].Skill != Skill.None ? packet.Values[0].Skill : lastSkill ?? Skill.None;
                 if (skill == Skill.None)
                 {
                     throw new NotImplementedException("Server sent 3a packet with skill 0 and no skill was requested from client.");

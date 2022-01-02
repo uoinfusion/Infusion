@@ -155,6 +155,10 @@ namespace Infusion.LegacyApi
         public static AttackResult TryAttack(ObjectId targetId, TimeSpan? timeout = null)
             => Current.TryAttack(targetId, timeout);
 
+        public static void Attack(Mobile target) => Current.Attack(target.Id);
+
+        public static void Attack(ObjectId mobileId) => Current.Attack(mobileId);
+
         public static void TargetTile(string tileInfo)
             => Current.TargetTile(tileInfo);
 

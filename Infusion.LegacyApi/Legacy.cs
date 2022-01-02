@@ -426,6 +426,16 @@ namespace Infusion.LegacyApi
             Server.RequestWarMode(WarMode.Normal);
         }
 
+        public void Attack(Mobile target)
+        {
+            Server.AttackRequest(target.Id);
+        }
+
+        public void Attack(ObjectId mobileId)
+        {
+            Server.AttackRequest(mobileId);
+        }
+
         public AttackResult TryAttack(Mobile target, TimeSpan? timeout = null)
         {
             return playerObservers.Attack(target.Id, timeout);

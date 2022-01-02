@@ -11,18 +11,14 @@
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.5" />
     <PackageReference Include="FluentAssertions" Version="5.9.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.0-preview-20200428-01" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.1.1" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
     <ProjectReference Include="..\Infusion\Infusion.csproj" />
     <ProjectReference Include="..\InjectionScript\src\InjectionScript\InjectionScript.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

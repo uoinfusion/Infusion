@@ -1,6 +1,6 @@
 version: 1.0.74-apha-{build}
 skip_tags: true
-image: Visual Studio 2019 Preview
+image: Visual Studio 2022
 configuration: Release
 platform: Any CPU
 clone_folder: c:\projects\infusion

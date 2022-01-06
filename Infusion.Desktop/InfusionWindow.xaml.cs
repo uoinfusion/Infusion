@@ -111,7 +111,7 @@ namespace Infusion.Desktop
         internal void Initialize(LaunchProfile profile)
         {
             this.profile = profile;
-            Title = $"{profile.Name}";
+            Title = $"Infusion {VersionHelpers.ProductVersion} - {profile.Name}";
 
             UO.CommandHandler.RegisterCommand(new Command("reload", () => Dispatcher.Invoke(() => Reload()), false, true,
                 "Reloads an initial script file."));

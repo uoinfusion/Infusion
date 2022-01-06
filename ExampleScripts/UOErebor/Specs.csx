@@ -627,6 +627,7 @@ public static class Specs
 
     // Monsters
     public static readonly MobileSpec Troll = new[] { 0x0035, 0x0036 };
+    public static readonly MobileSpec Spirit = new[] { 0x003A };
     public static readonly MobileSpec Ghost = 0x03CA;
     public static readonly MobileSpec ElementalLedu = new MobileSpec(0x000E, (Color)0x0480);
     public static readonly MobileSpec ElementalSnehu = new MobileSpec(0x000E, (Color)0x0481);
@@ -653,7 +654,10 @@ public static class Specs
        new MobileSpec(0x000E, (Color)0x054a)
     };   
     public static readonly MobileSpec ForrestElemental = new MobileSpec(0x0008);
-    public static readonly MobileSpec EarthElemental = new MobileSpec(0x000E, (Color)0x0709);
+    public static readonly MobileSpec EarthElemental = new[]
+    {
+        new MobileSpec(0x000E, (Color)0x0709),
+    };
 
     public static readonly MobileSpec Brouk = new MobileSpec(0x0317, (Color)0x0000);
     

@@ -4,7 +4,6 @@
         <MSBuild Projects="..\Infusion.sln" Properties="Configuration=Release;Platform=Any CPU" />
 
         <PropertyGroup>
-            <MSTestPath>$(VS160COMNTOOLS)\..\IDE\MSTest.exe</MSTestPath>
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
         </PropertyGroup>
 
@@ -12,7 +11,6 @@
 
         <Exec Command="dotnet test ..\Infusion.Tests" />
         <Exec Command="dotnet test ..\Infusion.LegacyApi.Tests" />
-        <Exec Command="&quot;$(MSTestPath)&quot; /testcontainer:&quot;..\Infusion.Desktop.Tests\bin\release\net47\Infusion.Desktop.Tests.dll&quot; /resultsfile:&quot;testresults\Infusion.Desktop.Tests.log&quot;" />
 
         <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
 

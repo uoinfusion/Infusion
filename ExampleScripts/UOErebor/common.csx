@@ -11,12 +11,12 @@ using Infusion.Commands;
 
 public static class Common
 {
-    private static EventJournal commonJurnal = UO.CreateEventJournal();    
+    private static EventJournal commonJournal = UO.CreateEventJournal();    
 
     public static void WaitForChangedLocation()
     {
         UO.Log("Waiting for changed location.");
-        commonJurnal.When<PlayerLocationChangedEvent>(e => { })
+        commonJournal.When<PlayerLocationChangedEvent>(e => { })
             .WaitAny();
 
         UO.Log("Waiting for changed location finished.");
@@ -26,7 +26,7 @@ public static class Common
     {
         bool result = false;
     
-        commonJurnal.When<ContainerOpenedEvent>(e => result = true)
+        commonJournal.When<ContainerOpenedEvent>(e => result = true)
             .When<SpeechReceivedEvent>(e => e.Speech.Message.Contains("You cannot reach that"), e => result = false)
             .When<SpeechReceivedEvent>(e => e.Speech.Message.Contains("You can't see that"), e => result = false)
             .WaitAny();
@@ -164,6 +164,20 @@ public static class Common
         else
             UO.ClientPrint("No collectable found", UO.Me);
     }
+    
+    public static void CollectAll()
+    {
+        var collectables = UO.Items.OnGround()
+            .Matching(Specs.Collectables)
+            .MaxDistance(5)
+            .OrderByDistance();
+            
+        foreach (var collectable in collectables)
+        {
+            UO.Use(collectable);
+            UO.Wait(100);
+        }
+    }
 }
 
 class MobileLookupLinqWrapper : IMobileLookup
@@ -227,3 +241,4 @@ UO.RegisterCommand("opencontainer", Common.OpenContainerCommand);
 UO.RegisterCommand("invis-item-all", Common.InvisAllItems);
 UO.RegisterCommand("invis-item", Common.InvisItem);
 UO.RegisterCommand("collect", Common.CollectNearest);
+UO.RegisterCommand("collect-all", Common.CollectAll);

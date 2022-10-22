@@ -17,9 +17,12 @@ public static class Magery
 
     public static void Recall(Action castRecallAction)
     {
-        Location3D startLocation = UO.Me.Location;
+        UO.Say(".resync");
+        UO.Wait(250);
+        Location2D startLocation = UO.Me.Location;
     
         bool failed;
+        Location2D currentLocation = UO.Me.Location;
         do
         {
             Meditation.Meditate(24);
@@ -27,6 +30,7 @@ public static class Magery
             failed = false;
             recallHomeJournal.Delete();
             castRecallAction();
+            UO.Log("Waiting for changed location.");
     
             do
             {
@@ -40,12 +44,13 @@ public static class Magery
                 if (recallHomeJournal.Contains("You don't know that spell."))
                 {
                     throw new CommandInvocationException("Cannot cast recall!");
-                }            
+                }
+                currentLocation = UO.Me.Location;
             }
-            while (UO.Me.Location == startLocation);
+            while (currentLocation == startLocation);
         } while (failed);
         
-        UO.ClientPrint("Waiting for changed location finished.");
+        UO.Log($"Recall {startLocation} -> {currentLocation} finished.");
     }
     
     public static void RecallHomeCommand()
@@ -77,7 +82,9 @@ public static class Magery
             UO.CastSpell(Spell.Recall);
         }
     
+        UO.Log("Waiting for target.");
         UO.WaitForTarget();
+        UO.Log("Target rune.");
         UO.Target(rune);
     }
     
@@ -87,7 +94,7 @@ public static class Magery
         {
             throw new CommandInvocationException("Expecting hexadecimal id of a rune.");
         }
-        
+                
         Recall(() => RecallTo(runeId));
     }
 }

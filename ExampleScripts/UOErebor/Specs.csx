@@ -108,7 +108,8 @@ public static class Specs
     public static readonly ItemSpec BurningTorch = 0x0A12;
     public static readonly ItemSpec Mortar = 0x0E9B;
     public static readonly ItemSpec Candle = 0x1430;
-    
+    public static readonly ItemSpec BurningCandle = 0x1430;
+
     // Instruments
     public static readonly ItemSpec Drum = 0x0E9C;
     public static readonly ItemSpec Tambourine = new[] { 0x0E9D, 0x0E9E };
@@ -599,6 +600,7 @@ public static class Specs
     public static readonly MobileSpec Prase = 0x00CB;
     public static readonly MobileSpec SedyVlk = new[] { 0x00E1, 0x03B3 };
     public static readonly MobileSpec SneznyLeopard = new MobileSpec(0x00D6, (Color)0x0482);
+    public static readonly MobileSpec Jaguar = 0x003F;
 
     public static readonly MobileSpec Drapac = new MobileSpec(0x00E1, (Color)0x0980);
     public static readonly MobileSpec KrvavyDrapac = new MobileSpec(0x00E1, (Color)0x098C);

@@ -1,5 +1,7 @@
 #load "colors.csx"
+#load "area.csx"
 
+using System;
 using System.Linq;
 using System.Text;
 using System.IO;
@@ -65,6 +67,12 @@ public static class Phantoms
         }
         
         UO.ClientPrint($"{fileName} loaded.");
+    }
+    
+    public static void Reset()
+    {
+        currentFileName = null;
+        phantoms = new List<Phantom>();
     }
     
     private static Location3D ParseLocation(string locationString)

@@ -199,15 +199,8 @@ public static class Targeting
             return;
         }
 
-        var attackResult = UO.TryAttack(target);
+        UO.Attack(target);
         AttackingLast?.Invoke(target.Id);
-
-        if (attackResult != AttackResult.Accepted)
-        {
-            UO.ClientPrint($"Cannot attack {target.Name ?? "last target"}");
-            if (Trace.Enabled)
-                Trace.Log($"AttackResult is {attackResult}, target: {target}");
-        }            
 
         alreadyTargeted.Clear();
         alreadyTargeted.Push(target.Id);

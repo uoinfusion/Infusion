@@ -40,7 +40,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="2.7.0" />
     <PackageReference Include="Microsoft.Composition" Version="1.0.27" />
     <PackageReference Include="Microsoft.DiaSymReader.Native" Version="1.7.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="System.AppContext" Version="4.3.0" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />

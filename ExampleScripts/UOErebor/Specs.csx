@@ -107,8 +107,8 @@ public static class Specs
     public static readonly ItemSpec Lantern = new[] { 0x0A18 };
     public static readonly ItemSpec BurningTorch = 0x0A12;
     public static readonly ItemSpec Mortar = 0x0E9B;
-    public static readonly ItemSpec Candle = 0x1430;
     public static readonly ItemSpec BurningCandle = 0x1430;
+    public static readonly ItemSpec Candle = 0x1433;
 
     // Instruments
     public static readonly ItemSpec Drum = 0x0E9C;
@@ -666,6 +666,7 @@ public static class Specs
 
     // Summons
     public static readonly MobileSpec Satan = 0x0310;
+    public static readonly MobileSpec MistrovskySatan = new MobileSpec("Mistrovsky Satan");
     public static readonly MobileSpec Mumie = new MobileSpec(0x009A, (Color)0x0481);
     public static readonly MobileSpec KostlivyLucistnik = new MobileSpec(0x0038, (Color)0x098F);
     public static readonly MobileSpec Liche = new MobileSpec(0x0018, (Color)0x0000);

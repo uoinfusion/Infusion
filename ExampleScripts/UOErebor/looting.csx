@@ -89,7 +89,7 @@ public static class Looting
     }
     
     private static EquipmentSet previousEquipmentSet;
-    private static DateTime lastPrevoiusEquipmentSet = DateTime.MinValue;
+    private static EquipmentSet ripEquipmentSet;
     
     public static void RipAndLoot(Corpse corpse)
     {
@@ -148,32 +148,16 @@ public static class Looting
 
         if (corpse != null)
         {
-            var handEquipmentSet = Equip.GetHand();
-            bool needsKnife;
-            if (handEquipmentSet.Any())
+            var currentEquipmentSet = Equip.GetHand();
+            if (previousEquipmentSet == null || ripEquipmentSet == null || !ripEquipmentSet.Equals(currentEquipmentSet))
             {
-                Trace.Log($"{DateTime.UtcNow} - {lastPrevoiusEquipmentSet} = {DateTime.UtcNow - lastPrevoiusEquipmentSet}");
-                if (DateTime.UtcNow - lastPrevoiusEquipmentSet > TimeSpan.FromSeconds(5))
-                {
-                    if (previousEquipmentSet != null)
-                        Trace.Log($"Previous equipment: {previousEquipmentSet.ToString() ?? "null"}");
-                    else
-                        Trace.Log("No previous equipment");
-                        
-                    Trace.Log($"Current equipment: {handEquipmentSet}");            
-                    previousEquipmentSet = handEquipmentSet;
-                    lastPrevoiusEquipmentSet = DateTime.UtcNow;
-                }
+                previousEquipmentSet = currentEquipmentSet;
             }
-            else
-            {
-                UO.Log("Cannot find equipment item or knife already in hand.");
-            }
-
-            bool humanCorpseLooting = Specs.Player.Matches(corpse.CorpseType);
 
             try
             {
+                bool humanCorpseLooting = Specs.Player.Matches(corpse.CorpseType);
+
                 if (humanCorpseLooting)
                 {
                     Loot(corpse);
@@ -183,8 +167,8 @@ public static class Looting
                 {
                     Rip(corpse);
                     Loot(corpse);
-                    CollectBody(corpse);
                 }
+
                 if (corpses.Length - 1 > 0)
                     HighlightLootableCorpses(corpses.Except(new[] { corpse }));
                 else
@@ -201,6 +185,7 @@ public static class Looting
                 // looting may crash the game client.
                 if (previousEquipmentSet != null)
                 {
+                    ripEquipmentSet = Equip.GetHand();
                     Equip.Set(previousEquipmentSet);
                 }
             }

@@ -81,7 +81,7 @@ public static class Equip
     }
 }
 
-public class EquipmentSet : IEnumerable<Equipment>
+public sealed class EquipmentSet : IEnumerable<Equipment>
 {
     public readonly static EquipmentSet Empty = new EquipmentSet(Array.Empty<Equipment>());
 
@@ -111,6 +111,16 @@ public class EquipmentSet : IEnumerable<Equipment>
         }
         
         return builder.ToString();
+    }
+
+    public override bool Equals(object b)
+    {
+        if (b is EquipmentSet other)
+        {
+            return other.All(o => this.Contains(o));
+        }
+        else
+            return false;
     }
 }
 

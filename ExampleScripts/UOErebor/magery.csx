@@ -15,7 +15,7 @@ public static class Magery
 
     private static SpeechJournal recallHomeJournal = UO.CreateSpeechJournal();
 
-    public static void Recall(Action castRecallAction)
+    public static void Recall(Action castRecallAction, bool meditate = true)
     {
         UO.Say(".resync");
         UO.Wait(250);
@@ -25,7 +25,16 @@ public static class Magery
         Location2D currentLocation = UO.Me.Location;
         do
         {
-            Meditation.Meditate(24);
+            if (!meditate)
+            {
+                while (UO.Me.CurrentMana < 24)
+                {
+                    UO.Wait(1000);
+                }
+            }
+            else
+                Meditation.Meditate(24);
+                
             UO.Wait(250);
             failed = false;
             recallHomeJournal.Delete();
@@ -55,7 +64,12 @@ public static class Magery
     
     public static void RecallHomeCommand()
     {
-        Recall(() => UO.Say(".recallhome"));
+        RecallHome(true);
+    }
+    
+    public static void RecallHome(bool meditate = true)
+    {
+        Recall(() => UO.Say(".recallhome"), meditate);
     }
     
     public static void RecallTo(uint runeId)

@@ -36,6 +36,7 @@ AssertNotPassable("tree on surface - east", 784, 1552, Direction.East);
 AssertNotPassable("tree on surface - north", 785, 1553, Direction.North);
 AssertNotPassable("tree on surface - west", 786, 1552, Direction.West);
 AssertPassable("tree on surface - Southwest (server allows it)", 786, 1552, Direction.Southwest);
+AssertPassable("Z difference can be more than 10", 2250, 34, Direction.West);
 
 AssertNotPassable("Hurka, broken", 1541, 1175, Direction.Northeast);
 

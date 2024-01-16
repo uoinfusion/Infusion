@@ -1,5 +1,8 @@
 <Project>
 	<PropertyGroup>
+		<NoWarn>NU1902;NU1903</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup>
 		<LangVersion>10</LangVersion>
 	</PropertyGroup>
 </Project>

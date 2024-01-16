@@ -638,9 +638,9 @@ namespace Infusion.Tests.Commands
             int commandThreadId = -1;
 
             var command = new TestCommand(commandHandler, "backgroundcmd", CommandExecutionMode.Background, () =>
-                {
-                    commandThreadId = Thread.CurrentThread.ManagedThreadId;
-                });
+            {
+                commandThreadId = Thread.CurrentThread.ManagedThreadId;
+            });
             commandHandler.RegisterCommand(command.Command);
 
             commandHandler.Invoke("backgroundcmd", CommandExecutionMode.Direct);

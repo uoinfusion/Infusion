@@ -12,7 +12,7 @@ namespace Infusion.LegacyApi
 
             var targetLand = Map.Felucca.Tiles.GetLandTile(target.X, target.Y);
             var startLand = Map.Felucca.Tiles.GetLandTile(start.X, start.Y);
-            if (Math.Abs(targetLand.Z - startLand.Z) > 10)
+            if (Math.Abs(targetLand.Z - startLand.Z) > 15)
                 return false;
 
             var tiles = Map.Felucca.Tiles.GetStaticTiles(target.X, target.Y);
@@ -20,7 +20,12 @@ namespace Infusion.LegacyApi
             {
                 var startSurfaceTiles = Map.Felucca.Tiles.GetStaticTiles(start.X, start.Y).Where(t => TileData.ItemTable[t.ID].Flags.HasFlag(TileFlag.Background));
                 var surfaceZ = startSurfaceTiles.Any() ? startSurfaceTiles.First().Z : startLand.Z;
-                if (tiles.Any(t => t.Z == surfaceZ && TileData.ItemTable[t.ID].Impassable))
+                var impassable = tiles.Any(t =>
+                {
+                    var item = TileData.ItemTable[t.ID];
+                    return item.Impassable && t.Z >= surfaceZ && t.Z - item.Height <= surfaceZ;
+                });
+                if (impassable)
                     return false;
             }
             else

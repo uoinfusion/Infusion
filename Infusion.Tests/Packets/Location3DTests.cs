@@ -45,5 +45,11 @@ namespace Infusion.Tests.Packets
             ((Action)(() => new Location3D(0, 0, sbyte.MinValue))).Should().NotThrow();
             ((Action)(() => new Location3D(0, 0, sbyte.MaxValue))).Should().NotThrow();
         }
+
+        [TestMethod]
+        public void GetDistance_can_calculate_distance()
+        {
+            new Location3D(0, 0, 0).GetDistance(new Location3D(0, 0, 10)).Should().Be(10);
+        }
     }
 }

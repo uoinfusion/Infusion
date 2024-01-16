@@ -20,7 +20,7 @@ namespace Infusion
 
         public static Vector operator -(Location3D location1, Location3D location2) =>
             new Vector((short) (location1.X - location2.X), (short) (location1.Y - location2.Y),
-                (byte) (location1.Z - location2.Z));
+                (sbyte) (location1.Z - location2.Z));
 
         public override bool Equals(object obj)
         {

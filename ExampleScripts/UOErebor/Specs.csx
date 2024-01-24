@@ -210,6 +210,7 @@ public static class Specs
     public static readonly ItemSpec ObsidianIngot = new ItemSpec(0x1BF2, (Color)0x0989);
     public static readonly ItemSpec AdamantiumOre = new ItemSpec(0x19B7, (Color)0x0026);
     public static readonly ItemSpec AdamantiumIngot = new ItemSpec(0x1BF2, (Color)0x0999);
+    public static readonly ItemSpec ShadowOre = new ItemSpec(0x19B7, (Color)0x0770);
     public static readonly ItemSpec MithrilOre = new ItemSpec(0x19B7, (Color)0x098B);
     public static readonly ItemSpec MithrilIngot = new ItemSpec(0x1BF2, (Color)0x098B);
     

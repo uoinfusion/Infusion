@@ -42,7 +42,7 @@ public static class Looting
     {
         Specs.Gold, Specs.Regs, Specs.Gem, Specs.Ammunition,
         Specs.MagickyPytlik, Specs.MagickyVacek, Specs.TajemnaMapa, Specs.VanocniBanka, Specs.VelikonocniVejce,
-        Specs.KamenOhne
+        Specs.KamenOhne, Specs.ShadowOre
     };
     
     

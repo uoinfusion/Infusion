@@ -49,8 +49,8 @@ public static class Specs
     public static readonly ItemSpec WarHammer = new[] { 0x1438, 0x1439 };
     public static readonly ItemSpec Scimitar = new[] { 0x13B6, 0x13B5 };
     public static readonly ItemSpec Kryss = new[] { 0x1400, 0x1401 };
-    public static readonly ItemSpec GnarledStaff = 0x13F8;
-    public static readonly ItemSpec BlackStaff = 0x0DF0;
+    public static readonly ItemSpec GnarledStaff = new[] { 0x13F8, 0x13F9 };
+    public static readonly ItemSpec BlackStaff = new[] { 0x0DF0, 0x0DF1 };
 
     public static readonly ItemSpec Crossbow = new[] { 0x0F4F, 0x0F50 };
 

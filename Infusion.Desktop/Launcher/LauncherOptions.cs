@@ -27,6 +27,8 @@ namespace Infusion.Desktop.Launcher
 
         public string UserName { get; set; }
         public string Password { get; set; }
+        
+        public string UOFilesPath { get; set; }
 
         public OrionLauncherOptions Orion { get; set; } = new OrionLauncherOptions();
         public CrossUOLauncherOptions Cross { get; set; } = new CrossUOLauncherOptions();

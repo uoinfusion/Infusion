@@ -77,9 +77,17 @@ namespace Infusion.Desktop.Launcher
 
             if (requiresExplicitUltimaPath)
             {
-                var clientDirectory = Path.GetDirectoryName(options.ClientExePath);
-                console.Info($"Client path is {options.ClientExePath}. Assuming Ultima Online files are in {clientDirectory}.");
-                Files.SetMulPath(clientDirectory);
+                if (!string.IsNullOrEmpty(options.UOFilesPath))
+                {
+                    console.Info($"Using Ultima Online files from explicitly configured {options.UOFilesPath}.");
+                    Files.SetMulPath(options.UOFilesPath);
+                }
+                else
+                {
+                    var clientDirectory = Path.GetDirectoryName(options.ClientExePath);
+                    console.Info($"Client path is {options.ClientExePath}. Assuming Ultima Online files are in {clientDirectory}.");
+                    Files.SetMulPath(clientDirectory);
+                }
             }
 
             console.Debug($"Loading mul files from {Files.RootDir}.");

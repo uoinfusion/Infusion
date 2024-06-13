@@ -36,7 +36,7 @@ namespace Infusion.Desktop.Launcher.ClassicUO
             var password = options.Password;
 
             var info = new ProcessStartInfo(ultimaExecutableInfo.FullName);
-            info.WorkingDirectory = Path.GetDirectoryName(ultimaExecutableInfo.DirectoryName);
+            info.WorkingDirectory = ultimaExecutableInfo.DirectoryName;
 
             var insensitiveArguments = $"-ip 127.0.0.1 -port {proxyPort} -username {account}";
             var sensitiveArguments = $" -password {password}";

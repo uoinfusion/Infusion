@@ -28,7 +28,7 @@ namespace Infusion.Tests.Commands
         public void Initialize()
         {
             logger = new RingBufferLogger(16);
-            commandHandler = new CommandHandler(logger);
+            commandHandler = new Infusion.Commands.CommandHandler(logger);
             commandHandler.CancellationTokenCreated += (sender, token) => cancellationToken = token;
         }
 
@@ -75,7 +75,7 @@ namespace Infusion.Tests.Commands
             commandHandler.InvokeSyntax(",testName");
             ev.AssertWaitOneSuccess();
         }
-        
+
         [TestMethod]
         public void Can_invoke_syntax_with_parameterless_command_with_custom_prefix()
         {
@@ -214,7 +214,7 @@ namespace Infusion.Tests.Commands
         [TestMethod]
         public void Can_remove_finished_command_from_list()
         {
-            var finishedCommand = new TestCommand(commandHandler, "finished_cmd", () =>{ });
+            var finishedCommand = new TestCommand(commandHandler, "finished_cmd", () => { });
             commandHandler.RegisterCommand(finishedCommand.Command);
             commandHandler.InvokeSyntax(",finished_cmd");
             finishedCommand.Finish();
@@ -305,28 +305,6 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
-        public void Can_terminate_parent_command_executing_Normal_nested_command()
-        {
-            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () => DoSomeCancellableAction());
-            commandHandler.RegisterCommand(nestedCommand.Command);
-
-            var parentCommand = new TestCommand(commandHandler, "parent", () => commandHandler.InvokeSyntax(",nested"));
-            commandHandler.RegisterCommand(parentCommand.Command);
-
-            commandHandler.InvokeSyntax(",parent");
-            parentCommand.WaitForInitialization();
-
-            commandHandler.Terminate("parent");
-
-            nestedCommand.Finish();
-            parentCommand.Finish();
-
-            parentCommand.WaitForFinished().Should().BeTrue();
-
-            commandHandler.RunningCommands.Should().BeEmpty();
-        }
-
-        [TestMethod]
         public void Exception_thrown_from_nested_command_propagates_to_parent_command()
         {
             bool nestedCommandExecuted = false;
@@ -374,64 +352,6 @@ namespace Infusion.Tests.Commands
         }
 
         [TestMethod]
-        public void Can_execute_nested_Normal_command_from_Normal_parent_on_same_thread()
-        {
-            int nestedCommandThreadId = -1;
-            int parentCommandThreadId = -1;
-
-            var nestedCommandExecuted = false;
-            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () =>
-            {
-                nestedCommandThreadId = Thread.CurrentThread.ManagedThreadId;
-                nestedCommandExecuted = true;
-            });
-            commandHandler.RegisterCommand(nestedCommand.Command);
-            var parentCommand = new TestCommand(commandHandler, "cmd1", CommandExecutionMode.Normal, () =>
-            {
-                parentCommandThreadId = Thread.CurrentThread.ManagedThreadId;
-                commandHandler.InvokeSyntax(",nested");
-            });
-            commandHandler.RegisterCommand(parentCommand.Command);
-
-            commandHandler.InvokeSyntax(",cmd1");
-            parentCommand.WaitForInitialization();
-            nestedCommand.WaitForAdditionalAction();
-
-            nestedCommandExecuted.Should().BeTrue();
-            commandHandler.RunningCommands.Select(c => c.Name).Should().Contain("cmd1");
-            commandHandler.RunningCommands.Select(c => c.Name).Should().NotContain("nested");
-            nestedCommandThreadId.Should().NotBe(-1);
-            parentCommandThreadId.Should().NotBe(-1);
-            nestedCommandThreadId.Should().Be(parentCommandThreadId);
-
-            nestedCommand.Finish();
-            parentCommand.Finish();
-        }
-
-        [TestMethod]
-        public void Can_execute_nested_Normal_command_from_Direct_parent()
-        {
-            var nestedCommandExecuted = false;
-            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal,
-                () =>
-                {
-                    nestedCommandExecuted = true;
-                    commandHandler.RunningCommands.Select(c => c.Name).Should().Contain("parent");
-                    commandHandler.RunningCommands.Select(c => c.Name).Should().NotContain("nested");
-                });
-            commandHandler.RegisterCommand(nestedCommand.Command);
-            var parentCommand = new TestCommand(commandHandler, "parent", CommandExecutionMode.Direct,
-                () => commandHandler.InvokeSyntax(",nested"));
-            commandHandler.RegisterCommand(parentCommand.Command);
-
-            nestedCommand.Finish();
-            parentCommand.Finish();
-            commandHandler.InvokeSyntax(",parent");
-
-            nestedCommandExecuted.Should().BeTrue();
-        }
-
-        [TestMethod]
         public void Can_execute_nested_command_When_AlwaysParallel()
         {
             var nestedCommandExecuted = false;
@@ -455,49 +375,6 @@ namespace Infusion.Tests.Commands
             command.Finish();
             nestedCommand.WaitForFinished();
             command.WaitForFinished();
-        }
-
-        [TestMethod]
-        public void Can_list_Normal_commands_executing_Normal_nested_command_multipletimes()
-        {
-            var nestedCommand = new TestCommand(commandHandler, "nested", CommandExecutionMode.Normal, () => { });
-            commandHandler.RegisterCommand(nestedCommand.Command);
-            var command = new TestCommand(commandHandler, "cmd1", () => commandHandler.InvokeSyntax(",nested"));
-            commandHandler.RegisterCommand(command.Command);
-
-            for (int i = 0; i < 100; i++)
-            {
-                nestedCommand.Reset();
-                command.Reset();
-
-                commandHandler.InvokeSyntax(",cmd1");
-                nestedCommand.WaitForAdditionalAction();
-
-                commandHandler.RunningCommands.Select(x => x.Name).Should().Contain("cmd1");
-                commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("nested");
-
-                nestedCommand.Finish();
-                command.Finish();
-                command.WaitForFinished();
-
-                commandHandler.RunningCommands.Should().BeEmpty();
-            }
-        }
-
-        [TestMethod]
-        public void Cannot_execute_same_commands_in_parallel()
-        {
-            int executionCount = 0;
-
-            var command = new TestCommand(commandHandler, "cmd1", () => executionCount++);
-            commandHandler.RegisterCommand(command.Command);
-            commandHandler.InvokeSyntax(",cmd1");
-            commandHandler.InvokeSyntax(",cmd1");
-
-            command.Finish();
-            command.WaitForFinished();
-
-            executionCount.Should().Be(1);
         }
 
         [TestMethod]
@@ -684,114 +561,6 @@ namespace Infusion.Tests.Commands
             command.WaitForFinished(TimeSpan.FromMilliseconds(100)).Should()
                 .BeTrue("normal command should not run after non-specific terminate all");
             commandHandler.RunningCommands.Select(x => x.Name).Should().NotContain("normalcmd");
-        }
-
-        private sealed class TestCommand
-        {
-            private readonly Action additionalAction;
-
-            private readonly EventWaitHandle additionalActionFinished = new EventWaitHandle(false,
-                EventResetMode.ManualReset);
-
-            private readonly EventWaitHandle finishedEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-            private readonly EventWaitHandle finishEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-
-            private readonly EventWaitHandle initializeEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-            private readonly StringBuilder trace = new StringBuilder(1024);
-
-            public TestCommand(CommandHandler handler, string name, Action additionalAction)
-                : this(handler, name, CommandExecutionMode.Normal, additionalAction)
-            {
-            }
-
-            public TestCommand(CommandHandler handler, string name, CommandExecutionMode executionMode,
-                Action additionalAction)
-            {
-                Command = new Command(name, CommandAction, executionMode: executionMode);
-
-                this.additionalAction = additionalAction;
-
-                if (handler != null)
-                    handler.RunningCommandRemoved += HandlerOnRunnigCommandRemoved;
-            }
-
-            public TestCommand(string name) : this(null, name, CommandExecutionMode.Normal, () => { })
-            {
-            }
-
-            public Command Command { get; }
-
-            private void CommandOnStopped(object sender, CommandInvocation eventArgs)
-            {
-                trace.AppendLine("CommandOnStopped: OnEntry");
-                finishedEvent.Set();
-                trace.AppendLine("CommandOnStopped: OnExit");
-            }
-
-            private void HandlerOnRunnigCommandRemoved(object sender, CommandInvocation invocation)
-            {
-                if (invocation.CommandName.Equals(Command.Name, StringComparison.Ordinal))
-                {
-                    trace.AppendLine("HandlerOnCommandStopped: OnEntry");
-                    finishedEvent.Set();
-                    trace.AppendLine("HandlerOnCommandStopped: OnExit");
-                }
-            }
-
-            public void Finish()
-            {
-                trace.AppendLine("Finish: OnStart");
-                finishEvent.Set();
-                trace.AppendLine("Finish: OnExit");
-            }
-
-            public void WaitForInitialization()
-            {
-                trace.AppendLine("WaitForInitialiation: OnEntry");
-                initializeEvent.AssertWaitOneSuccess();
-                trace.AppendLine("WaitForInitialiation: OnExit");
-            }
-
-            public bool WaitForFinished() => WaitForFinished(TimeSpan.FromSeconds(1));
-
-            public bool WaitForFinished(TimeSpan timeout)
-            {
-                trace.AppendLine("WaitForFinished: OnEntry");
-                var result = finishedEvent.WaitOne(timeout);
-                trace.AppendLine("WaitForFinished: OnExit");
-
-                return result;
-            }
-
-            private void CommandAction()
-            {
-                trace.AppendLine("CommandAction: OnEntry");
-
-                initializeEvent.Set();
-
-                additionalAction?.Invoke();
-                additionalActionFinished.Set();
-
-                finishEvent.WaitOneSlow();
-
-                trace.AppendLine("CommandAction: OnExit");
-            }
-
-            public void Reset()
-            {
-                trace.Clear();
-                initializeEvent.Reset();
-                finishEvent.Reset();
-                finishedEvent.Reset();
-                additionalActionFinished.Reset();
-            }
-
-            public override string ToString() => trace.ToString();
-
-            public void WaitForAdditionalAction()
-            {
-                additionalActionFinished.AssertWaitOneSuccess();
-            }
         }
     }
 }

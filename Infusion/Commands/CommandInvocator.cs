@@ -21,13 +21,13 @@ namespace Infusion.Commands
 
             public void Invoke(Command command, CommandExecutionMode? mode, CancellationTokenSource cancellationTokenSource)
             {
-                commandHandler.CheckIfAlreadyRunning(command);
+                commandHandler.CheckIfAlreadyRunning(command, mode);
                 InvokeCore(command.Invoke, command, string.Empty, mode, cancellationTokenSource);
             }
 
             internal void Invoke(Command command, string parameters, CommandExecutionMode? mode, CancellationTokenSource cancellationTokenSource)
             {
-                commandHandler.CheckIfAlreadyRunning(command);
+                commandHandler.CheckIfAlreadyRunning(command, mode);
                 InvokeCore(() => command.Invoke(parameters), command, parameters, mode, cancellationTokenSource);
             }
 
@@ -39,6 +39,7 @@ namespace Infusion.Commands
                         NestedAction(action, command, parameters, cancellationTokenSource);
                         break;
                     case CommandExecutionMode.Normal:
+                    case CommandExecutionMode.NormalExclusive:
                         if (nestingLevel.Value > 0)
                             NestedAction(action, command, parameters, cancellationTokenSource);
                         else

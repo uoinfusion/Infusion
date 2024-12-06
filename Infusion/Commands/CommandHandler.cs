@@ -170,12 +170,21 @@ namespace Infusion.Commands
             }
         }
 
-        private void CheckIfAlreadyRunning(Command command)
+        private void CheckIfAlreadyRunning(Command command, CommandExecutionMode? mode)
         {
             lock (runningCommandsLock)
             {
                 if (runningCommands.ContainsKey(command.Name))
-                    throw new CommandInvocationException($"Command '{command.Name}' is already running.");
+                {
+                    switch (mode ?? command.ExecutionMode)
+                    {
+                        case CommandExecutionMode.Normal:
+                            Terminate(command.Name);
+                            break;
+                        default:
+                            throw new CommandInvocationException($"Command '{command.Name}' is already running.");
+                    }
+                }
             }
         }
 

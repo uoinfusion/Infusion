@@ -3,6 +3,7 @@
     public enum CommandExecutionMode
     {
         Normal,
+        NormalExclusive,
         AlwaysParallel,
         Direct,
         Background

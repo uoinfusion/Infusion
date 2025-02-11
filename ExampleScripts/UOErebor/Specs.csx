@@ -48,6 +48,7 @@ public static class Specs
     public static readonly ItemSpec Club = new[] { 0x13B3, 0x013B4 };
     public static readonly ItemSpec WarHammer = new[] { 0x1438, 0x1439 };
     public static readonly ItemSpec Scimitar = new[] { 0x13B6, 0x13B5 };
+    public static readonly ItemSpec WarFork = new[] { 0x1404, 0x1405 };
     public static readonly ItemSpec Kryss = new[] { 0x1400, 0x1401 };
     public static readonly ItemSpec GnarledStaff = new[] { 0x13F8, 0x13F9 };
     public static readonly ItemSpec BlackStaff = new[] { 0x0DF0, 0x0DF1 };
@@ -89,7 +90,7 @@ public static class Specs
     };
 
     // Tools
-    public static readonly ItemSpec Knives = new[] { VikingSword, Longsword, Dagger, Katana, Scimitar, Kryss };
+    public static readonly ItemSpec Knives = new[] { VikingSword, Longsword, Dagger, Katana, Scimitar, Kryss, WarFork };
     public static readonly ItemSpec PickAxe = new[] { 0x0E85, 0x0E86 };
     public static readonly ItemSpec FishingPole = 0x0DBF;
     public static readonly ItemSpec Scissors = 0x0F9E;
@@ -148,8 +149,6 @@ public static class Specs
     public static readonly ItemSpec Bandage = 0x0E21;
     public static readonly ItemSpec BloodyBandage = 0x0E20;
     public static readonly ItemSpec AnyBandage = new[] { Bandage, BloodyBandage };
-    
-    public static readonly ItemSpec Collectables = new[] { Wheat, Cotton };
 
     public static readonly ItemSpec FoldedCloth = 0x175D;
     public static readonly ItemSpec FoldedTowel = 0x0A6C;
@@ -501,6 +500,8 @@ public static class Specs
     public static readonly ItemSpec Ham = 0x09C9;
     public static readonly ItemSpec ChickenLeg = 0x1608;
     public static readonly ItemSpec Limes = 0x172A;
+
+    public static readonly ItemSpec Collectables = new[] { Wheat, Cotton, Carrot, Onion };
 
     public static readonly ItemSpec RawFood = new[] { RawBird, RawFishSteak, RawRibs };
     public static readonly ItemSpec Food = new[] { FishSteak, Ribs, CookedBird,

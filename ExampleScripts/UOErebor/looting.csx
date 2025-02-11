@@ -457,6 +457,7 @@ public static class Looting
 
     public static bool Rip(Corpse corpse)
     {
+        Trace.Log($"Start Rip.");
         if (rippedCorpses.IsIgnored(corpse.Id))
         {
             UO.ClientPrint($"{Specs.TranslateToName(corpse)} already ripped.");
@@ -472,6 +473,7 @@ public static class Looting
         try
         {
             UO.WaitTargetObject(corpse);
+            Trace.Log($"Use knife.");
             if (!UO.TryUse(KnivesSpec))
             {
                 UO.ClientPrint("Cannot find any knife", UO.Me);
@@ -480,9 +482,11 @@ public static class Looting
           
             bool result = false;
             
+            Trace.Log($"Wait for journal.");
             journal
                 .When("Rozrezal jsi mrtvolu.", () => result = true)
                 .When("Rozrezala jsi mrtvolu.", () => result = true)
+                .When("You carve away some meat.", " You carve the corpse but find nothing usefull.", () => result = true)
                 .When("Jsi paralyzovan", "Jsi paralyzovana", "You are frozen and can not move.", "you can't reach anything in your state.", () => 
                 {
                     result = false;
@@ -496,8 +500,10 @@ public static class Looting
                 })
                 .WaitAny();
             
+            Trace.Log($"Wait for journal finished.");
             if (result)
             {
+                Trace.Log($"Result true.");
                 rippedCorpses.Ignore(corpse.Id);
                 CorpseRipped?.Invoke(corpse.Id);
             }

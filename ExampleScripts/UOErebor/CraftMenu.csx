@@ -222,6 +222,7 @@ public sealed class CraftProducer
     {
         foreach (var resource in product.Resources)
         {
+            UO.Wait(1000);
             containersBySpec[resource.Spec] = AskForContainer(resource.Spec,
                 $"Select container to reload {Specs.TranslateToName(resource.Spec)}.");
         }
@@ -232,6 +233,7 @@ public sealed class CraftProducer
         Item containerItem;
         if (Warehouse.Global.TryGetContainer(spec, out IContainer container))
         {
+            UO.Log($"Container {container.Id} found for {Specs.TranslateToName(spec)}.");
             container.Open();
             containerItem = container.Item;
         }

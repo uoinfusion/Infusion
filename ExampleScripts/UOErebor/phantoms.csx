@@ -59,11 +59,28 @@ public static class Phantoms
     {
         currentFileName = fileName;
 
+        var lineNumber = 1;
         foreach (var line in File.ReadAllLines(fileName))
         {
-            var location = ParseLocation(line);
-                
-            AddPhantom(location);
+            try
+            {
+                if (!string.IsNullOrEmpty(line))
+                {
+                    var phantom = ParsePhantom(line);
+                        
+                    AddPhantom(phantom);
+                }
+                else
+                {
+                    UO.Log($"Line {lineNumber} is empty, ignoring.");
+                }
+            }
+            catch (Exception e)
+            {
+                UO.Log($"Cannot parse line {lineNumber}: {line}");
+                UO.Log(e.Message);
+            }
+            lineNumber++;
         }
         
         UO.ClientPrint($"{fileName} loaded.");
@@ -75,13 +92,21 @@ public static class Phantoms
         phantoms = new List<Phantom>();
     }
     
-    private static Location3D ParseLocation(string locationString)
+    private static Phantom ParsePhantom(string locationString)
     {
-        var coordinates = locationString.Split(',');
-        return new Location3D(
-            ushort.Parse(coordinates[0].Trim()),
-            ushort.Parse(coordinates[1].Trim()),
-            sbyte.Parse(coordinates[2].Trim()));
+        var parts = locationString.Split(',');
+        var location = new Location3D(
+            ushort.Parse(parts[0].Trim()),
+            ushort.Parse(parts[1].Trim()),
+            sbyte.Parse(parts[2].Trim()));
+        var type = BlockingType;
+        var color = BlockingColor;
+        if (parts.Length > 3)
+            type = Convert.ToUInt16(parts[3].Trim(), 16);
+        if (parts.Length > 4)
+            color = (Color)Convert.ToUInt16(parts[4].Trim(), 16);
+
+        return new Phantom(location, type, color);
     }
     
     public static void Save(string fileName)
@@ -103,7 +128,7 @@ public static class Phantoms
     
         foreach (var phantom in phantoms)
         {
-            content.AppendLine(phantom.Location.ToString());
+            content.AppendLine($"{phantom.Location}, {phantom.Type}");
         }
         
         UO.ClientPrint($"Saving to {currentFileName}");
@@ -160,7 +185,7 @@ public static class Phantoms
     public static void AddPhantomAtLocationCommand(string parameters)
     {
         Enable();
-        var location = ParseLocation(parameters);
+        var location = ParsePhantom(parameters);
         AddPhantomAndSave(location);
     }
     
@@ -177,13 +202,26 @@ public static class Phantoms
     
     public static void AddPhantomCommand()
     {
+        HandlePhantomCommand(false);
+    }
+
+    public static void AddPassablePhantomCommand()
+    {
+        HandlePhantomCommand(true);
+    }
+    
+    private static void HandlePhantomCommand(bool passable)
+    {
         Enable();
+        var (type, color) = passable
+            ? (WalkableType, WalkableColor)
+            : (BlockingType, BlockingColor);
         UO.ClientPrint("Select positions to add phantoms, press esc to cancel phantoms adding");
         var targetInfo = UO.Info();
         while (targetInfo.HasValue)
         {
             Trace.Log($"Phantom location: {targetInfo.Value.Location}");
-            AddPhantomAndSave(targetInfo.Value.Location);
+            AddPhantomAndSave(new Phantom(targetInfo.Value.Location, type, color));
             targetInfo = UO.Info();
         }
         
@@ -206,10 +244,23 @@ public static class Phantoms
         UO.Log($"Phantom added at {location}");
     }
 
+    private static void AddPhantomAndSave(Phantom phantom)
+    {
+        AddPhantom(phantom);
+        Save();
+        
+        UO.Log($"Phantom added at {phantom.Location}");
+    }
+
     public static void AddPhantom(Location3D location)
     {
         var phantom = new Phantom(location, currentType, currentColor);
-        
+        AddPhantom(phantom);
+    }
+    
+    private static void AddPhantom(Phantom phantom)
+    {
+        var location = phantom.Location;
         var existingPhantom = phantoms.FirstOrDefault(x => x.Location == location);
         if (existingPhantom != null)
         {
@@ -376,4 +427,5 @@ UO.RegisterCommand("phantoms-refresh", Phantoms.RefreshAll);
 UO.RegisterCommand("phantoms-blocking", Phantoms.MakeBlocking);
 UO.RegisterCommand("phantoms-walkable", Phantoms.MakeWalkable);
 UO.RegisterCommand("phantoms-add", Phantoms.AddPhantomCommand);
+UO.RegisterCommand("phantoms-add-passable", Phantoms.AddPassablePhantomCommand);
 UO.RegisterCommand("phantoms-remove", Phantoms.RemovePhantomCommand);

@@ -15,6 +15,7 @@ public static class BlacksmithMenu
     public static readonly CraftProduct VeriteIngot = new CraftProduct(Specs.VeriteIngot, new CraftResource(Specs.VeriteOre, 1), "Ingots", "Verite ingot");       
     public static readonly CraftProduct ValoriteIngot = new CraftProduct(Specs.ValoriteIngot, new CraftResource(Specs.ValoriteOre, 1), "Ingots", "Valorite ingot");
     public static readonly CraftProduct ObsidianIngot = new CraftProduct(Specs.ObsidianIngot, new[] { new CraftResource(Specs.ObsidianOre, 1), new CraftResource(Specs.Uhli, 1) }, "Ingots", "Obsidian ingot");
+    public static readonly CraftProduct AdamantiumIngot = new CraftProduct(Specs.AdamantiumIngot, new[] { new CraftResource(Specs.AdamantiumOre, 1), new CraftResource(Specs.Uhli, 2) }, "Ingots", "Adamantium ingot");
     public static readonly CraftProduct Sklovina = new CraftProduct(Specs.Sklovina, new CraftResource(Specs.KremicityPisek, 1), "Ingots", "Sklovina");
 }
 
@@ -75,3 +76,4 @@ UO.RegisterCommand("blacksmith-valoriteingot", () => Blacksmith.IngotProduce(Bla
 UO.RegisterCommand("blacksmith-sklovina", () => Blacksmith.IngotProduce(BlacksmithMenu.Sklovina));
 UO.RegisterCommand("blacksmith-sklovina-mass", () => Blacksmith.MassIngotProduce(BlacksmithMenu.Sklovina));
 UO.RegisterCommand("blacksmith-obsidian-ingot", () => Blacksmith.IngotProduce(BlacksmithMenu.ObsidianIngot));
+UO.RegisterCommand("blacksmith-adamantium-ingot", () => Blacksmith.IngotProduce(BlacksmithMenu.AdamantiumIngot));

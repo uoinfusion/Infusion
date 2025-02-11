@@ -129,6 +129,11 @@ UO.RegisterCommand("inscription-4-curse", () => Inscription.Inscribe(Inscription
 UO.RegisterCommand("inscription-4-manadrain", () => Inscription.Inscribe(InscriptionMenu.ManaDrain));
 UO.RegisterCommand("inscription-4-recall", () => Inscription.Inscribe(InscriptionMenu.Recall));
 
+UO.RegisterCommand("inscription-5-summon-creature", () => Inscription.Inscribe(InscriptionMenu.SummonCreature));
+UO.RegisterCommand("inscription-5-paralyze", () => Inscription.Inscribe(InscriptionMenu.Paralyze));
+UO.RegisterCommand("inscription-5-magic-reflection", () => Inscription.Inscribe(InscriptionMenu.MagicReflection));
+UO.RegisterCommand("inscription-5-dispel-field", () => Inscription.Inscribe(InscriptionMenu.DispelField));
+
 UO.RegisterCommand("inscription-necro-frost-bolt", () => Inscription.Inscribe(InscriptionMenu.FrostBolt));
 UO.RegisterCommand("inscription-necro-light", () => Inscription.Inscribe(InscriptionMenu.NecroLight));
 UO.RegisterCommand("inscription-necro-bone-armor", () => Inscription.Inscribe(InscriptionMenu.NecroBoneArmor));

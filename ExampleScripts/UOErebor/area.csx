@@ -136,6 +136,8 @@ public class Area
         new AreaRect(5393, 720, 5478, 612)
     );
 
+    public static Area Dormil = new Area("Dormil", 5730, 2466, 5864, 2590);
+
     public string Name { get; }
 
     private readonly AreaRect[] rects;

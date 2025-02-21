@@ -33,10 +33,12 @@ public static class Bowcraft
 
     public static void Produce(CraftProduct product)
     {
+        var startingResource = CraftProducer.AskForItem(Specs.Feathers, "Select feathers", true);
+        UO.Wait(500);
         var knife = CraftProducer.AskForItem(Specs.Knives, "Select knife");
         
-        if (knife == null)
-            UO.ClientPrint("Canceling bowcraft");
+        if (startingResource == null || knife == null)
+            throw new InvalidOperationException("Canceling bowcraft");
             
         UO.Use(knife);
 
@@ -44,9 +46,6 @@ public static class Bowcraft
         producer.BatchSize = BatchSize;
         producer.StartCycle = () =>
         {
-            var startingResource = CraftProducer.AskForItem(Specs.Shaft, "Select shaft you start production with");
-            if (startingResource == null)
-                throw new InvalidOperationException("Canceling bowcraft");
             UO.Use(startingResource);
         };
         

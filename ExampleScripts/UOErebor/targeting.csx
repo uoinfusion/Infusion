@@ -115,7 +115,7 @@ public static class Targeting
             }
         }
     }
-
+    
     public static void PrintAlreadyTargeted()
     {
         if (Trace.Enabled)
@@ -125,7 +125,7 @@ public static class Targeting
                 .Aggregate("Targeted: ", (l, r) => l + ", " + r));
         }
     }
-
+    
     public static void TargetPrev()
     {
         Mobile target = null;
@@ -167,7 +167,7 @@ public static class Targeting
             SelectTarget(target);
         }
     }
-
+    
     private static void SelectTarget(Mobile target)
     {
         if (string.IsNullOrEmpty(target.Name))
@@ -183,7 +183,7 @@ public static class Targeting
         
         SelectedTarget = target.Id;
     }
-
+    
     public static void AttackLast()
     {
         if (!SelectedTarget.HasValue)

@@ -77,7 +77,7 @@ public static class Inscription
     public static ushort BatchSize { get; set; } = 75;
     public static Action OnStart { get; set; }
 
-    public static void Inscribe(InscriptionScroll scroll)
+    public static void Inscribe(InscriptionScroll scroll, bool reload = true)
     {
         var producer = new CraftProducer(scroll);
         producer.OnStart = OnStart;
@@ -89,7 +89,7 @@ public static class Inscription
             UO.Use(scroll.ScrollSpec);
         };
 
-        producer.Produce();
+        producer.Produce(reload);
     }
 }
 
@@ -140,7 +140,7 @@ UO.RegisterCommand("inscription-necro-bone-armor", () => Inscription.Inscribe(In
 UO.RegisterCommand("inscription-necro-fire-bolt", () => Inscription.Inscribe(InscriptionMenu.NecroFireBolt));
 UO.RegisterCommand("inscription-necro-animate-dead", () => Inscription.Inscribe(InscriptionMenu.AnimateDead));
 
-UO.RegisterCommand("inscription-gate", () => Inscription.Inscribe(InscriptionMenu.GateTravel));
+UO.RegisterCommand("inscription-gate", () => Inscription.Inscribe(InscriptionMenu.GateTravel, false));
 UO.RegisterCommand("inscription-recall", () => Inscription.Inscribe(InscriptionMenu.Recall));
 UO.RegisterCommand("inscription-mark", () => Inscription.Inscribe(InscriptionMenu.Mark));
 UO.RegisterCommand("inscription-teleport", () => Inscription.Inscribe(InscriptionMenu.Teleport));

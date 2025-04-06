@@ -243,28 +243,36 @@ public sealed class CraftProducer
         return containerItem;
     }
     
-    public void Produce()
+    public void Produce(bool reload = true)
     {
         OnStart?.Invoke();
-        AskForResourceContainers();
-        var productContainerItem = AskForContainer(product.Spec, $"Select container to unload {Specs.TranslateToName(product.Spec)}.");
-        var foodContainerItem = AskForContainer(Specs.Food, "Select container with food");
+        Item productContainerItem = null;
+        Item foodContainerItem = null;
+        if (reload)
+        {
+            AskForResourceContainers();
+            productContainerItem = AskForContainer(product.Spec, $"Select container to unload {Specs.TranslateToName(product.Spec)}.");
+            foodContainerItem = AskForContainer(Specs.Food, "Select container with food");
+        }
 
         while (true)
         {
             Postproduce?.Invoke();
-            UO.ClientPrint($"unloading {UO.Items.Matching(product.Spec).Count()} {Specs.TranslateToName(product.Spec)}");
-            Items.MoveItems(UO.Items.Matching(product.Spec).InContainer(UO.Me.BackPack),
-                productContainerItem);
-
-            UO.ClientPrint("reloading");
-            Items.Reload(foodContainerItem, 5, Specs.Food);
-
-            foreach (var resource in product.Resources)
+            if (reload)
             {
-                var resourceContainer = containersBySpec[resource.Spec];
-                Items.Reload(resourceContainer, (ushort)(BatchSize * resource.Amount),
-                    resource.Spec);
+                UO.ClientPrint($"unloading {UO.Items.Matching(product.Spec).Count()} {Specs.TranslateToName(product.Spec)}");
+                Items.MoveItems(UO.Items.Matching(product.Spec).InContainer(UO.Me.BackPack),
+                    productContainerItem);
+    
+                UO.ClientPrint("reloading");
+                Items.Reload(foodContainerItem, 5, Specs.Food);
+
+                foreach (var resource in product.Resources)
+                {
+                    var resourceContainer = containersBySpec[resource.Spec];
+                    Items.Reload(resourceContainer, (ushort)(BatchSize * resource.Amount),
+                        resource.Spec);
+                }
             }
     
             UO.Wait(1000);

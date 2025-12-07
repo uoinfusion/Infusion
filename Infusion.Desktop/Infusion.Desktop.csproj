@@ -2,12 +2,12 @@
   <PropertyGroup>
     <ProjectGuid>{CEB9DE65-59E5-4186-A11E-E797F86B97B1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net47</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <ExtrasEnableWpfProjectSetup>true</ExtrasEnableWpfProjectSetup>
-    <RuntimeIdentifiers>win;win7-x86</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>infusion.ico</ApplicationIcon>

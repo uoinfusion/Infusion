@@ -42,9 +42,9 @@ try {
     Run "dotnet" @("build", "..\Infusion.sln", "-c", "Release", "/p:RuntimeIdentifiers=win-x64 ")
 
     New-Item -ItemType Directory -Force -Path (Join-Path $buildRoot "testresults") | Out-Null
-
-    Run "dotnet" @("test", "..\Infusion.Tests", "--no-build")
-    Run "dotnet" @("test", "..\Infusion.LegacyApi.Tests", "--no-build")
+    
+    Run "dotnet" @("test", "..\Infusion.Tests", "--logger", "trx;LogFileName=$(Join-Path $buildRoot 'testresults\Infusion.Tests.trx')")
+    Run "dotnet" @("test", "..\Infusion.LegacyApi.Tests", "--logger", "trx;LogFileName=$(Join-Path $buildRoot 'testresults\Infusion.LegacyApi.Tests.trx')")
 
     $uoePath = "..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions"
     Run "dotnet" @("build", "$uoePath\Infusion.Scripts.UOErebor.Extensions.sln", "-c", "Release", "/p:RuntimeIdentifiers=win-x64")
@@ -95,9 +95,7 @@ try {
         throw "Extension binary not found under $uoeBinRoot"
     }
 
-    # PublishCli
-    Run "dotnet" @("publish", "..\Infusion.Cli\Infusion.Cli.csproj", "--configuration", "Release", "-p:", "TargetFramework=net8.0", "--output", "output\release-cli")
-    Run (Join-Path $buildRoot "paket\packages\NuGet.CommandLine\tools\NuGet.exe") @("pack", "..\infusion.cli.tools.nuspec", "-OutputDirectory", "output")
+    Run "dotnet" @("pack", "..\Infusion.Cli\Infusion.Cli.csproj", "--configuration", "Release", "-p:", "TargetFramework=net8.0", "--output", "output")
 }
 finally {
     Pop-Location

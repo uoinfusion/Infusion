@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Company>UOInfusion</Company>
+    <Product>Infusion</Product>
+    <Copyright>Copyright © UOInfusion 2017-2025</Copyright>
+
+    <Version>1.0.76</Version>
+
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
+  </PropertyGroup>
+</Project>

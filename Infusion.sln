@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion", "Infusion\Infusion.csproj", "{22E3BD2C-8FFE-4D11-8FD8-7764F40F3324}"
 EndProject
@@ -18,11 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoslynPad", "RoslynPad\src\RoslynPad\RoslynPad.csproj", "{2F7723C1-297B-416F-9A78-153156D319B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.LegacyApi", "Infusion.LegacyApi\Infusion.LegacyApi.csproj", "{28A5CECE-9E74-4524-9DFD-238ED4DF12BA}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{73CDF88F-5A6A-4920-8E5C-BB636DE364A9}"
-	ProjectSection(SolutionItems) = preProject
-		SharedAssemblyInfo.cs = SharedAssemblyInfo.cs
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InjectionScript", "InjectionScript", "{76681392-9D8A-4D2A-861A-45B9E07A22CE}"
 EndProject
@@ -65,10 +60,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infusion.Cli", "Infusion.Cli\Infusion.Cli.csproj", "{F66937A3-A6A6-4D9F-A55B-FE70EC0936ED}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		RoslynPad\src\RoslynPad.Editor.Shared\RoslynPad.Editor.Shared.projitems*{7fb0604b-44cd-4db1-99c5-e89ea6c20aec}*SharedItemsImports = 13
-		RoslynPad\src\RoslynPad.Editor.Shared\RoslynPad.Editor.Shared.projitems*{bc3c0e60-9524-46a3-9588-c4bff8e03c74}*SharedItemsImports = 5
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -397,5 +388,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {34584677-C555-4540-BBB0-527798A17725}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		RoslynPad\src\RoslynPad.Editor.Shared\RoslynPad.Editor.Shared.projitems*{7fb0604b-44cd-4db1-99c5-e89ea6c20aec}*SharedItemsImports = 13
+		RoslynPad\src\RoslynPad.Editor.Shared\RoslynPad.Editor.Shared.projitems*{bc3c0e60-9524-46a3-9588-c4bff8e03c74}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

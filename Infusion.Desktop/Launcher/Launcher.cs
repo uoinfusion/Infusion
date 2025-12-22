@@ -79,8 +79,10 @@ namespace Infusion.Desktop.Launcher
             {
                 if (!string.IsNullOrEmpty(options.UOFilesPath))
                 {
-                    console.Info($"Using Ultima Online files from explicitly configured {options.UOFilesPath}.");
-                    Files.SetMulPath(options.UOFilesPath);
+                    var uoFilesPath = Path.IsPathRooted(options.UOFilesPath) ? options.UOFilesPath 
+                        : Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, options.UOFilesPath));
+                    console.Info($"Using Ultima Online files from explicitly configured {uoFilesPath}.");
+                    Files.SetMulPath(uoFilesPath);
                 }
                 else
                 {

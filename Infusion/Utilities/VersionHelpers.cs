@@ -10,21 +10,21 @@ namespace Infusion.Utilities
 {
     public static class VersionHelpers
     {
-        private static Version productVersion;
+        private static Version fileVersion;
 
         public static Version ProductVersion
         {
             get
             {
-                if (productVersion == null)
+                if (fileVersion == null)
                 {
                     string versionText = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location)
-                        .ProductVersion;
-                    if (!Version.TryParse(versionText, out productVersion))
-                        productVersion = new Version(0, 0, 0, 0);
+                        .FileVersion;
+                    if (!Version.TryParse(versionText, out fileVersion))
+                        fileVersion = new Version(0, 0, 0, 0);
                 }
 
-                return productVersion;
+                return fileVersion;
             }
         } 
     }

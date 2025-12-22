@@ -26,6 +26,7 @@ function Run {
 
 $repoRoot = (Resolve-Path $PSScriptRoot).Path
 $buildRoot = Join-Path $repoRoot "build"
+New-Item -ItemType Directory -Force -Path $buildRoot | Out-Null
 
 Push-Location $buildRoot
 try {
@@ -58,7 +59,7 @@ try {
         New-Item -ItemType Directory -Force -Path $dir | Out-Null
     }
 
-    $launcherFile = Join-Path $buildRoot "..\Infusion.Launcher\bin\release\Infusion.exe"
+    $launcherFile = Join-Path $buildRoot "..\Infusion.Launcher\bin\release\net47\Infusion.exe"
     if (Test-Path $launcherFile) {
         Copy-Item -Path $launcherFile -Destination $releaseRoot -Force
     }

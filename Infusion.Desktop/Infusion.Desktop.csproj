@@ -8,7 +8,6 @@
     <OutputType>WinExe</OutputType>
     <ApplicationIcon>infusion.ico</ApplicationIcon>
     <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

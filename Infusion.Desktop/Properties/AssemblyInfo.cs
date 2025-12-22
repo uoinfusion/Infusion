@@ -1,14 +1,5 @@
-﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 using System.Windows;
-
-[assembly: AssemblyTitle("Infusion.Desktop")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-
-//[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.Satellite)]
 
 [assembly: ThemeInfo(
     ResourceDictionaryLocation.None, //where theme specific resource dictionaries are located

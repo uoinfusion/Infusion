@@ -2,11 +2,13 @@
   <PropertyGroup>
     <Company>UOInfusion</Company>
     <Product>Infusion</Product>
-    <Copyright>Copyright © UOInfusion 2017-2025</Copyright>
+    <Copyright>Copyright ï¿½ UOInfusion 2017-2025</Copyright>
 
     <Version>1.0.76</Version>
 
-    <AssemblyVersion>$(Version).0</AssemblyVersion>
-    <FileVersion>$(Version).0</FileVersion>
+    <AssemblyVersion>1.0.76.0</AssemblyVersion>
+    <FileVersion>1.0.76.0</FileVersion>
+    <!-- <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion> -->
   </PropertyGroup>
 </Project>

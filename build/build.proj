@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="Build" DependsOnTargets="Clean">
-        <MSBuild Projects="..\Infusion.sln" Properties="Configuration=Release;Platform=Any CPU" />
+        <Exec Command="dotnet build ..\Infusion.sln -c Release /p:RuntimeIdentifiers=win-x64" />
 
         <PropertyGroup>
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
@@ -9,10 +9,10 @@
 
         <MakeDir Directories=".\testresults" />
 
-        <Exec Command="dotnet test ..\Infusion.Tests" />
-        <Exec Command="dotnet test ..\Infusion.LegacyApi.Tests" />
+        <Exec Command="dotnet test ..\Infusion.Tests --no-build" />
+        <Exec Command="dotnet test ..\Infusion.LegacyApi.Tests --no-build" />
 
-        <MSBuild Projects="$(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln" Properties="Configuration=Release;Platform=Any CPU" />
+        <Exec Command="dotnet build $(UOEreborScriptExtensionPath)\Infusion.Scripts.UOErebor.Extensions.sln -c Release /p:RuntimeIdentifiers=win-x64" />
 
         <CallTarget Targets="PreparePackage" />
         <CallTarget Targets="PublishCli" />
@@ -21,7 +21,7 @@
     <Target Name="PreparePackage">
         <ItemGroup>
             <LauncherFile Include="..\Infusion.Launcher\bin\release\Infusion.exe" />
-            <BinFiles Include="..\Infusion.Desktop\bin\release\net47\**\*.*" /> 
+            <BinFiles Include="..\Infusion.Desktop\bin\release\net8.0-windows\**\*.*" /> 
         </ItemGroup>
         <PropertyGroup>
             <UOEreborScriptExtensionPath>..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions</UOEreborScriptExtensionPath>
@@ -45,7 +45,7 @@
 
     <Target Name="PublishCli">
         <Exec Command="paket.exe restore" WorkingDirectory="paket" />
-        <Exec Command="dotnet publish ..\Infusion.Cli\Infusion.Cli.csproj --framework net47 --configuration Release --output output\release-cli" />
+        <Exec Command="dotnet publish ..\Infusion.Cli\Infusion.Cli.csproj --configuration Release --output output\release-cli" />
         <Exec Command="paket\packages\NuGet.CommandLine\tools\NuGet.exe pack ..\infusion.cli.tools.nuspec -OutputDirectory output" />
     </Target>
 

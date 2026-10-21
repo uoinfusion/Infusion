@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Console host for macOS (and other non-Windows systems).
+    Replaces the WPF based Infusion.Desktop: starts the proxy, launches ClassicUO,
+    runs C# (.csx) scripts and reads commands from the terminal.
+    Not part of Infusion.sln on purpose, so the Windows build is not affected.
+    Build: dotnet build Infusion.Mac/Infusion.Mac.csproj -c Release
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Infusion.Mac</AssemblyName>
+    <RootNamespace>Infusion.Mac</RootNamespace>
+    <RollForward>Major</RollForward>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Product>Infusion for macOS</Product>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Infusion\Infusion.csproj" />
+    <ProjectReference Include="..\Infusion.LegacyApi\Infusion.LegacyApi.csproj" />
+    <ProjectReference Include="..\Infusion.Proxy\Infusion.Proxy.csproj" />
+    <ProjectReference Include="..\Infusion.EngineScripts\Infusion.EngineScripts.csproj" />
+  </ItemGroup>
+
+  <!-- script libraries copied next to the host; MacScriptEngine redirects #r references to them -->
+  <ItemGroup>
+    <ProjectReference Include="..\ExampleScripts\UOErebor\Infusion.Scripts.UOErebor.Extensions.Mac\Infusion.Scripts.UOErebor.Extensions.Mac.csproj"
+                      ReferenceOutputAssembly="false" OutputItemType="Content" CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="Compat\System.Windows.Extensions\System.Windows.Extensions.csproj"
+                      ReferenceOutputAssembly="false" OutputItemType="Content" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Compat\**" />
+    <None Remove="Compat\**" />
+    <Compile Remove="tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- profiles (*.profile) are JSON files shared with Infusion.Desktop -->
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+
+</Project>

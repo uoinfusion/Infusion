@@ -247,3 +247,6 @@ ModelManifest.xml
 *.DS_Store
 /Infusion.Desktop/Properties/launchSettings.json
 /Infusion.Cli/Properties/launchSettings.json
+
+# Infusion.Mac local .NET SDK (scripts/infusion-mac.sh)
+/.dotnet/

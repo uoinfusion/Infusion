@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Minimal macOS replacement of System.Windows.Extensions (System.Media.SoundPlayer, SystemSounds),
+    which scripts use for alerts (e.g. ExampleScripts/UOErebor/afk.csx). On Windows it comes with
+    the WindowsDesktop runtime. Public-signed with the ECMA key, so it binds like the original.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>System.Windows.Extensions</AssemblyName>
+    <RootNamespace>System.Windows.Extensions</RootNamespace>
+    <AssemblyVersion>8.0.0.0</AssemblyVersion>
+    <FileVersion>8.0.0.0</FileVersion>
+    <PublicSign>true</PublicSign>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)ecma.pub</AssemblyOriginatorKeyFile>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Cross-platform (macOS) replacement of the WPF Infusion.Scripts.UOErebor.Extensions.dll.
+    The assembly name is the same, so scripts (#r "Infusion.Scripts.UOErebor.Extensions.dll")
+    work without changes - Infusion.Mac redirects the reference to this build.
+    Instead of WPF windows it offers an in-game status gump (,status-gump) and a small browser window (,status-window).
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Infusion.Scripts.UOErebor.Extensions</AssemblyName>
+    <RootNamespace>Infusion.Scripts.UOErebor.Extensions</RootNamespace>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Infusion\Infusion.csproj"><Private>false</Private></ProjectReference>
+    <ProjectReference Include="..\..\..\Infusion.LegacyApi\Infusion.LegacyApi.csproj"><Private>false</Private></ProjectReference>
+  </ItemGroup>
+
+</Project>

@@ -10,3 +10,4 @@ using System.Runtime.InteropServices;
 
 [assembly: InternalsVisibleTo("Infusion.Proxy.Tests")]
 [assembly: InternalsVisibleTo("Infusion.Desktop")]
+[assembly: InternalsVisibleTo("Infusion.Mac")]

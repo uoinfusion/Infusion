@@ -39,11 +39,11 @@ namespace Infusion.Desktop.Launcher.Orion
             var info = new ProcessStartInfo(ultimaExecutablePath);
             info.WorkingDirectory = ultimaExecutableInfo.DirectoryName;
 
-            var insensitiveArguments = $"-autologin:0 -savepassword:0 \"-login 127.0.0.1,{proxyPort}\"";
-            var sensitiveArguments = $" -account:{account},{password}";
+            var insensitiveArguments = $"-autologin|0 -savepassword|0 -login|127.0.0.1,{proxyPort}";
+            var sensitiveArguments = $" -account|{account}|{password}";
             info.Arguments = insensitiveArguments + sensitiveArguments;
 
-            var argumentsInfo = insensitiveArguments + $" -account:{account},<password censored>";
+            var argumentsInfo = insensitiveArguments + $" -account|{account}|<password censored>";
 
             console.Info($"Staring {ultimaExecutablePath} {argumentsInfo}");
 

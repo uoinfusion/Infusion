@@ -25,7 +25,7 @@ namespace Infusion.LegacyApi.Injection
 
         public int Count(int type, int color, int containerId)
         {
-            var items = FindItems(type, color, containerId, -1, false);
+            var items = FindItems(type, color, containerId, -1, true);
 
             return items.OfType<Item>().Sum(x => x.Amount);
         }
